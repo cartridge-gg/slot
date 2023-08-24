@@ -1,11 +1,20 @@
-use clap::Parser;
+mod browser;
+mod cli;
+mod command;
+mod constants;
+mod server;
 
-/// Slot CLI for Cartridge
-#[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
-struct Args {}
+use clap::Parser;
+use cli::Cli;
 
 #[tokio::main]
 async fn main() {
-    let _args = Args::parse();
+    let cli = Cli::parse();
+
+    match &cli.command.handle() {
+        Ok(_) => {}
+        Err(e) => {
+            eprintln!("{e}")
+        }
+    }
 }
