@@ -1,4 +1,4 @@
-use crate::{browser::Browser, constants, server::Server};
+use crate::{browser::Browser, constants, server::LocalServer};
 use clap::Subcommand;
 use eyre;
 use tokio::runtime::Runtime;
@@ -23,7 +23,7 @@ impl Auth {
         let rt = Runtime::new()?;
 
         let handler = std::thread::spawn(move || {
-            let server = Server::new();
+            let server = LocalServer::new();
 
             let res = rt.block_on(async {
                 tokio::join!(server.start(constants::SERVER_HOST), Browser::open())
@@ -37,7 +37,7 @@ impl Auth {
                     eprintln!("Browser error: {e}");
                 }
                 _ => {
-                    println!("Success");
+                    // println!("Success");
                 }
             }
         });
