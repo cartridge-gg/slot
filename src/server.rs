@@ -6,31 +6,43 @@ use axum::{
     Json, Router,
 };
 use serde_json::{json, Value};
-use std::{collections::HashMap, sync::Arc};
+use std::{
+    collections::HashMap,
+    net::{SocketAddr, TcpListener},
+    sync::Arc,
+};
 use tokio::sync::mpsc::{Receiver, Sender};
 
 pub struct LocalServer {
     router: Router,
     shutdown_rx: Receiver<()>,
+    listener: TcpListener,
 }
 
 impl<'a> LocalServer {
-    pub fn new() -> Self {
+    pub fn new() -> eyre::Result<Self> {
         let (tx, rx) = tokio::sync::mpsc::channel::<()>(1);
+        // Port number of 0 requests OS to find an available port.
+        let listener = TcpListener::bind("0.0.0.0:0")?;
 
         let shared_state = Arc::new(AppState::new(tx));
         let router = Router::new()
             .route("/callback", post(Self::callback))
             .with_state(shared_state);
 
-        Self {
+        Ok(Self {
             router,
             shutdown_rx: rx,
-        }
+            listener,
+        })
     }
 
-    pub async fn start(mut self, host: &'a str) -> eyre::Result<()> {
-        axum::Server::bind(&host.parse()?)
+    pub fn local_addr(&self) -> eyre::Result<SocketAddr, std::io::Error> {
+        self.listener.local_addr()
+    }
+
+    pub async fn start(mut self) -> eyre::Result<()> {
+        axum::Server::from_tcp(self.listener)?
             .serve(self.router.into_make_service())
             .with_graceful_shutdown(async {
                 let _ = &self.shutdown_rx.recv().await;
@@ -45,7 +57,7 @@ impl<'a> LocalServer {
         Query(params): Query<HashMap<String, String>>,
     ) -> Result<Json<Value>, AppError> {
         let auth_code = &params["code"];
-        println!("{auth_code}");
+        println!("auth_code: {auth_code}");
 
         // TODO: get access token using the authorization code
 

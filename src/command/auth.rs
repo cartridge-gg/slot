@@ -1,4 +1,4 @@
-use crate::{browser::Browser, constants, server::LocalServer};
+use crate::{browser::Browser, server::LocalServer};
 use clap::Subcommand;
 use eyre;
 use tokio::runtime::Runtime;
@@ -23,11 +23,10 @@ impl Auth {
         let rt = Runtime::new()?;
 
         let handler = std::thread::spawn(move || {
-            let server = LocalServer::new();
+            let server = LocalServer::new().expect("Failed to start a server");
+            let addr = &server.local_addr().unwrap();
 
-            let res = rt.block_on(async {
-                tokio::join!(server.start(constants::SERVER_HOST), Browser::open())
-            });
+            let res = rt.block_on(async { tokio::join!(server.start(), Browser::open(addr)) });
 
             match res {
                 (Err(e), _) => {
