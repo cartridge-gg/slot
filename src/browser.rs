@@ -1,9 +1,10 @@
+use anyhow::Result;
 use std::net::SocketAddr;
 
 pub struct Browser;
 
 impl Browser {
-    pub async fn open(local_addr: &SocketAddr) -> eyre::Result<()> {
+    pub async fn open(local_addr: &SocketAddr) -> Result<()> {
         // TODO:
         //   - client_id?
         //   - state?

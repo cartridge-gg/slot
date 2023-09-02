@@ -1,15 +1,16 @@
 use crate::{browser::Browser, server::LocalServer};
+use anyhow::Result;
 use clap::Subcommand;
-use eyre;
 use tokio::runtime::Runtime;
 
 #[derive(Subcommand, Debug)]
 pub enum Auth {
+    #[command(about = "Login to your Cartridge account.")]
     Login,
 }
 
 impl Auth {
-    pub fn handle(&self) -> eyre::Result<()> {
+    pub fn run(&self) -> Result<()> {
         match self {
             Auth::Login => {
                 Self::login()?;
@@ -19,7 +20,7 @@ impl Auth {
         Ok(())
     }
 
-    fn login() -> eyre::Result<()> {
+    fn login() -> Result<()> {
         let rt = Runtime::new()?;
 
         let handler = std::thread::spawn(move || {
