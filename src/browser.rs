@@ -14,7 +14,7 @@ impl Browser {
             redirect_url = local_addr,
         );
 
-        println!("Your browser has been opened to visit: \n\n    {url}");
+        println!("Your browser has been opened to visit: \n\n    {url}\n");
         webbrowser::open(&url)?;
 
         Ok(())

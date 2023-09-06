@@ -6,9 +6,10 @@ use axum::{
     routing::post,
     Json, Router,
 };
+use log::error;
+use serde::Deserialize;
 use serde_json::{json, Value};
 use std::{
-    collections::HashMap,
     net::{SocketAddr, TcpListener},
     sync::Arc,
 };
@@ -55,17 +56,32 @@ impl<'a> LocalServer {
 
     async fn callback(
         State(state): State<Arc<AppState>>,
-        Query(params): Query<HashMap<String, String>>,
+        Query(params): Query<CallbackParams>,
     ) -> Result<Json<Value>, AppError> {
-        let auth_code = &params["code"];
-        println!("auth_code: {auth_code}");
-
-        // TODO: get access token using the authorization code
-
         state.shutdown().await?;
 
-        Ok(Json(json!({ "success": true })))
+        match params.code {
+            Some(code) => {
+                println!("auth_code: {}", code);
+
+                // TODO: 1. Get access token using the authorization code
+
+                // TODO: 2. Store the access token locally
+
+                Ok(Json(json!({ "success": true })))
+            }
+            None => {
+                error!("User denied consent. Try again.");
+
+                Ok(Json(json!({ "success": true })))
+            }
+        }
     }
+}
+
+#[derive(Deserialize)]
+struct CallbackParams {
+    code: Option<String>,
 }
 
 #[derive(Clone)]
