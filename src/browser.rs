@@ -10,8 +10,8 @@ impl Browser {
         //   - state?
         //   - PKCE?
         let url = format!(
-            "https:/x.cartridge.gg/auth?redirect_url=http://{redirect_url}",
-            redirect_url = local_addr,
+            "https:/x.cartridge.gg/auth?redirect_uri=http://{redirect_uri}/callback",
+            redirect_uri = local_addr,
         );
 
         println!("Your browser has been opened to visit: \n\n    {url}\n");
