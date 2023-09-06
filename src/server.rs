@@ -1,3 +1,4 @@
+use anyhow::Result;
 use axum::{
     extract::{Query, State},
     http::StatusCode,
@@ -20,7 +21,7 @@ pub struct LocalServer {
 }
 
 impl<'a> LocalServer {
-    pub fn new() -> eyre::Result<Self> {
+    pub fn new() -> Result<Self> {
         let (tx, rx) = tokio::sync::mpsc::channel::<()>(1);
         // Port number of 0 requests OS to find an available port.
         let listener = TcpListener::bind("0.0.0.0:0")?;
@@ -37,11 +38,11 @@ impl<'a> LocalServer {
         })
     }
 
-    pub fn local_addr(&self) -> eyre::Result<SocketAddr, std::io::Error> {
+    pub fn local_addr(&self) -> Result<SocketAddr, std::io::Error> {
         self.listener.local_addr()
     }
 
-    pub async fn start(mut self) -> eyre::Result<()> {
+    pub async fn start(mut self) -> Result<()> {
         axum::Server::from_tcp(self.listener)?
             .serve(self.router.into_make_service())
             .with_graceful_shutdown(async {
@@ -77,14 +78,14 @@ impl AppState {
         Self { shutdown_tx }
     }
 
-    async fn shutdown(&self) -> eyre::Result<()> {
+    async fn shutdown(&self) -> Result<()> {
         self.shutdown_tx.send(()).await?;
 
         Ok(())
     }
 }
 
-struct AppError(eyre::Error);
+struct AppError(anyhow::Error);
 
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
@@ -98,7 +99,7 @@ impl IntoResponse for AppError {
 
 impl<E> From<E> for AppError
 where
-    E: Into<eyre::Error>,
+    E: Into<anyhow::Error>,
 {
     fn from(err: E) -> Self {
         Self(err.into())

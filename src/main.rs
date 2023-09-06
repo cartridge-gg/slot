@@ -10,7 +10,7 @@ use cli::Cli;
 async fn main() {
     let cli = Cli::parse();
 
-    match &cli.command.handle() {
+    match &cli.command.run().await {
         Ok(_) => {}
         Err(e) => {
             eprintln!("{e}")
