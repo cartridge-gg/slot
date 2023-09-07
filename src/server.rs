@@ -56,11 +56,11 @@ impl<'a> LocalServer {
 
     async fn callback(
         State(state): State<Arc<AppState>>,
-        Query(params): Query<CallbackParams>,
+        Json(payload): Json<CallbackPayload>,
     ) -> Result<Json<Value>, AppError> {
         state.shutdown().await?;
 
-        match params.code {
+        match payload.code {
             Some(code) => {
                 println!("auth_code: {}", code);
 
@@ -80,7 +80,7 @@ impl<'a> LocalServer {
 }
 
 #[derive(Deserialize)]
-struct CallbackParams {
+struct CallbackPayload {
     code: Option<String>,
 }
 
