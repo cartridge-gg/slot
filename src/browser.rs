@@ -5,14 +5,8 @@ pub struct Browser;
 
 impl Browser {
     pub async fn open(local_addr: &SocketAddr) -> Result<()> {
-        // TODO:
-        //   - client_id?
-        //   - state?
-        //   - PKCE?
-        let url = format!(
-            "https:/x.cartridge.gg/auth?redirect_uri=http://{redirect_uri}/callback",
-            redirect_uri = local_addr,
-        );
+        let callback_uri = format!("http://{local_addr}/callback");
+        let url = format!("https:/x.cartridge.gg/slot/auth?callback_uri={callback_uri}");
 
         println!("Your browser has been opened to visit: \n\n    {url}\n");
         webbrowser::open(&url)?;
