@@ -1,6 +1,6 @@
 use anyhow::Result;
 use axum::{
-    extract::{Query, State},
+    extract::State,
     http::StatusCode,
     response::{IntoResponse, Response},
     routing::post,
@@ -10,7 +10,10 @@ use log::error;
 use serde::Deserialize;
 use serde_json::{json, Value};
 use std::{
+    fs::{self, OpenOptions},
+    io::Write,
     net::{SocketAddr, TcpListener},
+    path::Path,
     sync::Arc,
 };
 use tokio::sync::mpsc::{Receiver, Sender};
@@ -64,9 +67,28 @@ impl<'a> LocalServer {
             Some(code) => {
                 println!("auth_code: {}", code);
 
-                // TODO: 1. Get access token using the authorization code
+                // 1. Get access token using the authorization code
+                let client = reqwest::Client::new();
+                let res = client
+                    .post("https://api.cartridge.gg/")
+                    .form(&[("code", code)])
+                    .send()
+                    .await?
+                    .bytes()
+                    .await?;
 
-                // TODO: 2. Store the access token locally
+                // 2. Store the access token locally
+                let file_path = Path::new("~/.config/slot/credentails.json");
+                fs::create_dir_all(file_path.parent().unwrap())?;
+
+                // Create or overwrite credentails if the file already exists
+                let mut file = OpenOptions::new()
+                    .write(true)
+                    .create(true)
+                    .open(file_path)?;
+                file.write_all(&res)?;
+
+                println!("You are now logged in!\n");
 
                 Ok(Json(json!({ "success": true })))
             }
