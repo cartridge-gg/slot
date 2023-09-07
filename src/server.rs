@@ -13,7 +13,6 @@ use std::{
     fs::{self, OpenOptions},
     io::Write,
     net::{SocketAddr, TcpListener},
-    path::Path,
     sync::Arc,
 };
 use tokio::sync::mpsc::{Receiver, Sender};
@@ -78,7 +77,9 @@ impl<'a> LocalServer {
                     .await?;
 
                 // 2. Store the access token locally
-                let file_path = Path::new("~/.config/slot/credentails.json");
+                let mut file_path = dirs::config_local_dir().unwrap();
+
+                file_path.push("slot/credentails.json");
                 fs::create_dir_all(file_path.parent().unwrap())?;
 
                 // Create or overwrite credentails if the file already exists
