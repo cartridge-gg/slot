@@ -8,6 +8,7 @@ use axum::{
 };
 use log::error;
 use serde::Deserialize;
+use serde_json::json;
 use std::{
     fs::{self, OpenOptions},
     io::Write,
@@ -61,23 +62,20 @@ impl<'a> LocalServer {
         State(state): State<Arc<AppState>>,
         Query(payload): Query<CallbackPayload>,
     ) -> Result<Redirect, AppError> {
+        // 1. Shutdown the server
         state.shutdown().await?;
 
+        // 2. Get access token using the authorization code
         match payload.code {
             Some(code) => {
-                println!("auth_code: {}", code);
-
-                // 1. Get access token using the authorization code
                 let client = reqwest::Client::new();
-                let res = client
+                client
                     .post(constant::CARTRIDGE_API_URL)
-                    .form(&[("code", code)])
+                    .form(&[("code", &code)])
                     .send()
-                    .await?
-                    .bytes()
                     .await?;
 
-                // 2. Store the access token locally
+                // 3. Store the access token locally
                 let mut file_path = dirs::config_local_dir().unwrap();
 
                 file_path.push("slot/credentails.json");
@@ -88,7 +86,7 @@ impl<'a> LocalServer {
                     .write(true)
                     .create(true)
                     .open(file_path)?;
-                file.write_all(&res)?;
+                file.write_all(json!({ "code": code }).to_string().as_bytes())?;
 
                 println!("You are now logged in!\n");
 
