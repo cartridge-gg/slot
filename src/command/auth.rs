@@ -25,9 +25,9 @@ impl Auth {
 
         let handler = std::thread::spawn(move || {
             let server = LocalServer::new().expect("Failed to start a server");
-            let addr = &server.local_addr().unwrap();
+            let addr = server.local_addr().unwrap();
 
-            let res = rt.block_on(async { tokio::join!(server.start(), Browser::open(addr)) });
+            let res = rt.block_on(async { tokio::join!(server.start(), Browser::open(&addr)) });
 
             match res {
                 (Err(e), _) => {

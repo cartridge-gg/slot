@@ -1,9 +1,9 @@
 use anyhow::Result;
 use axum::{
-    extract::State,
+    extract::{Query, State},
     http::StatusCode,
     response::{IntoResponse, Response},
-    routing::post,
+    routing::get,
     Json, Router,
 };
 use log::error;
@@ -27,11 +27,11 @@ impl<'a> LocalServer {
     pub fn new() -> Result<Self> {
         let (tx, rx) = tokio::sync::mpsc::channel::<()>(1);
         // Port number of 0 requests OS to find an available port.
-        let listener = TcpListener::bind("0.0.0.0:0")?;
+        let listener = TcpListener::bind("localhost:0")?;
 
         let shared_state = Arc::new(AppState::new(tx));
         let router = Router::new()
-            .route("/callback", post(Self::callback))
+            .route("/callback", get(Self::callback))
             .with_state(shared_state);
 
         Ok(Self {
@@ -58,7 +58,7 @@ impl<'a> LocalServer {
 
     async fn callback(
         State(state): State<Arc<AppState>>,
-        Json(payload): Json<CallbackPayload>,
+        Query(payload): Query<CallbackPayload>,
     ) -> Result<Json<Value>, AppError> {
         state.shutdown().await?;
 
