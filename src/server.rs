@@ -2,13 +2,12 @@ use anyhow::Result;
 use axum::{
     extract::{Query, State},
     http::StatusCode,
-    response::{IntoResponse, Response},
+    response::{IntoResponse, Redirect, Response},
     routing::get,
-    Json, Router,
+    Router,
 };
 use log::error;
 use serde::Deserialize;
-use serde_json::{json, Value};
 use std::{
     fs::{self, OpenOptions},
     io::Write,
@@ -16,6 +15,8 @@ use std::{
     sync::Arc,
 };
 use tokio::sync::mpsc::{Receiver, Sender};
+
+use crate::constant;
 
 pub struct LocalServer {
     router: Router,
@@ -59,7 +60,7 @@ impl<'a> LocalServer {
     async fn callback(
         State(state): State<Arc<AppState>>,
         Query(payload): Query<CallbackPayload>,
-    ) -> Result<Json<Value>, AppError> {
+    ) -> Result<Redirect, AppError> {
         state.shutdown().await?;
 
         match payload.code {
@@ -69,7 +70,7 @@ impl<'a> LocalServer {
                 // 1. Get access token using the authorization code
                 let client = reqwest::Client::new();
                 let res = client
-                    .post("https://api.cartridge.gg/")
+                    .post(constant::CARTRIDGE_API_URL)
                     .form(&[("code", code)])
                     .send()
                     .await?
@@ -91,12 +92,18 @@ impl<'a> LocalServer {
 
                 println!("You are now logged in!\n");
 
-                Ok(Json(json!({ "success": true })))
+                Ok(Redirect::permanent(&format!(
+                    "{}/slot/auth/success",
+                    constant::CARTRIDGE_KEYCHAIN_URL
+                )))
             }
             None => {
                 error!("User denied consent. Try again.");
 
-                Ok(Json(json!({ "success": true })))
+                Ok(Redirect::permanent(&format!(
+                    "{}/slot/auth/failure",
+                    constant::CARTRIDGE_KEYCHAIN_URL
+                )))
             }
         }
     }

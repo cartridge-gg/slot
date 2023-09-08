@@ -1,6 +1,7 @@
 mod browser;
 mod cli;
 mod command;
+mod constant;
 mod server;
 
 use clap::Parser;
