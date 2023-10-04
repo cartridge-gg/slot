@@ -1,7 +1,8 @@
-mutation CreateDeployment($name: String!, $service: ServiceInput!, $config: String!) {
+mutation CreateDeployment($name: String!, $service: ServiceInput!, $tier: DeploymentTier!, $config: JSON!) {
   createDeployment(
     name: $name
     service: $service
+    tier: $tier
     config: $config
   )
 }

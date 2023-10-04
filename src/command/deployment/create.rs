@@ -7,6 +7,8 @@ use self::create_deployment::ServiceInput;
 
 use super::configs::CreateCommands;
 
+type JSON = String;
+
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "schema.json",
@@ -15,12 +17,21 @@ use super::configs::CreateCommands;
 )]
 pub struct CreateDeployment;
 
+#[derive(clap::ValueEnum, Clone, Debug, serde::Serialize)]
+pub enum Tier {
+    Basic,
+}
+
 #[derive(Debug, Args, serde::Serialize)]
 #[command(next_help_heading = "Create deployment options")]
 pub struct CreateOptions {
-    #[arg(long = "name")]
+    #[arg(short, long = "name")]
     #[arg(help = "The name of the project.")]
     pub name: String,
+    #[arg(short, long, default_value = "basic")]
+    #[arg(value_name = "tier")]
+    #[arg(help = "Deployment tier.")]
+    pub tier: Tier,
 }
 
 #[derive(Debug, Args)]
@@ -37,11 +48,15 @@ impl CreateArgs {
     pub async fn run(&self) -> Result<()> {
         let config = serde_json::to_string(&self.create_commands)?;
         let service_type = match &self.create_commands {
-            CreateCommands::Madara(_) => create_deployment::DeploymentService::madara,
+            CreateCommands::Katana(_) => create_deployment::DeploymentService::katana,
             CreateCommands::Torii(_) => create_deployment::DeploymentService::torii,
+        };
+        let tier = match &self.options.tier {
+            Tier::Basic => create_deployment::DeploymentTier::basic,
         };
         let request_body = CreateDeployment::build_query(create_deployment::Variables {
             name: self.options.name.clone(),
+            tier,
             service: ServiceInput {
                 type_: service_type,
                 version: None,
@@ -50,7 +65,11 @@ impl CreateArgs {
         });
 
         let client = reqwest::Client::new();
-        let res = client.post("/graphql").json(&request_body).send().await?;
+        let res = client
+            .post("https://api.cartridge.gg/query")
+            .json(&request_body)
+            .send()
+            .await?;
         let response_body: Response<create_deployment::ResponseData> = res.json().await?;
         println!("{:#?}", response_body);
         Ok(())

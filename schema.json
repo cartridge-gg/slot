@@ -2420,8 +2420,8 @@
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
+                  "kind": "ENUM",
+                  "name": "AccountTeamRole",
                   "ofType": null
                 }
               }
@@ -2453,7 +2453,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "Quest",
+                  "name": "Team",
                   "ofType": null
                 }
               }
@@ -2567,6 +2567,23 @@
           "interfaces": [],
           "kind": "OBJECT",
           "name": "AccountTeamEdge",
+          "possibleTypes": []
+        },
+        {
+          "description": "AccountTeamRole is enum for the field role",
+          "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "owner"
+            }
+          ],
+          "fields": [],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "ENUM",
+          "name": "AccountTeamRole",
           "possibleTypes": []
         },
         {
@@ -2721,8 +2738,8 @@
               "description": "role field predicates",
               "name": "role",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "AccountTeamRole",
                 "ofType": null
               }
             },
@@ -2731,8 +2748,8 @@
               "description": null,
               "name": "roleNEQ",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "AccountTeamRole",
                 "ofType": null
               }
             },
@@ -2747,8 +2764,8 @@
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
+                    "kind": "ENUM",
+                    "name": "AccountTeamRole",
                     "ofType": null
                   }
                 }
@@ -2765,101 +2782,11 @@
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
+                    "kind": "ENUM",
+                    "name": "AccountTeamRole",
                     "ofType": null
                   }
                 }
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "roleGT",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "roleGTE",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "roleLT",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "roleLTE",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "roleContains",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "roleHasPrefix",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "roleHasSuffix",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "roleEqualFold",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "roleContainsFold",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
               }
             }
           ],
@@ -11689,6 +11616,22 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
+              "name": "tier",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "DeploymentTier",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
               "name": "createdAt",
               "type": {
                 "kind": "NON_NULL",
@@ -11712,83 +11655,6 @@
                 "ofType": {
                   "kind": "SCALAR",
                   "name": "Time",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": null,
-                  "description": "Returns the elements in the list that come after the specified cursor.",
-                  "name": "after",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Cursor",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "description": "Returns the first _n_ elements from the list.",
-                  "name": "first",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "description": "Returns the elements in the list that come before the specified cursor.",
-                  "name": "before",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Cursor",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "description": "Returns the last _n_ elements from the list.",
-                  "name": "last",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "description": "Ordering options for Accounts returned from the connection.",
-                  "name": "orderBy",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "AccountOrder",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "description": "Filtering options for Accounts returned from the connection.",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "AccountWhereInput",
-                    "ofType": null
-                  }
-                }
-              ],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "owner",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "AccountConnection",
                   "ofType": null
                 }
               }
@@ -12085,6 +11951,23 @@
           "interfaces": [],
           "kind": "ENUM",
           "name": "DeploymentService",
+          "possibleTypes": []
+        },
+        {
+          "description": "DeploymentTier is enum for the field tier",
+          "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "basic"
+            }
+          ],
+          "fields": [],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "ENUM",
+          "name": "DeploymentTier",
           "possibleTypes": []
         },
         {
@@ -12584,6 +12467,62 @@
             },
             {
               "defaultValue": null,
+              "description": "tier field predicates",
+              "name": "tier",
+              "type": {
+                "kind": "ENUM",
+                "name": "DeploymentTier",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "tierNEQ",
+              "type": {
+                "kind": "ENUM",
+                "name": "DeploymentTier",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "tierIn",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "DeploymentTier",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "tierNotIn",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "DeploymentTier",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
               "description": "created_at field predicates",
               "name": "createdAt",
               "type": {
@@ -12772,34 +12711,6 @@
                 "kind": "SCALAR",
                 "name": "Time",
                 "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": "owner edge predicates",
-              "name": "hasOwner",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "hasOwnerWith",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "AccountWhereInput",
-                    "ofType": null
-                  }
-                }
               }
             },
             {
@@ -18019,80 +17930,6 @@
         {
           "description": null,
           "enumValues": [],
-          "fields": [],
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "memory",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "cpu",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                }
-              }
-            }
-          ],
-          "interfaces": [],
-          "kind": "INPUT_OBJECT",
-          "name": "MachineSpecInput",
-          "possibleTypes": []
-        },
-        {
-          "description": null,
-          "enumValues": [],
-          "fields": [
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "memory",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "cpu",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            }
-          ],
-          "inputFields": [],
-          "interfaces": [],
-          "kind": "OBJECT",
-          "name": "MachineSpecs",
-          "possibleTypes": []
-        },
-        {
-          "description": null,
-          "enumValues": [],
           "fields": [
             {
               "args": [],
@@ -18688,6 +18525,16 @@
                   "type": {
                     "kind": "INPUT_OBJECT",
                     "name": "ServiceInput",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "tier",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "DeploymentTier",
                     "ofType": null
                   }
                 },
@@ -24984,6 +24831,41 @@
         },
         {
           "description": null,
+          "enumValues": [],
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "memory",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "cpu",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "Resources",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
           "enumValues": [
             {
               "deprecationReason": null,
@@ -29371,22 +29253,79 @@
               }
             },
             {
-              "args": [],
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": "Returns the elements in the list that come after the specified cursor.",
+                  "name": "after",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Cursor",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": "Returns the first _n_ elements from the list.",
+                  "name": "first",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": "Returns the elements in the list that come before the specified cursor.",
+                  "name": "before",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Cursor",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": "Returns the last _n_ elements from the list.",
+                  "name": "last",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": "Ordering options for Deployments returned from the connection.",
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "DeploymentOrder",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": "Filtering options for Deployments returned from the connection.",
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "DeploymentWhereInput",
+                    "ofType": null
+                  }
+                }
+              ],
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
               "name": "deployments",
               "type": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Deployment",
-                    "ofType": null
-                  }
+                  "kind": "OBJECT",
+                  "name": "DeploymentConnection",
+                  "ofType": null
                 }
               }
             },

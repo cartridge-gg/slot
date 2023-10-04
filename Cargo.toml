@@ -18,6 +18,7 @@ tokio = { version = "1.18.2", features = ["full", "sync"] }
 tower-http = "0.4"
 urlencoding = "2"
 webbrowser = "0.8"
+starknet = "0.6.0"
 
 [[bin]]
 name = "slot"

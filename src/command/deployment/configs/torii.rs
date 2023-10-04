@@ -1,6 +1,5 @@
 use clap::Args;
-
-use super::MachineSpecs;
+use starknet::core::types::FieldElement;
 
 #[derive(Clone, Debug, Args, serde::Serialize)]
 #[command(next_help_heading = "Torii options")]
@@ -10,17 +9,10 @@ pub struct Torii {
     #[arg(help = "The Starknet RPC endpoint.")]
     rpc: String,
     #[arg(long)]
-    #[arg(value_name = "manifest")]
-    #[arg(help = "The manifest.")]
-    manifest: String,
-    #[command(flatten)]
-    requests: MachineSpecs,
-    #[arg(long)]
-    #[arg(value_name = "storage")]
-    #[arg(help = "Amount of storage to request.")]
-    storage: u16,
-    #[arg(long)]
-    #[arg(value_name = "start_block")]
-    #[arg(help = "The start block of the indexer.")]
+    #[arg(value_name = "world")]
+    #[arg(help = "World address.")]
+    world: FieldElement,
+    #[arg(short, long)]
+    #[arg(help = "Specify a block to start indexing from.")]
     start_block: u64,
 }
