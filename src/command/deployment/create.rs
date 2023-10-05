@@ -3,10 +3,13 @@ use anyhow::Result;
 use clap::Args;
 use graphql_client::{GraphQLQuery, Response};
 
+use crate::api::ApiClient;
+
 use self::create_deployment::ServiceInput;
 
 use super::configs::CreateCommands;
 
+#[allow(clippy::upper_case_acronyms)]
 type JSON = String;
 
 #[derive(GraphQLQuery)]
@@ -64,14 +67,11 @@ impl CreateArgs {
             config,
         });
 
-        let client = reqwest::Client::new();
-        let res = client
-            .post("https://api.cartridge.gg/query")
-            .json(&request_body)
-            .send()
-            .await?;
-        let response_body: Response<create_deployment::ResponseData> = res.json().await?;
-        println!("{:#?}", response_body);
+        let client = ApiClient::new();
+        let res: Response<create_deployment::ResponseData> = client.post(&request_body).await?;
+        if res.errors.is_some() {}
+
+        println!("{:#?}", res.errors);
         Ok(())
     }
 }

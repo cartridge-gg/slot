@@ -1,0 +1,11 @@
+query DeploymentLogs($name: String!, $service: DeploymentService!, $cursor: String!, $limit: Int!) {
+  deployment(
+    name: $name
+    service: $service
+  ) {
+    logs(cursor: $cursor, limit: $limit) {
+      entries
+      next_cursor
+    }
+  }
+}

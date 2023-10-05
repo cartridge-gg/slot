@@ -1,4 +1,4 @@
-use clap::Subcommand;
+use clap::{Subcommand, ValueEnum};
 
 use self::{katana::Katana, torii::Torii};
 
@@ -15,4 +15,10 @@ pub enum CreateCommands {
     // Madara(Madara),
     #[command(about = "Torii deployment.")]
     Torii(Torii),
+}
+
+#[derive(Clone, Debug, ValueEnum, serde::Serialize)]
+pub enum Service {
+    Katana,
+    Torii,
 }

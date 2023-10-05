@@ -1,3 +1,4 @@
+mod api;
 mod browser;
 mod cli;
 mod command;

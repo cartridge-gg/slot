@@ -2160,6 +2160,7 @@ dependencies = [
  "serde",
  "serde_json",
  "starknet",
+ "thiserror",
  "tokio",
  "tower-http",
  "urlencoding",
