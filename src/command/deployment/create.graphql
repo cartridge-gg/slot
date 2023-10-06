@@ -1,8 +1,25 @@
-mutation CreateDeployment($name: String!, $service: ServiceInput!, $tier: DeploymentTier!, $config: JSON!) {
+mutation CreateDeployment(
+  $name: String!
+  $service: ServiceInput!
+  $tier: DeploymentTier!
+  $wait: Boolean
+) {
   createDeployment(
     name: $name
     service: $service
     tier: $tier
-    config: $config
-  )
+    wait: $wait
+  ) {
+    __typename
+    ... on KatanaConfig {
+      rpc
+    }
+    ... on ToriiConfig {
+      graphql
+      grpc
+    }
+    ... on MadaraConfig {
+      rpc
+    }
+  }
 }

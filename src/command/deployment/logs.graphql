@@ -5,7 +5,7 @@ query DeploymentLogs($name: String!, $service: DeploymentService!, $cursor: Stri
   ) {
     logs(cursor: $cursor, limit: $limit) {
       entries
-      next_cursor
+      nextCursor
     }
   }
 }

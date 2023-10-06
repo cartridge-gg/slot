@@ -20,7 +20,7 @@ pub enum Command {
 impl Command {
     pub async fn run(&self) -> Result<()> {
         match &self {
-            Command::Auth(cmd) => cmd.run(),
+            Command::Auth(cmd) => cmd.run().await,
             Command::Deployment(cmd) => cmd.run().await,
         }
     }

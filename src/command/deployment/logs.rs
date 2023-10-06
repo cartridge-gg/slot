@@ -1,4 +1,3 @@
-#![allow(non_camel_case_types)]
 use anyhow::Result;
 use clap::Args;
 use graphql_client::{GraphQLQuery, Response};
@@ -41,12 +40,17 @@ impl LogsArgs {
             name: self.name.clone(),
             service,
             cursor: "".to_string(),
-            limit: self.tail.into(),
+            limit: self.tail,
         });
 
         let client = ApiClient::new();
         let res: Response<deployment_logs::ResponseData> = client.post(&request_body).await?;
-        if res.errors.is_some() {}
+        if let Some(errors) = res.errors {
+            for err in errors {
+                println!("Error: {}", err.message);
+            }
+            return Ok(());
+        }
 
         let entries = res
             .data

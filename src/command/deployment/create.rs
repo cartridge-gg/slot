@@ -1,16 +1,22 @@
-#![allow(non_camel_case_types)]
+#![allow(clippy::enum_variant_names)]
+
 use anyhow::Result;
 use clap::Args;
 use graphql_client::{GraphQLQuery, Response};
 
-use crate::api::ApiClient;
+use crate::{
+    api::ApiClient,
+    command::deployment::create::create_deployment::{
+        DeploymentService, DeploymentTier, KatanaConfigInput, ServiceConfigInput, ToriiConfigInput,
+        Variables,
+    },
+};
 
 use self::create_deployment::ServiceInput;
 
 use super::configs::CreateCommands;
 
-#[allow(clippy::upper_case_acronyms)]
-type JSON = String;
+type Long = u64;
 
 #[derive(GraphQLQuery)]
 #[graphql(
@@ -49,29 +55,58 @@ pub struct CreateArgs {
 
 impl CreateArgs {
     pub async fn run(&self) -> Result<()> {
-        let config = serde_json::to_string(&self.create_commands)?;
-        let service_type = match &self.create_commands {
-            CreateCommands::Katana(_) => create_deployment::DeploymentService::katana,
-            CreateCommands::Torii(_) => create_deployment::DeploymentService::torii,
+        let service = match &self.create_commands {
+            CreateCommands::Katana(config) => ServiceInput {
+                type_: DeploymentService::katana,
+                version: None,
+                config: Some(ServiceConfigInput {
+                    katana: Some(KatanaConfigInput {
+                        block_time: config.block_time,
+                        fork_rpc_url: config.fork_rpc_url.clone(),
+                        fork_block_number: config.fork_block_number,
+                        seed: match &config.seed {
+                            Some(seed) => seed.clone(),
+                            None => rand::random::<u64>().to_string(),
+                        },
+                        total_accounts: config.total_accounts,
+                    }),
+                    torii: None,
+                }),
+            },
+            CreateCommands::Torii(config) => ServiceInput {
+                type_: DeploymentService::torii,
+                version: None,
+                config: Some(ServiceConfigInput {
+                    katana: None,
+                    torii: Some(ToriiConfigInput {
+                        rpc: config.rpc.clone(),
+                        world: format!("{:#x}", config.world),
+                        start_block: Some(config.start_block),
+                    }),
+                }),
+            },
         };
+
         let tier = match &self.options.tier {
-            Tier::Basic => create_deployment::DeploymentTier::basic,
+            Tier::Basic => DeploymentTier::basic,
         };
-        let request_body = CreateDeployment::build_query(create_deployment::Variables {
+
+        let request_body = CreateDeployment::build_query(Variables {
             name: self.options.name.clone(),
             tier,
-            service: ServiceInput {
-                type_: service_type,
-                version: None,
-            },
-            config,
+            service,
+            wait: Some(true),
         });
 
         let client = ApiClient::new();
         let res: Response<create_deployment::ResponseData> = client.post(&request_body).await?;
-        if res.errors.is_some() {}
+        if let Some(errors) = res.errors.clone() {
+            for err in errors {
+                println!("Error: {}", err.message);
+            }
+        }
 
-        println!("{:#?}", res.errors);
+        println!("{:#?}", res.data);
         Ok(())
     }
 }

@@ -7,12 +7,12 @@ pub struct Torii {
     #[arg(long)]
     #[arg(value_name = "rpc")]
     #[arg(help = "The Starknet RPC endpoint.")]
-    rpc: String,
+    pub rpc: String,
     #[arg(long)]
     #[arg(value_name = "world")]
     #[arg(help = "World address.")]
-    world: FieldElement,
+    pub world: FieldElement,
     #[arg(short, long)]
     #[arg(help = "Specify a block to start indexing from.")]
-    start_block: u64,
+    pub start_block: i64,
 }

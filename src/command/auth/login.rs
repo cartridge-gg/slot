@@ -1,26 +1,13 @@
 use crate::{browser::Browser, server::LocalServer};
 use anyhow::Result;
-use clap::Subcommand;
+use clap::Args;
 use tokio::runtime::Runtime;
 
-#[derive(Subcommand, Debug)]
-pub enum Auth {
-    #[command(about = "Login to your Cartridge account.")]
-    Login,
-}
+#[derive(Debug, Args)]
+pub struct LoginArgs {}
 
-impl Auth {
+impl LoginArgs {
     pub fn run(&self) -> Result<()> {
-        match self {
-            Auth::Login => {
-                Self::login()?;
-            }
-        }
-
-        Ok(())
-    }
-
-    fn login() -> Result<()> {
         let rt = Runtime::new()?;
 
         let handler = std::thread::spawn(move || {
