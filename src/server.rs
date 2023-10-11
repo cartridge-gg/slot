@@ -8,16 +8,13 @@ use axum::{
 };
 use log::error;
 use serde::Deserialize;
-use serde_json::json;
 use std::{
-    fs::{self, OpenOptions},
-    io::Write,
     net::{SocketAddr, TcpListener},
     sync::Arc,
 };
 use tokio::sync::mpsc::{Receiver, Sender};
 
-use crate::constant;
+use crate::{constant, credential::Credentials};
 
 pub struct LocalServer {
     router: Router,
@@ -69,24 +66,16 @@ impl<'a> LocalServer {
         match payload.code {
             Some(code) => {
                 let client = reqwest::Client::new();
-                client
-                    .post(constant::CARTRIDGE_API_URL)
+                let response = client
+                    .post(format!("{}oauth2/token", constant::CARTRIDGE_API_URL))
                     .form(&[("code", &code)])
                     .send()
                     .await?;
 
+                let cred: Credentials = response.json().await?;
+
                 // 3. Store the access token locally
-                let mut file_path = dirs::config_local_dir().unwrap();
-
-                file_path.push("slot/credentails.json");
-                fs::create_dir_all(file_path.parent().unwrap())?;
-
-                // Create or overwrite credentails if the file already exists
-                let mut file = OpenOptions::new()
-                    .write(true)
-                    .create(true)
-                    .open(file_path)?;
-                file.write_all(json!({ "code": code }).to_string().as_bytes())?;
+                cred.write()?;
 
                 println!("You are now logged in!\n");
 

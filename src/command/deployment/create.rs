@@ -1,11 +1,22 @@
-#![allow(non_camel_case_types)]
+#![allow(clippy::enum_variant_names)]
+
 use anyhow::Result;
 use clap::Args;
 use graphql_client::{GraphQLQuery, Response};
 
+use crate::{
+    api::ApiClient,
+    command::deployment::create::create_deployment::{
+        DeploymentService, DeploymentTier, KatanaConfigInput, ServiceConfigInput, ToriiConfigInput,
+        Variables,
+    },
+};
+
 use self::create_deployment::ServiceInput;
 
 use super::configs::CreateCommands;
+
+type Long = u64;
 
 #[derive(GraphQLQuery)]
 #[graphql(
@@ -15,12 +26,21 @@ use super::configs::CreateCommands;
 )]
 pub struct CreateDeployment;
 
+#[derive(clap::ValueEnum, Clone, Debug, serde::Serialize)]
+pub enum Tier {
+    Basic,
+}
+
 #[derive(Debug, Args, serde::Serialize)]
 #[command(next_help_heading = "Create deployment options")]
 pub struct CreateOptions {
-    #[arg(long = "name")]
+    #[arg(short, long = "name")]
     #[arg(help = "The name of the project.")]
     pub name: String,
+    #[arg(short, long, default_value = "basic")]
+    #[arg(value_name = "tier")]
+    #[arg(help = "Deployment tier.")]
+    pub tier: Tier,
 }
 
 #[derive(Debug, Args)]
@@ -35,24 +55,58 @@ pub struct CreateArgs {
 
 impl CreateArgs {
     pub async fn run(&self) -> Result<()> {
-        let config = serde_json::to_string(&self.create_commands)?;
-        let service_type = match &self.create_commands {
-            CreateCommands::Madara(_) => create_deployment::DeploymentService::madara,
-            CreateCommands::Torii(_) => create_deployment::DeploymentService::torii,
-        };
-        let request_body = CreateDeployment::build_query(create_deployment::Variables {
-            name: self.options.name.clone(),
-            service: ServiceInput {
-                type_: service_type,
+        let service = match &self.create_commands {
+            CreateCommands::Katana(config) => ServiceInput {
+                type_: DeploymentService::katana,
                 version: None,
+                config: Some(ServiceConfigInput {
+                    katana: Some(KatanaConfigInput {
+                        block_time: config.block_time,
+                        fork_rpc_url: config.fork_rpc_url.clone(),
+                        fork_block_number: config.fork_block_number,
+                        seed: match &config.seed {
+                            Some(seed) => seed.clone(),
+                            None => rand::random::<u64>().to_string(),
+                        },
+                        total_accounts: config.total_accounts,
+                    }),
+                    torii: None,
+                }),
             },
-            config,
+            CreateCommands::Torii(config) => ServiceInput {
+                type_: DeploymentService::torii,
+                version: None,
+                config: Some(ServiceConfigInput {
+                    katana: None,
+                    torii: Some(ToriiConfigInput {
+                        rpc: config.rpc.clone(),
+                        world: format!("{:#x}", config.world),
+                        start_block: Some(config.start_block),
+                    }),
+                }),
+            },
+        };
+
+        let tier = match &self.options.tier {
+            Tier::Basic => DeploymentTier::basic,
+        };
+
+        let request_body = CreateDeployment::build_query(Variables {
+            name: self.options.name.clone(),
+            tier,
+            service,
+            wait: Some(true),
         });
 
-        let client = reqwest::Client::new();
-        let res = client.post("/graphql").json(&request_body).send().await?;
-        let response_body: Response<create_deployment::ResponseData> = res.json().await?;
-        println!("{:#?}", response_body);
+        let client = ApiClient::new();
+        let res: Response<create_deployment::ResponseData> = client.post(&request_body).await?;
+        if let Some(errors) = res.errors.clone() {
+            for err in errors {
+                println!("Error: {}", err.message);
+            }
+        }
+
+        println!("{:#?}", res.data);
         Ok(())
     }
 }

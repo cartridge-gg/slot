@@ -1,7 +1,9 @@
+mod api;
 mod browser;
 mod cli;
 mod command;
 mod constant;
+mod credential;
 mod server;
 
 use clap::Parser;
