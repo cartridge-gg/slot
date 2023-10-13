@@ -3,7 +3,7 @@ use starknet::core::types::FieldElement;
 
 #[derive(Clone, Debug, Args, serde::Serialize)]
 #[command(next_help_heading = "Torii options")]
-pub struct Torii {
+pub struct ToriiArgs {
     #[arg(long)]
     #[arg(value_name = "rpc")]
     #[arg(help = "The Starknet RPC endpoint.")]

@@ -4,12 +4,7 @@ mutation CreateDeployment(
   $tier: DeploymentTier!
   $wait: Boolean
 ) {
-  createDeployment(
-    name: $name
-    service: $service
-    tier: $tier
-    wait: $wait
-  ) {
+  createDeployment(name: $name, service: $service, tier: $tier, wait: $wait) {
     __typename
     ... on KatanaConfig {
       rpc
@@ -17,6 +12,9 @@ mutation CreateDeployment(
     ... on ToriiConfig {
       graphql
       grpc
+      rpc
+      world
+      startBlock
     }
     ... on MadaraConfig {
       rpc

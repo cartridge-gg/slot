@@ -1,6 +1,6 @@
 use clap::{Subcommand, ValueEnum};
 
-use self::{katana::Katana, torii::Torii};
+use self::{katana::KatanaArgs, torii::ToriiArgs};
 
 mod katana;
 mod madara;
@@ -10,11 +10,11 @@ mod torii;
 #[serde(untagged)]
 pub enum CreateCommands {
     #[command(about = "Katana deployment.")]
-    Katana(Katana),
+    Katana(KatanaArgs),
     // #[command(about = "Madara deployment.")]
     // Madara(Madara),
     #[command(about = "Torii deployment.")]
-    Torii(Torii),
+    Torii(ToriiArgs),
 }
 
 #[derive(Clone, Debug, ValueEnum, serde::Serialize)]

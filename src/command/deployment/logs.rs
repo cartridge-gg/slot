@@ -4,7 +4,7 @@ use graphql_client::{GraphQLQuery, Response};
 
 use crate::api::ApiClient;
 
-use super::configs::Service;
+use super::services::Service;
 
 #[derive(GraphQLQuery)]
 #[graphql(
@@ -55,9 +55,8 @@ impl LogsArgs {
         let entries = res
             .data
             .and_then(|data| data.deployment)
-            .and_then(|deployment| deployment.logs)
-            .and_then(|logs| logs.entries)
-            .unwrap();
+            .and_then(|deployment| Some(deployment.logs.entries))
+            .unwrap_or_default();
 
         for e in entries.iter() {
             if e.trim() == "{}" {

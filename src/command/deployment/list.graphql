@@ -1,0 +1,19 @@
+query ListDeployments {
+  me {
+    id
+    name
+    teams {
+      edges {
+        node {
+          deployments {
+            edges {
+              node {
+                project
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

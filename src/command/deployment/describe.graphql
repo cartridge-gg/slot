@@ -1,0 +1,23 @@
+query DescribeDeployment($name: String!, $service: DeploymentService!) {
+  deployment(name: $name, service: $service) {
+    project
+    environment
+    tier
+    config {
+      __typename
+      ... on KatanaConfig {
+        rpc
+      }
+      ... on ToriiConfig {
+        graphql
+        grpc
+        rpc
+        world
+        startBlock
+      }
+      ... on MadaraConfig {
+        rpc
+      }
+    }
+  }
+}

@@ -11568,7 +11568,7 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "namespace",
+              "name": "project",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -11577,6 +11577,18 @@
                   "name": "String",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "environment",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
               }
             },
             {
@@ -11748,9 +11760,13 @@
               "isDeprecated": false,
               "name": "logs",
               "type": {
-                "kind": "OBJECT",
-                "name": "Logs",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Logs",
+                  "ofType": null
+                }
               }
             },
             {
@@ -11760,9 +11776,13 @@
               "isDeprecated": false,
               "name": "config",
               "type": {
-                "kind": "UNION",
-                "name": "DeploymentConfig",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "UNION",
+                  "name": "DeploymentConfig",
+                  "ofType": null
+                }
               }
             }
           ],
@@ -12153,8 +12173,8 @@
             },
             {
               "defaultValue": null,
-              "description": "namespace field predicates",
-              "name": "namespace",
+              "description": "project field predicates",
+              "name": "project",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -12164,7 +12184,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "namespaceNEQ",
+              "name": "projectNEQ",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -12174,7 +12194,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "namespaceIn",
+              "name": "projectIn",
               "type": {
                 "kind": "LIST",
                 "name": null,
@@ -12192,7 +12212,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "namespaceNotIn",
+              "name": "projectNotIn",
               "type": {
                 "kind": "LIST",
                 "name": null,
@@ -12210,7 +12230,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "namespaceGT",
+              "name": "projectGT",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -12220,7 +12240,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "namespaceGTE",
+              "name": "projectGTE",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -12230,7 +12250,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "namespaceLT",
+              "name": "projectLT",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -12240,7 +12260,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "namespaceLTE",
+              "name": "projectLTE",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -12250,7 +12270,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "namespaceContains",
+              "name": "projectContains",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -12260,7 +12280,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "namespaceHasPrefix",
+              "name": "projectHasPrefix",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -12270,7 +12290,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "namespaceHasSuffix",
+              "name": "projectHasSuffix",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -12280,7 +12300,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "namespaceEqualFold",
+              "name": "projectEqualFold",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -12290,7 +12310,173 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "namespaceContainsFold",
+              "name": "projectContainsFold",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "environment field predicates",
+              "name": "environment",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "environmentNEQ",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "environmentIn",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "environmentNotIn",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "environmentGT",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "environmentGTE",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "environmentLT",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "environmentLTE",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "environmentContains",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "environmentHasPrefix",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "environmentHasSuffix",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "environmentIsNil",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "environmentNotNil",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "environmentEqualFold",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "environmentContainsFold",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -17908,15 +18094,19 @@
               "isDeprecated": false,
               "name": "entries",
               "type": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
                   }
                 }
               }
@@ -31422,6 +31612,54 @@
                 "ofType": {
                   "kind": "SCALAR",
                   "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "rpc",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "world",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "startBlock",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Long",
                   "ofType": null
                 }
               }

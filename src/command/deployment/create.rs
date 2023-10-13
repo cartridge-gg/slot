@@ -4,17 +4,17 @@ use anyhow::Result;
 use clap::Args;
 use graphql_client::{GraphQLQuery, Response};
 
+use self::create_deployment::ServiceInput;
 use crate::{
     api::ApiClient,
     command::deployment::create::create_deployment::{
+        CreateDeploymentCreateDeployment::{KatanaConfig, ToriiConfig},
         DeploymentService, DeploymentTier, KatanaConfigInput, ServiceConfigInput, ToriiConfigInput,
         Variables,
     },
 };
 
-use self::create_deployment::ServiceInput;
-
-use super::configs::CreateCommands;
+use super::services::CreateCommands;
 
 type Long = u64;
 
@@ -106,7 +106,26 @@ impl CreateArgs {
             }
         }
 
-        println!("{:#?}", res.data);
+        if let Some(data) = res.data {
+            println!("Deployment success 🚀");
+            match data.create_deployment {
+                ToriiConfig(config) => {
+                    println!("\nConfiguration:");
+                    println!("  World: {}", config.world);
+                    println!("  RPC: {}", config.rpc);
+                    println!("  Start Block: {}", config.start_block);
+                    println!("\nEndpoints:");
+                    println!("  GRAPHQL: {}", config.graphql);
+                    println!("  GRPC: {}", config.grpc);
+                }
+                KatanaConfig(config) => {
+                    println!("\nEndpoints:");
+                    println!("  RPC: {}", config.rpc);
+                }
+                _ => {}
+            }
+        }
+
         Ok(())
     }
 }
