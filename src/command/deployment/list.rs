@@ -41,15 +41,16 @@ impl ListArgs {
                         .filter_map(|team| team.node.as_ref())
                         .collect::<_>();
 
-                    let mut all_deployments = Vec::new();
+                    let deployments: Vec<_> = teams
+                        .iter()
+                        .filter_map(|team| team.deployments.edges.as_ref())
+                        .flatten()
+                        .map(|deployment| deployment.as_ref().unwrap())
+                        .collect();
 
-                    for team in teams {
-                        if let Some(deployments) = &team.deployments.edges {
-                            all_deployments.extend(deployments.clone());
-                        }
+                    for deployment in deployments {
+                        println!("{:?}", deployment.node.as_ref().unwrap());
                     }
-
-                    println!("{:?}", all_deployments);
                 }
             }
         }
