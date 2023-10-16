@@ -1,4 +1,6 @@
-# slot
+# Slot
+
+A toolchain for rapidly spinning up Katana and Torii instances. Play test your game in seconds.
 
 ## Usage
 
