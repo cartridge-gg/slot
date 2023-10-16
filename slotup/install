@@ -8,7 +8,7 @@ SLOT_DIR=${SLOT_DIR-"$BASE_DIR/.slot"}
 SLOT_BIN_DIR="$SLOT_DIR/bin"
 SLOT_MAN_DIR="$SLOT_DIR/share/man/man1"
 
-BIN_URL="https://raw.githubusercontent.com/cartridge-gg/slotup/main/slotup/slotup"
+BIN_URL="https://raw.githubusercontent.com/cartridge-gg/slot/main/slotup/slotup"
 BIN_PATH="$SLOT_BIN_DIR/slotup"
 
 
