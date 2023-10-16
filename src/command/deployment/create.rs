@@ -34,9 +34,9 @@ pub enum Tier {
 #[derive(Debug, Args, serde::Serialize)]
 #[command(next_help_heading = "Create deployment options")]
 pub struct CreateOptions {
-    #[arg(short, long = "name")]
+    #[arg(short, long = "project")]
     #[arg(help = "The name of the project.")]
-    pub name: String,
+    pub project: String,
     #[arg(short, long, default_value = "basic")]
     #[arg(value_name = "tier")]
     #[arg(help = "Deployment tier.")]
@@ -92,7 +92,7 @@ impl CreateArgs {
         };
 
         let request_body = CreateDeployment::build_query(Variables {
-            name: self.options.name.clone(),
+            project: self.options.project.clone(),
             tier,
             service,
             wait: Some(true),

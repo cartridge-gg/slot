@@ -1,10 +1,15 @@
 mutation CreateDeployment(
-  $name: String!
+  $project: String!
   $service: ServiceInput!
   $tier: DeploymentTier!
   $wait: Boolean
 ) {
-  createDeployment(name: $name, service: $service, tier: $tier, wait: $wait) {
+  createDeployment(
+    name: $project
+    service: $service
+    tier: $tier
+    wait: $wait
+  ) {
     __typename
     ... on KatanaConfig {
       rpc

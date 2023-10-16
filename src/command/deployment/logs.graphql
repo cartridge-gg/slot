@@ -1,6 +1,6 @@
-query DeploymentLogs($name: String!, $service: DeploymentService!, $cursor: String!, $limit: Int!) {
+query DeploymentLogs($project: String!, $service: DeploymentService!, $cursor: String!, $limit: Int!) {
   deployment(
-    name: $name
+    name: $project
     service: $service
   ) {
     logs(cursor: $cursor, limit: $limit) {

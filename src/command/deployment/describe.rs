@@ -27,9 +27,9 @@ pub struct DescribeDeployment;
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Describe options")]
 pub struct DescribeArgs {
-    #[arg(short, long = "name")]
-    #[arg(help = "The name of the project.")]
-    pub name: String,
+    #[arg(short, long = "project")]
+    #[arg(help = "The project of the project.")]
+    pub project: String,
 
     #[arg(short, long = "service")]
     #[arg(help = "The service of the project.")]
@@ -44,7 +44,7 @@ impl DescribeArgs {
         };
 
         let request_body = DescribeDeployment::build_query(Variables {
-            name: self.name.clone(),
+            project: self.project.clone(),
             service,
         });
 

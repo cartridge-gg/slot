@@ -5,10 +5,12 @@ query ListDeployments {
     teams {
       edges {
         node {
+          name
           deployments {
             edges {
               node {
                 project
+                service
               }
             }
           }

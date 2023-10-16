@@ -17,9 +17,9 @@ pub struct DeploymentLogs;
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Deployment logs options")]
 pub struct LogsArgs {
-    #[arg(short, long = "name")]
-    #[arg(help = "The name of the deployment.")]
-    pub name: String,
+    #[arg(short, long = "project")]
+    #[arg(help = "The project of the deployment.")]
+    pub project: String,
 
     #[arg(short, long = "service")]
     #[arg(help = "The name of the deployment service.")]
@@ -37,7 +37,7 @@ impl LogsArgs {
             Service::Torii => deployment_logs::DeploymentService::torii,
         };
         let request_body = DeploymentLogs::build_query(deployment_logs::Variables {
-            name: self.name.clone(),
+            project: self.project.clone(),
             service,
             cursor: "".to_string(),
             limit: self.tail,

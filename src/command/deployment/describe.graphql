@@ -1,5 +1,5 @@
-query DescribeDeployment($name: String!, $service: DeploymentService!) {
-  deployment(name: $name, service: $service) {
+query DescribeDeployment($project: String!, $service: DeploymentService!) {
+  deployment(name: $project, service: $service) {
     project
     environment
     tier

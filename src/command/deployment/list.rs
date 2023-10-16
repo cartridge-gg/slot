@@ -49,7 +49,9 @@ impl ListArgs {
                         .collect();
 
                     for deployment in deployments {
-                        println!("{:?}", deployment.node.as_ref().unwrap());
+                        println!("Project: {}", deployment.node.as_ref().unwrap().project);
+                        println!("Service: {:?}", deployment.node.as_ref().unwrap().service);
+                        println!("---");
                     }
                 }
             }
