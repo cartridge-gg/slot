@@ -2,6 +2,13 @@
 
 A toolchain for rapidly spinning up Katana and Torii instances. Play test your game in seconds.
 
+## Installation
+
+Install `slotup` to manage slot installations and follow the outputted directions.
+```
+curl -L https://slot.cartridge.sh | bash
+```
+
 ## Usage
 
 Authenticate with Cartridge
