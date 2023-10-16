@@ -19,7 +19,7 @@ type Long = u64;
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "schema.json",
-    query_path = "src/command/deployment/describe.graphql",
+    query_path = "src/command/deployments/describe.graphql",
     response_derives = "Debug"
 )]
 pub struct DescribeDeployment;
@@ -27,11 +27,9 @@ pub struct DescribeDeployment;
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Describe options")]
 pub struct DescribeArgs {
-    #[arg(short, long = "project")]
     #[arg(help = "The project of the project.")]
     pub project: String,
 
-    #[arg(short, long = "service")]
     #[arg(help = "The service of the project.")]
     pub service: Service,
 }

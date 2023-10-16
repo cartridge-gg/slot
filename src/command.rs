@@ -1,11 +1,11 @@
 pub mod auth;
-pub mod deployment;
+pub mod deployments;
 
 use anyhow::Result;
 use clap::Subcommand;
 
 use auth::Auth;
-use deployment::Deployment;
+use deployments::Deployments;
 
 #[derive(Subcommand, Debug)]
 pub enum Command {
@@ -14,14 +14,14 @@ pub enum Command {
     Auth(Auth),
     #[command(subcommand)]
     #[command(about = "Manage Slot deployments.")]
-    Deployment(Deployment),
+    Deployments(Deployments),
 }
 
 impl Command {
     pub async fn run(&self) -> Result<()> {
         match &self {
             Command::Auth(cmd) => cmd.run().await,
-            Command::Deployment(cmd) => cmd.run().await,
+            Command::Deployments(cmd) => cmd.run().await,
         }
     }
 }

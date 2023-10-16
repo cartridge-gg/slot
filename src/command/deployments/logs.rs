@@ -9,7 +9,7 @@ use super::services::Service;
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "schema.json",
-    query_path = "src/command/deployment/logs.graphql",
+    query_path = "src/command/deployments/logs.graphql",
     response_derives = "Debug"
 )]
 pub struct DeploymentLogs;
@@ -17,11 +17,9 @@ pub struct DeploymentLogs;
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Deployment logs options")]
 pub struct LogsArgs {
-    #[arg(short, long = "project")]
     #[arg(help = "The project of the deployment.")]
     pub project: String,
 
-    #[arg(short, long = "service")]
     #[arg(help = "The name of the deployment service.")]
     pub service: Service,
 
@@ -55,10 +53,9 @@ impl LogsArgs {
         let entries = res
             .data
             .and_then(|data| data.deployment)
-            .and_then(|deployment| Some(deployment.logs.entries))
-            .unwrap_or_default();
+            .map(|deployment| deployment.logs.entries);
 
-        for e in entries.iter() {
+        for e in entries.unwrap().iter() {
             if e.trim() == "{}" {
                 println!("\n");
             } else {

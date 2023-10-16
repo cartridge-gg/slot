@@ -11,7 +11,7 @@ use self::list_deployments::{ResponseData, Variables};
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "schema.json",
-    query_path = "src/command/deployment/list.graphql",
+    query_path = "src/command/deployments/list.graphql",
     response_derives = "Debug"
 )]
 pub struct ListDeployments;

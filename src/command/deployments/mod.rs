@@ -10,7 +10,7 @@ mod logs;
 mod services;
 
 #[derive(Subcommand, Debug)]
-pub enum Deployment {
+pub enum Deployments {
     #[command(about = "Create a new deployment.")]
     Create(CreateArgs),
     #[command(about = "Describe a deployment's configuration.")]
@@ -21,13 +21,13 @@ pub enum Deployment {
     Logs(LogsArgs),
 }
 
-impl Deployment {
+impl Deployments {
     pub async fn run(&self) -> Result<()> {
         match &self {
-            Deployment::Create(args) => args.run().await,
-            Deployment::Describe(args) => args.run().await,
-            Deployment::List(args) => args.run().await,
-            Deployment::Logs(args) => args.run().await,
+            Deployments::Create(args) => args.run().await,
+            Deployments::Describe(args) => args.run().await,
+            Deployments::List(args) => args.run().await,
+            Deployments::Logs(args) => args.run().await,
         }
     }
 }

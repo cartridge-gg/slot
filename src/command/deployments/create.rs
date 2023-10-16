@@ -7,7 +7,7 @@ use graphql_client::{GraphQLQuery, Response};
 use self::create_deployment::ServiceInput;
 use crate::{
     api::ApiClient,
-    command::deployment::create::create_deployment::{
+    command::deployments::create::create_deployment::{
         CreateDeploymentCreateDeployment::{KatanaConfig, ToriiConfig},
         DeploymentService, DeploymentTier, KatanaConfigInput, ServiceConfigInput, ToriiConfigInput,
         Variables,
@@ -21,7 +21,7 @@ type Long = u64;
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "schema.json",
-    query_path = "src/command/deployment/create.graphql",
+    query_path = "src/command/deployments/create.graphql",
     response_derives = "Debug"
 )]
 pub struct CreateDeployment;
@@ -31,23 +31,15 @@ pub enum Tier {
     Basic,
 }
 
-#[derive(Debug, Args, serde::Serialize)]
-#[command(next_help_heading = "Create deployment options")]
-pub struct CreateOptions {
-    #[arg(short, long = "project")]
+#[derive(Debug, Args)]
+#[command(next_help_heading = "Create options")]
+pub struct CreateArgs {
     #[arg(help = "The name of the project.")]
     pub project: String,
     #[arg(short, long, default_value = "basic")]
     #[arg(value_name = "tier")]
     #[arg(help = "Deployment tier.")]
     pub tier: Tier,
-}
-
-#[derive(Debug, Args)]
-#[command(next_help_heading = "Create options")]
-pub struct CreateArgs {
-    #[command(flatten)]
-    options: CreateOptions,
 
     #[command(subcommand)]
     create_commands: CreateCommands,
@@ -87,12 +79,12 @@ impl CreateArgs {
             },
         };
 
-        let tier = match &self.options.tier {
+        let tier = match &self.tier {
             Tier::Basic => DeploymentTier::basic,
         };
 
         let request_body = CreateDeployment::build_query(Variables {
-            project: self.options.project.clone(),
+            project: self.project.clone(),
             tier,
             service,
             wait: Some(true),
