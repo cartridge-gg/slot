@@ -23,9 +23,9 @@ pub struct LogsArgs {
     #[arg(help = "The name of the deployment service.")]
     pub service: Service,
 
-    #[arg(short, long = "tail", default_value = "25")]
+    #[arg(short, long = "limit", default_value = "25")]
     #[arg(help = "Display only the most recent `n` lines of logs.")]
-    pub tail: i64,
+    pub limit: i64,
 }
 
 impl LogsArgs {
@@ -38,7 +38,7 @@ impl LogsArgs {
             project: self.project.clone(),
             service,
             cursor: "".to_string(),
-            limit: self.tail,
+            limit: self.limit,
         });
 
         let client = ApiClient::new();
