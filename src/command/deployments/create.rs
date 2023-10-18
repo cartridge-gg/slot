@@ -1,15 +1,8 @@
 #![allow(clippy::enum_variant_names)]
 
-use std::sync::{
-    atomic::{AtomicBool, Ordering},
-    Arc,
-};
-
 use anyhow::Result;
 use clap::Args;
 use graphql_client::{GraphQLQuery, Response};
-use termion::event::Key;
-use termion::input::TermRead;
 
 use self::create_deployment::ServiceInput;
 use crate::{
@@ -21,10 +14,7 @@ use crate::{
     },
 };
 
-use super::{
-    logs::LogReader,
-    services::{CreateCommands, Service},
-};
+use super::services::CreateCommands;
 
 type Long = u64;
 
