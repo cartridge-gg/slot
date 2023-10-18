@@ -1,4 +1,5 @@
 use std::{
+    collections::HashSet,
     sync::{
         atomic::{AtomicBool, Ordering},
         Arc,
@@ -13,7 +14,7 @@ use tokio::time::sleep;
 
 use crate::{api::ApiClient, command::deployments::logs::deployment_logs::DeploymentService};
 
-use self::deployment_logs::{ResponseData, Variables};
+use self::deployment_logs::{DeploymentLogsDeploymentLogs, ResponseData, Variables};
 
 use super::services::Service;
 
@@ -56,7 +57,8 @@ impl LogsArgs {
         if self.follow {
             reader.stream(self.since.clone()).await?;
         } else {
-            reader.query(self.since.clone(), self.limit).await?;
+            let logs = reader.query(self.since.clone(), self.limit).await?;
+            println!("{}", logs.content);
         }
 
         Ok(())
@@ -78,7 +80,11 @@ impl LogReader {
         }
     }
 
-    pub async fn query(&self, since: Option<String>, limit: i64) -> Result<String> {
+    pub async fn query(
+        &self,
+        since: Option<String>,
+        limit: i64,
+    ) -> Result<DeploymentLogsDeploymentLogs> {
         let service = match self.service {
             Service::Katana => DeploymentService::katana,
             Service::Torii => DeploymentService::torii,
@@ -107,9 +113,7 @@ impl LogReader {
             .map(|deployment| deployment.logs)
             .unwrap();
 
-        println!("{}", logs.content);
-
-        Ok(logs.until)
+        Ok(logs)
     }
 
     pub async fn stream(&self, since: Option<String>) -> Result<()> {
@@ -120,11 +124,20 @@ impl LogReader {
         })
         .expect("Error setting Ctrl-C handler");
 
-        let mut since = self.query(since, 25).await?;
+        let mut logs = self.query(since, 1).await?;
+        let mut printed_logs = HashSet::new();
+
+        let mut since = logs.until;
         while running.load(Ordering::SeqCst) {
-            println!("{since}");
             sleep(Duration::from_millis(1000)).await;
-            since = self.query(Some(since.clone()), 25).await?;
+            logs = self.query(Some(since.clone()), 25).await?;
+
+            if !printed_logs.contains(&logs.content) {
+                println!("{}", logs.content);
+                printed_logs.insert(logs.content.clone()); // Add the log to the buffer
+            }
+
+            since = logs.until
         }
 
         Ok(())

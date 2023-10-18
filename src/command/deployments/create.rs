@@ -1,8 +1,15 @@
 #![allow(clippy::enum_variant_names)]
 
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc,
+};
+
 use anyhow::Result;
 use clap::Args;
 use graphql_client::{GraphQLQuery, Response};
+use termion::event::Key;
+use termion::input::TermRead;
 
 use self::create_deployment::ServiceInput;
 use crate::{
@@ -122,12 +129,14 @@ impl CreateArgs {
         }
 
         let service = match &self.create_commands {
-            CreateCommands::Katana(_) => Service::Katana,
-            CreateCommands::Torii(_) => Service::Torii,
+            CreateCommands::Katana(_) => "katana",
+            CreateCommands::Torii(_) => "torii",
         };
 
-        let reader = LogReader::new(service, self.project.clone());
-        reader.stream(None).await?;
+        println!(
+            "\nStream logs with `slot deployments logs {} {service} -f`",
+            self.project
+        );
 
         Ok(())
     }
