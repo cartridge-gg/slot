@@ -1,11 +1,13 @@
-query DeploymentLogs($project: String!, $service: DeploymentService!, $cursor: String!, $limit: Int!) {
-  deployment(
-    name: $project
-    service: $service
-  ) {
-    logs(cursor: $cursor, limit: $limit) {
-      entries
-      nextCursor
+query DeploymentLogs(
+  $project: String!
+  $service: DeploymentService!
+  $since: Time
+  $limit: Int
+) {
+  deployment(name: $project, service: $service) {
+    logs(since: $since, limit: $limit) {
+      content
+      until
     }
   }
 }

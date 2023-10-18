@@ -11727,10 +11727,10 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "cursor",
+                  "name": "since",
                   "type": {
                     "kind": "SCALAR",
-                    "name": "String",
+                    "name": "Time",
                     "ofType": null
                   }
                 },
@@ -18092,22 +18092,14 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "entries",
+              "name": "content",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String",
-                      "ofType": null
-                    }
-                  }
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
                 }
               }
             },
@@ -18116,11 +18108,15 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "nextCursor",
+              "name": "until",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Time",
+                  "ofType": null
+                }
               }
             }
           ],

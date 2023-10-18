@@ -14,7 +14,10 @@ use crate::{
     },
 };
 
-use super::services::CreateCommands;
+use super::{
+    logs::LogReader,
+    services::{CreateCommands, Service},
+};
 
 type Long = u64;
 
@@ -117,6 +120,14 @@ impl CreateArgs {
                 _ => {}
             }
         }
+
+        let service = match &self.create_commands {
+            CreateCommands::Katana(_) => Service::Katana,
+            CreateCommands::Torii(_) => Service::Torii,
+        };
+
+        let reader = LogReader::new(service, self.project.clone());
+        reader.stream(None).await?;
 
         Ok(())
     }
