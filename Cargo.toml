@@ -20,7 +20,6 @@ reqwest = { version = "0.11.20", default-features = false, features = [
 ] }
 serde = "1"
 serde_json = "1"
-termion = "2.0.1"
 thiserror = "1.0.32"
 tokio = { version = "1.18.2", features = ["full", "sync"] }
 tower-http = "0.4"
