@@ -114,7 +114,6 @@ impl CreateArgs {
                     println!("\nEndpoints:");
                     println!("  RPC: {}", config.rpc);
                 }
-                _ => {}
             }
         }
 

@@ -15,9 +15,6 @@ query DescribeDeployment($project: String!, $service: DeploymentService!) {
         world
         startBlock
       }
-      ... on MadaraConfig {
-        rpc
-      }
     }
   }
 }

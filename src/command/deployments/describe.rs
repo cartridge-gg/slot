@@ -79,7 +79,6 @@ impl DescribeArgs {
                         println!("\nEndpoints:");
                         println!("  RPC: {}", config.rpc);
                     }
-                    _ => {}
                 }
             }
         }
