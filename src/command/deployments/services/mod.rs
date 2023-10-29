@@ -8,7 +8,7 @@ mod torii;
 
 #[derive(Debug, Subcommand, serde::Serialize)]
 #[serde(untagged)]
-pub enum CreateCommands {
+pub enum ServiceCommands {
     #[command(about = "Katana deployment.")]
     Katana(KatanaArgs),
     // #[command(about = "Madara deployment.")]
