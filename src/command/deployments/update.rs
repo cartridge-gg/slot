@@ -96,10 +96,12 @@ impl UpdateArgs {
             for err in errors {
                 println!("Error: {}", err.message);
             }
+
+            return Ok(());
         }
 
         if let Some(data) = res.data {
-            println!("Deployment success 🚀");
+            println!("Update success 🚀");
             match data.update_deployment {
                 ToriiConfig(config) => {
                     println!("\nConfiguration:");

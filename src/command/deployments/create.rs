@@ -96,6 +96,8 @@ impl CreateArgs {
             for err in errors {
                 println!("Error: {}", err.message);
             }
+
+            return Ok(());
         }
 
         if let Some(data) = res.data {

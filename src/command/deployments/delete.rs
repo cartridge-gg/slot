@@ -54,7 +54,7 @@ impl DeleteArgs {
         }
 
         if res.data.is_some() {
-            println!("Deployment success 🚀");
+            println!("Delete success 🚀");
         }
 
         Ok(())
