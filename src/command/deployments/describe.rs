@@ -58,16 +58,15 @@ impl DescribeArgs {
             if let Some(deployment) = data.deployment {
                 println!("Project: {}", deployment.project);
                 println!(
-                    "Environment: {}",
-                    deployment
-                        .environment
-                        .unwrap_or_else(|| String::from("Default"))
+                    "Branch: {}",
+                    deployment.branch.unwrap_or_else(|| String::from("Default"))
                 );
                 println!("Tier: {:?}", deployment.tier);
 
                 match deployment.config {
                     ToriiConfig(config) => {
                         println!("\nConfiguration:");
+                        println!("  Version: {}", config.version);
                         println!("  World: {}", config.world);
                         println!("  RPC: {}", config.rpc);
                         println!("  Start Block: {}", config.start_block);
@@ -77,6 +76,7 @@ impl DescribeArgs {
                     }
                     KatanaConfig(config) => {
                         println!("\nEndpoints:");
+                        println!("  Version: {}", config.version);
                         println!("  RPC: {}", config.rpc);
                     }
                 }

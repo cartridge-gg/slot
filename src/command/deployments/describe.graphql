@@ -1,14 +1,16 @@
 query DescribeDeployment($project: String!, $service: DeploymentService!) {
   deployment(name: $project, service: $service) {
     project
-    environment
+    branch
     tier
     config {
       __typename
       ... on KatanaConfig {
+        version
         rpc
       }
       ... on ToriiConfig {
+        version
         graphql
         grpc
         rpc
