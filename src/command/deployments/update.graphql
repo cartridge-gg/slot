@@ -1,0 +1,25 @@
+mutation UpdateDeployment(
+  $project: String!
+  $service: ServiceInput!
+  $tier: DeploymentTier!
+  $wait: Boolean
+) {
+  updateDeployment(
+    name: $project
+    service: $service
+    tier: $tier
+    wait: $wait
+  ) {
+    __typename
+    ... on KatanaConfig {
+      rpc
+    }
+    ... on ToriiConfig {
+      graphql
+      grpc
+      rpc
+      world
+      startBlock
+    }
+  }
+}

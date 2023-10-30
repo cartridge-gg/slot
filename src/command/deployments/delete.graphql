@@ -1,0 +1,3 @@
+mutation DeleteDeployment($project: String!, $service: DeploymentService!) {
+  deleteDeployment(name: $project, service: $service)
+}

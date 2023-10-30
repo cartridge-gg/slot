@@ -4,12 +4,12 @@ use anyhow::Result;
 use clap::Args;
 use graphql_client::{GraphQLQuery, Response};
 
-use self::create_deployment::ServiceInput;
+use self::update_deployment::ServiceInput;
 use crate::{
     api::ApiClient,
-    command::deployments::create::create_deployment::{
-        CreateDeploymentCreateDeployment::{KatanaConfig, ToriiConfig},
+    command::deployments::update::update_deployment::{
         DeploymentService, DeploymentTier, KatanaConfigInput, ServiceConfigInput, ToriiConfigInput,
+        UpdateDeploymentUpdateDeployment::{KatanaConfig, ToriiConfig},
         Variables,
     },
 };
@@ -21,10 +21,10 @@ type Long = u64;
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "schema.json",
-    query_path = "src/command/deployments/create.graphql",
+    query_path = "src/command/deployments/update.graphql",
     response_derives = "Debug"
 )]
-pub struct CreateDeployment;
+pub struct UpdateDeployment;
 
 #[derive(clap::ValueEnum, Clone, Debug, serde::Serialize)]
 pub enum Tier {
@@ -32,8 +32,8 @@ pub enum Tier {
 }
 
 #[derive(Debug, Args)]
-#[command(next_help_heading = "Create options")]
-pub struct CreateArgs {
+#[command(next_help_heading = "Update options")]
+pub struct UpdateArgs {
     #[arg(help = "The name of the project.")]
     pub project: String,
     #[arg(short, long, default_value = "basic")]
@@ -42,12 +42,12 @@ pub struct CreateArgs {
     pub tier: Tier,
 
     #[command(subcommand)]
-    create_commands: ServiceCommands,
+    update_commands: ServiceCommands,
 }
 
-impl CreateArgs {
+impl UpdateArgs {
     pub async fn run(&self) -> Result<()> {
-        let service = match &self.create_commands {
+        let service = match &self.update_commands {
             ServiceCommands::Katana(config) => ServiceInput {
                 type_: DeploymentService::katana,
                 version: None,
@@ -83,7 +83,7 @@ impl CreateArgs {
             Tier::Basic => DeploymentTier::basic,
         };
 
-        let request_body = CreateDeployment::build_query(Variables {
+        let request_body = UpdateDeployment::build_query(Variables {
             project: self.project.clone(),
             tier,
             service,
@@ -91,7 +91,7 @@ impl CreateArgs {
         });
 
         let client = ApiClient::new();
-        let res: Response<create_deployment::ResponseData> = client.post(&request_body).await?;
+        let res: Response<update_deployment::ResponseData> = client.post(&request_body).await?;
         if let Some(errors) = res.errors.clone() {
             for err in errors {
                 println!("Error: {}", err.message);
@@ -100,7 +100,7 @@ impl CreateArgs {
 
         if let Some(data) = res.data {
             println!("Deployment success 🚀");
-            match data.create_deployment {
+            match data.update_deployment {
                 ToriiConfig(config) => {
                     println!("\nConfiguration:");
                     println!("  World: {}", config.world);
@@ -117,7 +117,7 @@ impl CreateArgs {
             }
         }
 
-        let service = match &self.create_commands {
+        let service = match &self.update_commands {
             ServiceCommands::Katana(_) => "katana",
             ServiceCommands::Torii(_) => "torii",
         };
