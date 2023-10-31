@@ -18151,10 +18151,50 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "totalAccounts",
+              "name": "accounts",
               "type": {
                 "kind": "SCALAR",
                 "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "invokeMaxSteps",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Long",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "validateMaxSteps",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Long",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "disableFee",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "gasPrice",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Long",
                 "ofType": null
               }
             }
