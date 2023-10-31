@@ -50,7 +50,7 @@ impl ListArgs {
 
                     for deployment in deployments {
                         println!("Project: {}", deployment.node.as_ref().unwrap().project);
-                        println!("Service: {:?}", deployment.node.as_ref().unwrap().service);
+                        println!("Service: {}", deployment.node.as_ref().unwrap().service.id);
                         println!("---");
                     }
                 }

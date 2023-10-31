@@ -10,7 +10,10 @@ query ListDeployments {
             edges {
               node {
                 project
-                service
+                branch
+                service {
+                  id
+                }
               }
             }
           }
