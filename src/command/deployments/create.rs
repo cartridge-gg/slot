@@ -60,7 +60,7 @@ impl CreateArgs {
                             Some(seed) => seed.clone(),
                             None => rand::random::<u64>().to_string(),
                         },
-                        total_accounts: config.total_accounts,
+                        total_accounts: config.accounts,
                     }),
                     torii: None,
                 }),

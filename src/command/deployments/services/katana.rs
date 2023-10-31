@@ -19,7 +19,23 @@ pub struct KatanaArgs {
     #[arg(help = "Seed.")]
     pub seed: Option<String>,
 
-    #[arg(long, short, value_name = "total_accounts")]
-    #[arg(help = "Total accounts.")]
-    pub total_accounts: Option<i64>,
+    #[arg(long, short, value_name = "accounts")]
+    #[arg(help = "Accounts.")]
+    pub accounts: Option<i64>,
+
+    #[arg(long, value_name = "invoke_max_steps")]
+    #[arg(help = "Invoke Max Steps.")]
+    pub invoke_max_steps: Option<u64>,
+
+    #[arg(long, value_name = "validate_max_steps")]
+    #[arg(help = "Validate Max Steps.")]
+    pub validate_max_steps: Option<u64>,
+
+    #[arg(long, value_name = "disable_fee")]
+    #[arg(help = "Disable Fee.")]
+    pub disable_fee: Option<bool>,
+
+    #[arg(long, value_name = "gas_price")]
+    #[arg(help = "Gas Price.")]
+    pub gas_price: Option<u64>,
 }
