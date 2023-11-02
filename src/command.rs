@@ -7,13 +7,14 @@ use clap::Subcommand;
 use auth::Auth;
 use deployments::Deployments;
 
+#[allow(clippy::large_enum_variant)]
 #[derive(Subcommand, Debug)]
 pub enum Command {
     #[command(subcommand)]
-    #[command(about = "Manage auth credentials for the Slot CLI.")]
+    #[command(about = "Manage auth credentials for the Slot CLI.", aliases = ["a"])]
     Auth(Auth),
     #[command(subcommand)]
-    #[command(about = "Manage Slot deployments.")]
+    #[command(about = "Manage Slot deployments.", aliases = ["d"])]
     Deployments(Deployments),
 }
 

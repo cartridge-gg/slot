@@ -50,7 +50,7 @@ impl UpdateArgs {
         let service = match &self.update_commands {
             ServiceCommands::Katana(config) => ServiceInput {
                 type_: DeploymentService::katana,
-                version: None,
+                version: config.version.clone(),
                 config: Some(ServiceConfigInput {
                     katana: Some(KatanaConfigInput {
                         block_time: config.block_time,
@@ -71,7 +71,7 @@ impl UpdateArgs {
             },
             ServiceCommands::Torii(config) => ServiceInput {
                 type_: DeploymentService::torii,
-                version: None,
+                version: config.version.clone(),
                 config: Some(ServiceConfigInput {
                     katana: None,
                     torii: Some(ToriiConfigInput {

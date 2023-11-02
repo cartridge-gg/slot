@@ -24,7 +24,7 @@ pub enum Deployments {
     Update(UpdateArgs),
     #[command(about = "Describe a deployment's configuration.")]
     Describe(DescribeArgs),
-    #[command(about = "List all deployments.")]
+    #[command(about = "List all deployments.", aliases = ["ls"])]
     List(ListArgs),
     #[command(about = "Fetch logs for a deployment.")]
     Logs(LogsArgs),

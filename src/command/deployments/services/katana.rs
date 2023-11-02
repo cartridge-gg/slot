@@ -3,6 +3,10 @@ use clap::Args;
 #[derive(Debug, Args, serde::Serialize)]
 #[command(next_help_heading = "Katana options")]
 pub struct KatanaArgs {
+    #[arg(long, short, value_name = "version")]
+    #[arg(help = "Service version to use.")]
+    pub version: Option<String>,
+
     #[arg(long, short, value_name = "block_time")]
     #[arg(help = "Block time.")]
     pub block_time: Option<i64>,
