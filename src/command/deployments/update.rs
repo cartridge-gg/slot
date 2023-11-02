@@ -4,17 +4,17 @@ use anyhow::Result;
 use clap::Args;
 use graphql_client::{GraphQLQuery, Response};
 
-use self::update_deployment::ServiceInput;
+use self::update_deployment::UpdateServiceInput;
 use crate::{
     api::ApiClient,
     command::deployments::update::update_deployment::{
-        DeploymentService, DeploymentTier, KatanaConfigInput, ServiceConfigInput, ToriiConfigInput,
+        DeploymentService, DeploymentTier,
         UpdateDeploymentUpdateDeployment::{KatanaConfig, ToriiConfig},
-        Variables,
+        UpdateKatanaConfigInput, UpdateServiceConfigInput, Variables,
     },
 };
 
-use super::services::ServiceCommands;
+use super::services::UpdateServiceCommands;
 
 type Long = u64;
 
@@ -42,44 +42,29 @@ pub struct UpdateArgs {
     pub tier: Tier,
 
     #[command(subcommand)]
-    update_commands: ServiceCommands,
+    update_commands: UpdateServiceCommands,
 }
 
 impl UpdateArgs {
     pub async fn run(&self) -> Result<()> {
         let service = match &self.update_commands {
-            ServiceCommands::Katana(config) => ServiceInput {
+            UpdateServiceCommands::Katana(config) => UpdateServiceInput {
                 type_: DeploymentService::katana,
                 version: config.version.clone(),
-                config: Some(ServiceConfigInput {
-                    katana: Some(KatanaConfigInput {
+                config: Some(UpdateServiceConfigInput {
+                    katana: Some(UpdateKatanaConfigInput {
                         block_time: config.block_time,
-                        fork_rpc_url: config.fork_rpc_url.clone(),
-                        fork_block_number: config.fork_block_number,
-                        seed: match &config.seed {
-                            Some(seed) => seed.clone(),
-                            None => rand::random::<u64>().to_string(),
-                        },
-                        accounts: config.accounts,
                         disable_fee: config.disable_fee,
                         gas_price: config.gas_price,
                         invoke_max_steps: config.invoke_max_steps,
                         validate_max_steps: config.validate_max_steps,
                     }),
-                    torii: None,
                 }),
             },
-            ServiceCommands::Torii(config) => ServiceInput {
+            UpdateServiceCommands::Torii(config) => UpdateServiceInput {
                 type_: DeploymentService::torii,
                 version: config.version.clone(),
-                config: Some(ServiceConfigInput {
-                    katana: None,
-                    torii: Some(ToriiConfigInput {
-                        rpc: config.rpc.clone(),
-                        world: format!("{:#x}", config.world),
-                        start_block: Some(config.start_block),
-                    }),
-                }),
+                config: Some(UpdateServiceConfigInput { katana: None }),
             },
         };
 
@@ -124,8 +109,8 @@ impl UpdateArgs {
         }
 
         let service = match &self.update_commands {
-            ServiceCommands::Katana(_) => "katana",
-            ServiceCommands::Torii(_) => "torii",
+            UpdateServiceCommands::Katana(_) => "katana",
+            UpdateServiceCommands::Torii(_) => "torii",
         };
 
         println!(

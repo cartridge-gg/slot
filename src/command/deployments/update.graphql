@@ -1,6 +1,6 @@
 mutation UpdateDeployment(
   $project: String!
-  $service: ServiceInput!
+  $service: UpdateServiceInput!
   $tier: DeploymentTier!
   $wait: Boolean
 ) {

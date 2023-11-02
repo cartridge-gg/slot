@@ -11465,6 +11465,232 @@
         {
           "description": null,
           "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "blockTime",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "forkRpcUrl",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "forkBlockNumber",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Long",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "seed",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "accounts",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "invokeMaxSteps",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Long",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "validateMaxSteps",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Long",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "disableFee",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "gasPrice",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Long",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "CreateKatanaConfigInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "katana",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "CreateKatanaConfigInput",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "torii",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "CreateToriiConfigInput",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "CreateServiceConfigInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "type",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "DeploymentService",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "version",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "config",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "CreateServiceConfigInput",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "CreateServiceInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "rpc",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "world",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "startBlock",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "CreateToriiConfigInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
           "fields": [
             {
               "args": [],
@@ -18102,111 +18328,6 @@
         {
           "description": null,
           "enumValues": [],
-          "fields": [],
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "blockTime",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "forkRpcUrl",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "forkBlockNumber",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Long",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "seed",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "accounts",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "invokeMaxSteps",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Long",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "validateMaxSteps",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Long",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "disableFee",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "gasPrice",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Long",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": [],
-          "kind": "INPUT_OBJECT",
-          "name": "KatanaConfigInput",
-          "possibleTypes": []
-        },
-        {
-          "description": null,
-          "enumValues": [],
           "fields": [
             {
               "args": [],
@@ -18951,7 +19072,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "ServiceInput",
+                      "name": "CreateServiceInput",
                       "ofType": null
                     }
                   }
@@ -19016,7 +19137,7 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
-                      "name": "ServiceInput",
+                      "name": "UpdateServiceInput",
                       "ofType": null
                     }
                   }
@@ -27049,37 +27170,6 @@
           "possibleTypes": []
         },
         {
-          "description": null,
-          "enumValues": [],
-          "fields": [],
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "katana",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "KatanaConfigInput",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "torii",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "ToriiConfigInput",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": [],
-          "kind": "INPUT_OBJECT",
-          "name": "ServiceConfigInput",
-          "possibleTypes": []
-        },
-        {
           "description": "A connection to a list of items.",
           "enumValues": [],
           "fields": [
@@ -27175,51 +27265,6 @@
           "interfaces": [],
           "kind": "OBJECT",
           "name": "ServiceEdge",
-          "possibleTypes": []
-        },
-        {
-          "description": null,
-          "enumValues": [],
-          "fields": [],
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "type",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "ENUM",
-                  "name": "DeploymentService",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "version",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "config",
-              "type": {
-                "kind": "INPUT_OBJECT",
-                "name": "ServiceConfigInput",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": [],
-          "kind": "INPUT_OBJECT",
-          "name": "ServiceInput",
           "possibleTypes": []
         },
         {
@@ -32748,55 +32793,6 @@
         {
           "description": null,
           "enumValues": [],
-          "fields": [],
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "rpc",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "world",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "startBlock",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            }
-          ],
-          "interfaces": [],
-          "kind": "INPUT_OBJECT",
-          "name": "ToriiConfigInput",
-          "possibleTypes": []
-        },
-        {
-          "description": null,
-          "enumValues": [],
           "fields": [
             {
               "args": [],
@@ -36825,6 +36821,133 @@
           "interfaces": [],
           "kind": "INPUT_OBJECT",
           "name": "TwitterQuestWhereInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "blockTime",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "invokeMaxSteps",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Long",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "validateMaxSteps",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Long",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "disableFee",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "gasPrice",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Long",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "UpdateKatanaConfigInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "katana",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UpdateKatanaConfigInput",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "UpdateServiceConfigInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "type",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "DeploymentService",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "version",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "config",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UpdateServiceConfigInput",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "UpdateServiceInput",
           "possibleTypes": []
         },
         {

@@ -1,6 +1,6 @@
 mutation CreateDeployment(
   $project: String!
-  $service: ServiceInput!
+  $service: CreateServiceInput!
   $tier: DeploymentTier!
   $wait: Boolean
 ) {
