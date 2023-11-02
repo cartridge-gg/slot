@@ -4,17 +4,16 @@ use anyhow::Result;
 use clap::Args;
 use graphql_client::{GraphQLQuery, Response};
 
-use self::create_deployment::ServiceInput;
 use crate::{
     api::ApiClient,
     command::deployments::create::create_deployment::{
         CreateDeploymentCreateDeployment::{KatanaConfig, ToriiConfig},
-        DeploymentService, DeploymentTier, KatanaConfigInput, ServiceConfigInput, ToriiConfigInput,
-        Variables,
+        CreateKatanaConfigInput, CreateServiceConfigInput, CreateServiceInput,
+        CreateToriiConfigInput, DeploymentService, DeploymentTier, Variables,
     },
 };
 
-use super::services::ServiceCommands;
+use super::services::CreateServiceCommands;
 
 type Long = u64;
 
@@ -42,24 +41,24 @@ pub struct CreateArgs {
     pub tier: Tier,
 
     #[command(subcommand)]
-    create_commands: ServiceCommands,
+    create_commands: CreateServiceCommands,
 }
 
 impl CreateArgs {
     pub async fn run(&self) -> Result<()> {
         let service = match &self.create_commands {
-            ServiceCommands::Katana(config) => ServiceInput {
+            CreateServiceCommands::Katana(config) => CreateServiceInput {
                 type_: DeploymentService::katana,
                 version: config.version.clone(),
-                config: Some(ServiceConfigInput {
-                    katana: Some(KatanaConfigInput {
+                config: Some(CreateServiceConfigInput {
+                    katana: Some(CreateKatanaConfigInput {
                         block_time: config.block_time,
                         fork_rpc_url: config.fork_rpc_url.clone(),
                         fork_block_number: config.fork_block_number,
-                        seed: match &config.seed {
+                        seed: Some(match &config.seed {
                             Some(seed) => seed.clone(),
                             None => rand::random::<u64>().to_string(),
-                        },
+                        }),
                         accounts: config.accounts,
                         disable_fee: config.disable_fee,
                         gas_price: config.gas_price,
@@ -69,12 +68,12 @@ impl CreateArgs {
                     torii: None,
                 }),
             },
-            ServiceCommands::Torii(config) => ServiceInput {
+            CreateServiceCommands::Torii(config) => CreateServiceInput {
                 type_: DeploymentService::torii,
                 version: config.version.clone(),
-                config: Some(ServiceConfigInput {
+                config: Some(CreateServiceConfigInput {
                     katana: None,
-                    torii: Some(ToriiConfigInput {
+                    torii: Some(CreateToriiConfigInput {
                         rpc: config.rpc.clone(),
                         world: format!("{:#x}", config.world),
                         start_block: Some(config.start_block),
@@ -124,8 +123,8 @@ impl CreateArgs {
         }
 
         let service = match &self.create_commands {
-            ServiceCommands::Katana(_) => "katana",
-            ServiceCommands::Torii(_) => "torii",
+            CreateServiceCommands::Katana(_) => "katana",
+            CreateServiceCommands::Torii(_) => "torii",
         };
 
         println!(
