@@ -45,6 +45,11 @@ impl ApiClient {
             .send()
             .await
             .map_err(ApiError::ReqwestError)?;
+
+        if res.status() == 403 {
+            return Err(ApiError::CredentialsError(anyhow::anyhow!("Invalid token, authenticate with `slot auth login`")));
+        }
+
         let res: Response<R> = res.json().await.map_err(ApiError::ReqwestError)?;
 
         Ok(res)
