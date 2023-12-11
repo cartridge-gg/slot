@@ -42,6 +42,10 @@ pub struct KatanaCreateArgs {
     #[arg(long, value_name = "gas_price")]
     #[arg(help = "Gas Price.")]
     pub gas_price: Option<u64>,
+
+    #[arg(long, short, value_name = "chain_id")]
+    #[arg(help = "Sequencer chain_id to use.")]
+    pub chain_id: Option<String>,
 }
 
 #[derive(Debug, Args, serde::Serialize)]

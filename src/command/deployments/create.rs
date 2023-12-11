@@ -64,6 +64,7 @@ impl CreateArgs {
                         gas_price: config.gas_price,
                         invoke_max_steps: config.invoke_max_steps,
                         validate_max_steps: config.validate_max_steps,
+                        chain_id: config.chain_id.clone(),
                     }),
                     torii: None,
                 }),
