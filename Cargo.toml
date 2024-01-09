@@ -27,6 +27,7 @@ tracing = "0.1.34"
 urlencoding = "2"
 webbrowser = "0.8"
 starknet = "0.6.0"
+url = "2.2.2"
 
 [[bin]]
 name = "slot"

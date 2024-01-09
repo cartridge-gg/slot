@@ -13,9 +13,7 @@ use crate::{
     },
 };
 
-use super::services::CreateServiceCommands;
-
-type Long = u64;
+use super::{services::CreateServiceCommands, Long, Tier};
 
 #[derive(GraphQLQuery)]
 #[graphql(
@@ -24,11 +22,6 @@ type Long = u64;
     response_derives = "Debug"
 )]
 pub struct CreateDeployment;
-
-#[derive(clap::ValueEnum, Clone, Debug, serde::Serialize)]
-pub enum Tier {
-    Basic,
-}
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Create options")]
