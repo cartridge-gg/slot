@@ -59,6 +59,14 @@ pub struct KatanaUpdateArgs {
     #[arg(help = "Block time.")]
     pub block_time: Option<i64>,
 
+    #[arg(long, short, value_name = "fork_rpc_url")]
+    #[arg(help = "Fork RPC URL.")]
+    pub fork_rpc_url: Option<String>,
+
+    #[arg(long, short, value_name = "fork_block_number")]
+    #[arg(help = "Fork Block Number.")]
+    pub fork_block_number: Option<u64>,
+
     #[arg(long, value_name = "invoke_max_steps")]
     #[arg(help = "Invoke Max Steps.")]
     pub invoke_max_steps: Option<u64>,
@@ -74,4 +82,15 @@ pub struct KatanaUpdateArgs {
     #[arg(long, value_name = "gas_price")]
     #[arg(help = "Gas Price.")]
     pub gas_price: Option<u64>,
+}
+
+#[derive(Debug, Args, serde::Serialize)]
+#[command(next_help_heading = "Katana fork options")]
+pub struct KatanaForkArgs {
+    #[arg(long, value_name = "fork_name")]
+    #[arg(help = "Specify the fork name")]
+    pub fork_name: String,
+    #[arg(long, value_name = "fork_block_number")]
+    #[arg(help = "Specify block number to fork. (latests if not provided)")]
+    pub fork_block_number: Option<u64>,
 }

@@ -54,6 +54,8 @@ impl UpdateArgs {
                 config: Some(UpdateServiceConfigInput {
                     katana: Some(UpdateKatanaConfigInput {
                         block_time: config.block_time,
+                        fork_rpc_url: config.fork_rpc_url.clone(),
+                        fork_block_number: config.fork_block_number,
                         disable_fee: config.disable_fee,
                         gas_price: config.gas_price,
                         invoke_max_steps: config.invoke_max_steps,

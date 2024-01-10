@@ -1,0 +1,20 @@
+mutation ForkDeployment(
+  $project: String!
+  $forkName: String!
+  $forkBlockNumber: Long!
+  $tier: DeploymentTier!
+  $wait: Boolean
+) {
+  forkDeployment(
+    name: $project
+    forkName: $forkName
+    forkBlockNumber: $forkBlockNumber
+    tier: $tier
+    wait: $wait
+  ) {
+    __typename
+    ... on KatanaConfig {
+      rpc
+    }
+  }
+}
