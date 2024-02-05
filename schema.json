@@ -11566,6 +11566,16 @@
                 "name": "String",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": null,
+              "description": "Base64 encoded genesis file with all the classes embedded in the file itself (if any).",
+              "name": "genesis",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             }
           ],
           "interfaces": [],
