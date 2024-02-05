@@ -2904,7 +2904,7 @@ dependencies = [
 [[package]]
 name = "katana-primitives"
 version = "0.5.1-alpha.5"
-source = "git+https://github.com/dojoengine/dojo?tag=v0.5.1-alpha.5#4fe87bab1ee4b4ecb2ce12f6385a9c934491c4ea"
+source = "git+https://github.com/dojoengine/dojo?rev=4fe87ba#4fe87bab1ee4b4ecb2ce12f6385a9c934491c4ea"
 dependencies = [
  "anyhow",
  "base64 0.21.3",
