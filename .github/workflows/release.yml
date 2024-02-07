@@ -9,7 +9,7 @@ on:
 env:
   IS_NIGHTLY: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && 'true' || 'false' }}
   CARGO_TERM_COLOR: always
-  RUST_VERSION: 1.70.0
+  RUST_VERSION: 1.74.0
   REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
 
 jobs:
