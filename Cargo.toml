@@ -4,7 +4,7 @@ version = "0.5.8"
 edition = "2021"
 
 [dependencies]
-katana-primitives = { git = "https://github.com/dojoengine/dojo", rev = "4fe87ba", default-features = false, features = [
+katana-primitives = { git = "https://github.com/dojoengine/dojo", rev = "c83936", default-features = false, features = [
     "serde",
     "blockifier",
 ] }
