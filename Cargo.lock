@@ -4410,7 +4410,7 @@ dependencies = [
 
 [[package]]
 name = "slot"
-version = "0.5.10"
+version = "0.5.9"
 dependencies = [
  "anyhow",
  "axum",

@@ -23,7 +23,7 @@ jobs:
         id: release_info
         run: |
           cargo install cargo-get
-          echo "tag_name=$(cargo get workspace.package.version)" >> $GITHUB_OUTPUT
+          echo "tag_name=$(cargo get package.version)" >> $GITHUB_OUTPUT
 
   release:
     name: ${{ matrix.job.target }} (${{ matrix.job.os }})
@@ -129,7 +129,7 @@ jobs:
       - id: version_info
         run: |
           cargo install cargo-get
-          echo "version=$(cargo get workspace.package.version)" >> $GITHUB_OUTPUT
+          echo "version=$(cargo get package.version)" >> $GITHUB_OUTPUT
       - name: Display structure of downloaded files
         run: ls -R artifacts
       - run: gh release create v${{ steps.version_info.outputs.version }} ./artifacts/*.gz --generate-notes --draft
