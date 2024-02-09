@@ -36,11 +36,11 @@ jobs:
     strategy:
       matrix:
         job:
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             platform: linux
             target: x86_64-unknown-linux-gnu
             arch: amd64
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             platform: linux
             target: aarch64-unknown-linux-gnu
             arch: arm64
@@ -70,11 +70,6 @@ jobs:
       - uses: Swatinem/rust-cache@v1
         with:
           cache-on-failure: true
-
-      - uses: arduino/setup-protoc@v2
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          version: "25.x"
 
       - name: Apple M1 setup
         if: ${{ matrix.job.target == 'aarch64-apple-darwin' }}
@@ -119,7 +114,7 @@ jobs:
           retention-days: 1
 
   create-draft-release:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs: [prepare, release]
     env:
       GITHUB_USER: ${{ github.repository_owner }}
