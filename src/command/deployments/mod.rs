@@ -2,10 +2,11 @@ use anyhow::Result;
 use clap::Subcommand;
 
 use self::{
-    create::CreateArgs, delete::DeleteArgs, describe::DescribeArgs, fork::ForkArgs, list::ListArgs,
-    logs::LogsArgs, update::UpdateArgs,
+    accounts::AccountsArgs, create::CreateArgs, delete::DeleteArgs, describe::DescribeArgs,
+    fork::ForkArgs, list::ListArgs, logs::LogsArgs, update::UpdateArgs,
 };
 
+mod accounts;
 mod create;
 mod delete;
 mod describe;
@@ -33,6 +34,8 @@ pub enum Deployments {
     List(ListArgs),
     #[command(about = "Fetch logs for a deployment.")]
     Logs(LogsArgs),
+    #[command(about = "Fetch Katana accounts.")]
+    Accounts(AccountsArgs),
 }
 
 impl Deployments {
@@ -45,6 +48,7 @@ impl Deployments {
             Deployments::Describe(args) => args.run().await,
             Deployments::List(args) => args.run().await,
             Deployments::Logs(args) => args.run().await,
+            Deployments::Accounts(args) => args.run().await,
         }
     }
 }

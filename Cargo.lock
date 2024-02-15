@@ -4414,6 +4414,7 @@ version = "0.5.9"
 dependencies = [
  "anyhow",
  "axum",
+ "base64 0.21.3",
  "chrono",
  "clap",
  "ctrlc",
