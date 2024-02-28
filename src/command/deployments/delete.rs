@@ -21,6 +21,7 @@ pub struct DeleteDeployment;
 pub enum Service {
     Katana,
     Torii,
+    Madara,
 }
 
 #[derive(Debug, Args)]
@@ -38,6 +39,7 @@ impl DeleteArgs {
         let service = match &self.service {
             Service::Katana => DeploymentService::katana,
             Service::Torii => DeploymentService::torii,
+            Service::Madara => DeploymentService::madara,
         };
 
         let request_body = DeleteDeployment::build_query(Variables {

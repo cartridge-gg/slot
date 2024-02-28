@@ -63,21 +63,19 @@ impl AccountsArgs {
                         return Ok(());
                     }
 
-                    if !config.seed.is_empty() {
-                        let total = match config.accounts {
-                            Some(accounts) => accounts as u16,
-                            None => 10,
-                        };
+                    let total = match config.accounts {
+                        Some(accounts) => accounts as u16,
+                        None => 10,
+                    };
 
-                        let accounts = DevAllocationsGenerator::new(total)
-                            .with_seed(parse_seed(&config.seed))
-                            .generate();
-                          
-                        let mut genesis = Genesis::default();
-                        genesis
-                            .extend_allocations(accounts.into_iter().map(|(k, v)| (k, v.into())));
-                        print_genesis_accounts(genesis.accounts().peekable(), Some(&config.seed));
-                    }
+                    let accounts = DevAllocationsGenerator::new(total)
+                        .with_seed(parse_seed(&config.seed))
+                        .generate();
+                      
+                    let mut genesis = Genesis::default();
+                    genesis
+                        .extend_allocations(accounts.into_iter().map(|(k, v)| (k, v.into())));
+                    print_genesis_accounts(genesis.accounts().peekable(), Some(&config.seed));
                 }
             }
         }

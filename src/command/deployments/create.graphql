@@ -21,5 +21,9 @@ mutation CreateDeployment(
       world
       startBlock
     }
+    ... on MadaraConfig {
+      rpc
+      name
+    }
   }
 }

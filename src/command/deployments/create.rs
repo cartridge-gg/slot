@@ -7,9 +7,7 @@ use graphql_client::{GraphQLQuery, Response};
 use crate::{
     api::ApiClient,
     command::deployments::create::create_deployment::{
-        CreateDeploymentCreateDeployment::{KatanaConfig, ToriiConfig},
-        CreateKatanaConfigInput, CreateServiceConfigInput, CreateServiceInput,
-        CreateToriiConfigInput, DeploymentService, DeploymentTier, Variables,
+        CreateDeploymentCreateDeployment::{KatanaConfig, ToriiConfig, MadaraConfig}, CreateKatanaConfigInput, CreateMadaraConfigInput, CreateServiceConfigInput, CreateServiceInput, CreateToriiConfigInput, DeploymentService, DeploymentTier, Variables
     },
 };
 
@@ -61,6 +59,8 @@ impl CreateArgs {
                         genesis: config.genesis.clone(),
                     }),
                     torii: None,
+                    madara: None,
+                    
                 }),
             },
             CreateServiceCommands::Torii(config) => CreateServiceInput {
@@ -68,10 +68,22 @@ impl CreateArgs {
                 version: config.version.clone(),
                 config: Some(CreateServiceConfigInput {
                     katana: None,
+                    madara: None,
                     torii: Some(CreateToriiConfigInput {
                         rpc: config.rpc.clone(),
                         world: format!("{:#x}", config.world),
                         start_block: Some(config.start_block),
+                    }),
+                }),
+            },
+            CreateServiceCommands::Madara(config) => CreateServiceInput {
+                type_: DeploymentService::madara,
+                version: config.version.clone(),
+                config: Some(CreateServiceConfigInput {
+                    katana: None,
+                    torii: None,
+                    madara: Some(CreateMadaraConfigInput {
+                        name: config.name.clone()
                     }),
                 }),
             },
@@ -114,12 +126,17 @@ impl CreateArgs {
                     println!("\nEndpoints:");
                     println!("  RPC: {}", config.rpc);
                 }
+                MadaraConfig(config) => { 
+                    println!("\nEndpoints:");
+                    println!("  RPC: {}", config.rpc);
+                }
             }
         }
 
         let service = match &self.create_commands {
             CreateServiceCommands::Katana(_) => "katana",
             CreateServiceCommands::Torii(_) => "torii",
+            CreateServiceCommands::Madara(_) => "madara",
         };
 
         println!(

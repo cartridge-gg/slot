@@ -9,7 +9,7 @@ use crate::{
     api::ApiClient,
     command::deployments::update::update_deployment::{
         DeploymentService, DeploymentTier,
-        UpdateDeploymentUpdateDeployment::{KatanaConfig, ToriiConfig},
+        UpdateDeploymentUpdateDeployment::{KatanaConfig, ToriiConfig, MadaraConfig},
         UpdateKatanaConfigInput, UpdateServiceConfigInput, Variables,
     },
 };
@@ -107,6 +107,7 @@ impl UpdateArgs {
                     println!("\nEndpoints:");
                     println!("  RPC: {}", config.rpc);
                 }
+                MadaraConfig => {} // TODO: implement
             }
         }
 
