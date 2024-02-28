@@ -11591,6 +11591,27 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "CreateMadaraConfigInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "katana",
               "type": {
                 "kind": "INPUT_OBJECT",
@@ -11605,6 +11626,16 @@
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "CreateToriiConfigInput",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "madara",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "CreateMadaraConfigInput",
                 "ofType": null
               }
             }
@@ -12094,6 +12125,11 @@
               "kind": "OBJECT",
               "name": "ToriiConfig",
               "ofType": null
+            },
+            {
+              "kind": "OBJECT",
+              "name": "MadaraConfig",
+              "ofType": null
             }
           ]
         },
@@ -12265,6 +12301,12 @@
               "description": null,
               "isDeprecated": false,
               "name": "torii"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "madara"
             }
           ],
           "fields": [],
@@ -18628,6 +18670,61 @@
           "interfaces": [],
           "kind": "SCALAR",
           "name": "Long",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "version",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "rpc",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "MadaraConfig",
           "possibleTypes": []
         },
         {

@@ -8,7 +8,7 @@ use crate::api::ApiClient;
 
 use self::describe_deployment::{
     DeploymentService,
-    DescribeDeploymentDeploymentConfig::{KatanaConfig, ToriiConfig},
+    DescribeDeploymentDeploymentConfig::{KatanaConfig, ToriiConfig, MadaraConfig},
     ResponseData, Variables,
 };
 
@@ -39,6 +39,7 @@ impl DescribeArgs {
         let service = match self.service {
             Service::Torii => DeploymentService::torii,
             Service::Katana => DeploymentService::katana,
+            Service::Madara => DeploymentService::madara,
         };
 
         let request_body = DescribeDeployment::build_query(Variables {
@@ -75,6 +76,11 @@ impl DescribeArgs {
                         println!("  GRPC: {}", config.grpc);
                     }
                     KatanaConfig(config) => {
+                        println!("\nEndpoints:");
+                        println!("  Version: {}", config.version);
+                        println!("  RPC: {}", config.rpc);
+                    }
+                    MadaraConfig(config) => {
                         println!("\nEndpoints:");
                         println!("  Version: {}", config.version);
                         println!("  RPC: {}", config.rpc);

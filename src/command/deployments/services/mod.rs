@@ -3,6 +3,7 @@ use clap::{Subcommand, ValueEnum};
 use self::{
     katana::{KatanaCreateArgs, KatanaForkArgs, KatanaUpdateArgs},
     torii::{ToriiCreateArgs, ToriiUpdateArgs},
+    madara::MadaraCreateArgs,
 };
 
 mod katana;
@@ -16,6 +17,8 @@ pub enum CreateServiceCommands {
     Katana(KatanaCreateArgs),
     #[command(about = "Torii deployment.")]
     Torii(ToriiCreateArgs),
+    #[command(about = "Madara deployment.")]
+    Madara(MadaraCreateArgs),
 }
 
 #[derive(Debug, Subcommand, serde::Serialize)]
@@ -40,4 +43,5 @@ pub enum ForkServiceCommands {
 pub enum Service {
     Katana,
     Torii,
+    Madara
 }
