@@ -10,6 +10,7 @@ katana-primitives = { git = "https://github.com/dojoengine/dojo", rev = "c83936"
 ] }
 anyhow = "1.0.75"
 axum = "0.6"
+base64 = "0.21.2"
 clap = { version = "4.2", features = ["derive"] }
 chrono = "0.4.31"
 ctrlc = "3.4.1"

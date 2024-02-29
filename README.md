@@ -49,3 +49,8 @@ View deployments configuration
 ```sh
 slot deployments describe <Project Name> <katana | madara | torii>
 ```
+
+View predeployed accounts
+```sh
+slot deployments account <Project Name> katana
+```

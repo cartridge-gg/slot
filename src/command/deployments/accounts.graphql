@@ -1,0 +1,15 @@
+query KatanaAccounts($project: String!) {
+  deployment(name: $project, service: katana) {
+    project
+    branch
+    tier
+    config {
+      __typename
+      ... on KatanaConfig {
+        seed
+        genesis
+        accounts
+      }
+    }
+  }
+}
