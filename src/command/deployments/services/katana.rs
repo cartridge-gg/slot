@@ -104,6 +104,10 @@ pub struct KatanaForkArgs {
     pub fork_block_number: Option<u64>,
 }
 
+#[derive(Debug, Args, serde::Serialize)]
+#[command(next_help_heading = "Katana account options")]
+pub struct KatanaAccountArgs {}
+
 fn genesis_value_parser(path: &str) -> Result<String, anyhow::Error> {
     let path = PathBuf::from(shellexpand::full(path)?.into_owned());
     let genesis = GenesisJson::load(path)?;
