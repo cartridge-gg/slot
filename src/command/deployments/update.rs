@@ -9,7 +9,7 @@ use crate::{
     api::ApiClient,
     command::deployments::update::update_deployment::{
         DeploymentService, DeploymentTier,
-        UpdateDeploymentUpdateDeployment::{KatanaConfig, ToriiConfig, MadaraConfig},
+        UpdateDeploymentUpdateDeployment::{KatanaConfig, MadaraConfig, ToriiConfig},
         UpdateKatanaConfigInput, UpdateServiceConfigInput, Variables,
     },
 };
