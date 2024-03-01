@@ -2,8 +2,8 @@ use clap::{Subcommand, ValueEnum};
 
 use self::{
     katana::{KatanaAccountArgs, KatanaCreateArgs, KatanaForkArgs, KatanaUpdateArgs},
-    torii::{ToriiCreateArgs, ToriiUpdateArgs},
     madara::MadaraCreateArgs,
+    torii::{ToriiCreateArgs, ToriiUpdateArgs},
 };
 
 mod katana;
@@ -50,4 +50,5 @@ pub enum KatanaAccountCommands {
 pub enum Service {
     Katana,
     Torii,
+    Madara,
 }

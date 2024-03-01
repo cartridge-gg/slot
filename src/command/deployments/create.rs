@@ -7,7 +7,9 @@ use graphql_client::{GraphQLQuery, Response};
 use crate::{
     api::ApiClient,
     command::deployments::create::create_deployment::{
-        CreateDeploymentCreateDeployment::{KatanaConfig, ToriiConfig, MadaraConfig}, CreateKatanaConfigInput, CreateMadaraConfigInput, CreateServiceConfigInput, CreateServiceInput, CreateToriiConfigInput, DeploymentService, DeploymentTier, Variables
+        CreateDeploymentCreateDeployment::{KatanaConfig, MadaraConfig, ToriiConfig},
+        CreateKatanaConfigInput, CreateMadaraConfigInput, CreateServiceConfigInput,
+        CreateServiceInput, CreateToriiConfigInput, DeploymentService, DeploymentTier, Variables,
     },
 };
 
@@ -60,7 +62,6 @@ impl CreateArgs {
                     }),
                     torii: None,
                     madara: None,
-                    
                 }),
             },
             CreateServiceCommands::Torii(config) => CreateServiceInput {
@@ -83,7 +84,13 @@ impl CreateArgs {
                     katana: None,
                     torii: None,
                     madara: Some(CreateMadaraConfigInput {
-                        name: config.name.clone()
+                        name: config.name.clone(),
+                        base_path: config.base_path.clone(),
+                        dev: config.dev.then_some(true),
+                        no_grandpa: config.no_grandpa.then_some(true),
+                        validator: config.validator.then_some(true),
+                        sealing: config.sealing.clone().map(|s| s.to_string()),
+                        chain: config.chain.clone().map(|c| c.to_string()),
                     }),
                 }),
             },
@@ -126,7 +133,7 @@ impl CreateArgs {
                     println!("\nEndpoints:");
                     println!("  RPC: {}", config.rpc);
                 }
-                MadaraConfig(config) => { 
+                MadaraConfig(config) => {
                     println!("\nEndpoints:");
                     println!("  RPC: {}", config.rpc);
                 }

@@ -71,10 +71,9 @@ impl AccountsArgs {
                     let accounts = DevAllocationsGenerator::new(total)
                         .with_seed(parse_seed(&config.seed))
                         .generate();
-                      
+
                     let mut genesis = Genesis::default();
-                    genesis
-                        .extend_allocations(accounts.into_iter().map(|(k, v)| (k, v.into())));
+                    genesis.extend_allocations(accounts.into_iter().map(|(k, v)| (k, v.into())));
                     print_genesis_accounts(genesis.accounts().peekable(), Some(&config.seed));
                 }
             }
@@ -115,13 +114,13 @@ PREFUNDED ACCOUNTS
     }
 
     if let Some(seed) = seed {
-    println!(
-      r"
+        println!(
+            r"
 ACCOUNTS SEED
 =============
 {seed}
 "
-  );
+        );
     }
 }
 
