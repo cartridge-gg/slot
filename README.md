@@ -54,3 +54,10 @@ View predeployed accounts
 ```sh
 slot deployments account <Project Name> katana
 ```
+
+Manage collaborators with teams
+```sh
+slot teams <Team Name> list
+slot teams <Team Name> add <Account Name>
+slot teams <Team Name> remove <Account Name>
+```
