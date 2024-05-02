@@ -99,6 +99,7 @@ impl UpdateArgs {
                     println!("  World: {}", config.world);
                     println!("  RPC: {}", config.rpc);
                     println!("  Start Block: {}", config.start_block);
+                    println!("  Index Pending: {}", config.index_pending);
                     println!("\nEndpoints:");
                     println!("  GRAPHQL: {}", config.graphql);
                     println!("  GRPC: {}", config.grpc);

@@ -16,6 +16,7 @@ query DescribeDeployment($project: String!, $service: DeploymentService!) {
         rpc
         world
         startBlock
+        indexPending
       }
       ... on MadaraConfig {
         version

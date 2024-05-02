@@ -74,6 +74,7 @@ impl CreateArgs {
                         rpc: config.rpc.clone(),
                         world: format!("{:#x}", config.world),
                         start_block: Some(config.start_block),
+                        index_pending: config.index_pending,
                     }),
                 }),
             },
