@@ -74,6 +74,7 @@ impl CreateArgs {
                         rpc: config.rpc.clone(),
                         world: format!("{:#x}", config.world),
                         start_block: Some(config.start_block),
+                        index_pending: config.index_pending,
                     }),
                 }),
             },
@@ -125,6 +126,7 @@ impl CreateArgs {
                     println!("  World: {}", config.world);
                     println!("  RPC: {}", config.rpc);
                     println!("  Start Block: {}", config.start_block);
+                    println!("  Index Pending: {}", config.index_pending);
                     println!("\nEndpoints:");
                     println!("  GRAPHQL: {}", config.graphql);
                     println!("  GRPC: {}", config.grpc);

@@ -20,6 +20,7 @@ mutation UpdateDeployment(
       rpc
       world
       startBlock
+      indexPending
     }
     # TODO: handle update
   }
