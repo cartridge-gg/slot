@@ -11,7 +11,7 @@ pub struct ToriiCreateArgs {
     #[arg(long)]
     #[arg(value_name = "rpc")]
     #[arg(help = "The Starknet RPC endpoint.")]
-    pub rpc: String,
+    pub rpc: Option<String>,
 
     #[arg(long)]
     #[arg(value_name = "world")]
@@ -20,11 +20,11 @@ pub struct ToriiCreateArgs {
 
     #[arg(short, long)]
     #[arg(help = "Specify a block to start indexing from.")]
-    pub start_block: i64,
+    pub start_block: Option<i64>,
 
     #[arg(long)]
     #[arg(help = "Enable indexing pending blocks.")]
-    pub index_pending: bool,
+    pub index_pending: Option<bool>,
 }
 
 #[derive(Clone, Debug, Args, serde::Serialize)]
