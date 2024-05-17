@@ -71,7 +71,10 @@ impl DescribeArgs {
                         println!("  World: {}", config.world);
                         println!("  RPC: {}", config.rpc);
                         println!("  Start Block: {}", config.start_block);
-                        println!("  Indexing Pending: {}", config.index_pending);
+                        println!(
+                            "  Indexing Pending: {}",
+                            config.index_pending.unwrap_or(false)
+                        );
                         println!("\nEndpoints:");
                         println!("  GraphQL: {}", config.graphql);
                         println!("  GRPC: {}", config.grpc);

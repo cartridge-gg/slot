@@ -57,7 +57,6 @@ impl CreateArgs {
                         gas_price: config.gas_price,
                         invoke_max_steps: config.invoke_max_steps,
                         validate_max_steps: config.validate_max_steps,
-                        chain_id: config.chain_id.clone(),
                         genesis: config.genesis.clone(),
                     }),
                     torii: None,
@@ -71,9 +70,9 @@ impl CreateArgs {
                     katana: None,
                     madara: None,
                     torii: Some(CreateToriiConfigInput {
-                        rpc: config.rpc.clone(),
+                        rpc: Some(config.rpc.clone().unwrap_or("".to_string())),
                         world: format!("{:#x}", config.world),
-                        start_block: Some(config.start_block),
+                        start_block: Some(config.start_block.unwrap_or(0)),
                         index_pending: config.index_pending,
                     }),
                 }),
@@ -126,7 +125,7 @@ impl CreateArgs {
                     println!("  World: {}", config.world);
                     println!("  RPC: {}", config.rpc);
                     println!("  Start Block: {}", config.start_block);
-                    println!("  Index Pending: {}", config.index_pending);
+                    println!("  Index Pending: {}", config.index_pending.unwrap_or(false));
                     println!("\nEndpoints:");
                     println!("  GRAPHQL: {}", config.graphql);
                     println!("  GRPC: {}", config.grpc);
