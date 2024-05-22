@@ -2,7 +2,7 @@
 
 # Slot
 
-A toolchain for rapidly spinning up Katana and Torii instances. Play test your game in seconds.
+Slot is the execution layer of Dojo, supporting rapid provisioning of low latency, dedicated, provable execution contexts, bringing horizontal scalability to the blockchain. It manages the sequencing, proving, and efficient settlement of its execution.
 
 ## Installation
 
