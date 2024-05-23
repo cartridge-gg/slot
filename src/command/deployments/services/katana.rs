@@ -23,10 +23,6 @@ pub struct KatanaCreateArgs {
     #[arg(help = "Fork block number.")]
     pub fork_block_number: Option<u64>,
 
-    #[arg(long, short, value_name = "seed")]
-    #[arg(help = "Seed.")]
-    pub seed: Option<String>,
-
     #[arg(long, short, value_name = "accounts")]
     #[arg(help = "Accounts.")]
     pub accounts: Option<i64>,
@@ -46,10 +42,6 @@ pub struct KatanaCreateArgs {
     #[arg(long, value_name = "gas_price")]
     #[arg(help = "Gas Price.")]
     pub gas_price: Option<u64>,
-
-    #[arg(long, short, value_name = "chain_id")]
-    #[arg(help = "Sequencer chain_id to use.")]
-    pub chain_id: Option<String>,
 
     #[arg(long, value_name = "PATH")]
     #[arg(help = "Path to a Katana genesis file.")]
