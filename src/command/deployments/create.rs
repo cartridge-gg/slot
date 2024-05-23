@@ -48,10 +48,7 @@ impl CreateArgs {
                         block_time: config.block_time,
                         fork_rpc_url: config.fork_rpc_url.clone(),
                         fork_block_number: config.fork_block_number,
-                        seed: Some(match &config.seed {
-                            Some(seed) => seed.clone(),
-                            None => rand::random::<u64>().to_string(),
-                        }),
+                        seed: None,
                         accounts: config.accounts,
                         disable_fee: config.disable_fee,
                         gas_price: config.gas_price,
