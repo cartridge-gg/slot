@@ -7,10 +7,11 @@ use starknet::providers::{jsonrpc::HttpTransport, JsonRpcClient, Provider};
 use url::Url;
 
 use crate::{
-    api::ApiClient,
+    api::Client,
     command::deployments::fork::fork_deployment::{
         DeploymentTier, ForkDeploymentForkDeployment::KatanaConfig, Variables,
     },
+    credential::Credentials,
 };
 
 use super::{services::ForkServiceCommands, Long, Tier};
@@ -53,8 +54,10 @@ impl ForkArgs {
             wait: Some(true),
         });
 
-        let client = ApiClient::new();
-        let res: Response<fork_deployment::ResponseData> = client.post(&request_body).await?;
+        let user = Credentials::load()?;
+        let client = Client::new_with_token(user.access_token);
+
+        let res: Response<fork_deployment::ResponseData> = client.query(&request_body).await?;
         if let Some(errors) = res.errors.clone() {
             for err in errors {
                 println!("Error: {}", err.message);

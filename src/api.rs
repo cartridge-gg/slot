@@ -1,59 +1,98 @@
 use graphql_client::Response;
-use serde::{de::DeserializeOwned, Serialize};
+use reqwest::RequestBuilder;
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use url::Url;
 
-use crate::credential::Credentials;
+use crate::{constant, credential::AccessToken};
 
 #[derive(Debug, thiserror::Error)]
-pub enum ApiError {
+pub enum Error {
     #[error(transparent)]
-    ReqwestError(reqwest::Error),
-    #[error(transparent)]
-    CredentialsError(anyhow::Error),
+    ReqwestError(#[from] reqwest::Error),
+    #[error("Invalid token, authenticate with `slot auth login`")]
+    Unauthorized,
 }
 
-pub struct ApiClient {
-    base_url: String,
+#[derive(Debug)]
+pub struct Client {
+    base_url: Url,
     client: reqwest::Client,
+    access_token: Option<AccessToken>,
 }
 
-impl ApiClient {
+impl Client {
     pub fn new() -> Self {
         Self {
-            base_url: "https://api.cartridge.gg/query".to_string(),
+            access_token: None,
             client: reqwest::Client::new(),
+            base_url: Url::parse(constant::CARTRIDGE_API_URL).expect("valid url"),
         }
     }
 
-    pub async fn post<R: DeserializeOwned, T: Serialize + ?Sized>(
-        &self,
-        body: &T,
-    ) -> Result<Response<R>, ApiError> {
-        let credentials = Credentials::load()
-            .map_err(|_| {
-                anyhow::anyhow!("Failed to load credentials. Login with `slot auth login`.")
-            })
-            .map_err(ApiError::CredentialsError)?;
+    pub fn new_with_token(token: AccessToken) -> Self {
+        let mut client = Self::new();
+        client.set_token(token);
+        client
+    }
 
-        let res = self
-            .client
-            .post(&self.base_url)
-            .header(
-                "Authorization",
-                format!("Bearer {}", credentials.access_token),
-            )
+    pub fn set_token(&mut self, token: AccessToken) {
+        self.access_token = Some(token);
+    }
+
+    pub async fn query<R, T>(&self, body: &T) -> Result<Response<R>, Error>
+    where
+        R: DeserializeOwned,
+        T: Serialize + ?Sized,
+    {
+        let path = "/query";
+        let token = self.access_token.as_ref().map(|t| t.token.as_str());
+
+        // TODO: return this as an error if token is None
+        let bearer = format!("Bearer {}", token.unwrap_or_default());
+
+        let response = self
+            .post(path)
+            .header("Authorization", bearer)
             .json(body)
             .send()
-            .await
-            .map_err(ApiError::ReqwestError)?;
+            .await?;
 
-        if res.status() == 403 {
-            return Err(ApiError::CredentialsError(anyhow::anyhow!(
-                "Invalid token, authenticate with `slot auth login`"
-            )));
+        if response.status() == 403 {
+            return Err(Error::Unauthorized);
         }
 
-        let res: Response<R> = res.json().await.map_err(ApiError::ReqwestError)?;
+        Ok(response.json().await?)
+    }
 
-        Ok(res)
+    pub async fn oauth2(&self, code: &str) -> Result<AccessToken, Error> {
+        #[derive(Deserialize)]
+        struct OauthToken {
+            #[serde(rename(deserialize = "access_token"))]
+            token: String,
+            #[serde(rename(deserialize = "token_type"))]
+            r#type: String,
+        }
+
+        let path = "/oauth2/token";
+        let form = [("code", code)];
+
+        let response = self.post(path).form(&form).send().await?;
+        let token: OauthToken = response.json().await?;
+
+        Ok(AccessToken {
+            token: token.token,
+            r#type: token.r#type,
+        })
+    }
+
+    fn post(&self, path: &str) -> RequestBuilder {
+        let url = self.get_url(path);
+        self.client.post(url)
+    }
+
+    fn get_url(&self, path: &str) -> Url {
+        let mut url = self.base_url.clone();
+        url.path_segments_mut().unwrap().extend(path.split('/'));
+        url
     }
 }

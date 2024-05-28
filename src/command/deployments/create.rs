@@ -5,12 +5,13 @@ use clap::Args;
 use graphql_client::{GraphQLQuery, Response};
 
 use crate::{
-    api::ApiClient,
+    api::Client,
     command::deployments::create::create_deployment::{
         CreateDeploymentCreateDeployment::{KatanaConfig, MadaraConfig, ToriiConfig},
         CreateKatanaConfigInput, CreateMadaraConfigInput, CreateServiceConfigInput,
         CreateServiceInput, CreateToriiConfigInput, DeploymentService, DeploymentTier, Variables,
     },
+    credential::Credentials,
 };
 
 use super::{services::CreateServiceCommands, Long, Tier};
@@ -104,8 +105,10 @@ impl CreateArgs {
             wait: Some(true),
         });
 
-        let client = ApiClient::new();
-        let res: Response<create_deployment::ResponseData> = client.post(&request_body).await?;
+        let user = Credentials::load()?;
+        let client = Client::new_with_token(user.access_token);
+
+        let res: Response<create_deployment::ResponseData> = client.query(&request_body).await?;
         if let Some(errors) = res.errors.clone() {
             for err in errors {
                 println!("Error: {}", err.message);

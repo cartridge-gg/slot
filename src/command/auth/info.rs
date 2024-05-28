@@ -1,16 +1,15 @@
 use anyhow::Result;
 use clap::Args;
 use graphql_client::{GraphQLQuery, Response};
+use me::{ResponseData, Variables};
 
-use crate::api::ApiClient;
-
-use self::me::{ResponseData, Variables};
+use crate::api::Client;
 
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "schema.json",
     query_path = "src/command/auth/info.graphql",
-    response_derives = "Debug"
+    response_derives = "Debug, Clone, Serialize"
 )]
 pub struct Me;
 
