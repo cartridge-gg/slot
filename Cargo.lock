@@ -2035,8 +2035,8 @@ dependencies = [
 
 [[package]]
 name = "katana-primitives"
-version = "0.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/dojo?tag=v0.7.0-alpha.4#aa5b534ebc4d82c18c6334ae7f3d236e77313c90"
+version = "0.7.0-alpha.3"
+source = "git+https://github.com/dojoengine/dojo?tag=v0.7.0-alpha.3#855da3112c87faea87646db5a406ac77b4daf149"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -3531,9 +3531,9 @@ dependencies = [
 
 [[package]]
 name = "starknet_api"
-version = "0.11.0"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "365ec5c0662466f299762bd012012da30e9a28319000cfade372b8787111f202"
+checksum = "9e6aeb260177f5ca6dde788e844825d8d83782905dbac1b24c0c620743284475"
 dependencies = [
  "cairo-lang-starknet-classes",
  "derive_more",
