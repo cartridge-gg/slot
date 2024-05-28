@@ -39,7 +39,7 @@ impl Credentials {
     pub fn write(&self) -> io::Result<()> {
         // create the dir paths if it doesn't yet exist
         let path = get_file_path();
-        fs::create_dir_all(&path.parent().expect("qed; parent exist"))?;
+        fs::create_dir_all(path.parent().expect("qed; parent exist"))?;
 
         let content = serde_json::to_string_pretty(&self)?;
         fs::write(path, content)?;
