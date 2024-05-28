@@ -37,7 +37,7 @@ impl Credentials {
     }
 
     pub fn write(&self) -> io::Result<()> {
-        // create the dir if it doesn't yet exist
+        // create the dir paths if it doesn't yet exist
         let path = get_file_path();
         fs::create_dir_all(&path.parent().expect("qed; parent exist"))?;
 
