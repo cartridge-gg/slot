@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::fs;
 use std::io::{self};
 use std::path::PathBuf;
 
@@ -30,15 +31,18 @@ impl Credentials {
 
     pub fn load() -> io::Result<Self> {
         let path = get_file_path();
-        let content = std::fs::read_to_string(path)?;
+        let content = fs::read_to_string(path)?;
         let credentials = serde_json::from_str(&content)?;
         Ok(credentials)
     }
 
     pub fn write(&self) -> io::Result<()> {
+        // create the path if it doesn't yet exist
         let path = get_file_path();
+        fs::create_dir_all(&path)?;
+
         let content = serde_json::to_string_pretty(&self)?;
-        std::fs::write(path, content)?;
+        fs::write(path, content)?;
         Ok(())
     }
 }
