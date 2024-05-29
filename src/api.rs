@@ -9,7 +9,7 @@ use crate::{constant, credential::AccessToken};
 pub enum Error {
     #[error(transparent)]
     ReqwestError(#[from] reqwest::Error),
-    #[error("Invalid token, authenticate with `slot auth login`")]
+    #[error("Invalid token, please authenticate with `slot auth login`")]
     Unauthorized,
 }
 

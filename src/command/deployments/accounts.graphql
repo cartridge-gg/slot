@@ -8,7 +8,11 @@ query KatanaAccounts($project: String!) {
       ... on KatanaConfig {
         seed
         genesis
-        accounts
+        accounts {
+          address
+          publicKey
+          privateKey
+        }
       }
     }
   }

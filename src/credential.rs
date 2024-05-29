@@ -8,10 +8,26 @@ use crate::command::auth::info::me::MeMe;
 const SLOT_DIR: &str = "slot";
 const CREDENTIALS_FILE: &str = "credentials.json";
 
+#[derive(Debug, thiserror::Error)]
+pub enum Error {
+    #[error(transparent)]
+    IO(#[from] io::Error),
+    #[error("No credentials found, please authenticate with `slot auth login`")]
+    Unauthorized,
+    #[error("Legacy credentials found, please reauthenticate with `slot auth login`")]
+    LegacyCredentials,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AccessToken {
     pub token: String,
     pub r#type: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LegacyCredentials {
+    pub access_token: String,
+    pub token_type: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -29,11 +45,18 @@ impl Credentials {
         }
     }
 
-    pub fn load() -> io::Result<Self> {
+    pub fn load() -> Result<Self, Error> {
         let path = get_file_path();
-        let content = fs::read_to_string(path)?;
-        let credentials = serde_json::from_str(&content)?;
-        Ok(credentials)
+        if !path.exists() {
+            return Err(Error::Unauthorized);
+        }
+
+        let content = fs::read_to_string(path.clone())?;
+        let credentials: Result<Credentials, _> = serde_json::from_str(&content);
+        match credentials {
+            Ok(creds) => Ok(creds),
+            Err(_) => Err(Error::LegacyCredentials),
+        }
     }
 
     pub fn write(&self) -> io::Result<()> {

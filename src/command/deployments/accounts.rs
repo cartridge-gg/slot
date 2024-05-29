@@ -67,7 +67,7 @@ impl AccountsArgs {
                     }
 
                     let total = match config.accounts {
-                        Some(accounts) => accounts as u16,
+                        Some(accounts) => accounts.len() as u16,
                         None => 10,
                     };
 
