@@ -1,7 +1,12 @@
 query Me {
     me {
         id
-        contractAddress
         name
+        contractAddress
+        credentials {
+            webauthn {
+                publicKey
+            }
+        }
     }
 }

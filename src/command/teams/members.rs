@@ -2,7 +2,7 @@ use anyhow::Result;
 use clap::Args;
 use graphql_client::{GraphQLQuery, Response};
 
-use crate::api::ApiClient;
+use crate::{api::Client, credential::Credentials};
 
 #[derive(GraphQLQuery)]
 #[graphql(
@@ -21,8 +21,10 @@ impl TeamListArgs {
         let request_body =
             TeamMembersList::build_query(self::team_members_list::Variables { team: team.clone() });
 
-        let client = ApiClient::new();
-        let res: Response<team_members_list::ResponseData> = client.post(&request_body).await?;
+        let user = Credentials::load()?;
+        let client = Client::new_with_token(user.access_token);
+
+        let res: Response<team_members_list::ResponseData> = client.query(&request_body).await?;
         if let Some(errors) = res.errors.clone() {
             for err in errors {
                 println!("Error: {}", err.message);
@@ -70,8 +72,10 @@ impl TeamAddArgs {
             accounts: self.account.clone(),
         });
 
-        let client = ApiClient::new();
-        let res: Response<team_member_add::ResponseData> = client.post(&request_body).await?;
+        let user = Credentials::load()?;
+        let client = Client::new_with_token(user.access_token);
+
+        let res: Response<team_member_add::ResponseData> = client.query(&request_body).await?;
         if let Some(errors) = res.errors {
             for err in errors {
                 println!("Error: {}", err.message);
@@ -106,8 +110,10 @@ impl TeamRemoveArgs {
             accounts: self.account.clone(),
         });
 
-        let client = ApiClient::new();
-        let res: Response<team_member_remove::ResponseData> = client.post(&request_body).await?;
+        let user = Credentials::load()?;
+        let client = Client::new_with_token(user.access_token);
+
+        let res: Response<team_member_remove::ResponseData> = client.query(&request_body).await?;
         if let Some(errors) = res.errors {
             for err in errors {
                 println!("Error: {}", err.message);

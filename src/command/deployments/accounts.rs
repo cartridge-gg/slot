@@ -10,7 +10,8 @@ use katana_primitives::genesis::Genesis;
 use katana_primitives::genesis::{allocation::GenesisAccountAlloc, json::GenesisJson};
 use std::str::FromStr;
 
-use crate::api::ApiClient;
+use crate::api::Client;
+use crate::credential::Credentials;
 
 use super::services::KatanaAccountCommands;
 
@@ -42,8 +43,10 @@ impl AccountsArgs {
             project: self.project.clone(),
         });
 
-        let client = ApiClient::new();
-        let res: Response<ResponseData> = client.post(&request_body).await?;
+        let user = Credentials::load()?;
+        let client = Client::new_with_token(user.access_token);
+
+        let res: Response<ResponseData> = client.query(&request_body).await?;
         if let Some(errors) = res.errors.clone() {
             for err in errors {
                 println!("Error: {}", err.message);

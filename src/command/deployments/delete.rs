@@ -5,8 +5,9 @@ use clap::Args;
 use graphql_client::{GraphQLQuery, Response};
 
 use crate::{
-    api::ApiClient,
+    api::Client,
     command::deployments::delete::delete_deployment::{DeploymentService, Variables},
+    credential::Credentials,
 };
 
 #[derive(GraphQLQuery)]
@@ -47,8 +48,10 @@ impl DeleteArgs {
             service,
         });
 
-        let client = ApiClient::new();
-        let res: Response<delete_deployment::ResponseData> = client.post(&request_body).await?;
+        let user = Credentials::load()?;
+        let client = Client::new_with_token(user.access_token);
+
+        let res: Response<delete_deployment::ResponseData> = client.query(&request_body).await?;
         if let Some(errors) = res.errors.clone() {
             for err in errors {
                 println!("Error: {}", err.message);

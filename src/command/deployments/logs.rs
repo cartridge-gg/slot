@@ -12,7 +12,10 @@ use clap::Args;
 use graphql_client::{GraphQLQuery, Response};
 use tokio::time::sleep;
 
-use crate::{api::ApiClient, command::deployments::logs::deployment_logs::DeploymentService};
+use crate::{
+    api::Client, command::deployments::logs::deployment_logs::DeploymentService,
+    credential::Credentials,
+};
 
 use self::deployment_logs::{DeploymentLogsDeploymentLogs, ResponseData, Variables};
 
@@ -66,15 +69,17 @@ impl LogsArgs {
 }
 
 pub struct LogReader {
-    client: ApiClient,
+    client: Client,
     service: Service,
     project: String,
 }
 
 impl LogReader {
     pub fn new(service: Service, project: String) -> Self {
+        let user = Credentials::load().unwrap();
+        let client = Client::new_with_token(user.access_token);
         LogReader {
-            client: ApiClient::new(),
+            client,
             service,
             project,
         }
@@ -98,7 +103,7 @@ impl LogReader {
             limit: Some(limit),
         });
 
-        let res: Response<ResponseData> = self.client.post(&request_body).await?;
+        let res: Response<ResponseData> = self.client.query(&request_body).await?;
         if let Some(errors) = res.errors {
             let error_message = errors
                 .into_iter()

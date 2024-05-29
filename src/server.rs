@@ -6,6 +6,7 @@ use axum::{
     routing::get,
     Router,
 };
+use graphql_client::GraphQLQuery;
 use log::error;
 use serde::Deserialize;
 use std::{
@@ -14,7 +15,15 @@ use std::{
 };
 use tokio::sync::mpsc::{Receiver, Sender};
 
-use crate::{constant, credential::Credentials};
+use crate::{
+    api::Client,
+    command::auth::info::{
+        me::{ResponseData, Variables},
+        Me,
+    },
+    constant,
+    credential::Credentials,
+};
 
 pub struct LocalServer {
     router: Router,
@@ -65,17 +74,26 @@ impl<'a> LocalServer {
         // 2. Get access token using the authorization code
         match payload.code {
             Some(code) => {
-                let client = reqwest::Client::new();
-                let response = client
-                    .post(format!("{}oauth2/token", constant::CARTRIDGE_API_URL))
-                    .form(&[("code", &code)])
-                    .send()
-                    .await?;
+                let mut api = Client::new();
 
-                let cred: Credentials = response.json().await?;
+                let token = api.oauth2(&code).await?;
+                api.set_token(token.clone());
+
+                // fetch the account information
+                let request_body = Me::build_query(Variables {});
+                let res: graphql_client::Response<ResponseData> = api.query(&request_body).await?;
+
+                // display the errors if any, but still process bcs we have the token
+                if let Some(errors) = res.errors {
+                    for err in errors {
+                        eprintln!("Error: {}", err.message);
+                    }
+                }
+
+                let account_info = res.data.map(|data| data.me.expect("should exist"));
 
                 // 3. Store the access token locally
-                cred.write()?;
+                Credentials::new(account_info, token).write()?;
 
                 println!("You are now logged in!\n");
 
