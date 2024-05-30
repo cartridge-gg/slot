@@ -37,7 +37,7 @@ shellexpand = "3.1.0"
 starknet.workspace = true
 tempfile = "3.10.1"
 thiserror = "1.0.32"
-tokio = { version = "1.18.2", features = [ "full", "sync" ] }
+tokio = { version = "1.37.0", features = [ "full", "sync" ] }
 tower-http = "0.4"
 tracing = "0.1.34"
 url = "2.2.2"
