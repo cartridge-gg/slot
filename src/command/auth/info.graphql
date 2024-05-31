@@ -5,6 +5,7 @@ query Me {
         contractAddress
         credentials {
             webauthn {
+            	id
                 publicKey
             }
         }
