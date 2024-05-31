@@ -1,14 +1,15 @@
 #![allow(clippy::enum_variant_names)]
 
 use anyhow::Result;
-use base64::prelude::*;
 use clap::Args;
 use graphql_client::{GraphQLQuery, Response};
 use katana_primitives::contract::ContractAddress;
-use katana_primitives::genesis::allocation::DevAllocationsGenerator;
+use katana_primitives::genesis::allocation::GenesisAccountAlloc;
+use katana_primitives::genesis::allocation::{
+    DevAllocationsGenerator, DevGenesisAccount, GenesisAccount,
+};
 use katana_primitives::genesis::Genesis;
-use katana_primitives::genesis::{allocation::GenesisAccountAlloc, json::GenesisJson};
-use std::str::FromStr;
+use starknet::core::types::FieldElement;
 
 use crate::api::Client;
 use crate::credential::Credentials;
@@ -56,28 +57,47 @@ impl AccountsArgs {
         if let Some(data) = res.data {
             if let Some(deployment) = data.deployment {
                 if let KatanaConfig(config) = deployment.config {
-                    // genesis overrides seed
-                    if let Some(genesis) = config.genesis {
-                        let decoded = BASE64_STANDARD.decode(genesis)?;
-                        let json = GenesisJson::from_str(&String::from_utf8(decoded)?)?;
-                        let genesis = Genesis::try_from(json)?;
-                        print_genesis_accounts(genesis.accounts().peekable(), None);
+                    match config.accounts {
+                        Some(accounts) => {
+                            let mut accounts_vec = Vec::new();
+                            for account in accounts {
+                                let address = ContractAddress::from(
+                                    FieldElement::from_hex_be(&account.address).unwrap(),
+                                );
+                                let public_key =
+                                    FieldElement::from_hex_be(&account.public_key).unwrap();
+                                let private_key =
+                                    FieldElement::from_hex_be(&account.private_key).unwrap();
+                                let genesis_account = GenesisAccount {
+                                    public_key,
+                                    ..GenesisAccount::default()
+                                };
 
-                        return Ok(());
-                    }
+                                accounts_vec.push((
+                                    address,
+                                    GenesisAccountAlloc::DevAccount(DevGenesisAccount {
+                                        private_key,
+                                        inner: genesis_account,
+                                    }),
+                                ));
+                            }
+                            print_genesis_accounts(accounts_vec.iter().map(|(a, b)| (a, b)), None);
+                        }
+                        None => {
+                            let accounts = DevAllocationsGenerator::new(10)
+                                .with_seed(parse_seed(&config.seed))
+                                .generate();
 
-                    let total = match config.accounts {
-                        Some(accounts) => accounts.len() as u16,
-                        None => 10,
+                            let mut genesis = Genesis::default();
+                            genesis.extend_allocations(
+                                accounts.into_iter().map(|(k, v)| (k, v.into())),
+                            );
+                            print_genesis_accounts(
+                                genesis.accounts().peekable(),
+                                Some(&config.seed),
+                            );
+                        }
                     };
-
-                    let accounts = DevAllocationsGenerator::new(total)
-                        .with_seed(parse_seed(&config.seed))
-                        .generate();
-
-                    let mut genesis = Genesis::default();
-                    genesis.extend_allocations(accounts.into_iter().map(|(k, v)| (k, v.into())));
-                    print_genesis_accounts(genesis.accounts().peekable(), Some(&config.seed));
                 }
             }
         }
