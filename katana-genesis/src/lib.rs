@@ -1,23 +1,16 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, str::FromStr};
 
-use alloy_primitives::{hex, U256};
+use alloy_primitives::U256;
+use anyhow::Result;
 use katana_primitives::{
     contract::ContractAddress,
-    genesis::{
-        json::{
-            ClassNameOrHash, GenesisAccountJson, GenesisClassJson, GenesisJson, PathOrFullArtifact,
-        },
-        Genesis,
-    },
+    genesis::json::{ClassNameOrHash, GenesisClassJson, GenesisContractJson, GenesisJson},
     FieldElement,
 };
 use lazy_static::lazy_static;
 use serde_json::Value;
 use sha2::{digest::Update, Digest, Sha256};
-use starknet::{
-    core::utils::get_storage_var_address,
-    macros::{felt, short_string},
-};
+use starknet::{core::utils::get_storage_var_address, macros::short_string};
 use starknet_crypto::poseidon_hash_many;
 
 const WEBAUTHN_RP_ID: &str = "cartridge.gg";
@@ -25,7 +18,7 @@ const WEBAUTHN_ORIGIN: &str = "https://x.cartridge.gg";
 
 lazy_static! {
     static ref CARTRIDGE_CONTROLLER_CLASS: Value = serde_json::from_str(include_str!(
-        "../build/cartridge_account_CartridgeAccount.contract_class.json"
+        "../artifacts/cartridge_account_CartridgeAccount.contract_class.json"
     ))
     .unwrap();
 }
@@ -38,6 +31,7 @@ pub struct WebAuthnSigner<'a, 'b> {
 }
 
 impl<'a, 'b> WebAuthnSigner<'a, 'b> {
+    /// With cartridge as origin and rp_id
     pub const fn new_cartidge(pubkey: U256) -> Self {
         Self {
             pubkey,
@@ -93,60 +87,74 @@ impl<'a, 'b> WebAuthnSigner<'a, 'b> {
     }
 }
 
-// build the genesis json file
-#[test]
-fn build() {
-    let controller = GenesisClassJson {
+fn add_controller_class(genesis: &mut GenesisJson) -> Result<()> {
+    let class = GenesisClassJson {
         class_hash: None,
         name: Some("controller".to_string()),
-        class: PathOrFullArtifact::Artifact(CARTRIDGE_CONTROLLER_CLASS.clone()),
+        class: CARTRIDGE_CONTROLLER_CLASS.clone().into(),
     };
 
+    genesis.classes.push(class);
+
+    Ok(())
+}
+
+// build the genesis json file
+pub fn add_controller_account(
+    genesis: &mut GenesisJson,
+    address: String,
+    pubkey: String,
+) -> Result<()> {
+    add_controller_class(genesis)?;
+
     // TODO: get public key from user
-    let pubkey = hex!("e03a1caadf5cdfe8d05b8cd283bfd8c8b7da904235bc79ae967e6a0215158067");
-    let signer = WebAuthnSigner::new_cartidge(U256::from_be_bytes(pubkey));
+    // let pubkey = hex!("e03a1caadf5cdfe8d05b8cd283bfd8c8b7da904235bc79ae967e6a0215158067");
+
+    let pubkey = U256::from_str(&pubkey)?;
+    let signer = WebAuthnSigner::new_cartidge(pubkey);
     let (r#type, guid) = signer.storage_value();
 
-    let account = {
+    let (address, contract) = {
         // TODO: get address from user
-        let address = ContractAddress::from(felt!("0x1"));
+        let address = FieldElement::from_str(&address)?;
 
         const NON_STARK_OWNER_VAR_NAME: &str = "_owner_non_stark";
         let storage = get_storage_var_address(NON_STARK_OWNER_VAR_NAME, &[r#type]).unwrap();
         let storages = HashMap::from([(storage, guid)]);
 
-        let account = GenesisAccountJson {
+        let account = GenesisContractJson {
             nonce: None,
             balance: None,
-            private_key: None,
             storage: Some(storages),
-            public_key: FieldElement::default(),
-            // should correspond to the controller class' name above
             class: Some(ClassNameOrHash::Name("controller".to_string())),
         };
 
-        (address, account)
+        (ContractAddress::from(address), account)
     };
 
-    let json = GenesisJson {
-        classes: vec![controller],
-        accounts: HashMap::from([account]),
-        ..Default::default()
-    };
+    genesis.contracts.insert(address, contract);
 
-    let _ = Genesis::try_from(json).unwrap();
+    Ok(())
 }
 
-#[test]
-fn test_generate_storage_values() {
-    let pubkey = hex!("e03a1caadf5cdfe8d05b8cd283bfd8c8b7da904235bc79ae967e6a0215158067");
-    let signer = WebAuthnSigner::new_cartidge(U256::from_be_bytes(pubkey));
+#[cfg(test)]
+mod test {
+    use crate::WebAuthnSigner;
+    use alloy_primitives::{hex, U256};
+    use starknet::macros::felt;
 
-    let (r#type, guid) = signer.storage_value();
+    #[test]
+    fn test_generate_storage_values() {
+        let pubkey = hex!("e03a1caadf5cdfe8d05b8cd283bfd8c8b7da904235bc79ae967e6a0215158067");
+        let signer = WebAuthnSigner::new_cartidge(U256::from_be_bytes(pubkey));
 
-    let expected_type = felt!("0x4");
-    let expected_guid = felt!("0x33b501c1720abbf891580658cc5308faddc3d85705267dce1f6d9922d0d6a3d");
+        let (r#type, guid) = signer.storage_value();
 
-    assert_eq!(expected_type, r#type);
-    assert_eq!(expected_guid, guid);
+        let expected_type = felt!("0x4");
+        let expected_guid =
+            felt!("0x33b501c1720abbf891580658cc5308faddc3d85705267dce1f6d9922d0d6a3d");
+
+        assert_eq!(expected_type, r#type);
+        assert_eq!(expected_guid, guid);
+    }
 }
