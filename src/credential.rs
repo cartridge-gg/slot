@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::io::{self};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use crate::command::auth::info::me::MeMe;
 
@@ -25,9 +25,9 @@ pub struct AccessToken {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct LegacyCredentials {
-    pub access_token: String,
-    pub token_type: String,
+struct LegacyCredentials {
+    access_token: String,
+    token_type: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -46,17 +46,7 @@ impl Credentials {
     }
 
     pub fn load() -> Result<Self, Error> {
-        let path = get_file_path();
-        if !path.exists() {
-            return Err(Error::Unauthorized);
-        }
-
-        let content = fs::read_to_string(path.clone())?;
-        let credentials: Result<Credentials, _> = serde_json::from_str(&content);
-        match credentials {
-            Ok(creds) => Ok(creds),
-            Err(_) => Err(Error::LegacyCredentials),
-        }
+        load_at_path(get_file_path())
     }
 
     pub fn write(&self) -> io::Result<()> {
@@ -70,9 +60,54 @@ impl Credentials {
     }
 }
 
+fn load_at_path<P: AsRef<Path>>(path: P) -> Result<Credentials, Error> {
+    let path = path.as_ref();
+
+    if !path.exists() {
+        return Err(Error::Unauthorized);
+    }
+
+    let content = fs::read_to_string(path)?;
+    let credentials = serde_json::from_str::<Credentials>(&content);
+
+    match credentials {
+        Ok(creds) => Ok(creds),
+        Err(_) => {
+            // check if the file is in the legacy format
+            let legacy = serde_json::from_str::<LegacyCredentials>(&content);
+            match legacy {
+                Ok(_) => Err(Error::LegacyCredentials),
+                Err(e) => Err(Error::IO(e.into())),
+            }
+        }
+    }
+}
+
 /// Get the path to the credentials file.
 fn get_file_path() -> PathBuf {
     let mut path = dirs::config_local_dir().unwrap();
     path.extend([SLOT_DIR, CREDENTIALS_FILE]);
     path
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{load_at_path, LegacyCredentials};
+    use std::fs;
+    use tempfile::tempdir;
+
+    #[test]
+    fn loading_legacy_credentials() {
+        let cred = LegacyCredentials {
+            access_token: "mytoken".to_string(),
+            token_type: "mytokentype".to_string(),
+        };
+
+        let dir = tempdir().unwrap();
+        let path = dir.path().join("cred.json");
+        fs::write(&path, serde_json::to_vec(&cred).unwrap()).unwrap();
+
+        let err = load_at_path(path).unwrap_err();
+        assert!(err.to_string().contains("Legacy credentials found"))
+    }
 }
