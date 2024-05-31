@@ -23,6 +23,10 @@ pub struct KatanaCreateArgs {
     #[arg(help = "Fork block number.")]
     pub fork_block_number: Option<u64>,
 
+    #[arg(long, short, value_name = "seed")]
+    #[arg(help = "Seed.")]
+    pub seed: Option<String>,
+
     #[arg(long, short, value_name = "accounts")]
     #[arg(help = "Accounts.")]
     pub accounts: Option<i64>,
