@@ -3578,6 +3578,7 @@ dependencies = [
  "serde",
  "serde_json",
  "shellexpand",
+ "slot-katana-genesis",
  "starknet",
  "tempfile",
  "thiserror",
