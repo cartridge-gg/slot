@@ -69,14 +69,18 @@ impl KatanaCreateArgs {
     pub async fn execute_local(&self) -> Result<()> {
         // 1. get the user controller address
 
-        let account = Credentials::load()?;
+        let account = Credentials::load()?.account.context("account missing")?;
 
         // TODO: the account type should already be using the proper types
-        let controller_address = account.account.unwrap().contract_address.unwrap();
-        dbg!(&controller_address);
-        let controller_address = FieldElement::from_str(&controller_address)?;
-
-        dbg!(&controller_address);
+        let controller_address = account.contract_address.unwrap();
+        let pubkey = account
+            .credentials
+            .webauthn
+            .unwrap()
+            .first()
+            .unwrap()
+            .public_key
+            .clone();
 
         // 2. inject the controller class into the genesis
 
@@ -97,9 +101,6 @@ impl KatanaCreateArgs {
                     "ETH": 1000,
                     "STRK": 1000
                 },
-                "accounts": {
-                },
-                "classes": [],
                 "feeToken": {
                     "name": "Ether",
                     "symbol": "ETH",
@@ -111,6 +112,8 @@ impl KatanaCreateArgs {
 
             serde_json::from_value::<GenesisJson>(default_genesis)?
         };
+
+        slot_katana_genesis::add_controller_account(&mut genesis, controller_address, pubkey)?;
 
         let dir = tempdir()?;
         let path = dir.path().join("genesis.json");

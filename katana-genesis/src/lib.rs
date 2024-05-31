@@ -64,6 +64,8 @@ pub fn add_controller_account(
     let r#type = FieldElement::from(4u8);
     let guid = signer.guid();
 
+    println!("ohayo");
+
     let (address, contract) = {
         let address = FieldElement::from_str(&address)?;
 
