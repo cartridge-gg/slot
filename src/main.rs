@@ -6,6 +6,8 @@ mod constant;
 mod credential;
 mod server;
 
+mod utils;
+
 use clap::Parser;
 use cli::Cli;
 use log::error;

@@ -1,8 +1,16 @@
-use std::path::PathBuf;
+use std::{io::Write, path::PathBuf, process::Command, str::FromStr};
 
+use anyhow::{Context, Result};
 use clap::Args;
-use katana_primitives::genesis;
-use katana_primitives::genesis::json::GenesisJson;
+use katana_primitives::genesis::{self, json::GenesisJson};
+use serde_json::json;
+use starknet::core::types::FieldElement;
+use tempfile::{tempdir, tempfile};
+
+use crate::{
+    command::auth::{info::InfoArgs, Auth},
+    credential::Credentials,
+};
 
 #[derive(Debug, Args, serde::Serialize)]
 #[command(next_help_heading = "Katana create options")]
@@ -51,6 +59,76 @@ pub struct KatanaCreateArgs {
     #[arg(help = "Path to a Katana genesis file.")]
     #[arg(value_parser = genesis_value_parser)]
     pub genesis: Option<String>,
+
+    #[arg(long, value_name = "local")]
+    #[arg(help = "Instantiate the service locally.")]
+    pub local: bool,
+}
+
+impl KatanaCreateArgs {
+    pub async fn execute_local(&self) -> Result<()> {
+        // 1. get the user controller address
+
+        let account = Credentials::load()?;
+
+        // TODO: the account type should already be using the proper types
+        let controller_address = account.account.unwrap().contract_address.unwrap();
+        dbg!(&controller_address);
+        let controller_address = FieldElement::from_str(&controller_address)?;
+
+        dbg!(&controller_address);
+
+        // 2. inject the controller class into the genesis
+
+        // 2.1. if user pass a genesis file, inject the controller class into the file
+        // genesis.add_controller_account(controller_address);
+        // 2.2. if user doesn't pass a genesis file, build a default genesis with the controller class in it
+
+        let mut genesis = if let Some(ref json) = self.genesis {
+            serde_json::from_str::<GenesisJson>(&json)?
+        } else {
+            let default_genesis = json!({
+                "parentHash": "0x0",
+                "stateRoot": "0x0",
+                "timestamp": 0,
+                "number": 0,
+                "sequencerAddress": "0x6bd82a20984e638c8e1d45770e2924e274e315b9609eb15c26384eac0094cf1",
+                "gasPrices": {
+                    "ETH": 1000,
+                    "STRK": 1000
+                },
+                "accounts": {
+                },
+                "classes": [],
+                "feeToken": {
+                    "name": "Ether",
+                    "symbol": "ETH",
+                    "address": "0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+                    "decimals": 18
+                },
+                "universalDeployer": {}
+            });
+
+            serde_json::from_value::<GenesisJson>(default_genesis)?
+        };
+
+        let dir = tempdir()?;
+        let path = dir.path().join("genesis.json");
+
+        std::fs::write(&path, serde_json::to_string(&genesis)?)
+            .context("failed to write genesis file to temporary file")?;
+
+        // 3. instantiate the local katana with the custom genesis
+        let mut process = Command::new("katana")
+            .args(["--genesis", path.to_str().unwrap()])
+            .spawn()?;
+
+        process.wait()?;
+
+        println!("katana is killed");
+
+        Ok(())
+    }
 }
 
 #[derive(Debug, Args, serde::Serialize)]
@@ -104,7 +182,7 @@ pub struct KatanaForkArgs {
 #[command(next_help_heading = "Katana account options")]
 pub struct KatanaAccountArgs {}
 
-fn genesis_value_parser(path: &str) -> Result<String, anyhow::Error> {
+fn genesis_value_parser(path: &str) -> anyhow::Result<String> {
     let path = PathBuf::from(shellexpand::full(path)?.into_owned());
     let genesis = GenesisJson::load(path)?;
     let encoded = genesis::json::to_base64(genesis)?;
