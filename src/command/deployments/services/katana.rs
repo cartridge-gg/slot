@@ -68,19 +68,15 @@ pub struct KatanaCreateArgs {
 impl KatanaCreateArgs {
     pub async fn execute_local(&self) -> Result<()> {
         // 1. get the user controller address
-
         let account = Credentials::load()?.account.context("account missing")?;
 
-        // TODO: the account type should already be using the proper types
+        // TODO: the account type should already be using the proper types. This is to far down the line to be unwrapping
+
+        let webauth_credential = account.credentials.webauthn.unwrap()[0].clone();
+
         let controller_address = account.contract_address.unwrap();
-        let pubkey = account
-            .credentials
-            .webauthn
-            .unwrap()
-            .first()
-            .unwrap()
-            .public_key
-            .clone();
+        let credential_id = webauth_credential.id.clone();
+        let pub_key = webauth_credential.public_key.clone();
 
         // 2. inject the controller class into the genesis
 
@@ -113,13 +109,22 @@ impl KatanaCreateArgs {
             serde_json::from_value::<GenesisJson>(default_genesis)?
         };
 
-        slot_katana_genesis::add_controller_account(&mut genesis, controller_address, pubkey)?;
+        slot_katana_genesis::add_controller_account(
+            &mut genesis,
+            &controller_address,
+            &credential_id,
+            &pub_key,
+        )?;
+
+        println!("hmm");
 
         let dir = tempdir()?;
         let path = dir.path().join("genesis.json");
 
         std::fs::write(&path, serde_json::to_string(&genesis)?)
             .context("failed to write genesis file to temporary file")?;
+
+        println!("assses");
 
         // 3. instantiate the local katana with the custom genesis
         let mut process = Command::new("katana")

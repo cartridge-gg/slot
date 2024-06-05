@@ -36,90 +36,76 @@ pub struct CreateArgs {
     #[arg(help = "Deployment tier.")]
     pub tier: Tier,
 
-    #[arg(long)]
-    #[arg(global = true)]
-    #[arg(help = "Instantiate the service locally.")]
-    pub local: bool,
-
     #[command(subcommand)]
     create_commands: CreateServiceCommands,
 }
 
 impl CreateArgs {
     pub async fn run(&self) -> Result<()> {
-        if self.local {
-            self.run_local().await?;
-        } else {
-            let service = self.create_commands.service_input();
-
-            let tier = match &self.tier {
-                Tier::Basic => DeploymentTier::basic,
-            };
-
-            let request_body = CreateDeployment::build_query(Variables {
-                project: self.project.clone(),
-                tier,
-                service,
-                wait: Some(true),
-            });
-
-            let user = Credentials::load()?;
-            let client = Client::new_with_token(user.access_token);
-
-            let res: Response<create_deployment::ResponseData> =
-                client.query(&request_body).await?;
-            if let Some(errors) = res.errors.clone() {
-                for err in errors {
-                    println!("Error: {}", err.message);
-                }
-
-                return Ok(());
-            }
-
-            if let Some(data) = res.data {
-                println!("Deployment success 🚀");
-                match data.create_deployment {
-                    ToriiConfig(config) => {
-                        println!("\nConfiguration:");
-                        println!("  World: {}", config.world);
-                        println!("  RPC: {}", config.rpc);
-                        println!("  Start Block: {}", config.start_block);
-                        println!("  Index Pending: {}", config.index_pending.unwrap_or(false));
-                        println!("\nEndpoints:");
-                        println!("  GRAPHQL: {}", config.graphql);
-                        println!("  GRPC: {}", config.grpc);
-                    }
-                    KatanaConfig(config) => {
-                        println!("\nEndpoints:");
-                        println!("  RPC: {}", config.rpc);
-                    }
-                    MadaraConfig(config) => {
-                        println!("\nEndpoints:");
-                        println!("  RPC: {}", config.rpc);
-                    }
-                }
-            }
-
-            let service = match &self.create_commands {
-                CreateServiceCommands::Katana(_) => "katana",
-                CreateServiceCommands::Torii(_) => "torii",
-                CreateServiceCommands::Madara(_) => "madara",
-            };
-
-            println!(
-                "\nStream logs with `slot deployments logs {} {service} -f`",
-                self.project
-            );
+        if self.create_commands.local() {
+            self.create_commands.run_local().await?;
         }
+
+        let service = self.create_commands.service_input();
+
+        let tier = match &self.tier {
+            Tier::Basic => DeploymentTier::basic,
+        };
+
+        let request_body = CreateDeployment::build_query(Variables {
+            project: self.project.clone(),
+            tier,
+            service,
+            wait: Some(true),
+        });
+
+        let user = Credentials::load()?;
+        let client = Client::new_with_token(user.access_token);
+
+        let res: Response<create_deployment::ResponseData> = client.query(&request_body).await?;
+        if let Some(errors) = res.errors.clone() {
+            for err in errors {
+                println!("Error: {}", err.message);
+            }
+
+            return Ok(());
+        }
+
+        if let Some(data) = res.data {
+            println!("Deployment success 🚀");
+            match data.create_deployment {
+                ToriiConfig(config) => {
+                    println!("\nConfiguration:");
+                    println!("  World: {}", config.world);
+                    println!("  RPC: {}", config.rpc);
+                    println!("  Start Block: {}", config.start_block);
+                    println!("  Index Pending: {}", config.index_pending.unwrap_or(false));
+                    println!("\nEndpoints:");
+                    println!("  GRAPHQL: {}", config.graphql);
+                    println!("  GRPC: {}", config.grpc);
+                }
+                KatanaConfig(config) => {
+                    println!("\nEndpoints:");
+                    println!("  RPC: {}", config.rpc);
+                }
+                MadaraConfig(config) => {
+                    println!("\nEndpoints:");
+                    println!("  RPC: {}", config.rpc);
+                }
+            }
+        }
+
+        let service = match &self.create_commands {
+            CreateServiceCommands::Katana(_) => "katana",
+            CreateServiceCommands::Torii(_) => "torii",
+            CreateServiceCommands::Madara(_) => "madara",
+        };
+
+        println!(
+            "\nStream logs with `slot deployments logs {} {service} -f`",
+            self.project
+        );
 
         Ok(())
-    }
-
-    /// Run the against the local environment.
-    async fn run_local(&self) -> anyhow::Result<()> {
-        match &self.create_commands {
-            CreateServiceCommands::Katana(args) => args.execute_local().await,
-            _ => bail!("Only Katana is supported for local deployments at the moment"),
-        }
     }
 }

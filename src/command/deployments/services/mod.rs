@@ -1,3 +1,4 @@
+use anyhow::{bail, Result};
 use clap::{Subcommand, ValueEnum};
 
 use self::{
@@ -27,6 +28,21 @@ pub enum CreateServiceCommands {
 }
 
 impl CreateServiceCommands {
+    /// Run the against the local environment.
+    pub(crate) async fn run_local(&self) -> Result<()> {
+        match self {
+            CreateServiceCommands::Katana(args) => args.execute_local().await,
+            _ => bail!("Only Katana is supported for local deployments at the moment"),
+        }
+    }
+
+    pub(crate) fn local(&self) -> bool {
+        match &self {
+            CreateServiceCommands::Katana(config) => config.local,
+            _ => false,
+        }
+    }
+
     pub(crate) fn service_input(&self) -> CreateServiceInput {
         match &self {
             CreateServiceCommands::Katana(config) => CreateServiceInput {
@@ -36,7 +52,6 @@ impl CreateServiceCommands {
                     torii: None,
                     madara: None,
                     katana: Some(CreateKatanaConfigInput {
-                        seed: None,
                         accounts: config.accounts,
                         gas_price: config.gas_price,
                         block_time: config.block_time,
@@ -46,6 +61,10 @@ impl CreateServiceCommands {
                         invoke_max_steps: config.invoke_max_steps,
                         fork_block_number: config.fork_block_number,
                         validate_max_steps: config.validate_max_steps,
+                        seed: Some(match &config.seed {
+                            Some(seed) => seed.clone(),
+                            None => rand::random::<u64>().to_string(),
+                        }),
                     }),
                 }),
             },
