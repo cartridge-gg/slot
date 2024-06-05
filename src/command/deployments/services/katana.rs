@@ -79,9 +79,7 @@ impl KatanaCreateArgs {
         let pub_key = webauth_credential.public_key.clone();
 
         // 2. inject the controller class into the genesis
-
         // 2.1. if user pass a genesis file, inject the controller class into the file
-        // genesis.add_controller_account(controller_address);
         // 2.2. if user doesn't pass a genesis file, build a default genesis with the controller class in it
 
         let mut genesis = if let Some(ref json) = self.genesis {
