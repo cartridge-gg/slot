@@ -53,7 +53,7 @@ impl CreateArgs {
                             Some(seed) => seed.clone(),
                             None => rand::random::<u64>().to_string(),
                         }),
-                        accounts: config.accounts,
+                        accounts: Some(config.accounts),
                         disable_fee: config.disable_fee,
                         gas_price: config.gas_price,
                         invoke_max_steps: config.invoke_max_steps,
