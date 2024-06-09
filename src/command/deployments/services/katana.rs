@@ -27,9 +27,9 @@ pub struct KatanaCreateArgs {
     #[arg(help = "Seed.")]
     pub seed: Option<String>,
 
-    #[arg(long, short, value_name = "accounts")]
+    #[arg(long, short, value_name = "accounts", default_value = "10")]
     #[arg(help = "Accounts.")]
-    pub accounts: Option<i64>,
+    pub accounts: i64,
 
     #[arg(long, value_name = "invoke_max_steps")]
     #[arg(help = "Invoke Max Steps.")]
