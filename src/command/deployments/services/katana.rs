@@ -114,15 +114,11 @@ impl KatanaCreateArgs {
             &pub_key,
         )?;
 
-        println!("hmm");
-
         let dir = tempdir()?;
         let path = dir.path().join("genesis.json");
 
         std::fs::write(&path, serde_json::to_string(&genesis)?)
             .context("failed to write genesis file to temporary file")?;
-
-        println!("assses");
 
         // 3. instantiate the local katana with the custom genesis
         let mut process = Command::new("katana")
