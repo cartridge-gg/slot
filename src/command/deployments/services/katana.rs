@@ -123,6 +123,7 @@ impl KatanaCreateArgs {
         // 3. instantiate the local katana with the custom genesis
         let mut process = Command::new("katana")
             .args(["--genesis", path.to_str().unwrap()])
+            .args(["--allowed-origins", "*"])
             .spawn()?;
 
         process.wait()?;
