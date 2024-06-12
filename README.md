@@ -52,7 +52,7 @@ slot deployments describe <Project Name> <katana | madara | torii>
 
 View predeployed accounts
 ```sh
-slot deployments account <Project Name> katana
+slot deployments accounts <Project Name> katana
 ```
 
 Manage collaborators with teams
