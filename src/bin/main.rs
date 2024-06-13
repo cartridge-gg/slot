@@ -1,14 +1,16 @@
-mod api;
-mod browser;
-mod cli;
 mod command;
-mod constant;
-mod credential;
-mod server;
 
+use crate::command::Command;
 use clap::Parser;
-use cli::Cli;
 use log::error;
+
+/// Slot CLI for Cartridge
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+pub struct Cli {
+    #[command(subcommand)]
+    pub command: Command,
+}
 
 #[tokio::main]
 async fn main() {

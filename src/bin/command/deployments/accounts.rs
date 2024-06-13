@@ -2,31 +2,21 @@
 
 use anyhow::Result;
 use clap::Args;
-use graphql_client::{GraphQLQuery, Response};
 use katana_primitives::contract::ContractAddress;
 use katana_primitives::genesis::allocation::GenesisAccountAlloc;
 use katana_primitives::genesis::allocation::{
     DevAllocationsGenerator, DevGenesisAccount, GenesisAccount,
 };
 use katana_primitives::genesis::Genesis;
+use slot::graphql::deployments::katana_accounts::KatanaAccountsDeploymentConfig::KatanaConfig;
+use slot::graphql::deployments::{katana_accounts::*, KatanaAccounts};
+use slot::graphql::{GraphQLQuery, Response};
 use starknet::core::types::FieldElement;
 
-use crate::api::Client;
-use crate::credential::Credentials;
+use slot::api::Client;
+use slot::credential::Credentials;
 
 use super::services::KatanaAccountCommands;
-
-use self::katana_accounts::{
-    KatanaAccountsDeploymentConfig::KatanaConfig, ResponseData, Variables,
-};
-
-#[derive(GraphQLQuery)]
-#[graphql(
-    schema_path = "schema.json",
-    query_path = "src/command/deployments/accounts.graphql",
-    response_derives = "Debug"
-)]
-pub struct KatanaAccounts;
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Accounts options")]

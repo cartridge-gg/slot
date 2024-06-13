@@ -35,4 +35,4 @@ tempfile = "3.10.1"
 
 [[bin]]
 name = "slot"
-path = "src/main.rs"
+path = "src/bin/main.rs"

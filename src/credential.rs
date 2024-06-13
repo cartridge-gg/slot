@@ -3,7 +3,7 @@ use std::fs;
 use std::io::{self};
 use std::path::{Path, PathBuf};
 
-use crate::command::auth::info::me::MeMe;
+use crate::graphql::auth::me::MeMe;
 
 const SLOT_DIR: &str = "slot";
 const CREDENTIALS_FILE: &str = "credentials.json";

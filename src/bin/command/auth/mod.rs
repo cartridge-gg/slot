@@ -3,7 +3,7 @@ use clap::Subcommand;
 
 use self::{info::InfoArgs, login::LoginArgs};
 
-pub mod info;
+mod info;
 mod login;
 
 #[derive(Subcommand, Debug)]

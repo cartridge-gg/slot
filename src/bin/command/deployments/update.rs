@@ -2,30 +2,18 @@
 
 use anyhow::Result;
 use clap::Args;
-use graphql_client::{GraphQLQuery, Response};
-
-use self::update_deployment::UpdateServiceInput;
-use crate::{
-    api::Client,
-    command::deployments::update::update_deployment::{
-        DeploymentService, DeploymentTier,
-        UpdateDeploymentUpdateDeployment::{KatanaConfig, MadaraConfig, ToriiConfig},
-        UpdateKatanaConfigInput, UpdateServiceConfigInput, Variables,
-    },
-    credential::Credentials,
+use slot::api::Client;
+use slot::credential::Credentials;
+use slot::graphql::deployments::update_deployment::UpdateDeploymentUpdateDeployment::{
+    KatanaConfig, MadaraConfig, ToriiConfig,
 };
+use slot::graphql::deployments::update_deployment::{
+    self, UpdateKatanaConfigInput, UpdateServiceConfigInput, UpdateServiceInput,
+};
+use slot::graphql::deployments::{update_deployment::*, UpdateDeployment};
+use slot::graphql::{GraphQLQuery, Response};
 
 use super::services::UpdateServiceCommands;
-
-type Long = u64;
-
-#[derive(GraphQLQuery)]
-#[graphql(
-    schema_path = "schema.json",
-    query_path = "src/command/deployments/update.graphql",
-    response_derives = "Debug"
-)]
-pub struct UpdateDeployment;
 
 #[derive(clap::ValueEnum, Clone, Debug, serde::Serialize)]
 pub enum Tier {

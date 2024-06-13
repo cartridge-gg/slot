@@ -2,27 +2,14 @@
 
 use anyhow::Result;
 use clap::Args;
-use graphql_client::{GraphQLQuery, Response};
+use slot::graphql::deployments::fork_deployment::ForkDeploymentForkDeployment::KatanaConfig;
+use slot::graphql::deployments::{fork_deployment::*, ForkDeployment};
+use slot::graphql::{GraphQLQuery, Response};
+use slot::{api::Client, credential::Credentials};
 use starknet::providers::{jsonrpc::HttpTransport, JsonRpcClient, Provider};
 use url::Url;
 
-use crate::{
-    api::Client,
-    command::deployments::fork::fork_deployment::{
-        DeploymentTier, ForkDeploymentForkDeployment::KatanaConfig, Variables,
-    },
-    credential::Credentials,
-};
-
-use super::{services::ForkServiceCommands, Long, Tier};
-
-#[derive(GraphQLQuery)]
-#[graphql(
-    schema_path = "schema.json",
-    query_path = "src/command/deployments/fork.graphql",
-    response_derives = "Debug"
-)]
-pub struct ForkDeployment;
+use super::{services::ForkServiceCommands, Tier};
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Fork options")]
@@ -57,7 +44,7 @@ impl ForkArgs {
         let user = Credentials::load()?;
         let client = Client::new_with_token(user.access_token);
 
-        let res: Response<fork_deployment::ResponseData> = client.query(&request_body).await?;
+        let res: Response<ResponseData> = client.query(&request_body).await?;
         if let Some(errors) = res.errors.clone() {
             for err in errors {
                 println!("Error: {}", err.message);

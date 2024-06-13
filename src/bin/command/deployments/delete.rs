@@ -1,22 +1,8 @@
-#![allow(clippy::enum_variant_names)]
-
 use anyhow::Result;
 use clap::Args;
-use graphql_client::{GraphQLQuery, Response};
-
-use crate::{
-    api::Client,
-    command::deployments::delete::delete_deployment::{DeploymentService, Variables},
-    credential::Credentials,
-};
-
-#[derive(GraphQLQuery)]
-#[graphql(
-    schema_path = "schema.json",
-    query_path = "src/command/deployments/delete.graphql",
-    response_derives = "Debug"
-)]
-pub struct DeleteDeployment;
+use slot::graphql::deployments::{delete_deployment::*, DeleteDeployment};
+use slot::graphql::{GraphQLQuery, Response};
+use slot::{api::Client, credential::Credentials};
 
 #[derive(clap::ValueEnum, Clone, Debug, serde::Serialize)]
 pub enum Service {
@@ -51,7 +37,7 @@ impl DeleteArgs {
         let user = Credentials::load()?;
         let client = Client::new_with_token(user.access_token);
 
-        let res: Response<delete_deployment::ResponseData> = client.query(&request_body).await?;
+        let res: Response<ResponseData> = client.query(&request_body).await?;
         if let Some(errors) = res.errors.clone() {
             for err in errors {
                 println!("Error: {}", err.message);

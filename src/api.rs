@@ -96,3 +96,9 @@ impl Client {
         url
     }
 }
+
+impl Default for Client {
+    fn default() -> Self {
+        Self::new()
+    }
+}

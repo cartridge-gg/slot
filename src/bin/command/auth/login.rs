@@ -1,10 +1,10 @@
-use crate::{browser::Browser, server::LocalServer};
 use anyhow::Result;
 use clap::Args;
+use slot::{browser::Browser, server::LocalServer};
 use tokio::runtime::Runtime;
 
 #[derive(Debug, Args)]
-pub struct LoginArgs {}
+pub struct LoginArgs;
 
 impl LoginArgs {
     pub fn run(&self) -> Result<()> {
