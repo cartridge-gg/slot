@@ -9,6 +9,7 @@ use account_sdk::{
         SignerTrait,
     },
 };
+use alloy_primitives::U256;
 use anyhow::Result;
 use katana_primitives::{
     contract::ContractAddress,
@@ -24,7 +25,7 @@ const WEBAUTHN_ORIGIN: &str = "https://x.cartridge.gg";
 
 lazy_static! {
     static ref CARTRIDGE_CONTROLLER_CLASS: Value = serde_json::from_str(include_str!(
-        "../artifacts/cartridge_account_CartridgeAccount.contract_class.json"
+        "../artifacts/cartridge_account.contract_class.json"
     ))
     .unwrap();
 }
@@ -73,8 +74,8 @@ pub fn add_controller_account(
 
         let account = GenesisContractJson {
             nonce: None,
-            balance: None,
             storage: Some(storages),
+            balance: Some(U256::from_str("0x1412313913198273").unwrap()),
             class: Some(ClassNameOrHash::Name("controller".to_string())),
         };
 
