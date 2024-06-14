@@ -12,13 +12,18 @@ const CREDENTIALS_FILE: &str = "credentials.json";
 pub enum Error {
     #[error(transparent)]
     IO(#[from] io::Error),
+
     #[error("No credentials found, please authenticate with `slot auth login`")]
     Unauthorized,
+
     #[error("Legacy credentials found, please reauthenticate with `slot auth login`")]
     LegacyCredentials,
+
+    #[error(transparent)]
+    Serde(#[from] serde_json::Error),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct AccessToken {
     pub token: String,
     pub r#type: String,
@@ -30,7 +35,7 @@ struct LegacyCredentials {
     token_type: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Credentials {
     #[serde(flatten)]
     pub account: Option<MeMe>,
@@ -46,45 +51,48 @@ impl Credentials {
     }
 
     pub fn load() -> Result<Self, Error> {
-        load_at_path(get_file_path())
+        Self::load_at(get_default_file_path())
     }
 
-    pub fn write(&self) -> io::Result<()> {
-        // create the dir paths if it doesn't yet exist
-        let path = get_file_path();
-        fs::create_dir_all(path.parent().expect("qed; parent exist"))?;
+    pub fn store(&self) -> Result<(), Error> {
+        Self::store_at(self, get_default_file_path())
+    }
 
-        let content = serde_json::to_string_pretty(&self)?;
+    pub(crate) fn store_at<P: AsRef<Path>>(credentials: &Self, path: P) -> Result<(), Error> {
+        let path = path.as_ref();
+        // create the dir paths if it doesn't yet exist
+        fs::create_dir_all(path.parent().expect("qed; parent exist"))?;
+        let content = serde_json::to_string_pretty(credentials)?;
         fs::write(path, content)?;
         Ok(())
     }
-}
 
-fn load_at_path<P: AsRef<Path>>(path: P) -> Result<Credentials, Error> {
-    let path = path.as_ref();
+    pub(crate) fn load_at<P: AsRef<Path>>(path: P) -> Result<Credentials, Error> {
+        let path = path.as_ref();
 
-    if !path.exists() {
-        return Err(Error::Unauthorized);
-    }
+        if !path.exists() {
+            return Err(Error::Unauthorized);
+        }
 
-    let content = fs::read_to_string(path)?;
-    let credentials = serde_json::from_str::<Credentials>(&content);
+        let content = fs::read_to_string(path)?;
+        let credentials = serde_json::from_str::<Credentials>(&content);
 
-    match credentials {
-        Ok(creds) => Ok(creds),
-        Err(_) => {
-            // check if the file is in the legacy format
-            let legacy = serde_json::from_str::<LegacyCredentials>(&content);
-            match legacy {
-                Ok(_) => Err(Error::LegacyCredentials),
-                Err(e) => Err(Error::IO(e.into())),
+        match credentials {
+            Ok(creds) => Ok(creds),
+            Err(_) => {
+                // check if the file is in the legacy format
+                let legacy = serde_json::from_str::<LegacyCredentials>(&content);
+                match legacy {
+                    Ok(_) => Err(Error::LegacyCredentials),
+                    Err(e) => Err(Error::IO(e.into())),
+                }
             }
         }
     }
 }
 
 /// Get the path to the credentials file.
-fn get_file_path() -> PathBuf {
+fn get_default_file_path() -> PathBuf {
     let mut path = dirs::config_local_dir().unwrap();
     path.extend([SLOT_DIR, CREDENTIALS_FILE]);
     path
@@ -92,7 +100,8 @@ fn get_file_path() -> PathBuf {
 
 #[cfg(test)]
 mod tests {
-    use super::{load_at_path, LegacyCredentials};
+    use super::LegacyCredentials;
+    use crate::credential::{AccessToken, Credentials};
     use std::fs;
     use tempfile::tempdir;
 
@@ -107,7 +116,33 @@ mod tests {
         let path = dir.path().join("cred.json");
         fs::write(&path, serde_json::to_vec(&cred).unwrap()).unwrap();
 
-        let err = load_at_path(path).unwrap_err();
+        let err = Credentials::load_at(path).unwrap_err();
         assert!(err.to_string().contains("Legacy credentials found"))
+    }
+
+    #[test]
+    fn loading_non_existent_credentials() {
+        let dir = tempdir().unwrap();
+        let path = dir.path().join("cred.json");
+
+        let err = Credentials::load_at(path).unwrap_err();
+        assert!(err.to_string().contains("No credentials found"))
+    }
+
+    #[test]
+    fn credentials_rt() {
+        let access_token = AccessToken {
+            token: "mytoken".to_string(),
+            r#type: "Bearer".to_string(),
+        };
+
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("cred.json");
+
+        let expected = Credentials::new(None, access_token);
+        Credentials::store_at(&expected, &path).unwrap();
+        let actual = Credentials::load_at(&path).unwrap();
+
+        assert_eq!(expected, actual);
     }
 }

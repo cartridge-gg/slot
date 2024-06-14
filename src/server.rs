@@ -93,7 +93,7 @@ impl<'a> LocalServer {
                 let account_info = res.data.map(|data| data.me.expect("should exist"));
 
                 // 3. Store the access token locally
-                Credentials::new(account_info, token).write()?;
+                Credentials::new(account_info, token).store()?;
 
                 println!("You are now logged in!\n");
 
