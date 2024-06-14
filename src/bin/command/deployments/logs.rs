@@ -7,29 +7,15 @@ use std::{
     time::Duration,
 };
 
+// use tokio::selectV
 use anyhow::Result;
 use clap::Args;
-use graphql_client::{GraphQLQuery, Response};
-use tokio::time::sleep;
-
-use crate::{
-    api::Client, command::deployments::logs::deployment_logs::DeploymentService,
-    credential::Credentials,
-};
-
-use self::deployment_logs::{DeploymentLogsDeploymentLogs, ResponseData, Variables};
+use slot::credential::Credentials;
+use slot::graphql::deployments::deployment_logs::DeploymentService;
+use slot::graphql::{deployments::deployment_logs::*, GraphQLQuery, Response};
+use slot::{api::Client, graphql::deployments::DeploymentLogs};
 
 use super::services::Service;
-
-#[derive(GraphQLQuery)]
-#[graphql(
-    schema_path = "schema.json",
-    query_path = "src/command/deployments/logs.graphql",
-    response_derives = "Debug"
-)]
-pub struct DeploymentLogs;
-
-type Time = String;
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Deployment logs options")]
@@ -135,7 +121,7 @@ impl LogReader {
 
         let mut since = logs.until;
         while running.load(Ordering::SeqCst) {
-            sleep(Duration::from_millis(1000)).await;
+            tokio::time::sleep(Duration::from_millis(1000)).await;
             logs = self.query(Some(since.clone()), 25).await?;
 
             if !printed_logs.contains(&logs.content) {

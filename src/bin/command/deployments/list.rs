@@ -2,19 +2,11 @@
 
 use anyhow::Result;
 use clap::Args;
-use graphql_client::{GraphQLQuery, Response};
 
-use crate::{api::Client, credential::Credentials};
-
-use self::list_deployments::{ResponseData, Variables};
-
-#[derive(GraphQLQuery)]
-#[graphql(
-    schema_path = "schema.json",
-    query_path = "src/command/deployments/list.graphql",
-    response_derives = "Debug"
-)]
-pub struct ListDeployments;
+use slot::graphql::deployments::list_deployments::{ResponseData, Variables};
+use slot::graphql::deployments::ListDeployments;
+use slot::graphql::{GraphQLQuery, Response};
+use slot::{api::Client, credential::Credentials};
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "List options")]

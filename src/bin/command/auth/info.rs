@@ -1,20 +1,11 @@
 use anyhow::Result;
 use clap::Args;
-use graphql_client::{GraphQLQuery, Response};
-use me::{ResponseData, Variables};
-
-use crate::{api::Client, credential::Credentials};
-
-#[derive(GraphQLQuery)]
-#[graphql(
-    schema_path = "schema.json",
-    query_path = "src/command/auth/info.graphql",
-    response_derives = "Debug, Clone, Serialize"
-)]
-pub struct Me;
+use slot::graphql::auth::{me::*, Me};
+use slot::graphql::{GraphQLQuery, Response};
+use slot::{api::Client, credential::Credentials};
 
 #[derive(Debug, Args)]
-pub struct InfoArgs {}
+pub struct InfoArgs;
 
 impl InfoArgs {
     // TODO: find the account info from `credentials.json` first before making a request

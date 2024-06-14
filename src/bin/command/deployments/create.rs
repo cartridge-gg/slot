@@ -2,27 +2,16 @@
 
 use anyhow::Result;
 use clap::Args;
-use graphql_client::{GraphQLQuery, Response};
-
-use crate::{
-    api::Client,
-    command::deployments::create::create_deployment::{
-        CreateDeploymentCreateDeployment::{KatanaConfig, MadaraConfig, ToriiConfig},
-        CreateKatanaConfigInput, CreateMadaraConfigInput, CreateServiceConfigInput,
-        CreateServiceInput, CreateToriiConfigInput, DeploymentService, DeploymentTier, Variables,
-    },
-    credential::Credentials,
+use slot::api::Client;
+use slot::credential::Credentials;
+use slot::graphql::deployments::create_deployment::CreateDeploymentCreateDeployment::{
+    KatanaConfig, MadaraConfig, ToriiConfig,
 };
+use slot::graphql::deployments::create_deployment::{self, *};
+use slot::graphql::deployments::CreateDeployment;
+use slot::graphql::{GraphQLQuery, Response};
 
-use super::{services::CreateServiceCommands, Long, Tier};
-
-#[derive(GraphQLQuery)]
-#[graphql(
-    schema_path = "schema.json",
-    query_path = "src/command/deployments/create.graphql",
-    response_derives = "Debug"
-)]
-pub struct CreateDeployment;
+use super::{services::CreateServiceCommands, Tier};
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Create options")]

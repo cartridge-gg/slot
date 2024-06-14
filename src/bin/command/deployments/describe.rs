@@ -1,28 +1,14 @@
 #![allow(clippy::enum_variant_names)]
 
+use super::services::Service;
 use anyhow::Result;
 use clap::Args;
-use graphql_client::{GraphQLQuery, Response};
-
-use crate::{api::Client, credential::Credentials};
-
-use self::describe_deployment::{
-    DeploymentService,
-    DescribeDeploymentDeploymentConfig::{KatanaConfig, MadaraConfig, ToriiConfig},
-    ResponseData, Variables,
+use slot::graphql::deployments::describe_deployment::DescribeDeploymentDeploymentConfig::{
+    KatanaConfig, MadaraConfig, ToriiConfig,
 };
-
-use super::services::Service;
-
-type Long = u64;
-
-#[derive(GraphQLQuery)]
-#[graphql(
-    schema_path = "schema.json",
-    query_path = "src/command/deployments/describe.graphql",
-    response_derives = "Debug"
-)]
-pub struct DescribeDeployment;
+use slot::graphql::deployments::{describe_deployment::*, DescribeDeployment};
+use slot::graphql::{GraphQLQuery, Response};
+use slot::{api::Client, credential::Credentials};
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Describe options")]

@@ -17,12 +17,12 @@ use tokio::sync::mpsc::{Receiver, Sender};
 
 use crate::{
     api::Client,
-    command::auth::info::{
+    constant,
+    credential::Credentials,
+    graphql::auth::{
         me::{ResponseData, Variables},
         Me,
     },
-    constant,
-    credential::Credentials,
 };
 
 pub struct LocalServer {

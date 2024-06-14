@@ -16,8 +16,6 @@ mod logs;
 mod services;
 mod update;
 
-type Long = u64;
-
 #[derive(Subcommand, Debug)]
 pub enum Deployments {
     #[command(about = "Create a new deployment.")]
