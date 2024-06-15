@@ -32,7 +32,7 @@ pub struct Policy {
 #[serde(rename_all = "camelCase")]
 pub struct SessionDetails {
     /// The expiration date of the session.
-    pub expires_at: String,
+    pub expires_at: u64,
     /// The session's policies.
     pub policies: Vec<Policy>,
     pub credentials: SessionCredentials,
