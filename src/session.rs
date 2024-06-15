@@ -307,7 +307,7 @@ mod tests {
             .await
             .expect("failed to call callback url");
 
-        assert!(dbg!(res.status()).is_success());
+        assert!(res.status().is_success());
 
         let actual = rx.recv().await.expect("failed to receive session");
         assert_eq!(session, actual)
