@@ -1,4 +1,5 @@
 use std::io;
+use std::path::Path;
 use std::{fs, path::PathBuf};
 
 use anyhow::Context;
@@ -49,7 +50,7 @@ pub enum Error {
     IO(#[from] io::Error),
 
     #[error(transparent)]
-    Auth(#[from] credential::Error),
+    Credentials(#[from] credential::Error),
 
     #[error(transparent)]
     Serde(#[from] serde_json::Error),
@@ -188,19 +189,33 @@ fn callback_server(tx: Sender<SessionDetails>) -> anyhow::Result<LocalServer> {
 fn get_file_path(username: &str, chain_id: FieldElement) -> PathBuf {
     // eg 0x12345-session.json
     let file_name = format!("{chain_id:#x}-{}", SESSION_FILE_BASE_NAME);
+
+    #[cfg(not(test))]
     let mut path = dirs::config_local_dir().expect("unsupported OS");
+    #[cfg(test)]
+    let mut path = tempfile::tempdir().unwrap().into_path();
+
     path.extend([SLOT_DIR, username, &file_name]);
     path
 }
 
 #[cfg(test)]
 mod tests {
+    use super::{get, Error};
+    use crate::credential::Error::Unauthorized;
+    use starknet::{core::types::FieldElement, macros::felt};
 
     #[test]
     fn get_non_existant_session() {}
 
     #[test]
-    fn get_session_when_not_authenticated() {}
+    fn get_session_when_not_authenticated() {
+        let chain = FieldElement::ONE;
+        let err = get(chain).unwrap_err();
+        let Error::Credentials(Unauthorized) = err else {
+            panic!("expected Unauthorized error, got {err:?}");
+        };
+    }
 
     #[test]
     fn store_session() {}
