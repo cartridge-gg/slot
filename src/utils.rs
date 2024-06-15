@@ -22,3 +22,15 @@ pub fn config_dir() -> PathBuf {
         path
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::utils::SLOT_DIR;
+
+    #[test]
+    fn config_dir_must_exist() {
+        let path = super::config_dir();
+        assert!(path.exists());
+        assert!(path.ends_with(SLOT_DIR));
+    }
+}
