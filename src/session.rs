@@ -19,6 +19,7 @@ use crate::{browser, server::LocalServer};
 const SESSION_CREATION_PAGE: &str = "https://x.cartridge.gg/slot/session";
 const SESSION_FILE_BASE_NAME: &str = "session.json";
 
+/// A policy defines what action can be performed by the session key.
 #[derive(Debug, Default, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Policy {
     /// The target contract address.
@@ -32,7 +33,7 @@ pub struct Policy {
 pub struct SessionDetails {
     /// The expiration date of the session.
     pub expires_at: String,
-    /// The policies that the session is allowed to execute.
+    /// The session's policies.
     pub policies: Vec<Policy>,
     pub credentials: SessionCredentials,
 }
