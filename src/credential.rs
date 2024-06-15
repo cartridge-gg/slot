@@ -82,8 +82,6 @@ impl Credentials {
     pub(crate) fn load_at<P: AsRef<Path>>(config_dir: P) -> Result<Credentials, Error> {
         let path = get_file_path(config_dir);
 
-        println!("{}", path.display());
-
         if !path.exists() {
             return Err(Error::Unauthorized);
         }

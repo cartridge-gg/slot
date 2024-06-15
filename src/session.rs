@@ -221,13 +221,16 @@ mod tests {
     use super::{get, Error};
     use crate::credential::{AccessToken, Credentials, Error::Unauthorized};
     use crate::graphql::auth::me::{MeMe, MeMeCredentials};
-    use crate::session::{get_at, store_at, SessionDetails};
+    use crate::session::{get_at, get_user_relative_file_path, store_at, SessionDetails};
     use crate::utils;
     use starknet::{core::types::FieldElement, macros::felt};
-    use std::path::Path;
+    use std::ffi::OsStr;
+    use std::path::{Component, Path};
     use tokio::sync::mpsc::channel;
 
-    fn authenticate(config_dir: impl AsRef<Path>) {
+    fn authenticate(config_dir: impl AsRef<Path>) -> &'static str {
+        static USERNAME: &str = "foo";
+
         let token = AccessToken {
             token: "mytoken".to_string(),
             r#type: "Bearer".to_string(),
@@ -235,13 +238,29 @@ mod tests {
 
         let me = MeMe {
             name: None,
-            id: "foo".to_string(),
+            id: USERNAME.to_string(),
             contract_address: None,
             credentials: MeMeCredentials { webauthn: None },
         };
 
         let cred = Credentials::new(Some(me), token);
         let _ = Credentials::store_at(&config_dir, &cred).unwrap();
+
+        USERNAME
+    }
+
+    #[test]
+    fn user_rel_path() {
+        let chain = felt!("0x999");
+        let username = "foo";
+        let file_name = "0x999-session.json";
+
+        let path = get_user_relative_file_path(username, chain);
+        let mut comps = path.components();
+
+        assert_eq!(comps.next(), Some(Component::Normal(OsStr::new(username))));
+        assert_eq!(comps.next(), Some(Component::Normal(OsStr::new(file_name))));
+        assert_eq!(comps.next(), None);
     }
 
     #[test]
@@ -266,14 +285,17 @@ mod tests {
     #[test]
     fn get_existant_session_authenticated() {
         let config_dir = utils::config_dir();
-        authenticate(&config_dir);
+        let username = authenticate(&config_dir);
 
         let chain = felt!("0x999");
         let expected = SessionDetails::default();
-        store_at(&config_dir, chain, &expected).unwrap();
+        let path = store_at(&config_dir, chain, &expected).unwrap();
 
+        let user_path = get_user_relative_file_path(username, chain);
         let actual = get_at(config_dir, chain).unwrap();
-        assert_eq!(Some(expected), actual)
+
+        assert_eq!(Some(expected), actual);
+        assert!(path.ends_with(user_path));
     }
 
     #[test]
