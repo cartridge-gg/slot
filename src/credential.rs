@@ -4,8 +4,8 @@ use std::io::{self};
 use std::path::{Path, PathBuf};
 
 use crate::graphql::auth::me::MeMe;
+use crate::utils::{self, SLOT_DIR};
 
-const SLOT_DIR: &str = "slot";
 const CREDENTIALS_FILE: &str = "credentials.json";
 
 #[derive(Debug, thiserror::Error)]
@@ -50,12 +50,23 @@ impl Credentials {
         }
     }
 
+    /// Load the credentials of the currently authenticated user.
+    ///
+    /// # Errors
+    ///
+    /// This function will fail if no user has authenticated yet, or if
+    /// the credentials file are invalid or missing.
+    ///
     pub fn load() -> Result<Self, Error> {
-        Self::load_at(get_default_file_path())
+        Self::load_at(get_file_path())
     }
 
-    pub fn store(&self) -> Result<(), Error> {
-        Self::store_at(self, get_default_file_path())
+    /// Store the credentials of an authenticated user. Returns the path to the stored credentials
+    /// file.
+    pub fn store(&self) -> Result<PathBuf, Error> {
+        let path = get_file_path();
+        Self::store_at(self, &path)?;
+        Ok(path)
     }
 
     pub(crate) fn store_at<P: AsRef<Path>>(credentials: &Self, path: P) -> Result<(), Error> {
@@ -92,8 +103,8 @@ impl Credentials {
 }
 
 /// Get the path to the credentials file.
-fn get_default_file_path() -> PathBuf {
-    let mut path = dirs::config_local_dir().unwrap();
+pub fn get_file_path() -> PathBuf {
+    let mut path = utils::config_dir();
     path.extend([SLOT_DIR, CREDENTIALS_FILE]);
     path
 }
@@ -136,13 +147,10 @@ mod tests {
             r#type: "Bearer".to_string(),
         };
 
-        let dir = tempfile::tempdir().unwrap();
-        let path = dir.path().join("cred.json");
-
         let expected = Credentials::new(None, access_token);
-        Credentials::store_at(&expected, &path).unwrap();
-        let actual = Credentials::load_at(&path).unwrap();
+        let stored_path = Credentials::store(&expected).unwrap();
 
+        let actual = Credentials::load_at(stored_path).unwrap();
         assert_eq!(expected, actual);
     }
 }
