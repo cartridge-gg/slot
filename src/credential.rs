@@ -112,11 +112,8 @@ pub fn get_file_path<P: AsRef<Path>>(config_dir: P) -> PathBuf {
 
 #[cfg(test)]
 mod tests {
-    use tokio::sync::mpsc::channel;
-
     use super::LegacyCredentials;
     use crate::credential::{AccessToken, Credentials, CREDENTIALS_FILE};
-    use crate::session::{callback_server, SessionDetails};
     use crate::utils;
     use std::fs;
 
@@ -157,32 +154,5 @@ mod tests {
 
         let actual = Credentials::load_at(config_dir).unwrap();
         assert_eq!(expected, actual);
-    }
-
-    #[tokio::test]
-    async fn test_callback_server() {
-        let (tx, mut rx) = channel::<SessionDetails>(1);
-        let server = callback_server(tx).expect("failed to create server");
-
-        // get the callback url
-        let port = server.local_addr().unwrap().port();
-        let url = format!("http://localhost:{port}/callback");
-
-        // start the callback server
-        tokio::spawn(server.start());
-
-        // call the callback url
-        let session = SessionDetails::default();
-        let res = reqwest::Client::new()
-            .post(url)
-            .json(&session)
-            .send()
-            .await
-            .expect("failed to call callback url");
-
-        assert!(dbg!(res.status()).is_success());
-
-        let actual = rx.recv().await.expect("failed to receive session");
-        assert_eq!(session, actual)
     }
 }

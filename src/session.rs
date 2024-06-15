@@ -197,7 +197,7 @@ fn prepare_query_params(
 }
 
 /// Create the callback server that will receive the session token from the browser.
-pub(super) fn callback_server(tx: Sender<SessionDetails>) -> anyhow::Result<LocalServer> {
+fn callback_server(tx: Sender<SessionDetails>) -> anyhow::Result<LocalServer> {
     let handler = move |tx: State<Sender<SessionDetails>>, session: Json<SessionDetails>| async move {
         trace!("Received session token from the browser.");
         tx.0.send(session.0).await.expect("qed; channel closed");
@@ -224,6 +224,7 @@ mod tests {
     use crate::utils;
     use starknet::{core::types::FieldElement, macros::felt};
     use std::path::Path;
+    use tokio::sync::mpsc::channel;
 
     fn authenticate(config_dir: impl AsRef<Path>) {
         let token = AccessToken {
@@ -283,5 +284,32 @@ mod tests {
 
         let err = store_at(config_dir, chain, &session).unwrap_err();
         assert!(err.to_string().contains("No credentials found"))
+    }
+
+    #[tokio::test]
+    async fn test_callback_server() {
+        let (tx, mut rx) = channel::<SessionDetails>(1);
+        let server = super::callback_server(tx).expect("failed to create server");
+
+        // get the callback url
+        let port = server.local_addr().unwrap().port();
+        let url = format!("http://localhost:{port}/callback");
+
+        // start the callback server
+        tokio::spawn(server.start());
+
+        // call the callback url
+        let session = SessionDetails::default();
+        let res = reqwest::Client::new()
+            .post(url)
+            .json(&session)
+            .send()
+            .await
+            .expect("failed to call callback url");
+
+        assert!(dbg!(res.status()).is_success());
+
+        let actual = rx.recv().await.expect("failed to receive session");
+        assert_eq!(session, actual)
     }
 }
