@@ -9,7 +9,7 @@ use starknet::core::types::FieldElement;
 use thiserror::Error;
 use tokio::sync::mpsc::{channel, Receiver, Sender};
 use tower_http::cors::CorsLayer;
-use tracing::trace;
+use tracing::info;
 use url::Url;
 
 use crate::credential::{self, Credentials};
@@ -46,6 +46,7 @@ pub struct SessionCredentials {
     pub authorization: Vec<FieldElement>,
 }
 
+// TODO(kariy): unify the error types for the whole Slot crate.
 #[derive(Debug, Error)]
 pub enum Error {
     #[error(transparent)]
@@ -104,6 +105,8 @@ where
     Ok(rx.recv().await.context("Channel dropped.")?)
 }
 
+/// Get the session token of the chain id `chain` for the currently authenticated user. It will
+/// use `config_dir` as the root path to look for the session file.
 fn get_at<P>(config_dir: P, chain: FieldElement) -> Result<Option<SessionDetails>, Error>
 where
     P: AsRef<Path>,
@@ -123,6 +126,8 @@ where
     }
 }
 
+/// Stores the session token of the chain id `chain` for the currently authenticated user. It will
+/// use `config_dir` as the root path to store the session file.
 fn store_at<P>(
     config_dir: P,
     chain: FieldElement,
@@ -198,17 +203,34 @@ fn prepare_query_params(
 }
 
 /// Create the callback server that will receive the session token from the browser.
-fn callback_server(tx: Sender<SessionDetails>) -> anyhow::Result<LocalServer> {
-    let handler = move |tx: State<Sender<SessionDetails>>, session: Json<SessionDetails>| async move {
-        trace!("Received session token from the browser.");
-        tx.0.send(session.0).await.expect("qed; channel closed");
-    };
+fn callback_server(result_sender: Sender<SessionDetails>) -> anyhow::Result<LocalServer> {
+    let handler =
+        move |State((res_sender, shutdown_sender)): State<(Sender<SessionDetails>, Sender<()>)>,
+              session: Json<SessionDetails>| async move {
+            info!("Received session token from the browser.");
+
+            res_sender
+                .send(session.0)
+                .await
+                .expect("qed; channel closed");
+
+            // send shutdown signal to the server ONLY after succesfully receiving and processing
+            // the session token.
+            shutdown_sender
+                .send(())
+                .await
+                .expect("failed to send shutdown signal.");
+        };
+
+    let (shutdown_tx, shutdown_rx) = tokio::sync::mpsc::channel(1);
 
     let router = Router::new()
         .route("/callback", post(handler))
-        .with_state(tx);
+        .with_state((result_sender, shutdown_tx));
 
-    Ok(LocalServer::new(router)?.cors(CorsLayer::permissive()))
+    Ok(LocalServer::new(router)?
+        .cors(CorsLayer::permissive())
+        .with_shutdown_signal(shutdown_rx))
 }
 
 fn get_user_relative_file_path(username: &str, chain_id: FieldElement) -> PathBuf {

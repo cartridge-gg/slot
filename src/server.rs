@@ -1,32 +1,30 @@
+use std::io;
 use std::net::{SocketAddr, TcpListener};
-use std::task::{Context, Poll};
-use std::{fmt, io};
 
 use axum::Router;
-use hyper::service::Service;
-use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender};
+use tokio::sync::mpsc::Receiver;
 use tower_http::cors::CorsLayer;
-use tower_layer::Layer;
+use tower_http::trace::TraceLayer;
 
+/// A simple local server.
 #[derive(Debug)]
 pub struct LocalServer {
     router: Router,
     listener: TcpListener,
-    shutdown_rx: Option<UnboundedReceiver<()>>,
+    shutdown_rx: Option<Receiver<()>>,
 }
 
 impl LocalServer {
     pub fn new(router: Router) -> anyhow::Result<Self> {
         // Port number of 0 requests OS to find an available port.
         let listener = TcpListener::bind("localhost:0")?;
-
-        let (tx, rx) = unbounded_channel::<()>();
-        let router = router.layer(ShutdownLayer::new(tx));
+        // To view the logs emitted by the server, set `RUST_LOG=tower_http=trace`
+        let router = router.layer(TraceLayer::new_for_http());
 
         Ok(Self {
             router,
             listener,
-            shutdown_rx: Some(rx),
+            shutdown_rx: None,
         })
     }
 
@@ -37,9 +35,8 @@ impl LocalServer {
     }
 
     /// Disable immediately shutdown the server upon handling the first request.
-    #[allow(dead_code)]
-    pub fn no_immediate_shutdown(mut self) -> Self {
-        self.shutdown_rx = None;
+    pub fn with_shutdown_signal(mut self, receiver: Receiver<()>) -> Self {
+        self.shutdown_rx = Some(receiver);
         self
     }
 
@@ -64,74 +61,33 @@ impl LocalServer {
     }
 }
 
-/// Layer for handling sending a shutdown signal to the server upon
-/// receiving the callback request.
-#[derive(Clone)]
-struct ShutdownLayer {
-    tx: UnboundedSender<()>,
-}
-
-impl ShutdownLayer {
-    pub fn new(tx: UnboundedSender<()>) -> Self {
-        Self { tx }
-    }
-}
-
-impl<S> Layer<S> for ShutdownLayer {
-    type Service = ShutdownService<S>;
-
-    fn layer(&self, service: S) -> Self::Service {
-        ShutdownService {
-            tx: self.tx.clone(),
-            service,
-        }
-    }
-}
-
-#[derive(Clone)]
-pub struct ShutdownService<S> {
-    tx: UnboundedSender<()>,
-    service: S,
-}
-
-impl<S, Request> Service<Request> for ShutdownService<S>
-where
-    S: Service<Request>,
-    Request: fmt::Debug,
-{
-    type Response = S::Response;
-    type Error = S::Error;
-    type Future = S::Future;
-
-    fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-        self.service.poll_ready(cx)
-    }
-
-    fn call(&mut self, request: Request) -> Self::Future {
-        self.tx.send(()).expect("failed to send shutdown signal");
-        self.service.call(request)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use crate::server::LocalServer;
     use axum::{routing::get, Router};
 
     #[tokio::test]
-    async fn test_server_immediate_shutdown() {
+    async fn test_server_graceful_shutdown() {
+        let (tx, rx) = tokio::sync::mpsc::channel(1);
+
         let router = Router::new().route("/callback", get(|| async { "Hello, World!" }));
-        let server = LocalServer::new(router).unwrap();
-
+        let server = LocalServer::new(router).unwrap().with_shutdown_signal(rx);
         let port = server.local_addr().unwrap().port();
-        let client = reqwest::Client::new();
 
+        let client = reqwest::Client::new();
+        let url = format!("http://localhost:{port}/callback");
+
+        // start the local server
         tokio::spawn(server.start());
 
-        let url = format!("http://localhost:{port}/callback");
         // first request should succeed
         assert!(client.get(&url).send().await.is_ok());
-        // second request should fail as server should've been shutdown after first request
+
+        // send shutdown signal
+        tx.send(()).await.unwrap();
+
+        // sending request after sending the shutdown signal should fail as server
+        // should've been shutdown
         assert!(client.get(url).send().await.is_err())
     }
 }
