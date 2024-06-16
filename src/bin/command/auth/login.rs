@@ -1,36 +1,147 @@
+use std::sync::Arc;
+
 use anyhow::Result;
+use axum::{
+    extract::{Query, State},
+    response::{IntoResponse, Redirect, Response},
+    routing::get,
+    Router,
+};
 use clap::Args;
-use slot::{browser::Browser, server::LocalServer};
-use tokio::runtime::Runtime;
+use graphql_client::GraphQLQuery;
+use hyper::StatusCode;
+use log::error;
+use serde::Deserialize;
+use slot::{
+    api::Client,
+    browser, constant,
+    credential::Credentials,
+    graphql::auth::{
+        me::{ResponseData, Variables},
+        Me,
+    },
+    server::LocalServer,
+};
+use tokio::sync::mpsc::Sender;
 
 #[derive(Debug, Args)]
 pub struct LoginArgs;
 
 impl LoginArgs {
-    pub fn run(&self) -> Result<()> {
-        let rt = Runtime::new()?;
+    pub async fn run(&self) -> Result<()> {
+        let server = Self::callback_server().expect("Failed to create a server");
+        let port = server.local_addr()?.port();
+        let callback_uri = format!("http://localhost:{port}/callback");
 
-        let handler = std::thread::spawn(move || {
-            let server = LocalServer::new().expect("Failed to start a server");
-            let addr = server.local_addr().unwrap();
+        let url = format!("https://x.cartridge.gg/slot/auth?callback_uri={callback_uri}");
 
-            let res = rt.block_on(async { tokio::join!(server.start(), Browser::open(&addr)) });
-
-            match res {
-                (Err(e), _) => {
-                    eprintln!("Server error: {e}");
-                }
-                (_, Err(e)) => {
-                    eprintln!("Browser error: {e}");
-                }
-                _ => {
-                    // println!("Success");
-                }
-            }
-        });
-
-        handler.join().unwrap();
+        browser::open(&url)?;
+        server.start().await?;
 
         Ok(())
+    }
+
+    fn callback_server() -> Result<LocalServer> {
+        let (tx, rx) = tokio::sync::mpsc::channel::<()>(1);
+        let shared_state = Arc::new(AppState::new(tx));
+
+        let router = Router::new()
+            .route("/callback", get(handler))
+            .with_state(shared_state);
+
+        Ok(LocalServer::new(router)?.with_shutdown_signal(rx))
+    }
+}
+
+#[derive(Debug, Deserialize)]
+struct CallbackPayload {
+    code: Option<String>,
+}
+
+#[derive(Clone)]
+struct AppState {
+    shutdown_tx: Sender<()>,
+}
+
+impl AppState {
+    fn new(shutdown_tx: Sender<()>) -> Self {
+        Self { shutdown_tx }
+    }
+
+    async fn shutdown(&self) -> Result<()> {
+        self.shutdown_tx.send(()).await?;
+        Ok(())
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+enum CallbackError {
+    #[error(transparent)]
+    Io(#[from] std::io::Error),
+
+    #[error("Api error: {0}")]
+    Api(#[from] slot::api::Error),
+
+    #[error(transparent)]
+    Other(#[from] anyhow::Error),
+
+    #[error(transparent)]
+    Credentials(#[from] slot::credential::Error),
+}
+
+impl IntoResponse for CallbackError {
+    fn into_response(self) -> Response {
+        let status = StatusCode::INTERNAL_SERVER_ERROR;
+        let message = format!("Something went wrong: {self}");
+        (status, message).into_response()
+    }
+}
+
+async fn handler(
+    State(state): State<Arc<AppState>>,
+    Query(payload): Query<CallbackPayload>,
+) -> Result<Redirect, CallbackError> {
+    // 1. Shutdown the server
+    state.shutdown().await?;
+
+    // 2. Get access token using the authorization code
+    match payload.code {
+        Some(code) => {
+            let mut api = Client::new();
+
+            let token = api.oauth2(&code).await?;
+            api.set_token(token.clone());
+
+            // fetch the account information
+            let request_body = Me::build_query(Variables {});
+            let res: graphql_client::Response<ResponseData> = api.query(&request_body).await?;
+
+            // display the errors if any, but still process bcs we have the token
+            if let Some(errors) = res.errors {
+                for err in errors {
+                    eprintln!("Error: {}", err.message);
+                }
+            }
+
+            let account_info = res.data.map(|data| data.me.expect("should exist"));
+
+            // 3. Store the access token locally
+            Credentials::new(account_info, token).store()?;
+
+            println!("You are now logged in!\n");
+
+            Ok(Redirect::permanent(&format!(
+                "{}/slot/auth/success",
+                constant::CARTRIDGE_KEYCHAIN_URL
+            )))
+        }
+        None => {
+            error!("User denied consent. Try again.");
+
+            Ok(Redirect::permanent(&format!(
+                "{}/slot/auth/failure",
+                constant::CARTRIDGE_KEYCHAIN_URL
+            )))
+        }
     }
 }

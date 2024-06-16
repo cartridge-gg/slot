@@ -1,158 +1,93 @@
-use anyhow::Result;
-use axum::{
-    extract::{Query, State},
-    http::StatusCode,
-    response::{IntoResponse, Redirect, Response},
-    routing::get,
-    Router,
-};
-use graphql_client::GraphQLQuery;
-use log::error;
-use serde::Deserialize;
-use std::{
-    net::{SocketAddr, TcpListener},
-    sync::Arc,
-};
-use tokio::sync::mpsc::{Receiver, Sender};
+use std::io;
+use std::net::{SocketAddr, TcpListener};
 
-use crate::{
-    api::Client,
-    constant,
-    credential::Credentials,
-    graphql::auth::{
-        me::{ResponseData, Variables},
-        Me,
-    },
-};
+use axum::Router;
+use tokio::sync::mpsc::Receiver;
+use tower_http::cors::CorsLayer;
+use tower_http::trace::TraceLayer;
 
+/// A simple local server.
+#[derive(Debug)]
 pub struct LocalServer {
     router: Router,
-    shutdown_rx: Receiver<()>,
     listener: TcpListener,
+    shutdown_rx: Option<Receiver<()>>,
 }
 
-impl<'a> LocalServer {
-    pub fn new() -> Result<Self> {
-        let (tx, rx) = tokio::sync::mpsc::channel::<()>(1);
+impl LocalServer {
+    pub fn new(router: Router) -> anyhow::Result<Self> {
         // Port number of 0 requests OS to find an available port.
         let listener = TcpListener::bind("localhost:0")?;
-
-        let shared_state = Arc::new(AppState::new(tx));
-        let router = Router::new()
-            .route("/callback", get(Self::callback))
-            .with_state(shared_state);
+        // To view the logs emitted by the server, set `RUST_LOG=tower_http=trace`
+        let router = router.layer(TraceLayer::new_for_http());
 
         Ok(Self {
             router,
-            shutdown_rx: rx,
             listener,
+            shutdown_rx: None,
         })
     }
 
-    pub fn local_addr(&self) -> Result<SocketAddr, std::io::Error> {
+    /// Add a CORS layer to the server.
+    pub fn cors(mut self, cors: CorsLayer) -> Self {
+        self.router = self.router.layer(cors);
+        self
+    }
+
+    /// Shutdown the server when a signal is received from `receiver`.
+    pub fn with_shutdown_signal(mut self, receiver: Receiver<()>) -> Self {
+        self.shutdown_rx = Some(receiver);
+        self
+    }
+
+    pub fn local_addr(&self) -> Result<SocketAddr, io::Error> {
         self.listener.local_addr()
     }
 
-    pub async fn start(mut self) -> Result<()> {
-        axum::Server::from_tcp(self.listener)?
-            .serve(self.router.into_make_service())
-            .with_graceful_shutdown(async {
-                let _ = &self.shutdown_rx.recv().await;
-            })
-            .await?;
+    pub async fn start(mut self) -> anyhow::Result<()> {
+        let addr = self.listener.local_addr()?;
+        tracing::info!(?addr, "Callback server started");
 
-        Ok(())
-    }
-
-    async fn callback(
-        State(state): State<Arc<AppState>>,
-        Query(payload): Query<CallbackPayload>,
-    ) -> Result<Redirect, AppError> {
-        // 1. Shutdown the server
-        state.shutdown().await?;
-
-        // 2. Get access token using the authorization code
-        match payload.code {
-            Some(code) => {
-                let mut api = Client::new();
-
-                let token = api.oauth2(&code).await?;
-                api.set_token(token.clone());
-
-                // fetch the account information
-                let request_body = Me::build_query(Variables {});
-                let res: graphql_client::Response<ResponseData> = api.query(&request_body).await?;
-
-                // display the errors if any, but still process bcs we have the token
-                if let Some(errors) = res.errors {
-                    for err in errors {
-                        eprintln!("Error: {}", err.message);
-                    }
-                }
-
-                let account_info = res.data.map(|data| data.me.expect("should exist"));
-
-                // 3. Store the access token locally
-                Credentials::new(account_info, token).store()?;
-
-                println!("You are now logged in!\n");
-
-                Ok(Redirect::permanent(&format!(
-                    "{}/slot/auth/success",
-                    constant::CARTRIDGE_KEYCHAIN_URL
-                )))
-            }
-            None => {
-                error!("User denied consent. Try again.");
-
-                Ok(Redirect::permanent(&format!(
-                    "{}/slot/auth/failure",
-                    constant::CARTRIDGE_KEYCHAIN_URL
-                )))
-            }
+        let server = axum::Server::from_tcp(self.listener)?.serve(self.router.into_make_service());
+        if let Some(mut rx) = self.shutdown_rx.take() {
+            server
+                .with_graceful_shutdown(async { rx.recv().await.expect("channel closed") })
+                .await?;
+        } else {
+            server.await?;
         }
-    }
-}
-
-#[derive(Deserialize)]
-struct CallbackPayload {
-    code: Option<String>,
-}
-
-#[derive(Clone)]
-struct AppState {
-    shutdown_tx: Sender<()>,
-}
-
-impl AppState {
-    fn new(shutdown_tx: Sender<()>) -> Self {
-        Self { shutdown_tx }
-    }
-
-    async fn shutdown(&self) -> Result<()> {
-        self.shutdown_tx.send(()).await?;
 
         Ok(())
     }
 }
 
-struct AppError(anyhow::Error);
+#[cfg(test)]
+mod tests {
+    use crate::server::LocalServer;
+    use axum::{routing::get, Router};
 
-impl IntoResponse for AppError {
-    fn into_response(self) -> Response {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Something went wrong: {}", self.0),
-        )
-            .into_response()
-    }
-}
+    #[tokio::test]
+    async fn test_server_graceful_shutdown() {
+        let (tx, rx) = tokio::sync::mpsc::channel(1);
 
-impl<E> From<E> for AppError
-where
-    E: Into<anyhow::Error>,
-{
-    fn from(err: E) -> Self {
-        Self(err.into())
+        let router = Router::new().route("/callback", get(|| async { "Hello, World!" }));
+        let server = LocalServer::new(router).unwrap().with_shutdown_signal(rx);
+        let port = server.local_addr().unwrap().port();
+
+        let client = reqwest::Client::new();
+        let url = format!("http://localhost:{port}/callback");
+
+        // start the local server
+        tokio::spawn(server.start());
+
+        // first request should succeed
+        assert!(client.get(&url).send().await.is_ok());
+
+        // send shutdown signal
+        tx.send(()).await.unwrap();
+
+        // sending request after sending the shutdown signal should fail as server
+        // should've been shutdown
+        assert!(client.get(url).send().await.is_err())
     }
 }

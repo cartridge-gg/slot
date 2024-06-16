@@ -4,7 +4,7 @@ use std::io::{self};
 use std::path::{Path, PathBuf};
 
 use crate::graphql::auth::me::MeMe;
-use crate::utils::{self, SLOT_DIR};
+use crate::utils::{self};
 
 const CREDENTIALS_FILE: &str = "credentials.json";
 
@@ -58,28 +58,29 @@ impl Credentials {
     /// the credentials file are invalid or missing.
     ///
     pub fn load() -> Result<Self, Error> {
-        Self::load_at(get_file_path())
+        Self::load_at(utils::config_dir())
     }
 
     /// Store the credentials of an authenticated user. Returns the path to the stored credentials
     /// file.
     pub fn store(&self) -> Result<PathBuf, Error> {
-        let path = get_file_path();
-        Self::store_at(self, &path)?;
-        Ok(path)
+        Self::store_at(utils::config_dir(), self)
     }
 
-    pub(crate) fn store_at<P: AsRef<Path>>(credentials: &Self, path: P) -> Result<(), Error> {
-        let path = path.as_ref();
+    pub(crate) fn store_at<P: AsRef<Path>>(
+        config_dir: P,
+        credentials: &Self,
+    ) -> Result<PathBuf, Error> {
+        let path = get_file_path(config_dir);
         // create the dir paths if it doesn't yet exist
         fs::create_dir_all(path.parent().expect("qed; parent exist"))?;
         let content = serde_json::to_string_pretty(credentials)?;
-        fs::write(path, content)?;
-        Ok(())
+        fs::write(&path, content)?;
+        Ok(path)
     }
 
-    pub(crate) fn load_at<P: AsRef<Path>>(path: P) -> Result<Credentials, Error> {
-        let path = path.as_ref();
+    pub(crate) fn load_at<P: AsRef<Path>>(config_dir: P) -> Result<Credentials, Error> {
+        let path = get_file_path(config_dir);
 
         if !path.exists() {
             return Err(Error::Unauthorized);
@@ -103,18 +104,16 @@ impl Credentials {
 }
 
 /// Get the path to the credentials file.
-pub fn get_file_path() -> PathBuf {
-    let mut path = utils::config_dir();
-    path.extend([SLOT_DIR, CREDENTIALS_FILE]);
-    path
+pub fn get_file_path<P: AsRef<Path>>(config_dir: P) -> PathBuf {
+    config_dir.as_ref().join(CREDENTIALS_FILE)
 }
 
 #[cfg(test)]
 mod tests {
     use super::LegacyCredentials;
-    use crate::credential::{AccessToken, Credentials};
+    use crate::credential::{AccessToken, Credentials, CREDENTIALS_FILE};
+    use crate::utils;
     use std::fs;
-    use tempfile::tempdir;
 
     #[test]
     fn loading_legacy_credentials() {
@@ -123,34 +122,35 @@ mod tests {
             token_type: "mytokentype".to_string(),
         };
 
-        let dir = tempdir().unwrap();
-        let path = dir.path().join("cred.json");
-        fs::write(&path, serde_json::to_vec(&cred).unwrap()).unwrap();
+        let dir = utils::config_dir();
+        let path = dir.join(CREDENTIALS_FILE);
+        fs::create_dir_all(&dir).expect("failed to create intermediary dirs");
+        fs::write(path, serde_json::to_vec(&cred).unwrap()).unwrap();
 
-        let err = Credentials::load_at(path).unwrap_err();
+        let err = Credentials::load_at(dir).unwrap_err();
         assert!(err.to_string().contains("Legacy credentials found"))
     }
 
     #[test]
     fn loading_non_existent_credentials() {
-        let dir = tempdir().unwrap();
-        let path = dir.path().join("cred.json");
-
-        let err = Credentials::load_at(path).unwrap_err();
+        let dir = utils::config_dir();
+        let err = Credentials::load_at(dir).unwrap_err();
         assert!(err.to_string().contains("No credentials found"))
     }
 
     #[test]
     fn credentials_rt() {
+        let config_dir = utils::config_dir();
+
         let access_token = AccessToken {
             token: "mytoken".to_string(),
             r#type: "Bearer".to_string(),
         };
 
         let expected = Credentials::new(None, access_token);
-        let stored_path = Credentials::store(&expected).unwrap();
+        let _ = Credentials::store_at(&config_dir, &expected).unwrap();
 
-        let actual = Credentials::load_at(stored_path).unwrap();
+        let actual = Credentials::load_at(config_dir).unwrap();
         assert_eq!(expected, actual);
     }
 }
