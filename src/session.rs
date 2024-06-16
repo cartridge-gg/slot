@@ -83,9 +83,8 @@ pub fn store(chain: FieldElement, session: &SessionDetails) -> Result<PathBuf, E
     store_at(utils::config_dir(), chain, session)
 }
 
-/// Creates a new session token. This will open a browser to the Cartridge Controller keychain page
-/// to prompt user to create a new session for the given policies and network. Returns the newly
-/// created session token.
+/// Creates a new session token for the given set of parameters for the currently authenticated user.
+/// Returns the newly created session token.
 ///
 /// # Errors
 ///
@@ -152,6 +151,10 @@ where
     Ok(file_path)
 }
 
+// TODO(kariy): this function should probably be put in a more generic `controller` rust sdk.
+/// Creates a new session token for the given user. This will open a browser to the Cartridge
+/// Controller keychain page to prompt user to create a new session for the given policies and
+/// network. Returns the newly created session token.
 #[tracing::instrument(name = "create_session", level = "trace", skip(rpc_url), fields(policies = policies.len()))]
 pub async fn create_user_session<U>(
     username: &str,
@@ -163,7 +166,7 @@ where
 {
     let rpc_url: Url = rpc_url.into();
     let mut rx = open_session_creation_page(username, rpc_url.as_str(), policies)?;
-    Ok(rx.recv().await.context("Channel dropped.")?)
+    Ok(rx.recv().await.context("Failed to received the session.")?)
 }
 
 /// Starts the session creation process by opening the browser to the Cartridge keychain to prompt
