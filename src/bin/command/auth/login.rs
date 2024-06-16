@@ -1,6 +1,8 @@
+use std::sync::Arc;
+
 use anyhow::Result;
 use axum::{
-    extract::Query,
+    extract::{Query, State},
     response::{IntoResponse, Redirect, Response},
     routing::get,
     Router,
@@ -20,6 +22,7 @@ use slot::{
     },
     server::LocalServer,
 };
+use tokio::sync::mpsc::Sender;
 
 #[derive(Debug, Args)]
 pub struct LoginArgs;
@@ -39,14 +42,36 @@ impl LoginArgs {
     }
 
     fn callback_server() -> Result<LocalServer> {
-        let router = Router::new().route("/callback", get(handler));
-        LocalServer::new(router)
+        let (tx, rx) = tokio::sync::mpsc::channel::<()>(1);
+        let shared_state = Arc::new(AppState::new(tx));
+
+        let router = Router::new()
+            .route("/callback", get(handler))
+            .with_state(shared_state);
+
+        Ok(LocalServer::new(router)?.with_shutdown_signal(rx))
     }
 }
 
 #[derive(Debug, Deserialize)]
 struct CallbackPayload {
     code: Option<String>,
+}
+
+#[derive(Clone)]
+struct AppState {
+    shutdown_tx: Sender<()>,
+}
+
+impl AppState {
+    fn new(shutdown_tx: Sender<()>) -> Self {
+        Self { shutdown_tx }
+    }
+
+    async fn shutdown(&self) -> Result<()> {
+        self.shutdown_tx.send(()).await?;
+        Ok(())
+    }
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -72,8 +97,14 @@ impl IntoResponse for CallbackError {
     }
 }
 
-async fn handler(Query(payload): Query<CallbackPayload>) -> Result<Redirect, CallbackError> {
-    // 1. Get access token using the authorization code
+async fn handler(
+    State(state): State<Arc<AppState>>,
+    Query(payload): Query<CallbackPayload>,
+) -> Result<Redirect, CallbackError> {
+    // 1. Shutdown the server
+    state.shutdown().await?;
+
+    // 2. Get access token using the authorization code
     match payload.code {
         Some(code) => {
             let mut api = Client::new();
@@ -94,7 +125,7 @@ async fn handler(Query(payload): Query<CallbackPayload>) -> Result<Redirect, Cal
 
             let account_info = res.data.map(|data| data.me.expect("should exist"));
 
-            // 2. Store the access token locally
+            // 3. Store the access token locally
             Credentials::new(account_info, token).store()?;
 
             println!("You are now logged in!\n");

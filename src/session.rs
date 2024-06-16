@@ -91,18 +91,13 @@ pub fn store(chain: FieldElement, session: &SessionDetails) -> Result<PathBuf, E
 ///
 /// This function will return an error if there is no authenticated user.
 ///
-#[tracing::instrument(level = "trace", skip(rpc_url), fields(policies = policies.len()))]
 pub async fn create<U>(rpc_url: U, policies: &[Policy]) -> Result<SessionDetails, Error>
 where
     U: Into<Url>,
 {
     let credentials = Credentials::load()?;
     let username = credentials.account.expect("id must exist").id;
-
-    let rpc_url: Url = rpc_url.into();
-    let mut rx = open_session_creation_page(&username, rpc_url.as_str(), policies)?;
-
-    Ok(rx.recv().await.context("Channel dropped.")?)
+    create_user_session(&username, rpc_url, policies).await
 }
 
 /// Get the session token of the chain id `chain` for the currently authenticated user. It will
@@ -155,6 +150,20 @@ where
     fs::write(&file_path, contents)?;
 
     Ok(file_path)
+}
+
+#[tracing::instrument(name = "create_session", level = "trace", skip(rpc_url), fields(policies = policies.len()))]
+pub async fn create_user_session<U>(
+    username: &str,
+    rpc_url: U,
+    policies: &[Policy],
+) -> Result<SessionDetails, Error>
+where
+    U: Into<Url>,
+{
+    let rpc_url: Url = rpc_url.into();
+    let mut rx = open_session_creation_page(username, rpc_url.as_str(), policies)?;
+    Ok(rx.recv().await.context("Channel dropped.")?)
 }
 
 /// Starts the session creation process by opening the browser to the Cartridge keychain to prompt
