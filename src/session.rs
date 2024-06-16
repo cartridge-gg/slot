@@ -86,6 +86,11 @@ pub fn store(chain: FieldElement, session: &SessionDetails) -> Result<PathBuf, E
 /// Creates a new session token for the given set of parameters for the currently authenticated user.
 /// Returns the newly created session token.
 ///
+/// # Arguments
+///
+/// * `rpc_url` - The RPC URL of the chain network that you want to create a session for.
+/// * `policies` - The policies that the session token will have.
+///
 /// # Errors
 ///
 /// This function will return an error if there is no authenticated user.
