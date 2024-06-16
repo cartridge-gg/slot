@@ -34,7 +34,7 @@ impl LocalServer {
         self
     }
 
-    /// Disable immediately shutdown the server upon handling the first request.
+    /// Shutdown the server when a signal is received from `receiver`.
     pub fn with_shutdown_signal(mut self, receiver: Receiver<()>) -> Self {
         self.shutdown_rx = Some(receiver);
         self

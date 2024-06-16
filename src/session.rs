@@ -204,23 +204,24 @@ fn prepare_query_params(
 
 /// Create the callback server that will receive the session token from the browser.
 fn callback_server(result_sender: Sender<SessionDetails>) -> anyhow::Result<LocalServer> {
-    let handler =
-        move |State((res_sender, shutdown_sender)): State<(Sender<SessionDetails>, Sender<()>)>,
-              session: Json<SessionDetails>| async move {
-            info!("Received session token from the browser.");
+    type HandlerState = State<(Sender<SessionDetails>, Sender<()>)>;
 
-            res_sender
-                .send(session.0)
-                .await
-                .expect("qed; channel closed");
+    // Request handler for the /callback endpoint.
+    let handler = |state: HandlerState, json: Json<SessionDetails>| async move {
+        info!("Received session token from the browser.");
 
-            // send shutdown signal to the server ONLY after succesfully receiving and processing
-            // the session token.
-            shutdown_sender
-                .send(())
-                .await
-                .expect("failed to send shutdown signal.");
-        };
+        let State((res_sender, shutdown_sender)) = state;
+        let Json(session) = json;
+
+        res_sender.send(session).await.expect("qed; channel closed");
+
+        // send shutdown signal to the server ONLY after succesfully receiving and processing
+        // the session token.
+        shutdown_sender
+            .send(())
+            .await
+            .expect("failed to signal shutdown.");
+    };
 
     let (shutdown_tx, shutdown_rx) = tokio::sync::mpsc::channel(1);
 
