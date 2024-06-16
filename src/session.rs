@@ -3,7 +3,9 @@ use std::path::Path;
 use std::{fs, path::PathBuf};
 
 use anyhow::Context;
+use axum::response::{IntoResponse, Response};
 use axum::{extract::State, routing::post, Json, Router};
+use hyper::StatusCode;
 use serde::{Deserialize, Serialize};
 use starknet::core::types::FieldElement;
 use thiserror::Error;
@@ -32,7 +34,8 @@ pub struct Policy {
 #[serde(rename_all = "camelCase")]
 pub struct SessionDetails {
     /// The expiration date of the session.
-    pub expires_at: u64,
+    // TODO(kariy): change this to u64
+    pub expires_at: String,
     /// The session's policies.
     pub policies: Vec<Policy>,
     pub credentials: SessionCredentials,
@@ -219,6 +222,23 @@ fn prepare_query_params(
     ))
 }
 
+#[derive(Debug, thiserror::Error)]
+enum CallbackError {
+    #[error("Internal server error")]
+    Unexpected,
+}
+
+impl IntoResponse for CallbackError {
+    fn into_response(self) -> Response {
+        match self {
+            Self::Unexpected => {
+                let status = StatusCode::INTERNAL_SERVER_ERROR;
+                (status, self.to_string()).into_response()
+            }
+        }
+    }
+}
+
 /// Create the callback server that will receive the session token from the browser.
 fn callback_server(result_sender: Sender<SessionDetails>) -> anyhow::Result<LocalServer> {
     type HandlerState = State<(Sender<SessionDetails>, Sender<()>)>;
@@ -230,14 +250,20 @@ fn callback_server(result_sender: Sender<SessionDetails>) -> anyhow::Result<Loca
         let State((res_sender, shutdown_sender)) = state;
         let Json(session) = json;
 
-        res_sender.send(session).await.expect("qed; channel closed");
+        // Parse the session token from the json payload.
+        res_sender
+            .send(session)
+            .await
+            .map_err(|_| CallbackError::Unexpected)?;
 
         // send shutdown signal to the server ONLY after succesfully receiving and processing
         // the session token.
         shutdown_sender
             .send(())
             .await
-            .expect("failed to signal shutdown.");
+            .map_err(|_| CallbackError::Unexpected)?;
+
+        Ok::<(), CallbackError>(())
     };
 
     let (shutdown_tx, shutdown_rx) = tokio::sync::mpsc::channel(1);
