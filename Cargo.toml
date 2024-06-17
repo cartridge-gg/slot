@@ -12,7 +12,6 @@ rust-version = "1.76.0"
 [workspace.dependencies]
 slot = { path = "slot" }
 
-account-sdk = { git = "https://github.com/cartridge-gg/controller", rev = "53a3457" }
 anyhow = "1.0.75"
 axum = "0.6"
 katana-primitives = { git = "https://github.com/dojoengine/dojo", tag = "v0.7.0-alpha.3" }
