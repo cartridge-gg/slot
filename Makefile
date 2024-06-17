@@ -1,9 +1,8 @@
 BUILD_DIR := katana-genesis/build
+CONTROLLER_CLASS_NAME := controller_CartridgeAccount
+CONTROLLER_SUBMODULE := controller
 
-generate-artifacts: controller
-	scarb --manifest-path $</crates/cartridge_account/Scarb.toml build
-	mkdir -p ${BUILD_DIR}
-	# Maybe only move the exact class that we want
-	mv $</target/dev/* ${BUILD_DIR}
-
-.PHONY: generate-artifacts
+${BUILD_DIR}: ${CONTROLLER_SUBMODULE}
+	scarb --manifest-path $</packages/contracts/controller/Scarb.toml build
+	mkdir -p $@
+	mv $</target/**/${CONTROLLER_CLASS_NAME}* $@
