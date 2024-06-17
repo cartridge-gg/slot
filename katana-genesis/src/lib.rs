@@ -65,7 +65,7 @@ pub fn add_controller_account(
     let guid = signer.guid();
 
     let (address, contract) = {
-        let address = FieldElement::from_str(&address)?;
+        let address = FieldElement::from_str(address)?;
 
         const NON_STARK_OWNER_VAR_NAME: &str = "_owner_non_stark";
         let storage = get_storage_var_address(NON_STARK_OWNER_VAR_NAME, &[r#type]).unwrap();
