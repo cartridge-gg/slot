@@ -69,7 +69,7 @@ pub fn add_controller_account(
 
 fn add_controller_class(genesis: &mut GenesisJson) -> Result<()> {
     // parse the controller class json file
-    let json = include_str!("../artifacts/cartridge_account_CartridgeAccount.contract_class.json");
+    let json = include_str!("../build/controller_CartridgeAccount.contract_class.json");
     let json = serde_json::from_str::<Value>(json).context("Failed to parse class artifact")?;
 
     let class = GenesisClassJson {

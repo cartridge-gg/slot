@@ -86,7 +86,9 @@ jobs:
           echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
 
       - name: Build binaries
-        run: cargo build --release --bins --target ${{ matrix.job.target }}
+        run: |
+          make
+          cargo build --release --bins --target ${{ matrix.job.target }}
 
       - name: Archive binaries
         id: artifacts
