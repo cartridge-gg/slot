@@ -1,27 +1,37 @@
 [workspace]
+members = [ "cli", "slot" ]
 resolver = "2"
-members = ["cli", "slot"]
 
 [workspace.package]
-version = "0.7.5"
+edition = "2021"
 license-file = "LICENSE"
 repository = "https://github.com/cartridge-gg/slot/"
-edition = "2021"
 rust-version = "1.76.0"
+version = "0.7.5"
 
 [workspace.dependencies]
 slot = { path = "slot" }
 
 account-sdk = { git = "https://github.com/cartridge-gg/controller", rev = "53a3457" }
 anyhow = "1.0.75"
+katana-primitives = { git = "https://github.com/dojoengine/dojo", tag = "v0.7.0-alpha.4" }
+serde_json = "1"
+slot-katana-genesis = { path = "katana-genesis" }
+starknet = "0.10.0"
+
+[dependencies]
+account-sdk.workspace = true
+slot-katana-genesis.workspace = true
+
+anyhow.workspace = true
 axum = "0.6"
-katana-primitives = { git = "https://github.com/dojoengine/dojo", tag = "v0.7.0-alpha.3" }
 graphql_client = "0.13.0"
 hyper = "0.14.27"
-tokio = { version = "1.18.2", features = ["full", "sync"] }
+katana-primitives = { git = "https://github.com/dojoengine/dojo", tag = "v0.7.0-alpha.3" }
+rand = "0.8.4"
 serde = "1"
 serde_json = "1"
 starknet = "0.10.0"
 thiserror = "1.0.32"
+tokio = { version = "1.18.2", features = [ "full", "sync" ] }
 url = "2.2.2"
-rand = "0.8.4"
