@@ -7,7 +7,7 @@ all: ${BUILD_DIR}
 ${BUILD_DIR}: ${CONTROLLER_SUBMODULE}
 	scarb --manifest-path $</packages/contracts/controller/Scarb.toml build
 	mkdir -p $@
-	mv $</target/**/${CONTROLLER_CLASS_NAME}* $@
+	mv $</target/dev/${CONTROLLER_CLASS_NAME}* $@
 
 test: ${BUILD_DIR}
 	cargo test --all-features --workspace
