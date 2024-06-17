@@ -1,0 +1,32 @@
+[package]
+name = "slot-cli"
+edition.workspace = true
+license-file.workspace = true
+repository.workspace = true
+version.workspace = true
+rust-version.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow.workspace = true
+axum.workspace = true
+clap = { version = "4.2", features = ["derive"] }
+ctrlc = "3.4.1"
+env_logger = "0.10"
+log = "0.4"
+graphql_client.workspace = true
+katana-primitives.workspace = true
+hyper.workspace = true
+tokio.workspace = true
+thiserror.workspace = true
+serde.workspace = true
+slot.workspace = true
+starknet.workspace = true
+shellexpand = "3.1.0"
+url.workspace = true
+rand.workspace = true
+
+[[bin]]
+name = "slot"
+path = "src/main.rs"
