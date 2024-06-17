@@ -8,13 +8,9 @@ rust-version.workspace = true
 
 [dependencies]
 account-sdk.workspace = true
-alloy-primitives = "0.7.4"
 anyhow.workspace = true
 base64 = "0.22.1"
 coset = "0.3.7"
 katana-primitives.workspace = true
-lazy_static = "1.4.0"
 serde_json.workspace = true
-sha2 = "0.10"
-starknet-crypto = "0.6.2"
 starknet.workspace = true

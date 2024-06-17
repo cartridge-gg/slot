@@ -1,46 +1,26 @@
-mod webauthn;
+#![cfg_attr(not(test), warn(unused_crate_dependencies))]
 
 use std::{collections::HashMap, str::FromStr};
 
-use account_sdk::{
-    abigen::cartridge_account::Signer,
-    signers::{
-        webauthn::{DeviceSigner, WebauthnAccountSigner},
-        SignerTrait,
-    },
-};
-use anyhow::Result;
-use katana_primitives::{
-    contract::ContractAddress,
-    genesis::json::{ClassNameOrHash, GenesisClassJson, GenesisContractJson, GenesisJson},
-    FieldElement,
-};
-use lazy_static::lazy_static;
+use account_sdk::abigen::cartridge_account::Signer;
+use account_sdk::signers::webauthn::{DeviceSigner, WebauthnAccountSigner};
+use account_sdk::signers::SignerTrait;
+use anyhow::{Context, Result};
+use katana_primitives::contract::ContractAddress;
+use katana_primitives::genesis::json::{ClassNameOrHash, GenesisClassJson};
+use katana_primitives::genesis::json::{GenesisContractJson, GenesisJson};
+use katana_primitives::FieldElement;
 use serde_json::Value;
 use starknet::core::utils::get_storage_var_address;
+
+mod webauthn;
+
+const CONTROLLER_CLASS_NAME: &str = "controller";
 
 const WEBAUTHN_RP_ID: &str = "cartridge.gg";
 const WEBAUTHN_ORIGIN: &str = "https://x.cartridge.gg";
 
-lazy_static! {
-    static ref CARTRIDGE_CONTROLLER_CLASS: Value = serde_json::from_str(include_str!(
-        "../artifacts/cartridge_account_CartridgeAccount.contract_class.json"
-    ))
-    .unwrap();
-}
-
-fn add_controller_class(genesis: &mut GenesisJson) -> Result<()> {
-    let class = GenesisClassJson {
-        class_hash: None,
-        name: Some("controller".to_string()),
-        class: CARTRIDGE_CONTROLLER_CLASS.clone().into(),
-    };
-
-    genesis.classes.push(class);
-
-    Ok(())
-}
-
+// TODO(kariy): should accept the whole account struct instead of individual fields
 // build the genesis json file
 pub fn add_controller_account(
     genesis: &mut GenesisJson,
@@ -67,6 +47,7 @@ pub fn add_controller_account(
     let (address, contract) = {
         let address = FieldElement::from_str(address)?;
 
+        // the storage variable name for webauthn signer
         const NON_STARK_OWNER_VAR_NAME: &str = "_owner_non_stark";
         let storage = get_storage_var_address(NON_STARK_OWNER_VAR_NAME, &[r#type]).unwrap();
         let storages = HashMap::from([(storage, guid)]);
@@ -75,7 +56,7 @@ pub fn add_controller_account(
             nonce: None,
             balance: None,
             storage: Some(storages),
-            class: Some(ClassNameOrHash::Name("controller".to_string())),
+            class: Some(ClassNameOrHash::Name(CONTROLLER_CLASS_NAME.to_string())),
         };
 
         (ContractAddress::from(address), account)
@@ -84,4 +65,27 @@ pub fn add_controller_account(
     genesis.contracts.insert(address, contract);
 
     Ok(())
+}
+
+fn add_controller_class(genesis: &mut GenesisJson) -> Result<()> {
+    // parse the controller class json file
+    let json = include_str!("../artifacts/cartridge_account_CartridgeAccount.contract_class.json");
+    let json = serde_json::from_str::<Value>(json).context("Failed to parse class artifact")?;
+
+    let class = GenesisClassJson {
+        class_hash: None,
+        class: json.into(),
+        name: Some(CONTROLLER_CLASS_NAME.to_string()),
+    };
+
+    genesis.classes.push(class);
+
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+
+    #[test]
+    fn test_add_controller_account() {}
 }
