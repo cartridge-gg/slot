@@ -78,16 +78,10 @@ impl AppState {
 #[derive(Debug, thiserror::Error)]
 enum CallbackError {
     #[error(transparent)]
-    Io(#[from] std::io::Error),
-
-    #[error("Api error: {0}")]
-    Api(#[from] slot::api::Error),
-
-    #[error(transparent)]
     Other(#[from] anyhow::Error),
 
     #[error(transparent)]
-    Credentials(#[from] slot::credential::Error),
+    Slot(#[from] slot::Error),
 
     #[error(transparent)]
     Parse(#[from] AccountTryFromGraphQLError),

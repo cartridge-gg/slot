@@ -8,4 +8,8 @@ pub mod credential;
 pub mod graphql;
 pub mod server;
 pub mod session;
+
+pub(crate) mod error;
 pub(crate) mod utils;
+
+pub use error::Error;

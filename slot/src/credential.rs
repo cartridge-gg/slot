@@ -1,27 +1,12 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::io::{self};
 use std::path::{Path, PathBuf};
 
 use crate::account::Account;
+use crate::error::Error;
 use crate::utils::{self};
 
 const CREDENTIALS_FILE: &str = "credentials.json";
-
-#[derive(Debug, thiserror::Error)]
-pub enum Error {
-    #[error(transparent)]
-    IO(#[from] io::Error),
-
-    #[error("No credentials found, please authenticate with `slot auth login`")]
-    Unauthorized,
-
-    #[error("Legacy credentials found, please reauthenticate with `slot auth login`")]
-    LegacyCredentials,
-
-    #[error(transparent)]
-    Serde(#[from] serde_json::Error),
-}
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct AccessToken {
@@ -96,7 +81,7 @@ impl Credentials {
                 let legacy = serde_json::from_str::<LegacyCredentials>(&content);
                 match legacy {
                     Ok(_) => Err(Error::LegacyCredentials),
-                    Err(e) => Err(Error::IO(e.into())),
+                    Err(e) => Err(Error::Serde(e)),
                 }
             }
         }

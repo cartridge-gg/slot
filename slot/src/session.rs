@@ -1,4 +1,3 @@
-use std::io;
 use std::path::Path;
 use std::{fs, path::PathBuf};
 
@@ -8,13 +7,13 @@ use axum::{extract::State, routing::post, Json, Router};
 use hyper::StatusCode;
 use serde::{Deserialize, Serialize};
 use starknet::core::types::FieldElement;
-use thiserror::Error;
 use tokio::sync::mpsc::{channel, Receiver, Sender};
 use tower_http::cors::CorsLayer;
 use tracing::info;
 use url::Url;
 
-use crate::credential::{self, Credentials};
+use crate::credential::Credentials;
+use crate::error::Error;
 use crate::utils::{self};
 use crate::{browser, server::LocalServer};
 
@@ -47,22 +46,6 @@ pub struct SessionCredentials {
     /// The signing key of the session.
     pub private_key: FieldElement,
     pub authorization: Vec<FieldElement>,
-}
-
-// TODO(kariy): unify the error types for the whole Slot crate.
-#[derive(Debug, Error)]
-pub enum Error {
-    #[error(transparent)]
-    IO(#[from] io::Error),
-
-    #[error(transparent)]
-    Credentials(#[from] credential::Error),
-
-    #[error(transparent)]
-    Serde(#[from] serde_json::Error),
-
-    #[error(transparent)]
-    Other(#[from] anyhow::Error),
 }
 
 /// Retrieves the session for the given chain id of the currently authenticated user.
@@ -284,9 +267,10 @@ fn get_user_relative_file_path(username: &str, chain_id: FieldElement) -> PathBu
 
 #[cfg(test)]
 mod tests {
-    use super::{get, Error};
+    use super::get;
     use crate::account::{Account, AccountCredentials};
-    use crate::credential::{AccessToken, Credentials, Error::Unauthorized};
+    use crate::credential::{AccessToken, Credentials};
+    use crate::error::Error::Unauthorized;
     use crate::session::{get_at, get_user_relative_file_path, store_at, SessionDetails};
     use crate::utils;
     use starknet::{core::types::FieldElement, macros::felt};
@@ -335,7 +319,7 @@ mod tests {
     fn get_session_unauthenticated() {
         let chain = FieldElement::ONE;
         let err = get(chain).unwrap_err();
-        let Error::Credentials(Unauthorized) = err else {
+        let Unauthorized = err else {
             panic!("expected Unauthorized error, got {err:?}");
         };
     }

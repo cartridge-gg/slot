@@ -3,15 +3,8 @@ use reqwest::RequestBuilder;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use url::Url;
 
+use crate::error::Error;
 use crate::{constant, credential::AccessToken};
-
-#[derive(Debug, thiserror::Error)]
-pub enum Error {
-    #[error(transparent)]
-    ReqwestError(#[from] reqwest::Error),
-    #[error("Invalid token, please authenticate with `slot auth login`")]
-    Unauthorized,
-}
 
 #[derive(Debug)]
 pub struct Client {
@@ -58,7 +51,7 @@ impl Client {
             .await?;
 
         if response.status() == 403 {
-            return Err(Error::Unauthorized);
+            return Err(Error::InvalidOAuth);
         }
 
         Ok(response.json().await?)
