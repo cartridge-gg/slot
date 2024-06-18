@@ -13,6 +13,7 @@ anyhow.workspace = true
 axum.workspace = true
 clap = { version = "4.2", features = ["derive"] }
 ctrlc = "3.4.1"
+dialoguer = "0.11.0"
 env_logger = "0.10"
 log = "0.4"
 graphql_client.workspace = true
