@@ -28,7 +28,6 @@ pub struct DeleteArgs {
 
 impl DeleteArgs {
     pub async fn run(&self) -> Result<()> {
-
         if !self.force {
             let confirmation = Confirm::with_theme(&ColorfulTheme::default())
                 .with_prompt(format!(
