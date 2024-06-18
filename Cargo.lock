@@ -3397,6 +3397,7 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
+ "serde_with",
  "starknet",
  "tempfile",
  "thiserror",

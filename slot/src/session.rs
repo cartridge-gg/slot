@@ -103,7 +103,7 @@ where
     U: Into<Url>,
 {
     let credentials = Credentials::load()?;
-    let username = credentials.account.expect("id must exist").id;
+    let username = credentials.account.id;
     create_user_session(&username, rpc_url, policies).await
 }
 
@@ -114,7 +114,7 @@ where
     P: AsRef<Path>,
 {
     let credentials = Credentials::load_at(&config_dir)?;
-    let username = credentials.account.expect("id must exist").id;
+    let username = credentials.account.id;
 
     let user_path = get_user_relative_file_path(&username, chain);
     let file_path = config_dir.as_ref().join(user_path);
@@ -141,7 +141,7 @@ where
     // TODO: maybe can store the authenticated user in a global variable so that
     // we don't have to call load again if we already did it before.
     let credentials = Credentials::load_at(&config_dir)?;
-    let username = credentials.account.expect("id must exist").id;
+    let username = credentials.account.id;
 
     let path = get_user_relative_file_path(&username, chain);
     let file_path = config_dir.as_ref().join(path);
@@ -285,8 +285,8 @@ fn get_user_relative_file_path(username: &str, chain_id: FieldElement) -> PathBu
 #[cfg(test)]
 mod tests {
     use super::{get, Error};
+    use crate::account::{Account, AccountCredentials};
     use crate::credential::{AccessToken, Credentials, Error::Unauthorized};
-    use crate::graphql::auth::me::{MeMe, MeMeCredentials};
     use crate::session::{get_at, get_user_relative_file_path, store_at, SessionDetails};
     use crate::utils;
     use starknet::{core::types::FieldElement, macros::felt};
@@ -302,14 +302,16 @@ mod tests {
             r#type: "Bearer".to_string(),
         };
 
-        let me = MeMe {
+        let account = Account {
             name: None,
             id: USERNAME.to_string(),
-            contract_address: None,
-            credentials: MeMeCredentials { webauthn: None },
+            contract_address: felt!("0x999"),
+            credentials: AccountCredentials {
+                webauthn: Vec::new(),
+            },
         };
 
-        let cred = Credentials::new(Some(me), token);
+        let cred = Credentials::new(account, token);
         let _ = Credentials::store_at(&config_dir, &cred).unwrap();
 
         USERNAME

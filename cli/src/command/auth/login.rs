@@ -13,12 +13,13 @@ use hyper::StatusCode;
 use log::error;
 use serde::Deserialize;
 use slot::{
+    account::Account,
     api::Client,
     browser, constant,
     credential::Credentials,
     graphql::auth::{
         me::{ResponseData, Variables},
-        Me,
+        AccountTryFromGraphQLError, Me,
     },
     server::LocalServer,
 };
@@ -87,6 +88,9 @@ enum CallbackError {
 
     #[error(transparent)]
     Credentials(#[from] slot::credential::Error),
+
+    #[error(transparent)]
+    Parse(#[from] AccountTryFromGraphQLError),
 }
 
 impl IntoResponse for CallbackError {
@@ -123,10 +127,11 @@ async fn handler(
                 }
             }
 
-            let account_info = res.data.map(|data| data.me.expect("should exist"));
+            let account = res.data.and_then(|data| data.me).expect("missing payload");
+            let account = Account::try_from(account)?;
 
             // 3. Store the access token locally
-            Credentials::new(account_info, token).store()?;
+            Credentials::new(account, token).store()?;
 
             println!("You are now logged in!\n");
 

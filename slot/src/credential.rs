@@ -3,7 +3,7 @@ use std::fs;
 use std::io::{self};
 use std::path::{Path, PathBuf};
 
-use crate::graphql::auth::me::MeMe;
+use crate::account::Account;
 use crate::utils::{self};
 
 const CREDENTIALS_FILE: &str = "credentials.json";
@@ -38,12 +38,12 @@ struct LegacyCredentials {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Credentials {
     #[serde(flatten)]
-    pub account: Option<MeMe>,
+    pub account: Account,
     pub access_token: AccessToken,
 }
 
 impl Credentials {
-    pub fn new(account: Option<MeMe>, access_token: AccessToken) -> Self {
+    pub fn new(account: Account, access_token: AccessToken) -> Self {
         Self {
             account,
             access_token,
@@ -110,10 +110,53 @@ pub fn get_file_path<P: AsRef<Path>>(config_dir: P) -> PathBuf {
 
 #[cfg(test)]
 mod tests {
+    use serde_json::{json, Value};
+    use starknet::macros::felt;
+
     use super::LegacyCredentials;
+    use crate::account::Account;
     use crate::credential::{AccessToken, Credentials, CREDENTIALS_FILE};
     use crate::utils;
     use std::fs;
+
+    // This test is to make sure that changes made to the `Credentials` struct doesn't
+    // introduce breaking changes to the serde format.
+    #[test]
+    fn test_rt_static_format() {
+        let json = json!({
+          "id": "foo",
+          "name": "",
+          "contractAddress": "0x1337",
+          "credentials": {
+            "webauthn": [
+              {
+                "id": "foobar",
+                "publicKey": "mypublickey"
+              }
+            ]
+          },
+          "access_token": {
+            "token": "oauthtoken",
+            "type": "bearer"
+          }
+        });
+
+        let account: Credentials = serde_json::from_value(json.clone()).unwrap();
+
+        assert_eq!(account.account.id, "foo".to_string());
+        assert_eq!(account.account.name, Some("".to_string()));
+        assert_eq!(account.account.contract_address, felt!("0x1337"));
+        assert_eq!(account.account.credentials.webauthn[0].id, "foobar");
+        assert_eq!(
+            account.account.credentials.webauthn[0].public_key,
+            "mypublickey"
+        );
+        assert_eq!(account.access_token.token, "oauthtoken");
+        assert_eq!(account.access_token.r#type, "bearer");
+
+        let account_serialized: Value = serde_json::to_value(&account).unwrap();
+        assert_eq!(json, account_serialized);
+    }
 
     #[test]
     fn loading_legacy_credentials() {
@@ -147,7 +190,7 @@ mod tests {
             r#type: "Bearer".to_string(),
         };
 
-        let expected = Credentials::new(None, access_token);
+        let expected = Credentials::new(Account::default(), access_token);
         let _ = Credentials::store_at(&config_dir, &expected).unwrap();
 
         let actual = Credentials::load_at(config_dir).unwrap();

@@ -26,3 +26,4 @@ starknet.workspace = true
 url.workspace = true
 tempfile = "3.10.1"
 hyper.workspace = true
+serde_with = "2.3"

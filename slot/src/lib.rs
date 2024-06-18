@@ -1,5 +1,6 @@
 #![cfg_attr(not(test), warn(unused_crate_dependencies))]
 
+pub mod account;
 pub mod api;
 pub mod browser;
 pub mod constant;
