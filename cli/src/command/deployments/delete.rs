@@ -1,5 +1,7 @@
 use anyhow::Result;
 use clap::Args;
+use dialoguer::theme::ColorfulTheme;
+use dialoguer::Confirm;
 use slot::graphql::deployments::{delete_deployment::*, DeleteDeployment};
 use slot::graphql::{GraphQLQuery, Response};
 use slot::{api::Client, credential::Credentials};
@@ -19,10 +21,31 @@ pub struct DeleteArgs {
 
     #[arg(help = "The name of the service.")]
     pub service: Service,
+
+    #[arg(help = "Force delete without confirmation", short('f'))]
+    pub force: bool,
 }
 
 impl DeleteArgs {
     pub async fn run(&self) -> Result<()> {
+
+        if !self.force {
+            let confirmation = Confirm::with_theme(&ColorfulTheme::default())
+                .with_prompt(format!(
+                    "Please confirm to delete {} {:?}",
+                    &self.project, &self.service
+                ))
+                .default(false)
+                .show_default(true)
+                .wait_for_newline(true)
+                .interact()
+                .unwrap();
+
+            if !confirmation {
+                return Ok(());
+            }
+        }
+
         let service = match &self.service {
             Service::Katana => DeploymentService::katana,
             Service::Torii => DeploymentService::torii,
