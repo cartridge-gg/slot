@@ -23,7 +23,7 @@ jobs:
       - id: version_info
         run: |
           cargo install cargo-get
-          echo "version=$(cargo get package.version)" >> $GITHUB_OUTPUT
+          echo "version=$(cargo get workspace.package.version)" >> $GITHUB_OUTPUT
       - uses: peter-evans/create-pull-request@v5
         with:
           # We have to use a PAT in order to trigger ci
