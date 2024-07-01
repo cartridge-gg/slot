@@ -3,7 +3,7 @@ use std::str::FromStr;
 use anyhow::{anyhow, ensure, Result};
 use clap::Parser;
 use slot::session::{self, Policy};
-use starknet::core::types::FieldElement;
+use starknet::core::types::Felt;
 use starknet::providers::{jsonrpc::HttpTransport, JsonRpcClient, Provider};
 use url::Url;
 
@@ -35,7 +35,7 @@ fn parse_policy(value: &str) -> Result<Policy> {
     let mut parts = value.split(',');
 
     let target = parts.next().ok_or(anyhow!("missing target"))?.to_owned();
-    let target = FieldElement::from_str(&target)?;
+    let target = Felt::from_str(&target)?;
     let method = parts.next().ok_or(anyhow!("missing method"))?.to_owned();
 
     ensure!(parts.next().is_none(), " bruh");
@@ -43,7 +43,7 @@ fn parse_policy(value: &str) -> Result<Policy> {
     Ok(Policy { target, method })
 }
 
-async fn get_network_chain_id(url: Url) -> Result<FieldElement> {
+async fn get_network_chain_id(url: Url) -> Result<Felt> {
     let provider = JsonRpcClient::new(HttpTransport::new(url));
     Ok(provider.chain_id().await?)
 }
