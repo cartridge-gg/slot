@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use graphql_client::GraphQLQuery;
 use me::MeMe;
-use starknet::core::types::{FieldElement, FromStrError};
+use starknet::core::types::{Felt, FromStrError};
 
 use crate::account::{Account, AccountCredentials, WebAuthnCredential};
 
@@ -38,7 +38,7 @@ impl TryFrom<MeMe> for Account {
             id: value.id,
             name: value.name,
             credentials: value.credentials.try_into()?,
-            contract_address: FieldElement::from_str(&address)?,
+            contract_address: Felt::from_str(&address)?,
         })
     }
 }
@@ -89,7 +89,7 @@ mod tests {
 
         assert_eq!(account.id, "id");
         assert_eq!(account.name, Some("name".to_string()));
-        assert_eq!(account.contract_address, FieldElement::ONE);
+        assert_eq!(account.contract_address, Felt::ONE);
         assert_eq!(account.credentials.webauthn.len(), 1);
         assert_eq!(account.credentials.webauthn[0].id, "id".to_string());
         assert_eq!(
