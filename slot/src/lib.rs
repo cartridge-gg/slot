@@ -3,11 +3,11 @@
 pub mod account;
 pub mod api;
 pub mod browser;
-pub mod constant;
 pub mod credential;
 pub mod graphql;
 pub mod server;
 pub mod session;
+pub mod vars;
 
 pub(crate) mod error;
 pub(crate) mod utils;

@@ -15,13 +15,14 @@ use serde::Deserialize;
 use slot::{
     account::Account,
     api::Client,
-    browser, constant,
+    browser,
     credential::Credentials,
     graphql::auth::{
         me::{ResponseData, Variables},
         AccountTryFromGraphQLError, Me,
     },
     server::LocalServer,
+    vars,
 };
 use tokio::sync::mpsc::Sender;
 
@@ -34,7 +35,9 @@ impl LoginArgs {
         let port = server.local_addr()?.port();
         let callback_uri = format!("http://localhost:{port}/callback");
 
-        let url = format!("https://x.cartridge.gg/slot/auth?callback_uri={callback_uri}");
+        let url = vars::get_cartridge_keychain_url();
+
+        let url = format!("{url}/slot/auth?callback_uri={callback_uri}");
 
         browser::open(&url)?;
         server.start().await?;
@@ -131,7 +134,7 @@ async fn handler(
 
             Ok(Redirect::permanent(&format!(
                 "{}/slot/auth/success",
-                constant::CARTRIDGE_KEYCHAIN_URL
+                vars::get_cartridge_keychain_url()
             )))
         }
         None => {
@@ -139,7 +142,7 @@ async fn handler(
 
             Ok(Redirect::permanent(&format!(
                 "{}/slot/auth/failure",
-                constant::CARTRIDGE_KEYCHAIN_URL
+                vars::get_cartridge_keychain_url()
             )))
         }
     }

@@ -5,7 +5,7 @@ use clap::Args;
 use slot::graphql::deployments::fork_deployment::ForkDeploymentForkDeployment::KatanaConfig;
 use slot::graphql::deployments::{fork_deployment::*, ForkDeployment};
 use slot::graphql::{GraphQLQuery, Response};
-use slot::{api::Client, credential::Credentials};
+use slot::{api::Client, credential::Credentials, vars};
 use starknet::providers::{jsonrpc::HttpTransport, JsonRpcClient, Provider};
 use url::Url;
 
@@ -72,9 +72,10 @@ impl ForkArgs {
                 let block_number = if let Some(block_number) = config.fork_block_number {
                     block_number
                 } else {
+                    let url = vars::get_cartridge_api_url();
                     // Workaround to get latest block number. Perhaps Katana could default to latest if none is supplied
                     let rpc_client = JsonRpcClient::new(HttpTransport::new(Url::parse(&format!(
-                        "https://api.cartridge.gg/x/{}/katana",
+                        "{url}/x/{}/katana",
                         self.project
                     ))?));
                     rpc_client.block_number().await?
