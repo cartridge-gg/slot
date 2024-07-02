@@ -4,7 +4,7 @@ use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use url::Url;
 
 use crate::error::Error;
-use crate::{constant, credential::AccessToken};
+use crate::{credential::AccessToken, vars};
 
 #[derive(Debug)]
 pub struct Client {
@@ -18,7 +18,7 @@ impl Client {
         Self {
             access_token: None,
             client: reqwest::Client::new(),
-            base_url: Url::parse(constant::CARTRIDGE_API_URL).expect("valid url"),
+            base_url: Url::parse(vars::get_cartridge_api_url().as_str()).expect("valid url"),
         }
     }
 

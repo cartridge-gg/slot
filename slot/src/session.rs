@@ -15,9 +15,9 @@ use url::Url;
 use crate::credential::Credentials;
 use crate::error::Error;
 use crate::utils::{self};
-use crate::{browser, server::LocalServer};
+use crate::{browser, server::LocalServer, vars};
 
-const SESSION_CREATION_PAGE: &str = "https://x.cartridge.gg/slot/session";
+const SESSION_CREATION_PATH: &str = "/slot/session";
 const SESSION_FILE_BASE_NAME: &str = "session.json";
 
 /// A policy defines what action can be performed by the session key.
@@ -146,7 +146,9 @@ where
 /// Creates a new session token for the given user. This will open a browser to the Cartridge
 /// Controller keychain page to prompt user to create a new session for the given policies and
 /// network. Returns the newly created session token.
-#[tracing::instrument(name = "create_session", level = "trace", skip(rpc_url), fields(policies = policies.len()))]
+#[tracing::instrument(name = "create_session", level = "trace", skip(rpc_url), fields(
+    policies = policies.len()
+))]
 pub async fn create_user_session<U>(
     username: &str,
     rpc_url: U,
@@ -168,7 +170,8 @@ fn open_session_creation_page(
     policies: &[Policy],
 ) -> anyhow::Result<Receiver<SessionDetails>> {
     let params = prepare_query_params(username, rpc_url, policies)?;
-    let url = format!("{SESSION_CREATION_PAGE}?{params}");
+    let host = vars::get_cartridge_keychain_url();
+    let url = format!("{host}{SESSION_CREATION_PATH}?{params}");
 
     let (tx, rx) = channel::<SessionDetails>(1);
     let server = callback_server(tx)?;
