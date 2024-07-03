@@ -8,10 +8,11 @@ use katana_primitives::genesis::allocation::{
     DevAllocationsGenerator, DevGenesisAccount, GenesisAccount,
 };
 use katana_primitives::genesis::Genesis;
+use katana_primitives::FieldElement;
 use slot::graphql::deployments::katana_accounts::KatanaAccountsDeploymentConfig::KatanaConfig;
 use slot::graphql::deployments::{katana_accounts::*, KatanaAccounts};
 use slot::graphql::{GraphQLQuery, Response};
-use starknet::core::types::FieldElement;
+use starknet::core::types::Felt;
 
 use slot::api::Client;
 use slot::credential::Credentials;
@@ -51,13 +52,23 @@ impl AccountsArgs {
                         Some(accounts) => {
                             let mut accounts_vec = Vec::new();
                             for account in accounts {
+                                // TODO(kariy): update these after updating katana-primitives
                                 let address = ContractAddress::from(
-                                    FieldElement::from_hex_be(&account.address).unwrap(),
+                                    FieldElement::from_bytes_be(
+                                        &Felt::from_hex(&account.address).unwrap().to_bytes_be(),
+                                    )
+                                    .unwrap(),
                                 );
-                                let public_key =
-                                    FieldElement::from_hex_be(&account.public_key).unwrap();
-                                let private_key =
-                                    FieldElement::from_hex_be(&account.private_key).unwrap();
+
+                                let public_key = FieldElement::from_bytes_be(
+                                    &Felt::from_hex(&account.public_key).unwrap().to_bytes_be(),
+                                )
+                                .unwrap();
+                                let private_key = FieldElement::from_bytes_be(
+                                    &Felt::from_hex(&account.private_key).unwrap().to_bytes_be(),
+                                )
+                                .unwrap();
+
                                 let genesis_account = GenesisAccount {
                                     public_key,
                                     ..GenesisAccount::default()

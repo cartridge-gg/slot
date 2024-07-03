@@ -6,7 +6,7 @@ use axum::response::{IntoResponse, Response};
 use axum::{extract::State, routing::post, Json, Router};
 use hyper::StatusCode;
 use serde::{Deserialize, Serialize};
-use starknet::core::types::FieldElement;
+use starknet::core::types::Felt;
 use tokio::sync::mpsc::{channel, Receiver, Sender};
 use tower_http::cors::CorsLayer;
 use tracing::info;
@@ -24,7 +24,7 @@ const SESSION_FILE_BASE_NAME: &str = "session.json";
 #[derive(Debug, Default, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Policy {
     /// The target contract address.
-    pub target: FieldElement,
+    pub target: Felt,
     /// The method name.
     pub method: String,
 }
@@ -44,8 +44,8 @@ pub struct SessionDetails {
 #[serde(rename_all = "camelCase")]
 pub struct SessionCredentials {
     /// The signing key of the session.
-    pub private_key: FieldElement,
-    pub authorization: Vec<FieldElement>,
+    pub private_key: Felt,
+    pub authorization: Vec<Felt>,
 }
 
 /// Retrieves the session for the given chain id of the currently authenticated user.
@@ -55,7 +55,7 @@ pub struct SessionCredentials {
 ///
 /// This function will return an error if there is no authenticated user.
 ///
-pub fn get(chain: FieldElement) -> Result<Option<SessionDetails>, Error> {
+pub fn get(chain: Felt) -> Result<Option<SessionDetails>, Error> {
     get_at(utils::config_dir(), chain)
 }
 
@@ -65,7 +65,7 @@ pub fn get(chain: FieldElement) -> Result<Option<SessionDetails>, Error> {
 ///
 /// This function will return an error if there is no authenticated user.
 ///
-pub fn store(chain: FieldElement, session: &SessionDetails) -> Result<PathBuf, Error> {
+pub fn store(chain: Felt, session: &SessionDetails) -> Result<PathBuf, Error> {
     store_at(utils::config_dir(), chain, session)
 }
 
@@ -92,7 +92,7 @@ where
 
 /// Get the session token of the chain id `chain` for the currently authenticated user. It will
 /// use `config_dir` as the root path to look for the session file.
-fn get_at<P>(config_dir: P, chain: FieldElement) -> Result<Option<SessionDetails>, Error>
+fn get_at<P>(config_dir: P, chain: Felt) -> Result<Option<SessionDetails>, Error>
 where
     P: AsRef<Path>,
 {
@@ -113,11 +113,7 @@ where
 
 /// Stores the session token of the chain id `chain` for the currently authenticated user. It will
 /// use `config_dir` as the root path to store the session file.
-fn store_at<P>(
-    config_dir: P,
-    chain: FieldElement,
-    session: &SessionDetails,
-) -> Result<PathBuf, Error>
+fn store_at<P>(config_dir: P, chain: Felt, session: &SessionDetails) -> Result<PathBuf, Error>
 where
     P: AsRef<Path>,
 {
@@ -263,7 +259,7 @@ fn callback_server(result_sender: Sender<SessionDetails>) -> anyhow::Result<Loca
         .with_shutdown_signal(shutdown_rx))
 }
 
-fn get_user_relative_file_path(username: &str, chain_id: FieldElement) -> PathBuf {
+fn get_user_relative_file_path(username: &str, chain_id: Felt) -> PathBuf {
     let file_name = format!("{chain_id:#x}-{}", SESSION_FILE_BASE_NAME);
     PathBuf::from(username).join(file_name)
 }
@@ -276,7 +272,7 @@ mod tests {
     use crate::error::Error::Unauthorized;
     use crate::session::{get_at, get_user_relative_file_path, store_at, SessionDetails};
     use crate::utils;
-    use starknet::{core::types::FieldElement, macros::felt};
+    use starknet::{core::types::Felt, macros::felt};
     use std::ffi::OsStr;
     use std::path::{Component, Path};
     use tokio::sync::mpsc::channel;
@@ -320,7 +316,7 @@ mod tests {
 
     #[test]
     fn get_session_unauthenticated() {
-        let chain = FieldElement::ONE;
+        let chain = Felt::ONE;
         let err = get(chain).unwrap_err();
         let Unauthorized = err else {
             panic!("expected Unauthorized error, got {err:?}");

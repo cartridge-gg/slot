@@ -1,5 +1,5 @@
 use clap::Args;
-use starknet::core::types::FieldElement;
+use starknet::core::types::Felt;
 
 #[derive(Clone, Debug, Args, serde::Serialize)]
 #[command(next_help_heading = "Torii create options")]
@@ -16,7 +16,7 @@ pub struct ToriiCreateArgs {
     #[arg(long)]
     #[arg(value_name = "world")]
     #[arg(help = "World address.")]
-    pub world: FieldElement,
+    pub world: Felt,
 
     #[arg(short, long)]
     #[arg(help = "Specify a block to start indexing from.")]
