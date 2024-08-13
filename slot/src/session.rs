@@ -1,6 +1,7 @@
 use std::path::Path;
 use std::{fs, path::PathBuf};
 
+use account_sdk::storage::SessionMetadata;
 use anyhow::Context;
 use axum::response::{IntoResponse, Response};
 use axum::{extract::State, routing::post, Json, Router};
