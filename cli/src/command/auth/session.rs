@@ -26,7 +26,8 @@ impl CreateSession {
         let url = Url::parse(&self.rpc_url)?;
         let chain_id = get_network_chain_id(url.clone()).await?;
         let session = session::create(url, &self.policies).await?;
-        session::store(chain_id, &session)?;
+        println!("session: {session:?}");
+        // session::store(chain_id, &session)?;
         Ok(())
     }
 }

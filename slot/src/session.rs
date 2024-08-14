@@ -56,7 +56,7 @@ pub struct SessionCredentials {
 ///
 /// This function will return an error if there is no authenticated user.
 ///
-pub fn get(chain: Felt) -> Result<Option<SessionDetails>, Error> {
+pub fn get(chain: Felt) -> Result<Option<SessionMetadata>, Error> {
     get_at(utils::config_dir(), chain)
 }
 
@@ -82,7 +82,7 @@ pub fn store(chain: Felt, session: &SessionDetails) -> Result<PathBuf, Error> {
 ///
 /// This function will return an error if there is no authenticated user.
 ///
-pub async fn create<U>(rpc_url: U, policies: &[Policy]) -> Result<SessionDetails, Error>
+pub async fn create<U>(rpc_url: U, policies: &[Policy]) -> Result<SessionMetadata, Error>
 where
     U: Into<Url>,
 {
@@ -93,7 +93,7 @@ where
 
 /// Get the session token of the chain id `chain` for the currently authenticated user. It will
 /// use `config_dir` as the root path to look for the session file.
-fn get_at<P>(config_dir: P, chain: Felt) -> Result<Option<SessionDetails>, Error>
+fn get_at<P>(config_dir: P, chain: Felt) -> Result<Option<SessionMetadata>, Error>
 where
     P: AsRef<Path>,
 {
@@ -150,7 +150,7 @@ pub async fn create_user_session<U>(
     username: &str,
     rpc_url: U,
     policies: &[Policy],
-) -> Result<SessionDetails, Error>
+) -> Result<SessionMetadata, Error>
 where
     U: Into<Url>,
 {
@@ -165,12 +165,12 @@ fn open_session_creation_page(
     username: &str,
     rpc_url: &str,
     policies: &[Policy],
-) -> anyhow::Result<Receiver<SessionDetails>> {
+) -> anyhow::Result<Receiver<SessionMetadata>> {
     let params = prepare_query_params(username, rpc_url, policies)?;
     let host = vars::get_cartridge_keychain_url();
     let url = format!("{host}{SESSION_CREATION_PATH}?{params}");
 
-    let (tx, rx) = channel::<SessionDetails>(1);
+    let (tx, rx) = channel::<SessionMetadata>(1);
     let server = callback_server(tx)?;
 
     // get the callback server url
@@ -223,15 +223,17 @@ impl IntoResponse for CallbackError {
 }
 
 /// Create the callback server that will receive the session token from the browser.
-fn callback_server(result_sender: Sender<SessionDetails>) -> anyhow::Result<LocalServer> {
-    type HandlerState = State<(Sender<SessionDetails>, Sender<()>)>;
+fn callback_server(result_sender: Sender<SessionMetadata>) -> anyhow::Result<LocalServer> {
+    type HandlerState = State<(Sender<SessionMetadata>, Sender<()>)>;
 
     // Request handler for the /callback endpoint.
-    let handler = |state: HandlerState, json: Json<SessionDetails>| async move {
+    let handler = |state: HandlerState, json: Json<SessionMetadata>| async move {
         info!("Received session token from the browser.");
 
         let State((res_sender, shutdown_sender)) = state;
         let Json(session) = json;
+
+        println!("response: {session:?}");
 
         // Parse the session token from the json payload.
         res_sender
@@ -273,6 +275,7 @@ mod tests {
     use crate::error::Error::Unauthorized;
     use crate::session::{get_at, get_user_relative_file_path, store_at, SessionDetails};
     use crate::utils;
+    use account_sdk::storage::SessionMetadata;
     use starknet::{core::types::Felt, macros::felt};
     use std::ffi::OsStr;
     use std::path::{Component, Path};
@@ -346,8 +349,10 @@ mod tests {
         let user_path = get_user_relative_file_path(username, chain);
         let actual = get_at(config_dir, chain).unwrap();
 
-        assert_eq!(Some(expected), actual);
-        assert!(path.ends_with(user_path));
+        todo!()
+
+        // assert_eq!(Some(expected), actual);
+        // assert!(path.ends_with(user_path));
     }
 
     #[test]
@@ -363,7 +368,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_callback_server() {
-        let (tx, mut rx) = channel::<SessionDetails>(1);
+        let (tx, mut rx) = channel::<SessionMetadata>(1);
         let server = super::callback_server(tx).expect("failed to create server");
 
         // get the callback url
@@ -373,18 +378,20 @@ mod tests {
         // start the callback server
         tokio::spawn(server.start());
 
-        // call the callback url
-        let session = SessionDetails::default();
-        let res = reqwest::Client::new()
-            .post(url)
-            .json(&session)
-            .send()
-            .await
-            .expect("failed to call callback url");
+        // // call the callback url
+        // let session = SessionMetadata::default();
+        // let res = reqwest::Client::new()
+        //     .post(url)
+        //     .json(&session)
+        //     .send()
+        //     .await
+        //     .expect("failed to call callback url");
 
-        assert!(res.status().is_success());
+        // assert!(res.status().is_success());
 
-        let actual = rx.recv().await.expect("failed to receive session");
-        assert_eq!(session, actual)
+        // let actual = rx.recv().await.expect("failed to receive session");
+        // assert_eq!(session, actual)
+
+        todo!()
     }
 }
