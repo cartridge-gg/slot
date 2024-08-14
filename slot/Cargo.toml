@@ -30,4 +30,5 @@ serde_with = "2.3"
 
 [dependencies.account_sdk]
 git = "https://github.com/cartridge-gg/controller"
-rev = "6913e9b"
+# Branch `controllerabstraction` with cainome updated.
+rev = "2427a9805a8e7f4b00844429f61ce577048e8d5b"

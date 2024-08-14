@@ -5,7 +5,7 @@ version = 3
 [[package]]
 name = "account_sdk"
 version = "0.1.0"
-source = "git+https://github.com/cartridge-gg/controller?rev=6913e9b#6913e9b912e22a47ca773584b94bc1d3fb453008"
+source = "git+https://github.com/cartridge-gg/controller?rev=2427a9805a8e7f4b00844429f61ce577048e8d5b#2427a9805a8e7f4b00844429f61ce577048e8d5b"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -509,7 +509,7 @@ dependencies = [
 [[package]]
 name = "cainome"
 version = "0.2.3"
-source = "git+https://github.com/cartridge-gg/cainome?branch=main#77807b5536e0c4ec802cd5a88f12190c9135384c"
+source = "git+https://github.com/cartridge-gg/cainome?rev=fb91215#fb9121566c6b4ba864984fbac2819725d17b3f74"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -534,7 +534,7 @@ dependencies = [
 [[package]]
 name = "cainome-cairo-serde"
 version = "0.1.0"
-source = "git+https://github.com/cartridge-gg/cainome?branch=main#77807b5536e0c4ec802cd5a88f12190c9135384c"
+source = "git+https://github.com/cartridge-gg/cainome?rev=fb91215#fb9121566c6b4ba864984fbac2819725d17b3f74"
 dependencies = [
  "serde",
  "starknet 0.11.0 (git+https://github.com/xJonathanLEI/starknet-rs?rev=2ddc694)",
@@ -544,7 +544,7 @@ dependencies = [
 [[package]]
 name = "cainome-parser"
 version = "0.1.0"
-source = "git+https://github.com/cartridge-gg/cainome?branch=main#77807b5536e0c4ec802cd5a88f12190c9135384c"
+source = "git+https://github.com/cartridge-gg/cainome?rev=fb91215#fb9121566c6b4ba864984fbac2819725d17b3f74"
 dependencies = [
  "convert_case 0.6.0",
  "quote",
@@ -557,7 +557,7 @@ dependencies = [
 [[package]]
 name = "cainome-rs"
 version = "0.1.0"
-source = "git+https://github.com/cartridge-gg/cainome?branch=main#77807b5536e0c4ec802cd5a88f12190c9135384c"
+source = "git+https://github.com/cartridge-gg/cainome?rev=fb91215#fb9121566c6b4ba864984fbac2819725d17b3f74"
 dependencies = [
  "anyhow",
  "cainome-cairo-serde",
@@ -575,7 +575,7 @@ dependencies = [
 [[package]]
 name = "cainome-rs-macro"
 version = "0.1.0"
-source = "git+https://github.com/cartridge-gg/cainome?branch=main#77807b5536e0c4ec802cd5a88f12190c9135384c"
+source = "git+https://github.com/cartridge-gg/cainome?rev=fb91215#fb9121566c6b4ba864984fbac2819725d17b3f74"
 dependencies = [
  "anyhow",
  "cainome-cairo-serde",
