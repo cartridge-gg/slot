@@ -30,25 +30,6 @@ pub struct Policy {
     pub method: String,
 }
 
-#[derive(Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "camelCase")]
-pub struct SessionDetails {
-    /// The expiration date of the session.
-    // TODO(kariy): change this to u64
-    pub expires_at: String,
-    /// The session's policies.
-    pub policies: Vec<Policy>,
-    pub credentials: SessionCredentials,
-}
-
-#[derive(Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "camelCase")]
-pub struct SessionCredentials {
-    /// The signing key of the session.
-    pub private_key: Felt,
-    pub authorization: Vec<Felt>,
-}
-
 /// Retrieves the session for the given chain id of the currently authenticated user.
 /// Returns `None` if no session can be found for the chain id.
 ///
@@ -66,7 +47,7 @@ pub fn get(chain: Felt) -> Result<Option<SessionMetadata>, Error> {
 ///
 /// This function will return an error if there is no authenticated user.
 ///
-pub fn store(chain: Felt, session: &SessionDetails) -> Result<PathBuf, Error> {
+pub fn store(chain: Felt, session: &SessionMetadata) -> Result<PathBuf, Error> {
     store_at(utils::config_dir(), chain, session)
 }
 
@@ -114,7 +95,7 @@ where
 
 /// Stores the session token of the chain id `chain` for the currently authenticated user. It will
 /// use `config_dir` as the root path to store the session file.
-fn store_at<P>(config_dir: P, chain: Felt, session: &SessionDetails) -> Result<PathBuf, Error>
+fn store_at<P>(config_dir: P, chain: Felt, session: &SessionMetadata) -> Result<PathBuf, Error>
 where
     P: AsRef<Path>,
 {
@@ -273,7 +254,7 @@ mod tests {
     use crate::account::{Account, AccountCredentials};
     use crate::credential::{AccessToken, Credentials};
     use crate::error::Error::Unauthorized;
-    use crate::session::{get_at, get_user_relative_file_path, store_at, SessionDetails};
+    use crate::session::{get_at, get_user_relative_file_path, store_at};
     use crate::utils;
     use account_sdk::storage::SessionMetadata;
     use starknet::{core::types::Felt, macros::felt};
@@ -343,16 +324,14 @@ mod tests {
         let username = authenticate(&config_dir);
 
         let chain = felt!("0x999");
-        let expected = SessionDetails::default();
+        let expected = SessionMetadata::default();
         let path = store_at(&config_dir, chain, &expected).unwrap();
 
         let user_path = get_user_relative_file_path(username, chain);
         let actual = get_at(config_dir, chain).unwrap();
 
-        todo!()
-
-        // assert_eq!(Some(expected), actual);
-        // assert!(path.ends_with(user_path));
+        assert_eq!(Some(expected), actual);
+        assert!(path.ends_with(user_path));
     }
 
     #[test]
@@ -360,7 +339,7 @@ mod tests {
         let config_dir = utils::config_dir();
 
         let chain = felt!("0x999");
-        let session = SessionDetails::default();
+        let session = SessionMetadata::default();
 
         let err = store_at(config_dir, chain, &session).unwrap_err();
         assert!(err.to_string().contains("No credentials found"))
@@ -378,20 +357,18 @@ mod tests {
         // start the callback server
         tokio::spawn(server.start());
 
-        // // call the callback url
-        // let session = SessionMetadata::default();
-        // let res = reqwest::Client::new()
-        //     .post(url)
-        //     .json(&session)
-        //     .send()
-        //     .await
-        //     .expect("failed to call callback url");
+        // call the callback url
+        let session = SessionMetadata::default();
+        let res = reqwest::Client::new()
+            .post(url)
+            .json(&session)
+            .send()
+            .await
+            .expect("failed to call callback url");
 
-        // assert!(res.status().is_success());
+        assert!(res.status().is_success());
 
-        // let actual = rx.recv().await.expect("failed to receive session");
-        // assert_eq!(session, actual)
-
-        todo!()
+        let actual = rx.recv().await.expect("failed to receive session");
+        assert_eq!(session, actual)
     }
 }

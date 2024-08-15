@@ -23,6 +23,7 @@ thiserror = "1.0.32"
 url = "2.2.2"
 rand = "0.8.4"
 
+# Must be synced across all downstream crates
 starknet = "0.11.0"
 starknet-types-core = "~0.1.4"
 
