@@ -30,5 +30,5 @@ serde_with = "3.9.0"
 
 # Must be synced across Dojo
 # Branch `controllerabstraction` with cainome updated.
-account_sdk = { git = "https://github.com/cartridge-gg/controller", rev = "146048fc" }
+account_sdk = { git = "https://github.com/cartridge-gg/controller", rev = "db3d739" }
 # account_sdk = { path = "../../controller/packages/account_sdk" }
