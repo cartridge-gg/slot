@@ -1,0 +1,2 @@
+schema: slot/schema.json
+documents: slot/src/graphql/**/*.graphql
