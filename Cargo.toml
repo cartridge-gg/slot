@@ -23,12 +23,10 @@ thiserror = "1.0.32"
 url = "2.2.2"
 rand = "0.8.4"
 
+# Must be synced across all downstream crates
 starknet = "0.11.0"
 starknet-types-core = "~0.1.4"
 
 [patch.crates-io]
-# Remove this patch once the following PR is merged: <https://github.com/xJonathanLEI/starknet-rs/pull/615>
-#
-# To enable std feature on `starknet-types-core`.
-# To re-export the entire `felt` module from `starknet-types-core`.
-starknet-core = { git = "https://github.com/kariy/starknet-rs", branch = "dojo-patch" }
+starknet = { git = "https://github.com/xJonathanLEI/starknet-rs", rev = "2ddc694" }
+starknet-types-core = { git = "https://github.com/starknet-io/types-rs", rev = "f98f048" }
