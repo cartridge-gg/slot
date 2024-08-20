@@ -3,12 +3,14 @@ mutation CreateDeployment(
 	$service: CreateServiceInput!
 	$tier: DeploymentTier!
 	$wait: Boolean
+	$regions: [String!]
 ) {
 	createDeployment(
 		name: $project
 		service: $service
 		tier: $tier
 		wait: $wait
+		regions: $regions
 	) {
 		__typename
 		... on KatanaConfig {
