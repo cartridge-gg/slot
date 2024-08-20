@@ -95,6 +95,8 @@ impl CreateArgs {
 
         let tier = match &self.tier {
             Tier::Basic => DeploymentTier::basic,
+            Tier::Rare => DeploymentTier::rare,
+            Tier::Epic => DeploymentTier::epic,
         };
 
         let request_body = CreateDeployment::build_query(Variables {
