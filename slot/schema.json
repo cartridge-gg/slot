@@ -8855,6 +8855,18 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
+              "name": "deployTransactionID",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
               "name": "classID",
               "type": {
                 "kind": "SCALAR",
@@ -9465,18 +9477,6 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "deployTransaction",
-              "type": {
-                "kind": "OBJECT",
-                "name": "Transaction",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
               "name": "class",
               "type": {
                 "kind": "OBJECT",
@@ -9942,6 +9942,172 @@
               "defaultValue": null,
               "description": null,
               "name": "idLTE",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "deploy_transaction_id field predicates",
+              "name": "deployTransactionID",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "deployTransactionIDNEQ",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "deployTransactionIDIn",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "deployTransactionIDNotIn",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "deployTransactionIDGT",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "deployTransactionIDGTE",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "deployTransactionIDLT",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "deployTransactionIDLTE",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "deployTransactionIDContains",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "deployTransactionIDHasPrefix",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "deployTransactionIDHasSuffix",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "deployTransactionIDIsNil",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "deployTransactionIDNotNil",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "deployTransactionIDEqualFold",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "deployTransactionIDContainsFold",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",
@@ -11348,34 +11514,6 @@
             },
             {
               "defaultValue": null,
-              "description": "deploy_transaction edge predicates",
-              "name": "hasDeployTransaction",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "hasDeployTransactionWith",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "TransactionWhereInput",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
               "description": "class edge predicates",
               "name": "hasClass",
               "type": {
@@ -12015,6 +12153,30 @@
                   "kind": "SCALAR",
                   "name": "String",
                   "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "regions",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  }
                 }
               }
             },
@@ -20527,8 +20689,8 @@
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "OBJECT",
-                  "name": "Contract",
+                  "kind": "SCALAR",
+                  "name": "String",
                   "ofType": null
                 }
               }
@@ -20863,6 +21025,24 @@
                     "kind": "SCALAR",
                     "name": "Boolean",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "regions",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "SCALAR",
+                        "name": "String",
+                        "ofType": null
+                      }
+                    }
                   }
                 }
               ],
@@ -35095,18 +35275,6 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "deployedContract",
-              "type": {
-                "kind": "OBJECT",
-                "name": "Contract",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
               "name": "receipt",
               "type": {
                 "kind": "OBJECT",
@@ -37950,34 +38118,6 @@
               "defaultValue": null,
               "description": null,
               "name": "hasToWith",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "ContractWhereInput",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": "deployed_contract edge predicates",
-              "name": "hasDeployedContract",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "hasDeployedContractWith",
               "type": {
                 "kind": "LIST",
                 "name": null,

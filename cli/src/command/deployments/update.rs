@@ -1,5 +1,7 @@
 #![allow(clippy::enum_variant_names)]
 
+use super::services::UpdateServiceCommands;
+use crate::command::deployments::Tier;
 use anyhow::Result;
 use clap::Args;
 use slot::api::Client;
@@ -12,13 +14,6 @@ use slot::graphql::deployments::update_deployment::{
 };
 use slot::graphql::deployments::{update_deployment::*, UpdateDeployment};
 use slot::graphql::{GraphQLQuery, Response};
-
-use super::services::UpdateServiceCommands;
-
-#[derive(clap::ValueEnum, Clone, Debug, serde::Serialize)]
-pub enum Tier {
-    Basic,
-}
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Update options")]
@@ -59,6 +54,8 @@ impl UpdateArgs {
 
         let tier = match &self.tier {
             Tier::Basic => DeploymentTier::basic,
+            Tier::Rare => DeploymentTier::rare,
+            Tier::Epic => DeploymentTier::epic,
         };
 
         let request_body = UpdateDeployment::build_query(Variables {

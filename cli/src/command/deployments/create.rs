@@ -7,7 +7,7 @@ use slot::credential::Credentials;
 use slot::graphql::deployments::create_deployment::CreateDeploymentCreateDeployment::{
     KatanaConfig, MadaraConfig, ToriiConfig,
 };
-use slot::graphql::deployments::create_deployment::{self, *};
+use slot::graphql::deployments::create_deployment::*;
 use slot::graphql::deployments::CreateDeployment;
 use slot::graphql::{GraphQLQuery, Response};
 
@@ -18,10 +18,17 @@ use super::{services::CreateServiceCommands, Tier};
 pub struct CreateArgs {
     #[arg(help = "The name of the project.")]
     pub project: String,
+
     #[arg(short, long, default_value = "basic")]
     #[arg(value_name = "tier")]
     #[arg(help = "Deployment tier.")]
     pub tier: Tier,
+
+    #[arg(short, long)]
+    #[arg(help = "The list of regions to deploy to.")]
+    #[arg(value_name = "regions")]
+    #[arg(value_delimiter = ',')]
+    pub regions: Option<Vec<String>>,
 
     #[command(subcommand)]
     create_commands: CreateServiceCommands,
@@ -88,6 +95,8 @@ impl CreateArgs {
 
         let tier = match &self.tier {
             Tier::Basic => DeploymentTier::basic,
+            Tier::Rare => DeploymentTier::rare,
+            Tier::Epic => DeploymentTier::epic,
         };
 
         let request_body = CreateDeployment::build_query(Variables {
@@ -95,12 +104,13 @@ impl CreateArgs {
             tier,
             service,
             wait: Some(true),
+            regions: self.regions.clone(),
         });
 
         let user = Credentials::load()?;
         let client = Client::new_with_token(user.access_token);
 
-        let res: Response<create_deployment::ResponseData> = client.query(&request_body).await?;
+        let res: Response<ResponseData> = client.query(&request_body).await?;
         if let Some(errors) = res.errors.clone() {
             for err in errors {
                 println!("Error: {}", err.message);
