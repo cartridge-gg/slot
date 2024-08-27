@@ -18,7 +18,7 @@ use crate::error::Error;
 use crate::utils::{self};
 use crate::{browser, server::LocalServer, vars};
 
-const SESSION_CREATION_PATH: &str = "/slot/session";
+const SESSION_CREATION_PATH: &str = "/session";
 const SESSION_FILE_BASE_NAME: &str = "session.json";
 
 /// A policy defines what action can be performed by the session key.

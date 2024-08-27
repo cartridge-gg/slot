@@ -37,7 +37,7 @@ impl LoginArgs {
 
         let url = vars::get_cartridge_keychain_url();
 
-        let url = format!("{url}/slot/auth?callback_uri={callback_uri}");
+        let url = format!("{url}/slot?callback_uri={callback_uri}");
 
         browser::open(&url)?;
         server.start().await?;
@@ -133,7 +133,7 @@ async fn handler(
             println!("You are now logged in!\n");
 
             Ok(Redirect::permanent(&format!(
-                "{}/slot/auth/success",
+                "{}/success",
                 vars::get_cartridge_keychain_url()
             )))
         }
@@ -141,7 +141,7 @@ async fn handler(
             error!("User denied consent. Try again.");
 
             Ok(Redirect::permanent(&format!(
-                "{}/slot/auth/failure",
+                "{}/failure",
                 vars::get_cartridge_keychain_url()
             )))
         }
