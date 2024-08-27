@@ -58,7 +58,7 @@ impl DescribeArgs {
                         println!("  Version: {}", config.version);
                         println!("  World: {}", config.world);
                         println!("  RPC: {}", config.rpc);
-                        println!("  Start Block: {}", config.start_block);
+                        println!("  Start Block: {}", config.start_block.unwrap_or(0));
                         println!(
                             "  Indexing Pending: {}",
                             config.index_pending.unwrap_or(false)

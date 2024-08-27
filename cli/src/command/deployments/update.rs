@@ -84,7 +84,7 @@ impl UpdateArgs {
                     println!("\nConfiguration:");
                     println!("  World: {}", config.world);
                     println!("  RPC: {}", config.rpc);
-                    println!("  Start Block: {}", config.start_block);
+                    println!("  Start Block: {}", config.start_block.unwrap_or(0));
                     println!("  Index Pending: {}", config.index_pending.unwrap_or(false));
                     println!("\nEndpoints:");
                     println!("  GRAPHQL: {}", config.graphql);
