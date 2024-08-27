@@ -71,6 +71,7 @@ impl CreateArgs {
                         world: format!("{:#x}", config.world),
                         start_block: Some(config.start_block.unwrap_or(0)),
                         index_pending: config.index_pending,
+                        polling_interval: config.polling_interval,
                     }),
                 }),
             },
@@ -126,7 +127,7 @@ impl CreateArgs {
                     println!("\nConfiguration:");
                     println!("  World: {}", config.world);
                     println!("  RPC: {}", config.rpc);
-                    println!("  Start Block: {}", config.start_block);
+                    println!("  Start Block: {}", config.start_block.unwrap_or(0));
                     println!("  Index Pending: {}", config.index_pending.unwrap_or(false));
                     println!("\nEndpoints:");
                     println!("  GRAPHQL: {}", config.graphql);

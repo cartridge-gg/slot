@@ -11943,7 +11943,7 @@
               "name": "startBlock",
               "type": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "Long",
                 "ofType": null
               }
             },
@@ -11954,6 +11954,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "pollingInterval",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Long",
                 "ofType": null
               }
             }
@@ -35002,13 +35012,9 @@
               "isDeprecated": false,
               "name": "startBlock",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Long",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "Long",
+                "ofType": null
               }
             },
             {
@@ -35020,6 +35026,18 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "pollingInterval",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Long",
                 "ofType": null
               }
             }

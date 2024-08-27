@@ -20,11 +20,15 @@ pub struct ToriiCreateArgs {
 
     #[arg(short, long)]
     #[arg(help = "Specify a block to start indexing from.")]
-    pub start_block: Option<i64>,
+    pub start_block: Option<u64>,
 
     #[arg(long)]
     #[arg(help = "Enable indexing pending blocks.")]
     pub index_pending: Option<bool>,
+
+    #[arg(long)]
+    #[arg(help = "Polling interval in milliseconds.")]
+    pub polling_interval: Option<u64>,
 }
 
 #[derive(Clone, Debug, Args, serde::Serialize)]
