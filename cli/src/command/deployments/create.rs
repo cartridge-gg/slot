@@ -96,6 +96,7 @@ impl CreateArgs {
 
         let tier = match &self.tier {
             Tier::Basic => DeploymentTier::basic,
+            Tier::Common => DeploymentTier::common,
             Tier::Rare => DeploymentTier::rare,
             Tier::Epic => DeploymentTier::epic,
         };

@@ -54,6 +54,7 @@ impl Deployments {
 #[derive(clap::ValueEnum, Clone, Debug, serde::Serialize)]
 pub enum Tier {
     Basic,
+    Common,
     Rare,
     Epic,
 }
