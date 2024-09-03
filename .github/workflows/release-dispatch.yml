@@ -25,6 +25,7 @@ jobs:
           cargo install cargo-get
           echo "version=$(cargo get workspace.package.version)" >> $GITHUB_OUTPUT
       - uses: peter-evans/create-pull-request@v5
+        id: pr
         with:
           # We have to use a PAT in order to trigger ci
           token: ${{ secrets.CREATE_PR_TOKEN }}
@@ -33,3 +34,10 @@ jobs:
           branch: prepare-release
           base: main
           delete-branch: true
+      - name: Enable auto-squash
+        if: ${{ steps.pr.outputs.pull-request-number }}
+        run: gh pr merge --auto --squash "${{ steps.pr.outputs.pull-request-number }}"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.CREATE_PR_TOKEN }}
+
