@@ -13,9 +13,11 @@ mutation CreateDeployment(
 		regions: $regions
 	) {
 		__typename
+
 		... on KatanaConfig {
 			rpc
 		}
+
 		... on ToriiConfig {
 			graphql
 			grpc
@@ -24,9 +26,14 @@ mutation CreateDeployment(
 			startBlock
 			indexPending
 		}
+
 		... on MadaraConfig {
 			rpc
 			name
+		}
+
+		... on SayaConfig {
+			rpcUrl
 		}
 	}
 }
