@@ -42,6 +42,7 @@ impl UpdateArgs {
                         gas_price: config.gas_price,
                         invoke_max_steps: config.invoke_max_steps,
                         validate_max_steps: config.validate_max_steps,
+                        dev: config.dev.then_some(true),
                     }),
                 }),
             },
