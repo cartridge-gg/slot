@@ -55,10 +55,11 @@ impl CreateArgs {
                         invoke_max_steps: config.invoke_max_steps,
                         validate_max_steps: config.validate_max_steps,
                         genesis: config.genesis.clone(),
-                        dev: config.dev,
+                        dev: config.dev.then_some(true),
                     }),
                     torii: None,
                     madara: None,
+                    saya: None,
                 }),
             },
             CreateServiceCommands::Torii(config) => CreateServiceInput {
@@ -74,6 +75,7 @@ impl CreateArgs {
                         index_pending: config.index_pending,
                         polling_interval: config.polling_interval,
                     }),
+                    saya: None,
                 }),
             },
             CreateServiceCommands::Madara(config) => CreateServiceInput {
@@ -91,6 +93,7 @@ impl CreateArgs {
                         sealing: config.sealing.clone().map(|s| s.to_string()),
                         chain: config.chain.clone().map(|c| c.to_string()),
                     }),
+                    saya: None,
                 }),
             },
         };
