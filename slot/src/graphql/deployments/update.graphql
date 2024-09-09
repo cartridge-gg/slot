@@ -11,9 +11,11 @@ mutation UpdateDeployment(
     wait: $wait
   ) {
     __typename
+
     ... on KatanaConfig {
       rpc
     }
+
     ... on ToriiConfig {
       graphql
       grpc
@@ -22,6 +24,9 @@ mutation UpdateDeployment(
       startBlock
       indexPending
     }
-    # TODO: handle update
+
+    ... on SayaConfig {
+      rpcUrl
+    }
   }
 }

@@ -5,10 +5,12 @@ query DescribeDeployment($project: String!, $service: DeploymentService!) {
     tier
     config {
       __typename
+
       ... on KatanaConfig {
         version
         rpc
       }
+
       ... on ToriiConfig {
         version
         graphql
@@ -22,6 +24,10 @@ query DescribeDeployment($project: String!, $service: DeploymentService!) {
         version
         rpc
         name
+      }
+
+      ... on SayaConfig {
+        rpcUrl
       }
     }
   }
