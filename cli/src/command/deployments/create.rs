@@ -55,7 +55,7 @@ impl CreateArgs {
                         invoke_max_steps: config.invoke_max_steps,
                         validate_max_steps: config.validate_max_steps,
                         genesis: config.genesis.clone(),
-                        dev_mode: config.dev_mode,
+                        dev: config.dev,
                     }),
                     torii: None,
                     madara: None,
