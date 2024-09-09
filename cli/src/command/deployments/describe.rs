@@ -4,7 +4,7 @@ use super::services::Service;
 use anyhow::Result;
 use clap::Args;
 use slot::graphql::deployments::describe_deployment::DescribeDeploymentDeploymentConfig::{
-    KatanaConfig, MadaraConfig, ToriiConfig,
+    KatanaConfig, MadaraConfig, SayaConfig, ToriiConfig,
 };
 use slot::graphql::deployments::{describe_deployment::*, DescribeDeployment};
 use slot::graphql::{GraphQLQuery, Response};
@@ -26,6 +26,7 @@ impl DescribeArgs {
             Service::Torii => DeploymentService::torii,
             Service::Katana => DeploymentService::katana,
             Service::Madara => DeploymentService::madara,
+            Service::Saya => DeploymentService::saya,
         };
 
         let request_body = DescribeDeployment::build_query(Variables {
@@ -76,6 +77,10 @@ impl DescribeArgs {
                         println!("\nEndpoints:");
                         println!("  Version: {}", config.version);
                         println!("  RPC: {}", config.rpc);
+                    }
+                    SayaConfig(config) => {
+                        println!("\nEndpoints:");
+                        println!("  RPC URL: {}", config.rpc_url);
                     }
                 }
             }

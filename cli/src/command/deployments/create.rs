@@ -5,7 +5,7 @@ use clap::Args;
 use slot::api::Client;
 use slot::credential::Credentials;
 use slot::graphql::deployments::create_deployment::CreateDeploymentCreateDeployment::{
-    KatanaConfig, MadaraConfig, ToriiConfig,
+    KatanaConfig, MadaraConfig, SayaConfig, ToriiConfig,
 };
 use slot::graphql::deployments::create_deployment::*;
 use slot::graphql::deployments::CreateDeployment;
@@ -59,6 +59,7 @@ impl CreateArgs {
                     }),
                     torii: None,
                     madara: None,
+                    saya: None,
                 }),
             },
             CreateServiceCommands::Torii(config) => CreateServiceInput {
@@ -74,6 +75,7 @@ impl CreateArgs {
                         index_pending: config.index_pending,
                         polling_interval: config.polling_interval,
                     }),
+                    saya: None,
                 }),
             },
             CreateServiceCommands::Madara(config) => CreateServiceInput {
@@ -90,6 +92,31 @@ impl CreateArgs {
                         validator: config.validator.then_some(true),
                         sealing: config.sealing.clone().map(|s| s.to_string()),
                         chain: config.chain.clone().map(|c| c.to_string()),
+                    }),
+                    saya: None,
+                }),
+            },
+            CreateServiceCommands::Saya(config) => CreateServiceInput {
+                type_: DeploymentService::saya,
+                version: config.version.clone(),
+                config: Some(CreateServiceConfigInput {
+                    katana: None,
+                    torii: None,
+                    madara: None,
+                    saya: Some(CreateSayaConfigInput {
+                        mode: config.mode.clone(),
+                        rpc_url: config.rpc_url.clone(),
+                        registry: config.registry.clone(),
+                        settlement_contract: config.settlement_contract.clone(),
+                        world: config.world.clone().to_string(),
+                        prover_url: config.prover_url.clone(),
+                        store_proofs: config.store_proofs.unwrap_or(false),
+                        starknet_url: config.starknet_url.clone(),
+                        signer_key: config.signer_key.clone(),
+                        signer_address: config.signer_address.clone(),
+                        private_key: config.private_key.clone(),
+                        batch_size: config.batch_size.unwrap_or(1),
+                        start_block: config.start_block.unwrap_or(0),
                     }),
                 }),
             },
@@ -125,6 +152,10 @@ impl CreateArgs {
         if let Some(data) = res.data {
             println!("Deployment success 🚀");
             match data.create_deployment {
+                SayaConfig(config) => {
+                    println!("\nConfiguration:");
+                    println!("  RPC URL: {}", config.rpc_url);
+                }
                 ToriiConfig(config) => {
                     println!("\nConfiguration:");
                     println!("  World: {}", config.world);
@@ -150,6 +181,7 @@ impl CreateArgs {
             CreateServiceCommands::Katana(_) => "katana",
             CreateServiceCommands::Torii(_) => "torii",
             CreateServiceCommands::Madara(_) => "madara",
+            CreateServiceCommands::Saya(_) => "saya",
         };
 
         println!(

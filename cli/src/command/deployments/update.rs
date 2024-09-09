@@ -7,7 +7,7 @@ use clap::Args;
 use slot::api::Client;
 use slot::credential::Credentials;
 use slot::graphql::deployments::update_deployment::UpdateDeploymentUpdateDeployment::{
-    KatanaConfig, MadaraConfig, ToriiConfig,
+    KatanaConfig, MadaraConfig, SayaConfig, ToriiConfig,
 };
 use slot::graphql::deployments::update_deployment::{
     self, UpdateKatanaConfigInput, UpdateServiceConfigInput, UpdateServiceInput,
@@ -47,6 +47,11 @@ impl UpdateArgs {
             },
             UpdateServiceCommands::Torii(config) => UpdateServiceInput {
                 type_: DeploymentService::torii,
+                version: config.version.clone(),
+                config: Some(UpdateServiceConfigInput { katana: None }),
+            },
+            UpdateServiceCommands::Saya(config) => UpdateServiceInput {
+                type_: DeploymentService::saya,
                 version: config.version.clone(),
                 config: Some(UpdateServiceConfigInput { katana: None }),
             },
@@ -96,12 +101,17 @@ impl UpdateArgs {
                     println!("  RPC: {}", config.rpc);
                 }
                 MadaraConfig => {} // TODO: implement
+                SayaConfig(config) => {
+                    println!("\nConfiguration:");
+                    println!("  RPC URL: {}", config.rpc_url);
+                }
             }
         }
 
         let service = match &self.update_commands {
             UpdateServiceCommands::Katana(_) => "katana",
             UpdateServiceCommands::Torii(_) => "torii",
+            UpdateServiceCommands::Saya(_) => "saya",
         };
 
         println!(

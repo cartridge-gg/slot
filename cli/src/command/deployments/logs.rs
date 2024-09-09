@@ -80,6 +80,7 @@ impl LogReader {
             Service::Katana => DeploymentService::katana,
             Service::Torii => DeploymentService::torii,
             Service::Madara => DeploymentService::madara,
+            Service::Saya => DeploymentService::saya,
         };
 
         let request_body = DeploymentLogs::build_query(Variables {
