@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use clap::Args;
+use clap::{ArgAction, Args};
 use katana_primitives::genesis;
 use katana_primitives::genesis::json::GenesisJson;
 
@@ -51,6 +51,10 @@ pub struct KatanaCreateArgs {
     #[arg(help = "Path to a Katana genesis file.")]
     #[arg(value_parser = genesis_value_parser)]
     pub genesis: Option<String>,
+
+    #[arg(long, action = ArgAction::Set, default_value_t = false)]
+    #[arg(help = "Enable Katana dev mode for specific endpoints.")]
+    pub dev_mode: bool,
 }
 
 #[derive(Debug, Args, serde::Serialize)]
@@ -87,6 +91,10 @@ pub struct KatanaUpdateArgs {
     #[arg(long, value_name = "gas_price")]
     #[arg(help = "Gas Price.")]
     pub gas_price: Option<u64>,
+
+    #[arg(long, action = ArgAction::Set, default_value_t = false)]
+    #[arg(help = "Enable Katana dev mode for specific endpoints.")]
+    pub dev_mode: bool,
 }
 
 #[derive(Debug, Args, serde::Serialize)]
