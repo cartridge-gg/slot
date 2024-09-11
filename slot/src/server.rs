@@ -18,6 +18,8 @@ impl LocalServer {
     pub fn new(router: Router) -> anyhow::Result<Self> {
         // Port number of 0 requests OS to find an available port.
         let listener = TcpListener::bind("localhost:0")?;
+        listener.set_nonblocking(true)?; // !important
+
         // To view the logs emitted by the server, set `RUST_LOG=tower_http=trace`
         let router = router.layer(TraceLayer::new_for_http());
 
@@ -48,10 +50,12 @@ impl LocalServer {
         let addr = self.listener.local_addr()?;
         tracing::info!(?addr, "Callback server started");
 
-        let server = axum::Server::from_tcp(self.listener)?.serve(self.router.into_make_service());
+        let listener = tokio::net::TcpListener::from_std(self.listener)?;
+        let server = axum::serve(listener, self.router.into_make_service());
+
         if let Some(mut rx) = self.shutdown_rx.take() {
             server
-                .with_graceful_shutdown(async { rx.recv().await.expect("channel closed") })
+                .with_graceful_shutdown(async move { rx.recv().await.expect("channel closed") })
                 .await?;
         } else {
             server.await?;
