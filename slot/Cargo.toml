@@ -29,4 +29,4 @@ hyper.workspace = true
 serde_with = "3.9.0"
 
 # Must be synced across Dojo
-account_sdk = { git = "https://github.com/cartridge-gg/controller", rev = "0b5c318" }
+account_sdk = { git = "https://github.com/cartridge-gg/controller", rev = "e433a45" }
