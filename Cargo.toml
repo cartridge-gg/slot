@@ -13,9 +13,9 @@ rust-version = "1.76.0"
 slot = { path = "slot" }
 
 anyhow = "1.0.75"
-axum = "0.6"
+axum = "0.7"
 graphql_client = "0.13.0"
-hyper = "0.14.27"
+hyper = "1.4"
 tokio = { version = "1.18.2", features = ["full", "sync"] }
 serde = "1"
 serde_json = "1"
