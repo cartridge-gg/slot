@@ -198,6 +198,8 @@ fn store_at(
 }
 
 /// The response object to the session creation request.
+//
+// A reflection of https://github.com/cartridge-gg/controller/blob/90b767bcc6478f0e02973f7237bc2a974f745adf/packages/keychain/src/pages/session.tsx#L15-L21
 #[cfg_attr(test, derive(PartialEq, Serialize))]
 #[derive(Debug, Clone, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -220,6 +222,8 @@ pub struct SessionCreationResponse {
 }
 
 impl SessionCreationResponse {
+    // Following how the server serialize the response object:
+    // https://github.com/cartridge-gg/controller/blob/90b767bcc6478f0e02973f7237bc2a974f745adf/packages/keychain/src/pages/session.tsx#L58-L60
     pub fn from_encoded(encoded: &str) -> anyhow::Result<Self> {
         use base64::{engine::general_purpose, Engine as _};
 
