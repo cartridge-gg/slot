@@ -545,6 +545,6 @@ mod tests {
                 "0x4e968edd81ba46224f7623f4095d754dc80f6cbd55583cde0ed2a143aeb7321"
             ))
         );
-        assert_eq!(response.already_registered, false);
+        assert!(!response.already_registered);
     }
 }
