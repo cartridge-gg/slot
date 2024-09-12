@@ -1,3 +1,6 @@
+use account_sdk::signers::SignError;
+use starknet::core::utils::NonAsciiNameError;
+
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error(transparent)]
@@ -20,4 +23,10 @@ pub enum Error {
 
     #[error(transparent)]
     Anyhow(#[from] anyhow::Error),
+
+    #[error("Invalid method name: {0}")]
+    InvalidMethodName(NonAsciiNameError),
+
+    #[error(transparent)]
+    Signing(#[from] SignError),
 }
