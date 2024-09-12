@@ -228,7 +228,7 @@ impl SessionCreationResponse {
         use base64::{engine::general_purpose, Engine as _};
 
         // Decode the Base64 string
-        let bytes = general_purpose::STANDARD.decode(encoded)?;
+        let bytes = general_purpose::STANDARD_NO_PAD.decode(encoded)?;
         let decoded = String::from_utf8(bytes)?;
 
         Ok(serde_json::from_str(&decoded)?)
