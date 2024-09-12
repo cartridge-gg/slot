@@ -523,8 +523,6 @@ mod tests {
         assert_eq!(response, actual)
     }
 
-    // Must follow how the server serialize the response object:
-    // https://github.com/cartridge-gg/controller/blob/90b767bcc6478f0e02973f7237bc2a974f745adf/packages/keychain/src/pages/session.tsx#L58-L60
     #[test]
     fn deserialize_backend_encoded_response() {
         let encoded_response = "eyJ1c2VybmFtZSI6ImpvaG5zbWl0aCIsImFkZHJlc3MiOiIweDM5NzMzM2U5OTNhZTE2MmI0NzY2OTBlMTQwMTU0OGFlOTdhODgxOTk1NTUwNmI4YmM5MThlMDY3YmRhZmMzIiwib3duZXJHdWlkIjoiMHg1ZDc3MDliMGE0ODVlNjRhNTQ5YWRhOWJkMTRkMzA0MTkzNjQxMjdkZmQzNTFlMDFmMzg4NzFjODI1MDBjZDciLCJ0cmFuc2FjdGlvbkhhc2giOiIweDRlOTY4ZWRkODFiYTQ2MjI0Zjc2MjNmNDA5NWQ3NTRkYzgwZjZjYmQ1NTU4M2NkZTBlZDJhMTQzYWViNzMyMSJ9";
