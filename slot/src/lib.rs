@@ -12,4 +12,5 @@ pub mod vars;
 pub(crate) mod error;
 pub(crate) mod utils;
 
+pub use account_sdk;
 pub use error::Error;
