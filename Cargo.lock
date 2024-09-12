@@ -4246,6 +4246,7 @@ dependencies = [
  "account_sdk",
  "anyhow",
  "axum",
+ "base64 0.22.1",
  "dirs",
  "graphql_client",
  "hyper 1.4.1",

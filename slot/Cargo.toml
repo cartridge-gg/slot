@@ -30,3 +30,4 @@ serde_with = "3.9.0"
 
 # Must be synced across Dojo
 account_sdk = { git = "https://github.com/cartridge-gg/controller", rev = "e433a45" }
+base64 = "0.22.1"

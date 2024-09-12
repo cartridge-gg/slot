@@ -6,7 +6,7 @@ use account_sdk::account::session::SessionAccount;
 use account_sdk::signers::{HashSigner, Signer};
 use anyhow::Context;
 use axum::response::{IntoResponse, Response};
-use axum::{extract::State, routing::post, Json, Router};
+use axum::{extract::State, routing::post, Router};
 use hyper::StatusCode;
 use serde::{Deserialize, Serialize};
 use starknet::core::types::Felt;
@@ -198,7 +198,8 @@ fn store_at(
 }
 
 /// The response object to the session creation request.
-#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(test, derive(PartialEq, Serialize))]
+#[derive(Debug, Clone, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SessionCreationResponse {
     /// The username of the Controller account.
@@ -216,6 +217,18 @@ pub struct SessionCreationResponse {
     /// before.
     #[serde(default)]
     pub already_registered: bool,
+}
+
+impl SessionCreationResponse {
+    pub fn from_encoded(encoded: &str) -> anyhow::Result<Self> {
+        use base64::{engine::general_purpose, Engine as _};
+
+        // Decode the Base64 string
+        let bytes = general_purpose::STANDARD.decode(encoded)?;
+        let decoded = String::from_utf8(bytes)?;
+
+        Ok(serde_json::from_str(&decoded)?)
+    }
 }
 
 // TODO(kariy): this function should probably be put in a more generic `controller` rust sdk.
@@ -240,7 +253,10 @@ pub async fn create_user_session(
     };
 
     let mut rx = open_session_creation_page(input)?;
-    Ok(rx.recv().await.context("Failed to received the session.")?)
+    let encoded_response = rx.recv().await.context("Failed to received the session.")?;
+    let response = SessionCreationResponse::from_encoded(&encoded_response)?;
+
+    Ok(response)
 }
 
 /// Input parameters for creating a new session.
@@ -255,7 +271,7 @@ struct SessionCreationInput<'a> {
 /// the user to approve the session creation.
 fn open_session_creation_page(
     input: SessionCreationInput<'_>,
-) -> anyhow::Result<Receiver<SessionCreationResponse>> {
+) -> anyhow::Result<Receiver<EncodedResponse>> {
     let params = prepare_query_params(input)?;
     let host = vars::get_cartridge_keychain_url();
     let url = format!("{host}{SESSION_CREATION_PATH}?{params}");
@@ -293,6 +309,9 @@ fn prepare_query_params(input: SessionCreationInput<'_>) -> Result<String, serde
     ))
 }
 
+// Base64 encoded response sent from the internal server.
+type EncodedResponse = String;
+
 #[derive(Debug, thiserror::Error)]
 enum CallbackError {
     #[error("Internal server error")]
@@ -311,19 +330,18 @@ impl IntoResponse for CallbackError {
 }
 
 /// Create the callback server that will receive the session token from the browser.
-fn callback_server(result_sender: Sender<SessionCreationResponse>) -> anyhow::Result<LocalServer> {
-    type HandlerState = State<(Sender<SessionCreationResponse>, Sender<()>)>;
+fn callback_server(result_sender: Sender<EncodedResponse>) -> anyhow::Result<LocalServer> {
+    type HandlerState = State<(Sender<EncodedResponse>, Sender<()>)>;
 
     // Request handler for the /callback endpoint.
-    let handler = |state: HandlerState, json: Json<SessionCreationResponse>| async move {
+    let handler = |state: HandlerState, encoded_response: EncodedResponse| async move {
         info!("Received session token from the browser.");
 
         let State((res_sender, shutdown_sender)) = state;
-        let Json(session) = json;
 
         // Parse the session token from the json payload.
         res_sender
-            .send(session)
+            .send(encoded_response)
             .await
             .map_err(|_| CallbackError::Unexpected)?;
 
@@ -499,7 +517,34 @@ mod tests {
 
         assert!(res.status().is_success());
 
-        let actual = rx.recv().await.expect("failed to receive session");
+        let actual_encoded = rx.recv().await.expect("failed to receive session");
+        let actual: SessionCreationResponse = serde_json::from_str(&actual_encoded).unwrap();
+
         assert_eq!(response, actual)
+    }
+
+    // Must follow how the server serialize the response object:
+    // https://github.com/cartridge-gg/controller/blob/90b767bcc6478f0e02973f7237bc2a974f745adf/packages/keychain/src/pages/session.tsx#L58-L60
+    #[test]
+    fn deserialize_backend_encoded_response() {
+        let encoded_response = "eyJ1c2VybmFtZSI6ImpvaG5zbWl0aCIsImFkZHJlc3MiOiIweDM5NzMzM2U5OTNhZTE2MmI0NzY2OTBlMTQwMTU0OGFlOTdhODgxOTk1NTUwNmI4YmM5MThlMDY3YmRhZmMzIiwib3duZXJHdWlkIjoiMHg1ZDc3MDliMGE0ODVlNjRhNTQ5YWRhOWJkMTRkMzA0MTkzNjQxMjdkZmQzNTFlMDFmMzg4NzFjODI1MDBjZDciLCJ0cmFuc2FjdGlvbkhhc2giOiIweDRlOTY4ZWRkODFiYTQ2MjI0Zjc2MjNmNDA5NWQ3NTRkYzgwZjZjYmQ1NTU4M2NkZTBlZDJhMTQzYWViNzMyMSJ9";
+        let response = SessionCreationResponse::from_encoded(encoded_response).unwrap();
+
+        assert_eq!(response.username, "johnsmith");
+        assert_eq!(
+            response.address,
+            felt!("0x397333e993ae162b476690e1401548ae97a8819955506b8bc918e067bdafc3")
+        );
+        assert_eq!(
+            response.owner_guid,
+            felt!("0x5d7709b0a485e64a549ada9bd14d30419364127dfd351e01f38871c82500cd7")
+        );
+        assert_eq!(
+            response.transaction_hash,
+            Some(felt!(
+                "0x4e968edd81ba46224f7623f4095d754dc80f6cbd55583cde0ed2a143aeb7321"
+            ))
+        );
+        assert_eq!(response.already_registered, false);
     }
 }
