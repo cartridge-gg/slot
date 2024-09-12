@@ -56,6 +56,7 @@ pub fn store(chain: Felt, session: &SessionMetadata) -> Result<PathBuf, Error> {
 ///
 /// # Arguments
 ///
+/// * `public_key` - The public key associated with the private key that the session token will be issued for.
 /// * `rpc_url` - The RPC URL of the chain network that you want to create a session for.
 /// * `policies` - The policies that the session token will have.
 ///
@@ -63,13 +64,17 @@ pub fn store(chain: Felt, session: &SessionMetadata) -> Result<PathBuf, Error> {
 ///
 /// This function will return an error if there is no authenticated user.
 ///
-pub async fn create<U>(rpc_url: U, policies: &[Policy]) -> Result<SessionMetadata, Error>
+pub async fn create<U>(
+    public_key: Felt,
+    rpc_url: U,
+    policies: &[Policy],
+) -> Result<SessionMetadata, Error>
 where
     U: Into<Url>,
 {
     let credentials = Credentials::load()?;
     let username = credentials.account.id;
-    create_user_session(&username, rpc_url, policies).await
+    create_user_session(public_key, &username, rpc_url, policies).await
 }
 
 /// Get the session token of the chain id `chain` for the currently authenticated user. It will
@@ -128,6 +133,7 @@ where
     policies = policies.len()
 ))]
 pub async fn create_user_session<U>(
+    public_key: Felt,
     username: &str,
     rpc_url: U,
     policies: &[Policy],
@@ -136,18 +142,31 @@ where
     U: Into<Url>,
 {
     let rpc_url: Url = rpc_url.into();
-    let mut rx = open_session_creation_page(username, rpc_url.as_str(), policies)?;
+    let input = SessionCreationInput {
+        policies,
+        username,
+        public_key,
+        rpc_url: rpc_url.as_str(),
+    };
+
+    let mut rx = open_session_creation_page(input)?;
     Ok(rx.recv().await.context("Failed to received the session.")?)
+}
+
+/// Input parameters for creating a new session.
+struct SessionCreationInput<'a> {
+    public_key: Felt,
+    username: &'a str,
+    rpc_url: &'a str,
+    policies: &'a [Policy],
 }
 
 /// Starts the session creation process by opening the browser to the Cartridge keychain to prompt
 /// the user to approve the session creation.
 fn open_session_creation_page(
-    username: &str,
-    rpc_url: &str,
-    policies: &[Policy],
+    input: SessionCreationInput<'_>,
 ) -> anyhow::Result<Receiver<SessionMetadata>> {
-    let params = prepare_query_params(username, rpc_url, policies)?;
+    let params = prepare_query_params(input)?;
     let host = vars::get_cartridge_keychain_url();
     let url = format!("{host}{SESSION_CREATION_PATH}?{params}");
 
@@ -169,12 +188,9 @@ fn open_session_creation_page(
     Ok(rx)
 }
 
-fn prepare_query_params(
-    username: &str,
-    rpc_url: &str,
-    policies: &[Policy],
-) -> Result<String, serde_json::Error> {
-    let policies = policies
+fn prepare_query_params(input: SessionCreationInput<'_>) -> Result<String, serde_json::Error> {
+    let policies = input
+        .policies
         .iter()
         .map(serde_json::to_string)
         .map(|p| Ok(urlencoding::encode(&p?).into_owned()))
@@ -182,7 +198,8 @@ fn prepare_query_params(
         .join(",");
 
     Ok(format!(
-        "username={username}&rpc_url={rpc_url}&policies=[{policies}]",
+        "username={}&public_key={}&rpc_url={}&policies=[{}]",
+        input.username, input.public_key, input.rpc_url, policies
     ))
 }
 
@@ -213,8 +230,6 @@ fn callback_server(result_sender: Sender<SessionMetadata>) -> anyhow::Result<Loc
 
         let State((res_sender, shutdown_sender)) = state;
         let Json(session) = json;
-
-        println!("response: {session:?}");
 
         // Parse the session token from the json payload.
         res_sender

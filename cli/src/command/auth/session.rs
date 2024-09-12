@@ -5,6 +5,7 @@ use clap::Parser;
 use slot::session::{self, Policy};
 use starknet::core::types::Felt;
 use starknet::providers::{jsonrpc::HttpTransport, JsonRpcClient, Provider};
+use starknet::signers::{LocalWallet, Signer, SigningKey};
 use url::Url;
 
 #[derive(Debug, Parser)]
@@ -25,8 +26,13 @@ impl CreateSession {
     pub async fn run(&self) -> Result<()> {
         let url = Url::parse(&self.rpc_url)?;
         let chain_id = get_network_chain_id(url.clone()).await?;
-        let session = session::create(url, &self.policies).await?;
+
+        let wallet = LocalWallet::from(SigningKey::from_random());
+        let pubkey = wallet.get_public_key().await?;
+
+        let session = session::create(pubkey.scalar(), url, &self.policies).await?;
         session::store(chain_id, &session)?;
+
         Ok(())
     }
 }
