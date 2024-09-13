@@ -30,7 +30,7 @@ const GUARDIAN: Felt = short_string!("CARTRIDGE_GUARDIAN");
 pub const SESSION_GUARDIAN_SIGNING_KEY: SigningKey = SigningKey::from_secret_scalar(GUARDIAN);
 
 // Taken from: https://github.com/cartridge-gg/controller/blob/046f3b98f410f71e4d14b8f40efaae57f6c5483e/packages/keychain/src/components/connect/CreateSession.tsx#L24
-const DEFAULT_SESSION_EXPIRES_AT: u64 = 3000000000;
+const DEFAULT_SESSION_EXPIRES_AT: u64 = 1727776800;
 const SESSION_CREATION_PATH: &str = "/session";
 const SESSION_FILE_BASE_NAME: &str = "session.json";
 
