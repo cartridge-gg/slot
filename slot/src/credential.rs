@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
-use std::fs;
 use std::path::{Path, PathBuf};
+use std::{env, fs};
 
 use crate::account::Account;
 use crate::error::Error;
@@ -65,13 +65,18 @@ impl Credentials {
     }
 
     pub(crate) fn load_at<P: AsRef<Path>>(config_dir: P) -> Result<Credentials, Error> {
-        let path = get_file_path(config_dir);
+        let content = if let Ok(slot_auth) = env::var("SLOT_AUTH") {
+            slot_auth
+        } else {
+            let path = get_file_path(config_dir);
 
-        if !path.exists() {
-            return Err(Error::Unauthorized);
-        }
+            if !path.exists() {
+                return Err(Error::Unauthorized);
+            }
 
-        let content = fs::read_to_string(path)?;
+            fs::read_to_string(path)?
+        };
+
         let credentials = serde_json::from_str::<Credentials>(&content);
 
         match credentials {
