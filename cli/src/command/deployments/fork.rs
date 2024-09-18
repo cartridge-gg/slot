@@ -1,6 +1,6 @@
 #![allow(clippy::enum_variant_names)]
 
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use clap::Args;
 use slot::graphql::deployments::fork_deployment::ForkDeploymentForkDeployment::KatanaConfig;
 use slot::graphql::deployments::{fork_deployment::*, ForkDeployment};
@@ -52,6 +52,7 @@ impl ForkArgs {
             for err in errors {
                 println!("Error: {}", err.message);
             }
+            return Err(anyhow!("Failed"));
         }
 
         if let Some(data) = res.data {

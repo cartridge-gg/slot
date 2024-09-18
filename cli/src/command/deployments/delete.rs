@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use clap::Args;
 use dialoguer::theme::ColorfulTheme;
 use dialoguer::Confirm;
@@ -66,6 +66,7 @@ impl DeleteArgs {
             for err in errors {
                 println!("Error: {}", err.message);
             }
+            return Err(anyhow!("Failed"));
         }
 
         if res.data.is_some() {

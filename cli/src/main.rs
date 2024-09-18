@@ -22,7 +22,8 @@ async fn main() {
     match &cli.command.run().await {
         Ok(_) => {}
         Err(e) => {
-            error!("{e}")
+            error!("{e}");
+            std::process::exit(1);
         }
     }
 }

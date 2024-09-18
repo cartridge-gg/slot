@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use clap::Args;
 use slot::graphql::auth::{me::*, Me};
 use slot::graphql::{GraphQLQuery, Response};
@@ -20,7 +20,7 @@ impl InfoArgs {
             for err in errors {
                 println!("Error: {}", err.message);
             }
-            return Ok(());
+            return Err(anyhow!("Failed"));
         }
 
         print!("{:?}", res.data.unwrap());

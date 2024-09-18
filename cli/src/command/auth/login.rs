@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use axum::{
     extract::{Query, State},
     response::{IntoResponse, Redirect, Response},
@@ -117,11 +117,11 @@ async fn handler(
             let request_body = Me::build_query(Variables {});
             let res: graphql_client::Response<ResponseData> = api.query(&request_body).await?;
 
-            // display the errors if any, but still process bcs we have the token
             if let Some(errors) = res.errors {
                 for err in errors {
                     eprintln!("Error: {}", err.message);
                 }
+                return Err(CallbackError::Other(anyhow!("Failed")));
             }
 
             let account = res.data.and_then(|data| data.me).expect("missing payload");

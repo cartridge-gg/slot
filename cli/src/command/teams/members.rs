@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use clap::Args;
 use slot::api::Client;
 use slot::credential::Credentials;
@@ -25,8 +25,7 @@ impl TeamListArgs {
             for err in errors {
                 println!("Error: {}", err.message);
             }
-
-            return Ok(());
+            return Err(anyhow!("Failed"));
         }
 
         if let Some(data) = res.data {
@@ -68,8 +67,7 @@ impl TeamAddArgs {
             for err in errors {
                 println!("Error: {}", err.message);
             }
-
-            return Ok(());
+            return Err(anyhow!("Failed"));
         }
 
         Ok(())
@@ -98,8 +96,7 @@ impl TeamRemoveArgs {
             for err in errors {
                 println!("Error: {}", err.message);
             }
-
-            return Ok(());
+            return Err(anyhow!("Failed"));
         }
 
         Ok(())

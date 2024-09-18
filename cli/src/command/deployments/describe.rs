@@ -1,7 +1,7 @@
 #![allow(clippy::enum_variant_names)]
 
 use super::services::Service;
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use clap::Args;
 use slot::graphql::deployments::describe_deployment::DescribeDeploymentDeploymentConfig::{
     KatanaConfig, MadaraConfig, SayaConfig, ToriiConfig,
@@ -42,6 +42,7 @@ impl DescribeArgs {
             for err in errors {
                 println!("Error: {}", err.message);
             }
+            return Err(anyhow!("Failed"));
         }
 
         if let Some(data) = res.data {

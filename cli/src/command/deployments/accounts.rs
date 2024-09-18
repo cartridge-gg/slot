@@ -1,6 +1,6 @@
 #![allow(clippy::enum_variant_names)]
 
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use clap::Args;
 use katana_primitives::contract::ContractAddress;
 use katana_primitives::genesis::allocation::GenesisAccountAlloc;
@@ -43,6 +43,7 @@ impl AccountsArgs {
             for err in errors {
                 println!("Error: {}", err.message);
             }
+            return Err(anyhow!("Failed"));
         }
 
         if let Some(data) = res.data {

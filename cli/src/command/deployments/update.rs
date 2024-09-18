@@ -2,7 +2,7 @@
 
 use super::services::UpdateServiceCommands;
 use crate::command::deployments::Tier;
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use clap::Args;
 use slot::api::Client;
 use slot::credential::Credentials;
@@ -80,8 +80,7 @@ impl UpdateArgs {
             for err in errors {
                 println!("Error: {}", err.message);
             }
-
-            return Ok(());
+            return Err(anyhow!("Failed"));
         }
 
         if let Some(data) = res.data {
