@@ -13,7 +13,7 @@ use slot::graphql::deployments::update_deployment::{
     self, UpdateKatanaConfigInput, UpdateServiceConfigInput, UpdateServiceInput,
 };
 use slot::graphql::deployments::{update_deployment::*, UpdateDeployment};
-use slot::graphql::{GraphQLQuery, Response};
+use slot::graphql::GraphQLQuery;
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Update options")]
@@ -75,37 +75,29 @@ impl UpdateArgs {
         let user = Credentials::load()?;
         let client = Client::new_with_token(user.access_token);
 
-        let res: Response<update_deployment::ResponseData> = client.query(&request_body).await?;
-        if let Some(errors) = res.errors.clone() {
-            for err in errors {
-                println!("Error: {}", err.message);
+        let data: update_deployment::ResponseData = client.query(&request_body).await?;
+
+        println!("Update success 🚀");
+
+        match data.update_deployment {
+            ToriiConfig(config) => {
+                println!("\nConfiguration:");
+                println!("  World: {}", config.world);
+                println!("  RPC: {}", config.rpc);
+                println!("  Start Block: {}", config.start_block.unwrap_or(0));
+                println!("  Index Pending: {}", config.index_pending.unwrap_or(false));
+                println!("\nEndpoints:");
+                println!("  GRAPHQL: {}", config.graphql);
+                println!("  GRPC: {}", config.grpc);
             }
-
-            return Ok(());
-        }
-
-        if let Some(data) = res.data {
-            println!("Update success 🚀");
-            match data.update_deployment {
-                ToriiConfig(config) => {
-                    println!("\nConfiguration:");
-                    println!("  World: {}", config.world);
-                    println!("  RPC: {}", config.rpc);
-                    println!("  Start Block: {}", config.start_block.unwrap_or(0));
-                    println!("  Index Pending: {}", config.index_pending.unwrap_or(false));
-                    println!("\nEndpoints:");
-                    println!("  GRAPHQL: {}", config.graphql);
-                    println!("  GRPC: {}", config.grpc);
-                }
-                KatanaConfig(config) => {
-                    println!("\nEndpoints:");
-                    println!("  RPC: {}", config.rpc);
-                }
-                MadaraConfig => {} // TODO: implement
-                SayaConfig(config) => {
-                    println!("\nConfiguration:");
-                    println!("  RPC URL: {}", config.rpc_url);
-                }
+            KatanaConfig(config) => {
+                println!("\nEndpoints:");
+                println!("  RPC: {}", config.rpc);
+            }
+            MadaraConfig => {} // TODO: implement
+            SayaConfig(config) => {
+                println!("\nConfiguration:");
+                println!("  RPC URL: {}", config.rpc_url);
             }
         }
 

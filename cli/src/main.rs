@@ -4,7 +4,6 @@ mod command;
 
 use crate::command::Command;
 use clap::Parser;
-use log::error;
 
 /// Slot CLI for Cartridge
 #[derive(Parser, Debug)]
@@ -22,7 +21,8 @@ async fn main() {
     match &cli.command.run().await {
         Ok(_) => {}
         Err(e) => {
-            error!("{e}")
+            eprintln!("{e}");
+            std::process::exit(1);
         }
     }
 }

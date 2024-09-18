@@ -3,7 +3,7 @@ use clap::Args;
 use dialoguer::theme::ColorfulTheme;
 use dialoguer::Confirm;
 use slot::graphql::deployments::{delete_deployment::*, DeleteDeployment};
-use slot::graphql::{GraphQLQuery, Response};
+use slot::graphql::GraphQLQuery;
 use slot::{api::Client, credential::Credentials};
 
 #[derive(clap::ValueEnum, Clone, Debug, serde::Serialize)]
@@ -61,16 +61,9 @@ impl DeleteArgs {
         let user = Credentials::load()?;
         let client = Client::new_with_token(user.access_token);
 
-        let res: Response<ResponseData> = client.query(&request_body).await?;
-        if let Some(errors) = res.errors.clone() {
-            for err in errors {
-                println!("Error: {}", err.message);
-            }
-        }
+        let _data: ResponseData = client.query(&request_body).await?;
 
-        if res.data.is_some() {
-            println!("Delete success 🚀");
-        }
+        println!("Delete success 🚀");
 
         Ok(())
     }

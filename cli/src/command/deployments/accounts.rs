@@ -11,7 +11,7 @@ use katana_primitives::genesis::Genesis;
 use katana_primitives::FieldElement;
 use slot::graphql::deployments::katana_accounts::KatanaAccountsDeploymentConfig::KatanaConfig;
 use slot::graphql::deployments::{katana_accounts::*, KatanaAccounts};
-use slot::graphql::{GraphQLQuery, Response};
+use slot::graphql::GraphQLQuery;
 use starknet::core::types::Felt;
 
 use slot::api::Client;
@@ -38,68 +38,57 @@ impl AccountsArgs {
         let user = Credentials::load()?;
         let client = Client::new_with_token(user.access_token);
 
-        let res: Response<ResponseData> = client.query(&request_body).await?;
-        if let Some(errors) = res.errors.clone() {
-            for err in errors {
-                println!("Error: {}", err.message);
-            }
-        }
+        let data: ResponseData = client.query(&request_body).await?;
 
-        if let Some(data) = res.data {
-            if let Some(deployment) = data.deployment {
-                if let KatanaConfig(config) = deployment.config {
-                    match config.accounts {
-                        Some(accounts) => {
-                            let mut accounts_vec = Vec::new();
-                            for account in accounts {
-                                // TODO(kariy): update these after updating katana-primitives
-                                let address = ContractAddress::from(
-                                    FieldElement::from_bytes_be(
-                                        &Felt::from_hex(&account.address).unwrap().to_bytes_be(),
-                                    )
-                                    .unwrap(),
-                                );
-
-                                let public_key = FieldElement::from_bytes_be(
-                                    &Felt::from_hex(&account.public_key).unwrap().to_bytes_be(),
+        if let Some(deployment) = data.deployment {
+            if let KatanaConfig(config) = deployment.config {
+                match config.accounts {
+                    Some(accounts) => {
+                        let mut accounts_vec = Vec::new();
+                        for account in accounts {
+                            // TODO(kariy): update these after updating katana-primitives
+                            let address = ContractAddress::from(
+                                FieldElement::from_bytes_be(
+                                    &Felt::from_hex(&account.address).unwrap().to_bytes_be(),
                                 )
-                                .unwrap();
-                                let private_key = FieldElement::from_bytes_be(
-                                    &Felt::from_hex(&account.private_key).unwrap().to_bytes_be(),
-                                )
-                                .unwrap();
-
-                                let genesis_account = GenesisAccount {
-                                    public_key,
-                                    ..GenesisAccount::default()
-                                };
-
-                                accounts_vec.push((
-                                    address,
-                                    GenesisAccountAlloc::DevAccount(DevGenesisAccount {
-                                        private_key,
-                                        inner: genesis_account,
-                                    }),
-                                ));
-                            }
-                            print_genesis_accounts(accounts_vec.iter().map(|(a, b)| (a, b)), None);
-                        }
-                        None => {
-                            let accounts = DevAllocationsGenerator::new(10)
-                                .with_seed(parse_seed(&config.seed))
-                                .generate();
-
-                            let mut genesis = Genesis::default();
-                            genesis.extend_allocations(
-                                accounts.into_iter().map(|(k, v)| (k, v.into())),
+                                .unwrap(),
                             );
-                            print_genesis_accounts(
-                                genesis.accounts().peekable(),
-                                Some(&config.seed),
-                            );
+
+                            let public_key = FieldElement::from_bytes_be(
+                                &Felt::from_hex(&account.public_key).unwrap().to_bytes_be(),
+                            )
+                            .unwrap();
+                            let private_key = FieldElement::from_bytes_be(
+                                &Felt::from_hex(&account.private_key).unwrap().to_bytes_be(),
+                            )
+                            .unwrap();
+
+                            let genesis_account = GenesisAccount {
+                                public_key,
+                                ..GenesisAccount::default()
+                            };
+
+                            accounts_vec.push((
+                                address,
+                                GenesisAccountAlloc::DevAccount(DevGenesisAccount {
+                                    private_key,
+                                    inner: genesis_account,
+                                }),
+                            ));
                         }
-                    };
-                }
+                        print_genesis_accounts(accounts_vec.iter().map(|(a, b)| (a, b)), None);
+                    }
+                    None => {
+                        let accounts = DevAllocationsGenerator::new(10)
+                            .with_seed(parse_seed(&config.seed))
+                            .generate();
+
+                        let mut genesis = Genesis::default();
+                        genesis
+                            .extend_allocations(accounts.into_iter().map(|(k, v)| (k, v.into())));
+                        print_genesis_accounts(genesis.accounts().peekable(), Some(&config.seed));
+                    }
+                };
             }
         }
 

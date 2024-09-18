@@ -1,3 +1,5 @@
+use std::fmt::{self};
+
 use graphql_client::Response;
 use reqwest::RequestBuilder;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
@@ -32,7 +34,7 @@ impl Client {
         self.access_token = Some(token);
     }
 
-    pub async fn query<R, T>(&self, body: &T) -> Result<Response<R>, Error>
+    pub async fn query<R, T>(&self, body: &T) -> Result<R, Error>
     where
         R: DeserializeOwned,
         T: Serialize + ?Sized,
@@ -54,7 +56,13 @@ impl Client {
             return Err(Error::InvalidOAuth);
         }
 
-        Ok(response.json().await?)
+        let res: Response<R> = response.json().await?;
+
+        if let Some(errors) = res.errors {
+            Err(Error::Api(GraphQLErrors(errors)))
+        } else {
+            Ok(res.data.unwrap())
+        }
     }
 
     pub async fn oauth2(&self, code: &str) -> Result<AccessToken, Error> {
@@ -93,5 +101,17 @@ impl Client {
 impl Default for Client {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+pub struct GraphQLErrors(Vec<graphql_client::Error>);
+
+impl fmt::Display for GraphQLErrors {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        for err in &self.0 {
+            writeln!(f, "Error: {}", err.message)?;
+        }
+        Ok(())
     }
 }

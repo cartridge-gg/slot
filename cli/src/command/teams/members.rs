@@ -6,7 +6,7 @@ use slot::graphql::team::{
     team_member_add, team_member_remove, team_members_list, TeamMemberAdd, TeamMemberRemove,
     TeamMembersList,
 };
-use slot::graphql::{GraphQLQuery, Response};
+use slot::graphql::GraphQLQuery;
 
 #[derive(Debug, Args, serde::Serialize)]
 #[command(next_help_heading = "Team list options")]
@@ -20,27 +20,17 @@ impl TeamListArgs {
         let user = Credentials::load()?;
         let client = Client::new_with_token(user.access_token);
 
-        let res: Response<team_members_list::ResponseData> = client.query(&request_body).await?;
-        if let Some(errors) = res.errors.clone() {
-            for err in errors {
-                println!("Error: {}", err.message);
-            }
+        let data: team_members_list::ResponseData = client.query(&request_body).await?;
 
-            return Ok(());
-        }
-
-        if let Some(data) = res.data {
-            println!("{} members:", team);
-            data.team
-                .and_then(|team_list| team_list.members.edges)
-                .into_iter()
-                .flatten()
-                .for_each(|edge| {
-                    if let Some(node) = edge.and_then(|edge| edge.node) {
-                        println!("  {}", node.id)
-                    }
-                });
-        }
+        data.team
+            .and_then(|team_list| team_list.members.edges)
+            .into_iter()
+            .flatten()
+            .for_each(|edge| {
+                if let Some(node) = edge.and_then(|edge| edge.node) {
+                    println!("  {}", node.id)
+                }
+            });
 
         Ok(())
     }
@@ -63,14 +53,9 @@ impl TeamAddArgs {
         let user = Credentials::load()?;
         let client = Client::new_with_token(user.access_token);
 
-        let res: Response<team_member_add::ResponseData> = client.query(&request_body).await?;
-        if let Some(errors) = res.errors {
-            for err in errors {
-                println!("Error: {}", err.message);
-            }
+        let _data: team_member_add::ResponseData = client.query(&request_body).await?;
 
-            return Ok(());
-        }
+        println!("Successfully added {} to the team", self.account.join(", "));
 
         Ok(())
     }
@@ -86,21 +71,20 @@ pub struct TeamRemoveArgs {
 impl TeamRemoveArgs {
     pub async fn run(&self, team: String) -> Result<()> {
         let request_body = TeamMemberRemove::build_query(team_member_remove::Variables {
-            team,
+            team: team.clone(),
             accounts: self.account.clone(),
         });
 
         let user = Credentials::load()?;
         let client = Client::new_with_token(user.access_token);
 
-        let res: Response<team_member_remove::ResponseData> = client.query(&request_body).await?;
-        if let Some(errors) = res.errors {
-            for err in errors {
-                println!("Error: {}", err.message);
-            }
+        let _data: team_member_remove::ResponseData = client.query(&request_body).await?;
 
-            return Ok(());
-        }
+        println!(
+            "Successfully removed {} from the team {}",
+            self.account.join(", "),
+            team,
+        );
 
         Ok(())
     }

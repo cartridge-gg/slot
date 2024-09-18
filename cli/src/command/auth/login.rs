@@ -115,16 +115,9 @@ async fn handler(
 
             // fetch the account information
             let request_body = Me::build_query(Variables {});
-            let res: graphql_client::Response<ResponseData> = api.query(&request_body).await?;
+            let data: ResponseData = api.query(&request_body).await?;
 
-            // display the errors if any, but still process bcs we have the token
-            if let Some(errors) = res.errors {
-                for err in errors {
-                    eprintln!("Error: {}", err.message);
-                }
-            }
-
-            let account = res.data.and_then(|data| data.me).expect("missing payload");
+            let account = data.me.expect("missing payload");
             let account = Account::try_from(account)?;
 
             // 3. Store the access token locally
