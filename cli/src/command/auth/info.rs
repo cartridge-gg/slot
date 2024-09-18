@@ -14,21 +14,8 @@ impl InfoArgs {
         let client = Client::new_with_token(credentials.access_token);
 
         let request_body = Me::build_query(Variables {});
-<<<<<<< Updated upstream
-        let res: Response<ResponseData> = client.query(&request_body).await?;
-
-        if let Some(errors) = res.errors {
-            for err in errors {
-                println!("Error: {}", err.message);
-            }
-            return Err(anyhow!("API Error"));
-        }
-
-        print!("{:?}", res.data.unwrap());
-=======
         let res: ResponseData = client.query(&request_body).await?;
         print!("{:?}", res);
->>>>>>> Stashed changes
 
         Ok(())
     }
