@@ -58,18 +58,10 @@ impl Client {
 
         let res: Response<R> = response.json().await?;
 
-<<<<<<< Updated upstream
-        if let Some(ref errors) = res.errors {
-            for err in errors {
-                println!("Error: {}", err.message);
-            }
-            return Err(Error::Anyhow(anyhow!("API Error")));
-=======
         if let Some(errors) = res.errors {
             Err(Error::Api(GraphQLErrors(errors)))
         } else {
             Ok(res.data.unwrap())
->>>>>>> Stashed changes
         }
     }
 

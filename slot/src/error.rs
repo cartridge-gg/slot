@@ -30,10 +30,7 @@ pub enum Error {
 
     #[error(transparent)]
     Signing(#[from] SignError),
-<<<<<<< Updated upstream
-=======
 
     #[error(transparent)]
     Api(#[from] api::GraphQLErrors),
->>>>>>> Stashed changes
 }
