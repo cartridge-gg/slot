@@ -66,7 +66,7 @@ impl DeleteArgs {
             for err in errors {
                 println!("Error: {}", err.message);
             }
-            return Err(anyhow!("Failed"));
+            return Err(anyhow!("API Error"));
         }
 
         if res.data.is_some() {

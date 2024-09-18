@@ -20,7 +20,7 @@ impl InfoArgs {
             for err in errors {
                 println!("Error: {}", err.message);
             }
-            return Err(anyhow!("Failed"));
+            return Err(anyhow!("API Error"));
         }
 
         print!("{:?}", res.data.unwrap());

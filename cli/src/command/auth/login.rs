@@ -121,7 +121,7 @@ async fn handler(
                 for err in errors {
                     eprintln!("Error: {}", err.message);
                 }
-                return Err(CallbackError::Other(anyhow!("Failed")));
+                return Err(CallbackError::Other(anyhow!("API Error")));
             }
 
             let account = res.data.and_then(|data| data.me).expect("missing payload");

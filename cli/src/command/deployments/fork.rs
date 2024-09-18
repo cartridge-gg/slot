@@ -52,7 +52,7 @@ impl ForkArgs {
             for err in errors {
                 println!("Error: {}", err.message);
             }
-            return Err(anyhow!("Failed"));
+            return Err(anyhow!("API Error"));
         }
 
         if let Some(data) = res.data {

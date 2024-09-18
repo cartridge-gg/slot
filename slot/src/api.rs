@@ -1,3 +1,4 @@
+use anyhow::anyhow;
 use graphql_client::Response;
 use reqwest::RequestBuilder;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
@@ -54,7 +55,16 @@ impl Client {
             return Err(Error::InvalidOAuth);
         }
 
-        Ok(response.json().await?)
+        let res: Response<R> = response.json().await?;
+
+        if let Some(ref errors) = res.errors {
+            for err in errors {
+                println!("Error: {}", err.message);
+            }
+            return Err(Error::Anyhow(anyhow!("API Error")));
+        }
+
+        Ok(res)
     }
 
     pub async fn oauth2(&self, code: &str) -> Result<AccessToken, Error> {
