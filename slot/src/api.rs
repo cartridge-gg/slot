@@ -109,10 +109,9 @@ pub struct GraphQLErrors(Vec<graphql_client::Error>);
 
 impl fmt::Display for GraphQLErrors {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut msg = String::new();
         for err in &self.0 {
-            msg.push_str(&format!("Error: {}", err.message));
+            write!(f, "Error: {}\n", err.message)?;
         }
-        write!(f, "{msg}")
+        Ok(())
     }
 }
