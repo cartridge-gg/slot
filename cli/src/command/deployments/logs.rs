@@ -12,7 +12,7 @@ use anyhow::Result;
 use clap::Args;
 use slot::credential::Credentials;
 use slot::graphql::deployments::deployment_logs::DeploymentService;
-use slot::graphql::{deployments::deployment_logs::*, GraphQLQuery, Response};
+use slot::graphql::{deployments::deployment_logs::*, GraphQLQuery};
 use slot::{api::Client, graphql::deployments::DeploymentLogs};
 
 use super::services::Service;
@@ -90,21 +90,9 @@ impl LogReader {
             limit: Some(limit),
         });
 
-        let res: Response<ResponseData> = self.client.query(&request_body).await?;
-        if let Some(errors) = res.errors {
-            let error_message = errors
-                .into_iter()
-                .map(|err| err.message)
-                .collect::<Vec<_>>()
-                .join(", ");
-            return Err(anyhow::anyhow!(error_message));
-        }
+        let data: ResponseData = self.client.query(&request_body).await?;
 
-        let logs = res
-            .data
-            .and_then(|data| data.deployment)
-            .map(|deployment| deployment.logs)
-            .unwrap();
+        let logs = data.deployment.map(|deployment| deployment.logs).unwrap();
 
         Ok(logs)
     }
