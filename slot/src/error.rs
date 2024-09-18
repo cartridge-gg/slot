@@ -1,3 +1,4 @@
+use crate::api::{self};
 use account_sdk::signers::SignError;
 use starknet::core::utils::NonAsciiNameError;
 
@@ -29,4 +30,10 @@ pub enum Error {
 
     #[error(transparent)]
     Signing(#[from] SignError),
+<<<<<<< Updated upstream
+=======
+
+    #[error(transparent)]
+    Api(#[from] api::GraphQLErrors),
+>>>>>>> Stashed changes
 }
