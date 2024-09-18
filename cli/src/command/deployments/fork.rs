@@ -1,10 +1,10 @@
 #![allow(clippy::enum_variant_names)]
 
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use clap::Args;
 use slot::graphql::deployments::fork_deployment::ForkDeploymentForkDeployment::KatanaConfig;
 use slot::graphql::deployments::{fork_deployment::*, ForkDeployment};
-use slot::graphql::{GraphQLQuery, Response};
+use slot::graphql::GraphQLQuery;
 use slot::{api::Client, credential::Credentials, vars};
 use starknet::providers::{jsonrpc::HttpTransport, JsonRpcClient, Provider};
 use url::Url;
@@ -47,24 +47,15 @@ impl ForkArgs {
         let user = Credentials::load()?;
         let client = Client::new_with_token(user.access_token);
 
-        let res: Response<ResponseData> = client.query(&request_body).await?;
-        if let Some(errors) = res.errors.clone() {
-            for err in errors {
-                println!("Error: {}", err.message);
-            }
-            return Err(anyhow!("API Error"));
-        }
-
-        if let Some(data) = res.data {
-            println!("Fork success 🚀");
-            if let KatanaConfig(config) = data.fork_deployment {
-                println!("\nEndpoints:");
-                println!("  RPC: {}", config.rpc);
-                println!(
-                    "\nStream logs with `slot deployments logs {} katana -f`",
-                    fork_name
-                );
-            }
+        let data: ResponseData = client.query(&request_body).await?;
+        println!("Fork success 🚀");
+        if let KatanaConfig(config) = data.fork_deployment {
+            println!("\nEndpoints:");
+            println!("  RPC: {}", config.rpc);
+            println!(
+                "\nStream logs with `slot deployments logs {} katana -f`",
+                fork_name
+            );
         }
 
         Ok(())

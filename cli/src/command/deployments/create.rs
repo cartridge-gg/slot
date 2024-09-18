@@ -1,6 +1,6 @@
 #![allow(clippy::enum_variant_names)]
 
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use clap::Args;
 use slot::api::Client;
 use slot::credential::Credentials;
@@ -9,7 +9,7 @@ use slot::graphql::deployments::create_deployment::CreateDeploymentCreateDeploym
 };
 use slot::graphql::deployments::create_deployment::*;
 use slot::graphql::deployments::CreateDeployment;
-use slot::graphql::{GraphQLQuery, Response};
+use slot::graphql::GraphQLQuery;
 
 use super::{services::CreateServiceCommands, Tier};
 
@@ -140,39 +140,32 @@ impl CreateArgs {
         let user = Credentials::load()?;
         let client = Client::new_with_token(user.access_token);
 
-        let res: Response<ResponseData> = client.query(&request_body).await?;
-        if let Some(errors) = res.errors.clone() {
-            for err in errors {
-                println!("Error: {}", err.message);
-            }
-            return Err(anyhow!("API Error"));
-        }
+        let data: ResponseData = client.query(&request_body).await?;
 
-        if let Some(data) = res.data {
-            println!("Deployment success 🚀");
-            match data.create_deployment {
-                SayaConfig(config) => {
-                    println!("\nConfiguration:");
-                    println!("  RPC URL: {}", config.rpc_url);
-                }
-                ToriiConfig(config) => {
-                    println!("\nConfiguration:");
-                    println!("  World: {}", config.world);
-                    println!("  RPC: {}", config.rpc);
-                    println!("  Start Block: {}", config.start_block.unwrap_or(0));
-                    println!("  Index Pending: {}", config.index_pending.unwrap_or(false));
-                    println!("\nEndpoints:");
-                    println!("  GRAPHQL: {}", config.graphql);
-                    println!("  GRPC: {}", config.grpc);
-                }
-                KatanaConfig(config) => {
-                    println!("\nEndpoints:");
-                    println!("  RPC: {}", config.rpc);
-                }
-                MadaraConfig(config) => {
-                    println!("\nEndpoints:");
-                    println!("  RPC: {}", config.rpc);
-                }
+        println!("Deployment success 🚀");
+
+        match data.create_deployment {
+            SayaConfig(config) => {
+                println!("\nConfiguration:");
+                println!("  RPC URL: {}", config.rpc_url);
+            }
+            ToriiConfig(config) => {
+                println!("\nConfiguration:");
+                println!("  World: {}", config.world);
+                println!("  RPC: {}", config.rpc);
+                println!("  Start Block: {}", config.start_block.unwrap_or(0));
+                println!("  Index Pending: {}", config.index_pending.unwrap_or(false));
+                println!("\nEndpoints:");
+                println!("  GRAPHQL: {}", config.graphql);
+                println!("  GRPC: {}", config.grpc);
+            }
+            KatanaConfig(config) => {
+                println!("\nEndpoints:");
+                println!("  RPC: {}", config.rpc);
+            }
+            MadaraConfig(config) => {
+                println!("\nEndpoints:");
+                println!("  RPC: {}", config.rpc);
             }
         }
 
