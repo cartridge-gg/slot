@@ -2,13 +2,11 @@ use clap::{Subcommand, ValueEnum};
 
 use self::{
     katana::{KatanaAccountArgs, KatanaCreateArgs, KatanaForkArgs, KatanaUpdateArgs},
-    madara::MadaraCreateArgs,
     saya::{SayaCreateArgs, SayaUpdateArgs},
     torii::{ToriiCreateArgs, ToriiUpdateArgs},
 };
 
 mod katana;
-mod madara;
 mod saya;
 mod torii;
 
@@ -19,8 +17,6 @@ pub enum CreateServiceCommands {
     Katana(KatanaCreateArgs),
     #[command(about = "Torii deployment.")]
     Torii(ToriiCreateArgs),
-    #[command(about = "Madara deployment.")]
-    Madara(MadaraCreateArgs),
     #[command(about = "Saya deployment.")]
     Saya(SayaCreateArgs),
 }
@@ -56,6 +52,5 @@ pub enum KatanaAccountCommands {
 pub enum Service {
     Katana,
     Torii,
-    Madara,
     Saya,
 }

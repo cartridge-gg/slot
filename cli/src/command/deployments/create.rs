@@ -5,7 +5,7 @@ use clap::Args;
 use slot::api::Client;
 use slot::credential::Credentials;
 use slot::graphql::deployments::create_deployment::CreateDeploymentCreateDeployment::{
-    KatanaConfig, MadaraConfig, SayaConfig, ToriiConfig,
+    KatanaConfig, SayaConfig, ToriiConfig,
 };
 use slot::graphql::deployments::create_deployment::*;
 use slot::graphql::deployments::CreateDeployment;
@@ -58,7 +58,6 @@ impl CreateArgs {
                         dev: config.dev.then_some(true),
                     }),
                     torii: None,
-                    madara: None,
                     saya: None,
                 }),
             },
@@ -67,7 +66,6 @@ impl CreateArgs {
                 version: config.version.clone(),
                 config: Some(CreateServiceConfigInput {
                     katana: None,
-                    madara: None,
                     torii: Some(CreateToriiConfigInput {
                         rpc: Some(config.rpc.clone().unwrap_or("".to_string())),
                         world: format!("{:#x}", config.world),
@@ -78,31 +76,12 @@ impl CreateArgs {
                     saya: None,
                 }),
             },
-            CreateServiceCommands::Madara(config) => CreateServiceInput {
-                type_: DeploymentService::madara,
-                version: config.version.clone(),
-                config: Some(CreateServiceConfigInput {
-                    katana: None,
-                    torii: None,
-                    madara: Some(CreateMadaraConfigInput {
-                        name: config.name.clone(),
-                        base_path: config.base_path.clone(),
-                        dev: config.dev.then_some(true),
-                        no_grandpa: config.no_grandpa.then_some(true),
-                        validator: config.validator.then_some(true),
-                        sealing: config.sealing.clone().map(|s| s.to_string()),
-                        chain: config.chain.clone().map(|c| c.to_string()),
-                    }),
-                    saya: None,
-                }),
-            },
             CreateServiceCommands::Saya(config) => CreateServiceInput {
                 type_: DeploymentService::saya,
                 version: config.version.clone(),
                 config: Some(CreateServiceConfigInput {
                     katana: None,
                     torii: None,
-                    madara: None,
                     saya: Some(CreateSayaConfigInput {
                         mode: config.mode.clone(),
                         rpc_url: config.rpc_url.clone(),
@@ -163,16 +142,11 @@ impl CreateArgs {
                 println!("\nEndpoints:");
                 println!("  RPC: {}", config.rpc);
             }
-            MadaraConfig(config) => {
-                println!("\nEndpoints:");
-                println!("  RPC: {}", config.rpc);
-            }
         }
 
         let service = match &self.create_commands {
             CreateServiceCommands::Katana(_) => "katana",
             CreateServiceCommands::Torii(_) => "torii",
-            CreateServiceCommands::Madara(_) => "madara",
             CreateServiceCommands::Saya(_) => "saya",
         };
 
