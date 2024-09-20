@@ -4,7 +4,7 @@ use super::services::Service;
 use anyhow::Result;
 use clap::Args;
 use slot::graphql::deployments::describe_deployment::DescribeDeploymentDeploymentConfig::{
-    KatanaConfig, MadaraConfig, SayaConfig, ToriiConfig,
+    KatanaConfig, SayaConfig, ToriiConfig,
 };
 use slot::graphql::deployments::{describe_deployment::*, DescribeDeployment};
 use slot::graphql::GraphQLQuery;
@@ -25,7 +25,6 @@ impl DescribeArgs {
         let service = match self.service {
             Service::Torii => DeploymentService::torii,
             Service::Katana => DeploymentService::katana,
-            Service::Madara => DeploymentService::madara,
             Service::Saya => DeploymentService::saya,
         };
 
@@ -63,11 +62,6 @@ impl DescribeArgs {
                     println!("  GRPC: {}", config.grpc);
                 }
                 KatanaConfig(config) => {
-                    println!("\nEndpoints:");
-                    println!("  Version: {}", config.version);
-                    println!("  RPC: {}", config.rpc);
-                }
-                MadaraConfig(config) => {
                     println!("\nEndpoints:");
                     println!("  Version: {}", config.version);
                     println!("  RPC: {}", config.rpc);

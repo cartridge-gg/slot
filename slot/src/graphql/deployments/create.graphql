@@ -27,11 +27,6 @@ mutation CreateDeployment(
 			indexPending
 		}
 
-		... on MadaraConfig {
-			rpc
-			name
-		}
-
 		... on SayaConfig {
 			rpcUrl
 		}

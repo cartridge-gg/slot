@@ -20,11 +20,6 @@ query DescribeDeployment($project: String!, $service: DeploymentService!) {
         startBlock
         indexPending
       }
-      ... on MadaraConfig {
-        version
-        rpc
-        name
-      }
 
       ... on SayaConfig {
         rpcUrl

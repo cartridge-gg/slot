@@ -7,7 +7,7 @@ use clap::Args;
 use slot::api::Client;
 use slot::credential::Credentials;
 use slot::graphql::deployments::update_deployment::UpdateDeploymentUpdateDeployment::{
-    KatanaConfig, MadaraConfig, SayaConfig, ToriiConfig,
+    KatanaConfig, SayaConfig, ToriiConfig,
 };
 use slot::graphql::deployments::update_deployment::{
     self, UpdateKatanaConfigInput, UpdateServiceConfigInput, UpdateServiceInput,
@@ -94,7 +94,6 @@ impl UpdateArgs {
                 println!("\nEndpoints:");
                 println!("  RPC: {}", config.rpc);
             }
-            MadaraConfig => {} // TODO: implement
             SayaConfig(config) => {
                 println!("\nConfiguration:");
                 println!("  RPC URL: {}", config.rpc_url);

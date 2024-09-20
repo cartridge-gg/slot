@@ -10,7 +10,6 @@ use slot::{api::Client, credential::Credentials};
 pub enum Service {
     Katana,
     Torii,
-    Madara,
     Saya,
 }
 
@@ -49,7 +48,6 @@ impl DeleteArgs {
         let service = match &self.service {
             Service::Katana => DeploymentService::katana,
             Service::Torii => DeploymentService::torii,
-            Service::Madara => DeploymentService::madara,
             Service::Saya => DeploymentService::saya,
         };
 
