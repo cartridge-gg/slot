@@ -1,13 +1,13 @@
 query Me {
-    me {
+  me {
+    id
+    name
+    contractAddress
+    credentials {
+      webauthn {
         id
-        name
-        contractAddress
-        credentials {
-            webauthn {
-            	id
-                publicKey
-            }
-        }
+        publicKey
+      }
     }
+  }
 }
