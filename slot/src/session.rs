@@ -232,6 +232,18 @@ impl SessionCreationResponse {
 
         Ok(serde_json::from_str(&decoded)?)
     }
+
+    #[cfg(test)]
+    pub fn to_encoded(&self) -> anyhow::Result<String> {
+        use base64::{engine::general_purpose, Engine as _};
+
+        // Serialize the struct to JSON
+        let json = serde_json::to_string(self)?;
+
+        // Encode the JSON string to Base64
+        let encoded = general_purpose::STANDARD_NO_PAD.encode(json.as_bytes());
+        Ok(encoded)
+    }
 }
 
 // TODO(kariy): this function should probably be put in a more generic `controller` rust sdk.
@@ -528,24 +540,25 @@ mod tests {
 
     #[test]
     fn deserialize_backend_encoded_response() {
-        let encoded_response = "eyJ1c2VybmFtZSI6ImpvaG5zbWl0aCIsImFkZHJlc3MiOiIweDM5NzMzM2U5OTNhZTE2MmI0NzY2OTBlMTQwMTU0OGFlOTdhODgxOTk1NTUwNmI4YmM5MThlMDY3YmRhZmMzIiwib3duZXJHdWlkIjoiMHg1ZDc3MDliMGE0ODVlNjRhNTQ5YWRhOWJkMTRkMzA0MTkzNjQxMjdkZmQzNTFlMDFmMzg4NzFjODI1MDBjZDciLCJ0cmFuc2FjdGlvbkhhc2giOiIweDRlOTY4ZWRkODFiYTQ2MjI0Zjc2MjNmNDA5NWQ3NTRkYzgwZjZjYmQ1NTU4M2NkZTBlZDJhMTQzYWViNzMyMSJ9";
-        let response = SessionCreationResponse::from_encoded(encoded_response).unwrap();
-
-        assert_eq!(response.username, "johnsmith");
-        assert_eq!(
-            response.address,
-            felt!("0x397333e993ae162b476690e1401548ae97a8819955506b8bc918e067bdafc3")
-        );
-        assert_eq!(
-            response.owner_guid,
-            felt!("0x5d7709b0a485e64a549ada9bd14d30419364127dfd351e01f38871c82500cd7")
-        );
-        assert_eq!(
-            response.transaction_hash,
-            Some(felt!(
+        let original = SessionCreationResponse {
+            username: "johnsmith".to_string(),
+            address: felt!("0x397333e993ae162b476690e1401548ae97a8819955506b8bc918e067bdafc3"),
+            owner_guid: felt!("0x5d7709b0a485e64a549ada9bd14d30419364127dfd351e01f38871c82500cd7"),
+            transaction_hash: Some(felt!(
                 "0x4e968edd81ba46224f7623f4095d754dc80f6cbd55583cde0ed2a143aeb7321"
-            ))
-        );
-        assert!(!response.already_registered);
+            )),
+            expires_at: "2023-12-31T23:59:59Z".to_string(),
+            already_registered: false,
+        };
+
+        let encoded = original.to_encoded().unwrap();
+        let decoded = SessionCreationResponse::from_encoded(&encoded).unwrap();
+
+        assert_eq!(decoded.username, original.username);
+        assert_eq!(decoded.address, original.address);
+        assert_eq!(decoded.owner_guid, original.owner_guid);
+        assert_eq!(decoded.transaction_hash, original.transaction_hash);
+        assert_eq!(decoded.expires_at, original.expires_at);
+        assert_eq!(decoded.already_registered, original.already_registered);
     }
 }
