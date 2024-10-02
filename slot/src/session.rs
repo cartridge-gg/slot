@@ -416,7 +416,7 @@ mod tests {
     use tokio::sync::mpsc::channel;
 
     fn authenticate(config_dir: impl AsRef<Path>) -> &'static str {
-        static USERNAME: &str = "foo";
+        let username = "foo";
 
         let token = AccessToken {
             token: "mytoken".to_string(),
@@ -425,8 +425,7 @@ mod tests {
 
         let account = Account {
             name: None,
-            id: USERNAME.to_string(),
-            contract_address: felt!("0x999"),
+            id: username.to_string(),
             credentials: AccountCredentials {
                 webauthn: Vec::new(),
             },
@@ -435,7 +434,7 @@ mod tests {
         let cred = Credentials::new(account, token);
         let _ = Credentials::store_at(&config_dir, &cred).unwrap();
 
-        USERNAME
+        username
     }
 
     #[test]
