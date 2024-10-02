@@ -1,10 +1,10 @@
 use std::path::Path;
 use std::{fs, path::PathBuf};
 
-use account_sdk::account::session::hash::{AllowedMethod, Session};
+use account_sdk::account::session::hash::{Policy, Session};
 use account_sdk::account::session::SessionAccount;
 use account_sdk::signers::{HashSigner, Signer};
-use anyhow::Context;
+use anyhow::{anyhow, Context};
 use axum::response::{IntoResponse, Response};
 use axum::{extract::State, routing::post, Router};
 use hyper::StatusCode;
@@ -29,8 +29,6 @@ use crate::{browser, server::LocalServer, vars};
 const GUARDIAN: Felt = short_string!("CARTRIDGE_GUARDIAN");
 pub const SESSION_GUARDIAN_SIGNING_KEY: SigningKey = SigningKey::from_secret_scalar(GUARDIAN);
 
-// Taken from: https://github.com/cartridge-gg/controller/blob/b2c6ed8fcbabdc2e40176ce9955e155c662a9f1c/packages/keychain/src/const.ts#L2C1-L2C47
-const DEFAULT_SESSION_EXPIRES_AT: u64 = 1727776800;
 const SESSION_CREATION_PATH: &str = "/session";
 const SESSION_FILE_BASE_NAME: &str = "session.json";
 
@@ -62,13 +60,11 @@ impl FullSessionInfo {
     where
         P: Provider + Send,
     {
-        let session_guardian = Signer::Starknet(SESSION_GUARDIAN_SIGNING_KEY);
         let session_signer = Signer::Starknet(SigningKey::from_secret_scalar(self.auth.signer));
 
         SessionAccount::new_as_registered(
             provider,
             session_signer,
-            session_guardian,
             self.auth.address,
             self.chain_id,
             self.auth.owner_guid,
@@ -137,11 +133,12 @@ pub async fn create(rpc_url: Url, policies: &[PolicyMethod]) -> Result<FullSessi
 
     let methods = policies
         .iter()
-        .map(AllowedMethod::try_from)
+        .map(Policy::try_from)
         .collect::<Result<Vec<_>, _>>()
         .map_err(Error::InvalidMethodName)?;
 
-    let session = Session::new(methods, DEFAULT_SESSION_EXPIRES_AT, &signer.signer())?;
+    let expires_at = response.expires_at.parse::<u64>().map_err(|e| anyhow!(e))?;
+    let session = Session::new(methods, expires_at, &signer.signer())?;
     let chain_id = get_network_chain_id(rpc_url).await?;
 
     Ok(FullSessionInfo {
@@ -199,7 +196,7 @@ fn store_at(
 
 /// The response object to the session creation request.
 //
-// A reflection of https://github.com/cartridge-gg/controller/blob/90b767bcc6478f0e02973f7237bc2a974f745adf/packages/keychain/src/pages/session.tsx#L15-L21
+// A reflection of https://github.com/cartridge-gg/controller/blob/1ac2995e4d430e9d3b88e3a62f4d3eb21a2496c3/packages/keychain/src/pages/session.tsx#L15-L22
 #[cfg_attr(test, derive(PartialEq, Serialize))]
 #[derive(Debug, Clone, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -208,6 +205,8 @@ pub struct SessionCreationResponse {
     pub username: String,
     /// The address of the Controller account associated with the username.
     pub address: Felt,
+    /// The session's expiration date.
+    pub expires_at: String,
 
     pub owner_guid: Felt,
     /// The hash of the session creation transaction. `None` is the session
@@ -380,7 +379,7 @@ async fn get_network_chain_id(url: Url) -> anyhow::Result<Felt> {
     Ok(provider.chain_id().await?)
 }
 
-impl TryFrom<PolicyMethod> for AllowedMethod {
+impl TryFrom<PolicyMethod> for account_sdk::account::session::hash::Policy {
     type Error = NonAsciiNameError;
 
     fn try_from(value: PolicyMethod) -> Result<Self, Self::Error> {
@@ -391,7 +390,7 @@ impl TryFrom<PolicyMethod> for AllowedMethod {
     }
 }
 
-impl TryFrom<&PolicyMethod> for AllowedMethod {
+impl TryFrom<&PolicyMethod> for account_sdk::account::session::hash::Policy {
     type Error = NonAsciiNameError;
 
     fn try_from(value: &PolicyMethod) -> Result<Self, Self::Error> {
