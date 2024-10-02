@@ -1,10 +1,10 @@
 use std::path::Path;
 use std::{fs, path::PathBuf};
 
-use account_sdk::account::session::hash::{AllowedMethod, Session};
+use account_sdk::account::session::hash::{Policy, Session};
 use account_sdk::account::session::SessionAccount;
 use account_sdk::signers::{HashSigner, Signer};
-use anyhow::Context;
+use anyhow::{anyhow, Context};
 use axum::response::{IntoResponse, Response};
 use axum::{extract::State, routing::post, Router};
 use hyper::StatusCode;
@@ -29,8 +29,6 @@ use crate::{browser, server::LocalServer, vars};
 const GUARDIAN: Felt = short_string!("CARTRIDGE_GUARDIAN");
 pub const SESSION_GUARDIAN_SIGNING_KEY: SigningKey = SigningKey::from_secret_scalar(GUARDIAN);
 
-// Taken from: https://github.com/cartridge-gg/controller/blob/b2c6ed8fcbabdc2e40176ce9955e155c662a9f1c/packages/keychain/src/const.ts#L2C1-L2C47
-const DEFAULT_SESSION_EXPIRES_AT: u64 = 1727776800;
 const SESSION_CREATION_PATH: &str = "/session";
 const SESSION_FILE_BASE_NAME: &str = "session.json";
 
@@ -62,13 +60,11 @@ impl FullSessionInfo {
     where
         P: Provider + Send,
     {
-        let session_guardian = Signer::Starknet(SESSION_GUARDIAN_SIGNING_KEY);
         let session_signer = Signer::Starknet(SigningKey::from_secret_scalar(self.auth.signer));
 
         SessionAccount::new_as_registered(
             provider,
             session_signer,
-            session_guardian,
             self.auth.address,
             self.chain_id,
             self.auth.owner_guid,
@@ -137,11 +133,12 @@ pub async fn create(rpc_url: Url, policies: &[PolicyMethod]) -> Result<FullSessi
 
     let methods = policies
         .iter()
-        .map(AllowedMethod::try_from)
+        .map(Policy::try_from)
         .collect::<Result<Vec<_>, _>>()
         .map_err(Error::InvalidMethodName)?;
 
-    let session = Session::new(methods, DEFAULT_SESSION_EXPIRES_AT, &signer.signer())?;
+    let expires_at = response.expires_at.parse::<u64>().map_err(|e| anyhow!(e))?;
+    let session = Session::new(methods, expires_at, &signer.signer())?;
     let chain_id = get_network_chain_id(rpc_url).await?;
 
     Ok(FullSessionInfo {
@@ -199,7 +196,7 @@ fn store_at(
 
 /// The response object to the session creation request.
 //
-// A reflection of https://github.com/cartridge-gg/controller/blob/90b767bcc6478f0e02973f7237bc2a974f745adf/packages/keychain/src/pages/session.tsx#L15-L21
+// A reflection of https://github.com/cartridge-gg/controller/blob/1ac2995e4d430e9d3b88e3a62f4d3eb21a2496c3/packages/keychain/src/pages/session.tsx#L15-L22
 #[cfg_attr(test, derive(PartialEq, Serialize))]
 #[derive(Debug, Clone, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -208,6 +205,8 @@ pub struct SessionCreationResponse {
     pub username: String,
     /// The address of the Controller account associated with the username.
     pub address: Felt,
+    /// The session's expiration date.
+    pub expires_at: String,
 
     pub owner_guid: Felt,
     /// The hash of the session creation transaction. `None` is the session
@@ -232,6 +231,18 @@ impl SessionCreationResponse {
         let decoded = String::from_utf8(bytes)?;
 
         Ok(serde_json::from_str(&decoded)?)
+    }
+
+    #[cfg(test)]
+    pub fn to_encoded(&self) -> anyhow::Result<String> {
+        use base64::{engine::general_purpose, Engine as _};
+
+        // Serialize the struct to JSON
+        let json = serde_json::to_string(self)?;
+
+        // Encode the JSON string to Base64
+        let encoded = general_purpose::STANDARD_NO_PAD.encode(json.as_bytes());
+        Ok(encoded)
     }
 }
 
@@ -380,7 +391,7 @@ async fn get_network_chain_id(url: Url) -> anyhow::Result<Felt> {
     Ok(provider.chain_id().await?)
 }
 
-impl TryFrom<PolicyMethod> for AllowedMethod {
+impl TryFrom<PolicyMethod> for account_sdk::account::session::hash::Policy {
     type Error = NonAsciiNameError;
 
     fn try_from(value: PolicyMethod) -> Result<Self, Self::Error> {
@@ -391,7 +402,7 @@ impl TryFrom<PolicyMethod> for AllowedMethod {
     }
 }
 
-impl TryFrom<&PolicyMethod> for AllowedMethod {
+impl TryFrom<&PolicyMethod> for account_sdk::account::session::hash::Policy {
     type Error = NonAsciiNameError;
 
     fn try_from(value: &PolicyMethod) -> Result<Self, Self::Error> {
@@ -529,24 +540,25 @@ mod tests {
 
     #[test]
     fn deserialize_backend_encoded_response() {
-        let encoded_response = "eyJ1c2VybmFtZSI6ImpvaG5zbWl0aCIsImFkZHJlc3MiOiIweDM5NzMzM2U5OTNhZTE2MmI0NzY2OTBlMTQwMTU0OGFlOTdhODgxOTk1NTUwNmI4YmM5MThlMDY3YmRhZmMzIiwib3duZXJHdWlkIjoiMHg1ZDc3MDliMGE0ODVlNjRhNTQ5YWRhOWJkMTRkMzA0MTkzNjQxMjdkZmQzNTFlMDFmMzg4NzFjODI1MDBjZDciLCJ0cmFuc2FjdGlvbkhhc2giOiIweDRlOTY4ZWRkODFiYTQ2MjI0Zjc2MjNmNDA5NWQ3NTRkYzgwZjZjYmQ1NTU4M2NkZTBlZDJhMTQzYWViNzMyMSJ9";
-        let response = SessionCreationResponse::from_encoded(encoded_response).unwrap();
-
-        assert_eq!(response.username, "johnsmith");
-        assert_eq!(
-            response.address,
-            felt!("0x397333e993ae162b476690e1401548ae97a8819955506b8bc918e067bdafc3")
-        );
-        assert_eq!(
-            response.owner_guid,
-            felt!("0x5d7709b0a485e64a549ada9bd14d30419364127dfd351e01f38871c82500cd7")
-        );
-        assert_eq!(
-            response.transaction_hash,
-            Some(felt!(
+        let original = SessionCreationResponse {
+            username: "johnsmith".to_string(),
+            address: felt!("0x397333e993ae162b476690e1401548ae97a8819955506b8bc918e067bdafc3"),
+            owner_guid: felt!("0x5d7709b0a485e64a549ada9bd14d30419364127dfd351e01f38871c82500cd7"),
+            transaction_hash: Some(felt!(
                 "0x4e968edd81ba46224f7623f4095d754dc80f6cbd55583cde0ed2a143aeb7321"
-            ))
-        );
-        assert!(!response.already_registered);
+            )),
+            expires_at: "2023-12-31T23:59:59Z".to_string(),
+            already_registered: false,
+        };
+
+        let encoded = original.to_encoded().unwrap();
+        let decoded = SessionCreationResponse::from_encoded(&encoded).unwrap();
+
+        assert_eq!(decoded.username, original.username);
+        assert_eq!(decoded.address, original.address);
+        assert_eq!(decoded.owner_guid, original.owner_guid);
+        assert_eq!(decoded.transaction_hash, original.transaction_hash);
+        assert_eq!(decoded.expires_at, original.expires_at);
+        assert_eq!(decoded.already_registered, original.already_registered);
     }
 }

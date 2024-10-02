@@ -5,7 +5,7 @@ version = 3
 [[package]]
 name = "account_sdk"
 version = "0.1.0"
-source = "git+https://github.com/cartridge-gg/controller?rev=fea57f1#fea57f16ba2c52e89311787aaaea8875b35e38f4"
+source = "git+https://github.com/cartridge-gg/controller#61d2fd0cd856daa01b2da52b762368542c03da6f"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -27,6 +27,7 @@ dependencies = [
  "primitive-types",
  "reqwest 0.11.27",
  "serde",
+ "serde-wasm-bindgen",
  "serde_cbor_2",
  "serde_json",
  "serde_with 3.9.0",
@@ -37,6 +38,7 @@ dependencies = [
  "thiserror",
  "tokio",
  "toml",
+ "tsify-next",
  "u256-literal",
  "url",
  "urlencoding",
@@ -515,7 +517,7 @@ dependencies = [
 [[package]]
 name = "cainome"
 version = "0.2.3"
-source = "git+https://github.com/cartridge-gg/cainome?tag=v0.4.1#db76fb849d1b7f3e9a2e943868bcd8616cf72e90"
+source = "git+https://github.com/cartridge-gg/cainome?tag=v0.4.2#4e3924fb82b7299d56d3619aa5d7b9863f581e0a"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -540,7 +542,7 @@ dependencies = [
 [[package]]
 name = "cainome-cairo-serde"
 version = "0.1.0"
-source = "git+https://github.com/cartridge-gg/cainome?tag=v0.4.1#db76fb849d1b7f3e9a2e943868bcd8616cf72e90"
+source = "git+https://github.com/cartridge-gg/cainome?tag=v0.4.2#4e3924fb82b7299d56d3619aa5d7b9863f581e0a"
 dependencies = [
  "serde",
  "starknet 0.12.0",
@@ -550,7 +552,7 @@ dependencies = [
 [[package]]
 name = "cainome-parser"
 version = "0.1.0"
-source = "git+https://github.com/cartridge-gg/cainome?tag=v0.4.1#db76fb849d1b7f3e9a2e943868bcd8616cf72e90"
+source = "git+https://github.com/cartridge-gg/cainome?tag=v0.4.2#4e3924fb82b7299d56d3619aa5d7b9863f581e0a"
 dependencies = [
  "convert_case 0.6.0",
  "quote",
@@ -563,7 +565,7 @@ dependencies = [
 [[package]]
 name = "cainome-rs"
 version = "0.1.0"
-source = "git+https://github.com/cartridge-gg/cainome?tag=v0.4.1#db76fb849d1b7f3e9a2e943868bcd8616cf72e90"
+source = "git+https://github.com/cartridge-gg/cainome?tag=v0.4.2#4e3924fb82b7299d56d3619aa5d7b9863f581e0a"
 dependencies = [
  "anyhow",
  "cainome-cairo-serde",
@@ -581,7 +583,7 @@ dependencies = [
 [[package]]
 name = "cainome-rs-macro"
 version = "0.1.0"
-source = "git+https://github.com/cartridge-gg/cainome?tag=v0.4.1#db76fb849d1b7f3e9a2e943868bcd8616cf72e90"
+source = "git+https://github.com/cartridge-gg/cainome?tag=v0.4.2#4e3924fb82b7299d56d3619aa5d7b9863f581e0a"
 dependencies = [
  "anyhow",
  "cainome-cairo-serde",
@@ -4043,6 +4045,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "serde-wasm-bindgen"
+version = "0.6.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8302e169f0eddcc139c70f139d19d6467353af16f9fce27e8c30158036a1e16b"
+dependencies = [
+ "js-sys",
+ "serde",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "serde_cbor_2"
 version = "0.12.0-dev"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4713,9 +4726,9 @@ dependencies = [
 
 [[package]]
 name = "starknet-types-core"
-version = "0.1.5"
+version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ce6bacf0ba19bc721e518bc4bf389ff13daa8a7c5db5fd320600473b8aa9fcbd"
+checksum = "9b889ee5734db8b3c8a6551135c16764bf4ce1ab4955fffbb2ac5b6706542b64"
 dependencies = [
  "lambdaworks-crypto",
  "lambdaworks-math",
@@ -5270,6 +5283,31 @@ name = "try-lock"
 version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e421abadd41a4225275504ea4d6566923418b7f05506fbc9c0fe86ba7396114b"
+
+[[package]]
+name = "tsify-next"
+version = "0.5.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2f4a645dca4ee0800f5ab60ce166deba2db6a0315de795a2691e138a3d55d756"
+dependencies = [
+ "gloo-utils",
+ "serde",
+ "serde_json",
+ "tsify-next-macros",
+ "wasm-bindgen",
+]
+
+[[package]]
+name = "tsify-next-macros"
+version = "0.5.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0d5c06f8a51d759bb58129e30b2631739e7e1e4579fad1f30ac09a6c88e488a6"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "serde_derive_internals",
+ "syn 2.0.66",
+]
 
 [[package]]
 name = "typenum"
