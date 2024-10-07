@@ -28,5 +28,5 @@ tempfile = "3.10.1"
 hyper.workspace = true
 serde_with = "3.9.0"
 
-account_sdk = { git = "https://github.com/cartridge-gg/controller" }
+account_sdk = { git = "https://github.com/cartridge-gg/controller", rev = "61d2fd0" }
 base64 = "0.22.1"
