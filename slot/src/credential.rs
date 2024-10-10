@@ -101,7 +101,6 @@ pub fn get_file_path<P: AsRef<Path>>(config_dir: P) -> PathBuf {
 #[cfg(test)]
 mod tests {
     use serde_json::{json, Value};
-    use starknet::macros::felt;
 
     use super::LegacyCredentials;
     use crate::account::Account;
@@ -116,7 +115,6 @@ mod tests {
         let json = json!({
           "id": "foo",
           "name": "",
-          "contractAddress": "0x1337",
           "credentials": {
             "webauthn": [
               {
@@ -135,7 +133,6 @@ mod tests {
 
         assert_eq!(account.account.id, "foo".to_string());
         assert_eq!(account.account.name, Some("".to_string()));
-        assert_eq!(account.account.contract_address, felt!("0x1337"));
         assert_eq!(account.account.credentials.webauthn[0].id, "foobar");
         assert_eq!(
             account.account.credentials.webauthn[0].public_key,

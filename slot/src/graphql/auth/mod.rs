@@ -1,8 +1,5 @@
-use std::str::FromStr;
-
 use graphql_client::GraphQLQuery;
 use me::MeMe;
-use starknet::core::types::{Felt, FromStrError};
 
 use crate::account::{Account, AccountCredentials, WebAuthnCredential};
 
@@ -17,28 +14,20 @@ pub struct Me;
 #[derive(Debug, thiserror::Error)]
 pub enum AccountTryFromGraphQLError {
     #[error("Missing WebAuthn credentials")]
-    MissingCredendentials,
+    MissingCredentials,
 
     #[error("Missing contract address")]
     MissingContractAddress,
-
-    #[error("Invalid contract address: {0}")]
-    InvalidContractAddress(#[from] FromStrError),
 }
 
 impl TryFrom<MeMe> for Account {
     type Error = AccountTryFromGraphQLError;
 
     fn try_from(value: MeMe) -> Result<Self, Self::Error> {
-        let address = value
-            .contract_address
-            .ok_or(AccountTryFromGraphQLError::MissingContractAddress)?;
-
         Ok(Self {
             id: value.id,
             name: value.name,
             credentials: value.credentials.try_into()?,
-            contract_address: Felt::from_str(&address)?,
         })
     }
 }
@@ -49,7 +38,7 @@ impl TryFrom<me::MeMeCredentials> for AccountCredentials {
     fn try_from(value: me::MeMeCredentials) -> Result<Self, Self::Error> {
         let webauthn = value
             .webauthn
-            .ok_or(AccountTryFromGraphQLError::MissingCredendentials)?
+            .ok_or(AccountTryFromGraphQLError::MissingCredentials)?
             .into_iter()
             .map(WebAuthnCredential::from)
             .collect();
@@ -82,14 +71,13 @@ mod tests {
                     public_key: "foo".to_string(),
                 }]),
             },
-            contract_address: Some("0x1".to_string()),
+            controllers: None,
         };
 
         let account = Account::try_from(me).unwrap();
 
         assert_eq!(account.id, "id");
         assert_eq!(account.name, Some("name".to_string()));
-        assert_eq!(account.contract_address, Felt::ONE);
         assert_eq!(account.credentials.webauthn.len(), 1);
         assert_eq!(account.credentials.webauthn[0].id, "id".to_string());
         assert_eq!(

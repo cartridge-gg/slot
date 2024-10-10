@@ -1,16 +1,11 @@
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
-use starknet::core::serde::unsigned_field_element::UfeHex;
-use starknet::core::types::Felt;
 
 #[serde_as]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 pub struct Account {
     pub id: String,
     pub name: Option<String>,
-    #[serde_as(as = "UfeHex")]
-    #[serde(rename = "contractAddress")]
-    pub contract_address: Felt,
     pub credentials: AccountCredentials,
 }
 
