@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 use std::{env, fs};
 
-use crate::account::Account;
+use crate::account::AccountInfo;
 use crate::error::Error;
 use crate::utils::{self};
 
@@ -14,21 +14,14 @@ pub struct AccessToken {
     pub r#type: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct LegacyCredentials {
-    access_token: String,
-    token_type: String,
-}
-
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Credentials {
-    #[serde(flatten)]
-    pub account: Account,
+    pub account: AccountInfo,
     pub access_token: AccessToken,
 }
 
 impl Credentials {
-    pub fn new(account: Account, access_token: AccessToken) -> Self {
+    pub fn new(account: AccountInfo, access_token: AccessToken) -> Self {
         Self {
             account,
             access_token,
@@ -77,19 +70,7 @@ impl Credentials {
             fs::read_to_string(path)?
         };
 
-        let credentials = serde_json::from_str::<Credentials>(&content);
-
-        match credentials {
-            Ok(creds) => Ok(creds),
-            Err(_) => {
-                // check if the file is in the legacy format
-                let legacy = serde_json::from_str::<LegacyCredentials>(&content);
-                match legacy {
-                    Ok(_) => Err(Error::LegacyCredentials),
-                    Err(e) => Err(Error::Serde(e)),
-                }
-            }
-        }
+        serde_json::from_str::<Credentials>(&content).map_err(|_| Error::MalformedCredentials)
     }
 }
 
@@ -100,12 +81,12 @@ pub fn get_file_path<P: AsRef<Path>>(config_dir: P) -> PathBuf {
 
 #[cfg(test)]
 mod tests {
+    use assert_matches::assert_matches;
     use serde_json::{json, Value};
 
-    use super::LegacyCredentials;
-    use crate::account::Account;
+    use crate::account::AccountInfo;
     use crate::credential::{AccessToken, Credentials, CREDENTIALS_FILE};
-    use crate::utils;
+    use crate::{utils, Error};
     use std::fs;
 
     // This test is to make sure that changes made to the `Credentials` struct doesn't
@@ -113,52 +94,61 @@ mod tests {
     #[test]
     fn test_rt_static_format() {
         let json = json!({
-          "id": "foo",
-          "name": "",
-          "credentials": {
-            "webauthn": [
-              {
-                "id": "foobar",
-                "publicKey": "mypublickey"
-              }
-            ]
-          },
-          "access_token": {
-            "token": "oauthtoken",
-            "type": "bearer"
-          }
+            "account": {
+                "id": "foo",
+                "name": "",
+                "controllers": [
+                    {
+                        "id": "foo",
+                        "address": "0x12345",
+                        "signers": [
+                            {
+                                "id": "bar",
+                                "type": "WebAuthn"
+                            }
+                        ]
+                    }
+                ],
+                "credentials": [
+                    {
+                        "id": "foobar",
+                        "publicKey": "mypublickey"
+                    }
+                ]
+            },
+            "access_token": {
+                "token": "oauthtoken",
+                "type": "bearer"
+            }
         });
 
-        let account: Credentials = serde_json::from_value(json.clone()).unwrap();
+        let credentials: Credentials = serde_json::from_value(json.clone()).unwrap();
 
-        assert_eq!(account.account.id, "foo".to_string());
-        assert_eq!(account.account.name, Some("".to_string()));
-        assert_eq!(account.account.credentials.webauthn[0].id, "foobar");
-        assert_eq!(
-            account.account.credentials.webauthn[0].public_key,
-            "mypublickey"
-        );
-        assert_eq!(account.access_token.token, "oauthtoken");
-        assert_eq!(account.access_token.r#type, "bearer");
+        assert_eq!(credentials.account.id, "foo".to_string());
+        assert_eq!(credentials.account.name, Some("".to_string()));
+        assert_eq!(credentials.account.credentials[0].id, "foobar");
+        assert_eq!(credentials.account.credentials[0].public_key, "mypublickey");
+        assert_eq!(credentials.access_token.token, "oauthtoken");
+        assert_eq!(credentials.access_token.r#type, "bearer");
 
-        let account_serialized: Value = serde_json::to_value(&account).unwrap();
-        assert_eq!(json, account_serialized);
+        let credentials_serialized: Value = serde_json::to_value(&credentials).unwrap();
+        assert_eq!(json, credentials_serialized);
     }
 
     #[test]
-    fn loading_legacy_credentials() {
-        let cred = LegacyCredentials {
-            access_token: "mytoken".to_string(),
-            token_type: "mytokentype".to_string(),
-        };
+    fn loading_malformed_credentials() {
+        let malformed_cred = json!({
+            "access_token": "mytoken",
+            "token_type": "mytokentype"
+        });
 
         let dir = utils::config_dir();
         let path = dir.join(CREDENTIALS_FILE);
         fs::create_dir_all(&dir).expect("failed to create intermediary dirs");
-        fs::write(path, serde_json::to_vec(&cred).unwrap()).unwrap();
+        fs::write(path, serde_json::to_vec(&malformed_cred).unwrap()).unwrap();
 
-        let err = Credentials::load_at(dir).unwrap_err();
-        assert!(err.to_string().contains("Legacy credentials found"))
+        let result = Credentials::load_at(dir);
+        assert_matches!(result, Err(Error::MalformedCredentials))
     }
 
     #[test]
@@ -177,7 +167,7 @@ mod tests {
             r#type: "Bearer".to_string(),
         };
 
-        let expected = Credentials::new(Account::default(), access_token);
+        let expected = Credentials::new(AccountInfo::default(), access_token);
         let _ = Credentials::store_at(&config_dir, &expected).unwrap();
 
         let actual = Credentials::load_at(config_dir).unwrap();

@@ -416,7 +416,7 @@ impl TryFrom<&PolicyMethod> for account_sdk::account::session::hash::Policy {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::account::{Account, AccountCredentials};
+    use crate::account::AccountInfo;
     use crate::credential::{AccessToken, Credentials};
     use crate::error::Error::Unauthorized;
     use crate::session::{get_at, get_user_relative_file_path, store_at};
@@ -434,12 +434,9 @@ mod tests {
             r#type: "Bearer".to_string(),
         };
 
-        let account = Account {
-            name: None,
+        let account = AccountInfo {
             id: username.to_string(),
-            credentials: AccountCredentials {
-                webauthn: Vec::new(),
-            },
+            ..Default::default()
         };
 
         let cred = Credentials::new(account, token);

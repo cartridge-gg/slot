@@ -1,22 +1,35 @@
+use crate::graphql::auth::me::MeMeCredentialsWebauthn as WebAuthnCredential;
 use serde::{Deserialize, Serialize};
-use serde_with::serde_as;
+use starknet::core::types::Felt;
 
-#[serde_as]
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct Account {
+/// Controller account information.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(test, derive(Default))]
+pub struct AccountInfo {
+    /// The username of the account.
     pub id: String,
     pub name: Option<String>,
-    pub credentials: AccountCredentials,
+    pub controllers: Vec<Controller>,
+    pub credentials: Vec<WebAuthnCredential>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
-pub struct AccountCredentials {
-    pub webauthn: Vec<WebAuthnCredential>,
-}
-
-#[derive(Deserialize, Debug, Clone, Serialize, PartialEq, Eq, Default)]
-#[serde(rename_all = "camelCase")]
-pub struct WebAuthnCredential {
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Controller {
     pub id: String,
-    pub public_key: String,
+    /// The address of the Controller contract.
+    pub address: Felt,
+    pub signers: Vec<ControllerSigner>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum SignerType {
+    WebAuthn,
+    StarknetAccount,
+    Other(String),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ControllerSigner {
+    pub id: String,
+    pub r#type: SignerType,
 }

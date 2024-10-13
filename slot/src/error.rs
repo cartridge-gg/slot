@@ -10,8 +10,8 @@ pub enum Error {
     #[error("No credentials found, please authenticate with `slot auth login`")]
     Unauthorized,
 
-    #[error("Legacy credentials found, please reauthenticate with `slot auth login`")]
-    LegacyCredentials,
+    #[error("Malformed credentials, please reauthenticate with `slot auth login`")]
+    MalformedCredentials,
 
     #[error(transparent)]
     ReqwestError(#[from] reqwest::Error),
