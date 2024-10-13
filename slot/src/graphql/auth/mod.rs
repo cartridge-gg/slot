@@ -66,7 +66,7 @@ impl From<me::MeMeControllersSigners> for account::ControllerSigner {
 impl From<me::SignerType> for account::SignerType {
     fn from(value: me::SignerType) -> Self {
         match value {
-            me::SignerType::webauthn => Self::Webauthn,
+            me::SignerType::webauthn => Self::WebAuthn,
             me::SignerType::starknet_account => Self::StarknetAccount,
             me::SignerType::Other(other) => Self::Other(other),
         }

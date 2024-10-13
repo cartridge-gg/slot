@@ -115,14 +115,24 @@ mod tests {
         let json = json!({
           "id": "foo",
           "name": "",
-          "credentials": {
-            "webauthn": [
+          "controllers": [
+          {
+           "id": "foo",
+           "address": "0x12345",
+           "signers": [
+               {
+                   "id": "bar",
+                   "type": "WebAuthn",
+               }
+           ],
+          }
+          ],
+          "credentials": [
               {
                 "id": "foobar",
                 "publicKey": "mypublickey"
               }
-            ]
-          },
+            ],
           "access_token": {
             "token": "oauthtoken",
             "type": "bearer"

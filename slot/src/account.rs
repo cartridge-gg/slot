@@ -23,7 +23,7 @@ pub struct Controller {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum SignerType {
-    Webauthn,
+    WebAuthn,
     StarknetAccount,
     Other(String),
 }
