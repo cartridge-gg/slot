@@ -1,7 +1,10 @@
+use std::str::FromStr;
+
 use graphql_client::GraphQLQuery;
 use me::MeMe;
+use starknet::core::types::Felt;
 
-use crate::account::{Account, AccountCredentials, WebAuthnCredential};
+use crate::account::{self};
 
 #[derive(GraphQLQuery)]
 #[graphql(
@@ -11,53 +14,69 @@ use crate::account::{Account, AccountCredentials, WebAuthnCredential};
 )]
 pub struct Me;
 
-#[derive(Debug, thiserror::Error)]
-pub enum AccountTryFromGraphQLError {
-    #[error("Missing WebAuthn credentials")]
-    MissingCredentials,
-
-    #[error("Missing contract address")]
-    MissingContractAddress,
-}
-
-impl TryFrom<MeMe> for Account {
-    type Error = AccountTryFromGraphQLError;
-
-    fn try_from(value: MeMe) -> Result<Self, Self::Error> {
-        Ok(Self {
-            id: value.id,
-            name: value.name,
-            credentials: value.credentials.try_into()?,
-        })
-    }
-}
-
-impl TryFrom<me::MeMeCredentials> for AccountCredentials {
-    type Error = AccountTryFromGraphQLError;
-
-    fn try_from(value: me::MeMeCredentials) -> Result<Self, Self::Error> {
-        let webauthn = value
-            .webauthn
-            .ok_or(AccountTryFromGraphQLError::MissingCredentials)?
+impl From<MeMe> for account::AccountInfo {
+    fn from(value: MeMe) -> Self {
+        let id = value.id;
+        let name = value.name;
+        let credentials = value.credentials.webauthn.unwrap_or_default();
+        let controllers = value
+            .controllers
+            .unwrap_or_default()
             .into_iter()
-            .map(WebAuthnCredential::from)
+            .map(|c| account::Controller::from(c))
             .collect();
 
-        Ok(Self { webauthn })
+        Self {
+            id,
+            name,
+            controllers,
+            credentials,
+        }
     }
 }
 
-impl From<me::MeMeCredentialsWebauthn> for WebAuthnCredential {
-    fn from(value: me::MeMeCredentialsWebauthn) -> Self {
+impl From<me::MeMeControllers> for account::Controller {
+    fn from(value: me::MeMeControllers) -> Self {
+        let id = value.id;
+        let address = Felt::from_str(&value.address).expect("valid address");
+        let signers = value
+            .signers
+            .unwrap_or_default()
+            .into_iter()
+            .map(|s| s.into())
+            .collect::<Vec<_>>();
+
+        Self {
+            id,
+            address,
+            signers,
+        }
+    }
+}
+
+impl From<me::MeMeControllersSigners> for account::ControllerSigner {
+    fn from(value: me::MeMeControllersSigners) -> Self {
         Self {
             id: value.id,
-            public_key: value.public_key,
+            r#type: value.type_.into(),
+        }
+    }
+}
+
+impl From<me::SignerType> for account::SignerType {
+    fn from(value: me::SignerType) -> Self {
+        match value {
+            me::SignerType::webauthn => Self::Webauthn,
+            me::SignerType::starknet_account => Self::StarknetAccount,
+            me::SignerType::Other(other) => Self::Other(other),
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::account::AccountInfo;
+
     use super::*;
 
     #[test]
@@ -74,15 +93,12 @@ mod tests {
             controllers: None,
         };
 
-        let account = Account::try_from(me).unwrap();
+        let account = AccountInfo::from(me);
 
         assert_eq!(account.id, "id");
         assert_eq!(account.name, Some("name".to_string()));
-        assert_eq!(account.credentials.webauthn.len(), 1);
-        assert_eq!(account.credentials.webauthn[0].id, "id".to_string());
-        assert_eq!(
-            account.credentials.webauthn[0].public_key,
-            "foo".to_string()
-        );
+        assert_eq!(account.credentials.len(), 1);
+        assert_eq!(account.credentials[0].id, "id".to_string());
+        assert_eq!(account.credentials[0].public_key, "foo".to_string());
     }
 }

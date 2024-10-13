@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 use std::{env, fs};
 
-use crate::account::Account;
+use crate::account::AccountInfo;
 use crate::error::Error;
 use crate::utils::{self};
 
@@ -23,12 +23,12 @@ struct LegacyCredentials {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Credentials {
     #[serde(flatten)]
-    pub account: Account,
+    pub account: AccountInfo,
     pub access_token: AccessToken,
 }
 
 impl Credentials {
-    pub fn new(account: Account, access_token: AccessToken) -> Self {
+    pub fn new(account: AccountInfo, access_token: AccessToken) -> Self {
         Self {
             account,
             access_token,
@@ -103,7 +103,7 @@ mod tests {
     use serde_json::{json, Value};
 
     use super::LegacyCredentials;
-    use crate::account::Account;
+    use crate::account::AccountInfo;
     use crate::credential::{AccessToken, Credentials, CREDENTIALS_FILE};
     use crate::utils;
     use std::fs;
@@ -133,11 +133,8 @@ mod tests {
 
         assert_eq!(account.account.id, "foo".to_string());
         assert_eq!(account.account.name, Some("".to_string()));
-        assert_eq!(account.account.credentials.webauthn[0].id, "foobar");
-        assert_eq!(
-            account.account.credentials.webauthn[0].public_key,
-            "mypublickey"
-        );
+        assert_eq!(account.account.credentials[0].id, "foobar");
+        assert_eq!(account.account.credentials[0].public_key, "mypublickey");
         assert_eq!(account.access_token.token, "oauthtoken");
         assert_eq!(account.access_token.r#type, "bearer");
 
@@ -177,7 +174,7 @@ mod tests {
             r#type: "Bearer".to_string(),
         };
 
-        let expected = Credentials::new(Account::default(), access_token);
+        let expected = Credentials::new(AccountInfo::default(), access_token);
         let _ = Credentials::store_at(&config_dir, &expected).unwrap();
 
         let actual = Credentials::load_at(config_dir).unwrap();
