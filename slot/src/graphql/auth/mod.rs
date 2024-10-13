@@ -23,7 +23,7 @@ impl From<MeMe> for account::AccountInfo {
             .controllers
             .unwrap_or_default()
             .into_iter()
-            .map(|c| account::Controller::from(c))
+            .map(account::Controller::from)
             .collect();
 
         Self {

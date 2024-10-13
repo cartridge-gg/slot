@@ -94,43 +94,45 @@ mod tests {
     #[test]
     fn test_rt_static_format() {
         let json = json!({
-          "id": "foo",
-          "name": "",
-          "controllers": [
-          {
-           "id": "foo",
-           "address": "0x12345",
-           "signers": [
-               {
-                   "id": "bar",
-                   "type": "WebAuthn",
-               }
-           ],
-          }
-          ],
-          "credentials": [
-              {
-                "id": "foobar",
-                "publicKey": "mypublickey"
-              }
-            ],
-          "access_token": {
-            "token": "oauthtoken",
-            "type": "bearer"
-          }
+            "account": {
+                "id": "foo",
+                "name": "",
+                "controllers": [
+                    {
+                        "id": "foo",
+                        "address": "0x12345",
+                        "signers": [
+                            {
+                                "id": "bar",
+                                "type": "WebAuthn"
+                            }
+                        ]
+                    }
+                ],
+                "credentials": [
+                    {
+                        "id": "foobar",
+                        "publicKey": "mypublickey"
+                    }
+                ]
+            },
+            "access_token": {
+                "token": "oauthtoken",
+                "type": "bearer"
+            }
         });
 
-        let account: Credentials = serde_json::from_value(json.clone()).unwrap();
+        let credentials: Credentials = serde_json::from_value(json.clone()).unwrap();
 
-        assert_eq!(account.account.id, "foo".to_string());
-        assert_eq!(account.account.name, Some("".to_string()));
-        assert_eq!(account.account.credentials[0].id, "foobar");
-        assert_eq!(account.account.credentials[0].public_key, "mypublickey");
-        assert_eq!(account.access_token.token, "oauthtoken");
-        assert_eq!(account.access_token.r#type, "bearer");
+        assert_eq!(credentials.account.id, "foo".to_string());
+        assert_eq!(credentials.account.name, Some("".to_string()));
+        assert_eq!(credentials.account.credentials[0].id, "foobar");
+        assert_eq!(credentials.account.credentials[0].public_key, "mypublickey");
+        assert_eq!(credentials.access_token.token, "oauthtoken");
+        assert_eq!(credentials.access_token.r#type, "bearer");
 
-        let account_serialized: Value = serde_json::to_value(&account).unwrap();
-        assert_eq!(json, account_serialized);
+        let credentials_serialized: Value = serde_json::to_value(&credentials).unwrap();
+        assert_eq!(json, credentials_serialized);
     }
 
     #[test]
