@@ -14,15 +14,8 @@ pub struct AccessToken {
     pub r#type: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct LegacyCredentials {
-    access_token: String,
-    token_type: String,
-}
-
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Credentials {
-    #[serde(flatten)]
     pub account: AccountInfo,
     pub access_token: AccessToken,
 }
@@ -77,19 +70,7 @@ impl Credentials {
             fs::read_to_string(path)?
         };
 
-        let credentials = serde_json::from_str::<Credentials>(&content);
-
-        match credentials {
-            Ok(creds) => Ok(creds),
-            Err(_) => {
-                // check if the file is in the legacy format
-                let legacy = serde_json::from_str::<LegacyCredentials>(&content);
-                match legacy {
-                    Ok(_) => Err(Error::LegacyCredentials),
-                    Err(e) => Err(Error::Serde(e)),
-                }
-            }
-        }
+        serde_json::from_str::<Credentials>(&content).map_err(|_| Error::MalformedCredentials)
     }
 }
 
@@ -100,12 +81,12 @@ pub fn get_file_path<P: AsRef<Path>>(config_dir: P) -> PathBuf {
 
 #[cfg(test)]
 mod tests {
+    use assert_matches::assert_matches;
     use serde_json::{json, Value};
 
-    use super::LegacyCredentials;
     use crate::account::AccountInfo;
     use crate::credential::{AccessToken, Credentials, CREDENTIALS_FILE};
-    use crate::utils;
+    use crate::{utils, Error};
     use std::fs;
 
     // This test is to make sure that changes made to the `Credentials` struct doesn't
@@ -153,19 +134,19 @@ mod tests {
     }
 
     #[test]
-    fn loading_legacy_credentials() {
-        let cred = LegacyCredentials {
-            access_token: "mytoken".to_string(),
-            token_type: "mytokentype".to_string(),
-        };
+    fn loading_malformed_credentials() {
+        let malformed_cred = json!({
+            "access_token": "mytoken",
+            "token_type": "mytokentype"
+        });
 
         let dir = utils::config_dir();
         let path = dir.join(CREDENTIALS_FILE);
         fs::create_dir_all(&dir).expect("failed to create intermediary dirs");
-        fs::write(path, serde_json::to_vec(&cred).unwrap()).unwrap();
+        fs::write(path, serde_json::to_vec(&malformed_cred).unwrap()).unwrap();
 
-        let err = Credentials::load_at(dir).unwrap_err();
-        assert!(err.to_string().contains("Legacy credentials found"))
+        let result = Credentials::load_at(dir);
+        assert_matches!(result, Err(Error::MalformedCredentials))
     }
 
     #[test]

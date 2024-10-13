@@ -4283,6 +4283,7 @@ version = "0.18.0"
 dependencies = [
  "account_sdk",
  "anyhow",
+ "assert_matches",
  "axum",
  "base64 0.22.1",
  "dirs",
