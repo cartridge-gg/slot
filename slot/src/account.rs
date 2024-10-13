@@ -1,4 +1,4 @@
-use crate::graphql::auth::me::MeMeCredentialsWebauthn as WebAuthnCredential;
+pub use crate::graphql::auth::me::MeMeCredentialsWebauthn as WebAuthnCredential;
 use serde::{Deserialize, Serialize};
 use starknet::core::types::Felt;
 
