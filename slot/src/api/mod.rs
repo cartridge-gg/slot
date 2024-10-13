@@ -1,3 +1,7 @@
+mod auth;
+
+pub use auth::Auth;
+
 use std::fmt::{self};
 
 use graphql_client::Response;
@@ -5,6 +9,7 @@ use reqwest::RequestBuilder;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use url::Url;
 
+use crate::credential::Credentials;
 use crate::error::Error;
 use crate::{credential::AccessToken, vars};
 
@@ -16,6 +21,9 @@ pub struct Client {
 }
 
 impl Client {
+    /// Create a new client to the Cartridge API.
+    ///
+    /// This client is not authenticated and can only be used to perform public queries.
     pub fn new() -> Self {
         Self {
             access_token: None,
@@ -24,6 +32,14 @@ impl Client {
         }
     }
 
+    /// Create a new [`Client`] using the credentials stored in the local storage from the
+    /// previously authenticated user.
+    pub fn new_with_stored_credential() -> Result<Self, Error> {
+        let credentials = Credentials::load()?;
+        Ok(Client::new_with_token(credentials.access_token))
+    }
+
+    /// Create a new [`Client`] using the provided access token.
     pub fn new_with_token(token: AccessToken) -> Self {
         let mut client = Self::new();
         client.set_token(token);

@@ -1,13 +1,6 @@
-use std::sync::Arc;
-
 use anyhow::Result;
-use axum::{
-    extract::{Query, State},
-    response::{IntoResponse, Redirect, Response},
-    routing::get,
-    Router,
-};
 use clap::Args;
+<<<<<<< Updated upstream
 use graphql_client::GraphQLQuery;
 use hyper::StatusCode;
 use log::error;
@@ -25,58 +18,21 @@ use slot::{
     vars,
 };
 use tokio::sync::mpsc::Sender;
+=======
+use slot::api::{self, Client};
+>>>>>>> Stashed changes
 
 #[derive(Debug, Args)]
 pub struct LoginArgs;
 
 impl LoginArgs {
     pub async fn run(&self) -> Result<()> {
-        let server = Self::callback_server().expect("Failed to create a server");
-        let port = server.local_addr()?.port();
-        let callback_uri = format!("http://localhost:{port}/callback");
-
-        let url = vars::get_cartridge_keychain_url();
-
-        let url = format!("{url}/slot?callback_uri={callback_uri}");
-
-        browser::open(&url)?;
-        server.start().await?;
-
-        Ok(())
-    }
-
-    fn callback_server() -> Result<LocalServer> {
-        let (tx, rx) = tokio::sync::mpsc::channel::<()>(1);
-        let shared_state = Arc::new(AppState::new(tx));
-
-        let router = Router::new()
-            .route("/callback", get(handler))
-            .with_state(shared_state);
-
-        Ok(LocalServer::new(router)?.with_shutdown_signal(rx))
-    }
-}
-
-#[derive(Debug, Deserialize)]
-struct CallbackPayload {
-    code: Option<String>,
-}
-
-#[derive(Clone)]
-struct AppState {
-    shutdown_tx: Sender<()>,
-}
-
-impl AppState {
-    fn new(shutdown_tx: Sender<()>) -> Self {
-        Self { shutdown_tx }
-    }
-
-    async fn shutdown(&self) -> Result<()> {
-        self.shutdown_tx.send(()).await?;
+        let client = Client::new();
+        let _ = api::Auth::new(&client).login().await?;
         Ok(())
     }
 }
+<<<<<<< Updated upstream
 
 #[derive(Debug, thiserror::Error)]
 enum CallbackError {
@@ -137,3 +93,5 @@ async fn handler(
         }
     }
 }
+=======
+>>>>>>> Stashed changes

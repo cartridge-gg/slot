@@ -4288,6 +4288,7 @@ dependencies = [
  "dirs",
  "graphql_client",
  "hyper 1.4.1",
+ "log",
  "reqwest 0.12.7",
  "serde",
  "serde_json",
