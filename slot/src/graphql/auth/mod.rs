@@ -21,8 +21,10 @@ impl From<MeMe> for account::AccountInfo {
         let credentials = value.credentials.webauthn.unwrap_or_default();
         let controllers = value
             .controllers
+            .edges
             .unwrap_or_default()
             .into_iter()
+            .map(|c| c.unwrap())
             .map(account::Controller::from)
             .collect();
 
@@ -35,11 +37,12 @@ impl From<MeMe> for account::AccountInfo {
     }
 }
 
-impl From<me::MeMeControllers> for account::Controller {
-    fn from(value: me::MeMeControllers) -> Self {
-        let id = value.id;
-        let address = Felt::from_str(&value.address).expect("valid address");
-        let signers = value
+impl From<me::MeMeControllersEdges> for account::Controller {
+    fn from(value: me::MeMeControllersEdges) -> Self {
+        let node = value.node.unwrap();
+        let id = node.id;
+        let address = Felt::from_str(&node.address).expect("valid address");
+        let signers = node
             .signers
             .unwrap_or_default()
             .into_iter()
@@ -54,8 +57,8 @@ impl From<me::MeMeControllers> for account::Controller {
     }
 }
 
-impl From<me::MeMeControllersSigners> for account::ControllerSigner {
-    fn from(value: me::MeMeControllersSigners) -> Self {
+impl From<me::MeMeControllersEdgesNodeSigners> for account::ControllerSigner {
+    fn from(value: me::MeMeControllersEdgesNodeSigners) -> Self {
         Self {
             id: value.id,
             r#type: value.type_.into(),
@@ -77,6 +80,7 @@ impl From<me::SignerType> for account::SignerType {
 mod tests {
     use crate::account::AccountInfo;
 
+    #[allow(unused_imports)]
     use super::*;
 
     #[test]
@@ -90,7 +94,18 @@ mod tests {
                     public_key: "foo".to_string(),
                 }]),
             },
-            controllers: None,
+            controllers: me::MeMeControllers {
+                edges: Some(vec![Some(me::MeMeControllersEdges {
+                    node: Some(me::MeMeControllersEdgesNode {
+                        id: "id".to_string(),
+                        address: "0x123".to_string(),
+                        signers: Some(vec![me::MeMeControllersEdgesNodeSigners {
+                            id: "id".to_string(),
+                            type_: me::SignerType::webauthn,
+                        }]),
+                    }),
+                })]),
+            },
         };
 
         let account = AccountInfo::from(me);

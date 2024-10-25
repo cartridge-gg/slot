@@ -4,12 +4,16 @@ query Me {
     name
 
     controllers {
-      id
-      address
+      edges {
+        node {
+          id
+          address
 
-      signers {
-        id
-        type
+          signers {
+            id
+            type
+          }
+        }
       }
     }
 
