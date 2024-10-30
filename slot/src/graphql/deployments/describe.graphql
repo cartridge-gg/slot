@@ -17,8 +17,11 @@ query DescribeDeployment($project: String!, $service: DeploymentService!) {
         grpc
         rpc
         world
+        contracts
         startBlock
         indexPending
+        indexRawEvents
+        indexTransactions
       }
 
       ... on SayaConfig {

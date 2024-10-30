@@ -19,6 +19,11 @@ pub struct ToriiCreateArgs {
     pub world: Felt,
 
     #[arg(short, long)]
+    #[arg(value_name = "contracts")]
+    #[arg(help = "Contract addresses to index")]
+    pub contracts: Option<String>,
+
+    #[arg(short, long)]
     #[arg(help = "Specify a block to start indexing from.")]
     pub start_block: Option<u64>,
 
@@ -29,6 +34,16 @@ pub struct ToriiCreateArgs {
     #[arg(long)]
     #[arg(help = "Polling interval in milliseconds.")]
     pub polling_interval: Option<u64>,
+
+    #[arg(long)]
+    #[arg(value_name = "index_transactions")]
+    #[arg(help = "Whether or not to index world transactions")]
+    pub index_transactions: Option<bool>,
+
+    #[arg(long)]
+    #[arg(value_name = "index_raw_events")]
+    #[arg(help = "Whether or not to index raw events")]
+    pub index_raw_events: Option<bool>,
 }
 
 #[derive(Clone, Debug, Args, serde::Serialize)]
