@@ -52,11 +52,21 @@ impl DescribeArgs {
                     println!("  Version: {}", config.version);
                     println!("  World: {}", config.world);
                     println!("  RPC: {}", config.rpc);
-                    println!("  Start Block: {}", config.start_block.unwrap_or(0));
-                    println!(
-                        "  Indexing Pending: {}",
-                        config.index_pending.unwrap_or(false)
-                    );
+                    if let Some(contracts) = config.contracts {
+                        println!("  Contracts: {}", contracts);
+                    }
+                    if let Some(start_block) = config.start_block {
+                        println!("  Start Block: {}", start_block);
+                    }
+                    if let Some(index_pending) = config.index_pending {
+                        println!("  Index Pending: {}", index_pending);
+                    }
+                    if let Some(index_raw_events) = config.index_raw_events {
+                        println!("  Index Raw Events: {}", index_raw_events);
+                    }
+                    if let Some(index_transactions) = config.index_transactions {
+                        println!("  Index Transactions: {}", index_transactions);
+                    }
                     println!("\nEndpoints:");
                     println!("  GraphQL: {}", config.graphql);
                     println!("  GRPC: {}", config.grpc);

@@ -23,8 +23,11 @@ mutation CreateDeployment(
 			grpc
 			rpc
 			world
+			contracts
 			startBlock
 			indexPending
+			indexRawEvents
+			indexTransactions
 		}
 
 		... on SayaConfig {
