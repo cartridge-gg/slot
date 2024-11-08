@@ -28,6 +28,7 @@ mutation CreateDeployment(
 			indexPending
 			indexRawEvents
 			indexTransactions
+			configFile
 		}
 
 		... on SayaConfig {
