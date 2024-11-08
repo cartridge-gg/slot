@@ -153,7 +153,10 @@ impl CreateArgs {
             }
             ToriiConfig(config) => {
                 println!("\nConfiguration:");
-                println!("  World: {}", config.world);
+                println!(
+                    "  World: {}",
+                    config.world.unwrap_or_else(|| "0x0".to_string())
+                );
                 println!("  RPC: {}", config.rpc);
                 if let Some(contracts) = config.contracts {
                     println!("  Contracts: {}", contracts);

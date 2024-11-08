@@ -82,7 +82,10 @@ impl UpdateArgs {
         match data.update_deployment {
             ToriiConfig(config) => {
                 println!("\nConfiguration:");
-                println!("  World: {}", config.world);
+                println!(
+                    "  World: {}",
+                    config.world.unwrap_or_else(|| "0x0".to_string())
+                );
                 println!("  RPC: {}", config.rpc);
                 println!("  Start Block: {}", config.start_block.unwrap_or(0));
                 println!("  Index Pending: {}", config.index_pending.unwrap_or(false));
