@@ -16612,6 +16612,16 @@
                 "name": "UpdateKatanaConfigInput",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "torii",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "UpdateToriiConfigInput",
+                "ofType": null
+              }
             }
           ],
           "interfaces": [],
@@ -16662,6 +16672,27 @@
           "interfaces": [],
           "kind": "INPUT_OBJECT",
           "name": "UpdateServiceInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "configFile",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "UpdateToriiConfigInput",
           "possibleTypes": []
         },
         {

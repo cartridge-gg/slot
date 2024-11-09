@@ -3,6 +3,8 @@
 use super::services::UpdateServiceCommands;
 use crate::command::deployments::Tier;
 use anyhow::Result;
+use base64::engine::general_purpose;
+use base64::Engine;
 use clap::Args;
 use slot::api::Client;
 use slot::credential::Credentials;
@@ -11,9 +13,11 @@ use slot::graphql::deployments::update_deployment::UpdateDeploymentUpdateDeploym
 };
 use slot::graphql::deployments::update_deployment::{
     self, UpdateKatanaConfigInput, UpdateServiceConfigInput, UpdateServiceInput,
+    UpdateToriiConfigInput,
 };
 use slot::graphql::deployments::{update_deployment::*, UpdateDeployment};
 use slot::graphql::GraphQLQuery;
+use std::fs;
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Update options")]
@@ -36,6 +40,7 @@ impl UpdateArgs {
                 type_: DeploymentService::katana,
                 version: config.version.clone(),
                 config: Some(UpdateServiceConfigInput {
+                    torii: None,
                     katana: Some(UpdateKatanaConfigInput {
                         block_time: config.block_time,
                         disable_fee: config.disable_fee,
@@ -46,15 +51,34 @@ impl UpdateArgs {
                     }),
                 }),
             },
-            UpdateServiceCommands::Torii(config) => UpdateServiceInput {
-                type_: DeploymentService::torii,
-                version: config.version.clone(),
-                config: Some(UpdateServiceConfigInput { katana: None }),
-            },
+            UpdateServiceCommands::Torii(config) => {
+                // Read the file and convert to base64
+                let config_file_base64 = match &config.config_file {
+                    Some(file_path) => {
+                        let file_contents = fs::read(file_path)?;
+                        Some(general_purpose::STANDARD.encode(file_contents))
+                    }
+                    None => None,
+                };
+
+                UpdateServiceInput {
+                    type_: DeploymentService::torii,
+                    version: config.version.clone(),
+                    config: Some(UpdateServiceConfigInput {
+                        katana: None,
+                        torii: Some(UpdateToriiConfigInput {
+                            config_file: config_file_base64,
+                        }),
+                    }),
+                }
+            }
             UpdateServiceCommands::Saya(config) => UpdateServiceInput {
                 type_: DeploymentService::saya,
                 version: config.version.clone(),
-                config: Some(UpdateServiceConfigInput { katana: None }),
+                config: Some(UpdateServiceConfigInput {
+                    katana: None,
+                    torii: None,
+                }),
             },
         };
 
