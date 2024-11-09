@@ -1,7 +1,6 @@
 #![allow(clippy::enum_variant_names)]
 
 use anyhow::Result;
-use base64::Engine;
 use clap::Args;
 use slot::api::Client;
 use slot::credential::Credentials;
@@ -11,11 +10,8 @@ use slot::graphql::deployments::create_deployment::CreateDeploymentCreateDeploym
 use slot::graphql::deployments::create_deployment::*;
 use slot::graphql::deployments::CreateDeployment;
 use slot::graphql::GraphQLQuery;
-use std::fs;
 
 use super::{services::CreateServiceCommands, Tier};
-
-use base64::engine::general_purpose;
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Create options")]
@@ -60,21 +56,15 @@ impl CreateArgs {
                         validate_max_steps: config.validate_max_steps,
                         genesis: config.genesis.clone(),
                         dev: config.dev.then_some(true),
+                        config_file: slot::read::read_and_encode_file_as_base64(
+                            config.config_file.as_ref().cloned(),
+                        )?,
                     }),
                     torii: None,
                     saya: None,
                 }),
             },
             CreateServiceCommands::Torii(config) => {
-                // Read the file and convert to base64
-                let config_file_base64 = match &config.config_file {
-                    Some(file_path) => {
-                        let file_contents = fs::read(file_path)?;
-                        Some(general_purpose::STANDARD.encode(file_contents))
-                    }
-                    None => None,
-                };
-
                 CreateServiceInput {
                     type_: DeploymentService::torii,
                     version: config.version.clone(),
@@ -93,7 +83,9 @@ impl CreateArgs {
                             polling_interval: config.polling_interval,
                             index_transactions: config.index_transactions,
                             index_raw_events: config.index_raw_events,
-                            config_file: config_file_base64,
+                            config_file: slot::read::read_and_encode_file_as_base64(
+                                config.clone().config_file,
+                            )?,
                         }),
                         saya: None,
                     }),

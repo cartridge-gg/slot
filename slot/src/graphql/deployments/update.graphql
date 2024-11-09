@@ -13,6 +13,7 @@ mutation UpdateDeployment(
     __typename
 
     ... on KatanaConfig {
+      configFile
       rpc
     }
 

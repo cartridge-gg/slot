@@ -5137,6 +5137,16 @@
                 "name": "Boolean",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "configFile",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             }
           ],
           "interfaces": [],
@@ -10708,6 +10718,18 @@
                   "name": "String",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "configFile",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
               }
             }
           ],
@@ -16589,6 +16611,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "configFile",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             }
