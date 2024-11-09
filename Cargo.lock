@@ -4309,7 +4309,6 @@ version = "0.21.0"
 dependencies = [
  "anyhow",
  "axum",
- "base64 0.21.7",
  "clap",
  "ctrlc",
  "dialoguer",

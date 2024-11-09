@@ -5,6 +5,7 @@ pub mod api;
 pub mod browser;
 pub mod credential;
 pub mod graphql;
+pub mod read;
 pub mod server;
 pub mod session;
 pub mod vars;

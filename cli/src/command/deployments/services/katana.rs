@@ -55,6 +55,11 @@ pub struct KatanaCreateArgs {
     #[arg(long)]
     #[arg(help = "Enable Katana dev mode for specific endpoints.")]
     pub dev: bool,
+
+    #[arg(long)]
+    #[arg(help = "A config file ")]
+    #[arg(value_name = "config-file")]
+    pub config_file: Option<String>,
 }
 
 #[derive(Debug, Args, serde::Serialize)]
@@ -95,6 +100,11 @@ pub struct KatanaUpdateArgs {
     #[arg(long)]
     #[arg(help = "Enable Katana dev mode for specific endpoints.")]
     pub dev: bool,
+
+    #[arg(long)]
+    #[arg(help = "A config file ")]
+    #[arg(value_name = "config-file")]
+    pub config_file: Option<String>,
 }
 
 #[derive(Debug, Args, serde::Serialize)]
