@@ -1,6 +1,7 @@
 #![allow(clippy::enum_variant_names)]
 
 use anyhow::Result;
+use base64::Engine;
 use clap::Args;
 use slot::api::Client;
 use slot::credential::Credentials;
@@ -10,8 +11,11 @@ use slot::graphql::deployments::create_deployment::CreateDeploymentCreateDeploym
 use slot::graphql::deployments::create_deployment::*;
 use slot::graphql::deployments::CreateDeployment;
 use slot::graphql::GraphQLQuery;
+use std::fs;
 
 use super::{services::CreateServiceCommands, Tier};
+
+use base64::engine::general_purpose;
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Create options")]
@@ -61,24 +65,40 @@ impl CreateArgs {
                     saya: None,
                 }),
             },
-            CreateServiceCommands::Torii(config) => CreateServiceInput {
-                type_: DeploymentService::torii,
-                version: config.version.clone(),
-                config: Some(CreateServiceConfigInput {
-                    katana: None,
-                    torii: Some(CreateToriiConfigInput {
-                        rpc: Some(config.rpc.clone().unwrap_or("".to_string())),
-                        world: format!("{:#x}", config.world),
-                        contracts: config.contracts.clone(),
-                        start_block: config.start_block,
-                        index_pending: config.index_pending,
-                        polling_interval: config.polling_interval,
-                        index_transactions: config.index_transactions,
-                        index_raw_events: config.index_raw_events,
+            CreateServiceCommands::Torii(config) => {
+                // Read the file and convert to base64
+                let config_file_base64 = match &config.config_file {
+                    Some(file_path) => {
+                        let file_contents = fs::read(file_path)?;
+                        Some(general_purpose::STANDARD.encode(file_contents))
+                    }
+                    None => None,
+                };
+
+                CreateServiceInput {
+                    type_: DeploymentService::torii,
+                    version: config.version.clone(),
+                    config: Some(CreateServiceConfigInput {
+                        katana: None,
+                        torii: Some(CreateToriiConfigInput {
+                            rpc: Some(config.rpc.clone().unwrap_or("".to_string())),
+                            // provide world if provided
+                            world: match &config.world {
+                                Some(world) => format!("{:#x}", world).into(),
+                                None => None,
+                            },
+                            contracts: config.contracts.clone(),
+                            start_block: config.start_block,
+                            index_pending: config.index_pending,
+                            polling_interval: config.polling_interval,
+                            index_transactions: config.index_transactions,
+                            index_raw_events: config.index_raw_events,
+                            config_file: config_file_base64,
+                        }),
+                        saya: None,
                     }),
-                    saya: None,
-                }),
-            },
+                }
+            }
             CreateServiceCommands::Saya(config) => CreateServiceInput {
                 type_: DeploymentService::saya,
                 version: config.version.clone(),

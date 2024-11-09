@@ -16,7 +16,12 @@ pub struct ToriiCreateArgs {
     #[arg(long)]
     #[arg(value_name = "world")]
     #[arg(help = "World address.")]
-    pub world: Felt,
+    pub world: Option<Felt>,
+
+    #[arg(long)]
+    #[arg(help = "A config file ")]
+    #[arg(value_name = "config-file")]
+    pub config_file: Option<String>,
 
     #[arg(short, long)]
     #[arg(value_name = "contracts")]
