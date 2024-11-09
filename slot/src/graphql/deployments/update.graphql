@@ -17,6 +17,7 @@ mutation UpdateDeployment(
     }
 
     ... on ToriiConfig {
+      configFile
       graphql
       grpc
       rpc

@@ -57,4 +57,9 @@ pub struct ToriiUpdateArgs {
     #[arg(long, short, value_name = "version")]
     #[arg(help = "Service version to use.")]
     pub version: Option<String>,
+
+    #[arg(long)]
+    #[arg(help = "A config file ")]
+    #[arg(value_name = "config-file")]
+    pub config_file: Option<String>,
 }
