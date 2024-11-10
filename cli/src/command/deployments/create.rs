@@ -71,7 +71,7 @@ impl CreateArgs {
                     config: Some(CreateServiceConfigInput {
                         katana: None,
                         torii: Some(CreateToriiConfigInput {
-                            rpc: Some(config.rpc.clone().unwrap_or("".to_string())),
+                            rpc: config.clone().rpc,
                             // provide world if provided
                             world: match &config.world {
                                 Some(world) => format!("{:#x}", world).into(),
