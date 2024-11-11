@@ -58,7 +58,7 @@ pub struct KatanaCreateArgs {
 
     #[arg(long)]
     #[arg(help = "A config file ")]
-    #[arg(value_name = "config-file")]
+    #[arg(value_name = "config")]
     pub config_file: Option<String>,
 }
 
@@ -103,7 +103,7 @@ pub struct KatanaUpdateArgs {
 
     #[arg(long)]
     #[arg(help = "A config file ")]
-    #[arg(value_name = "config-file")]
+    #[arg(value_name = "config")]
     pub config_file: Option<String>,
 }
 

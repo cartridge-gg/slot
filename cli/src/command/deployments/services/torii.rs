@@ -20,7 +20,7 @@ pub struct ToriiCreateArgs {
 
     #[arg(long)]
     #[arg(help = "A config file ")]
-    #[arg(value_name = "config-file")]
+    #[arg(value_name = "config")]
     pub config_file: Option<String>,
 
     #[arg(short, long)]
@@ -60,6 +60,6 @@ pub struct ToriiUpdateArgs {
 
     #[arg(long)]
     #[arg(help = "A config file ")]
-    #[arg(value_name = "config-file")]
+    #[arg(value_name = "config")]
     pub config_file: Option<String>,
 }
