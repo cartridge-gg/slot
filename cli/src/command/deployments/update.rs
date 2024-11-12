@@ -46,7 +46,7 @@ impl UpdateArgs {
                         validate_max_steps: config.validate_max_steps,
                         dev: config.dev.then_some(true),
                         config_file: slot::read::read_and_encode_file_as_base64(
-                            config.config_file.as_ref().cloned(),
+                            config.config.as_ref().cloned(),
                         )?,
                     }),
                 }),
@@ -58,7 +58,7 @@ impl UpdateArgs {
                     katana: None,
                     torii: Some(UpdateToriiConfigInput {
                         config_file: slot::read::read_and_encode_file_as_base64(
-                            config.clone().config_file,
+                            config.clone().config,
                         )?,
                     }),
                 }),

@@ -57,9 +57,8 @@ pub struct KatanaCreateArgs {
     pub dev: bool,
 
     #[arg(long)]
-    #[arg(help = "A config file ")]
-    #[arg(value_name = "config")]
-    pub config_file: Option<String>,
+    #[arg(help = "Configuration file with Katana config, in TOML format.")]
+    pub config: Option<String>,
 }
 
 #[derive(Debug, Args, serde::Serialize)]
@@ -102,9 +101,8 @@ pub struct KatanaUpdateArgs {
     pub dev: bool,
 
     #[arg(long)]
-    #[arg(help = "A config file ")]
-    #[arg(value_name = "config")]
-    pub config_file: Option<String>,
+    #[arg(help = "Configuration file with Katana config, in TOML format.")]
+    pub config: Option<String>,
 }
 
 #[derive(Debug, Args, serde::Serialize)]

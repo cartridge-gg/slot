@@ -19,9 +19,8 @@ pub struct ToriiCreateArgs {
     pub world: Option<Felt>,
 
     #[arg(long)]
-    #[arg(help = "A config file ")]
-    #[arg(value_name = "config")]
-    pub config_file: Option<String>,
+    #[arg(help = "Configuration file with Torii config, in TOML format.")]
+    pub config: Option<String>,
 
     #[arg(short, long)]
     #[arg(value_name = "contracts")]
@@ -59,7 +58,6 @@ pub struct ToriiUpdateArgs {
     pub version: Option<String>,
 
     #[arg(long)]
-    #[arg(help = "A config file ")]
-    #[arg(value_name = "config")]
-    pub config_file: Option<String>,
+    #[arg(help = "Configuration file with Torii config, in TOML format.")]
+    pub config: Option<String>,
 }

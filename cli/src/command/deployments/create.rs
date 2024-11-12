@@ -57,7 +57,7 @@ impl CreateArgs {
                         genesis: config.genesis.clone(),
                         dev: config.dev.then_some(true),
                         config_file: slot::read::read_and_encode_file_as_base64(
-                            config.config_file.as_ref().cloned(),
+                            config.config.as_ref().cloned(),
                         )?,
                     }),
                     torii: None,
@@ -84,7 +84,7 @@ impl CreateArgs {
                             index_transactions: config.index_transactions,
                             index_raw_events: config.index_raw_events,
                             config_file: slot::read::read_and_encode_file_as_base64(
-                                config.clone().config_file,
+                                config.clone().config,
                             )?,
                         }),
                         saya: None,
