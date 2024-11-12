@@ -39,14 +39,8 @@ impl UpdateArgs {
                 config: Some(UpdateServiceConfigInput {
                     torii: None,
                     katana: Some(UpdateKatanaConfigInput {
-                        block_time: config.block_time,
-                        disable_fee: config.disable_fee,
-                        gas_price: config.gas_price,
-                        invoke_max_steps: config.invoke_max_steps,
-                        validate_max_steps: config.validate_max_steps,
-                        dev: config.dev.then_some(true),
                         config_file: slot::read::read_and_encode_file_as_base64(
-                            config.config.as_ref().cloned(),
+                            None
                         )?,
                     }),
                 }),
@@ -58,7 +52,7 @@ impl UpdateArgs {
                     katana: None,
                     torii: Some(UpdateToriiConfigInput {
                         config_file: slot::read::read_and_encode_file_as_base64(
-                            config.clone().config,
+                            None,
                         )?,
                     }),
                 }),
@@ -96,6 +90,7 @@ impl UpdateArgs {
 
         match data.update_deployment {
             ToriiConfig(config) => {
+                /*
                 println!("\nConfiguration:");
                 println!("  World: {}", config.world);
                 println!("  RPC: {}", config.rpc);
@@ -104,10 +99,13 @@ impl UpdateArgs {
                 println!("\nEndpoints:");
                 println!("  GRAPHQL: {}", config.graphql);
                 println!("  GRPC: {}", config.grpc);
+                */
             }
             KatanaConfig(config) => {
+                /*
                 println!("\nEndpoints:");
                 println!("  RPC: {}", config.rpc);
+                */
             }
             SayaConfig(config) => {
                 println!("\nConfiguration:");

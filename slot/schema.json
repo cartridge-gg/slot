@@ -2111,6 +2111,22 @@
             {
               "args": [],
               "deprecationReason": null,
+              "description": "Transaction fee payment source",
+              "isDeprecated": false,
+              "name": "feeSource",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "ActivityFeeSource",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
               "description": "Additional activity details in JSON format",
               "isDeprecated": false,
               "name": "details",
@@ -2289,6 +2305,35 @@
           "interfaces": [],
           "kind": "OBJECT",
           "name": "ActivityEdge",
+          "possibleTypes": []
+        },
+        {
+          "description": "ActivityFeeSource is enum for the field fee_source",
+          "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "ACCOUNT"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "CREDITS"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "PAYMASTER"
+            }
+          ],
+          "fields": [],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "ENUM",
+          "name": "ActivityFeeSource",
           "possibleTypes": []
         },
         {
@@ -3300,6 +3345,62 @@
                 "kind": "SCALAR",
                 "name": "String",
                 "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "fee_source field predicates",
+              "name": "feeSource",
+              "type": {
+                "kind": "ENUM",
+                "name": "ActivityFeeSource",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "feeSourceNEQ",
+              "type": {
+                "kind": "ENUM",
+                "name": "ActivityFeeSource",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "feeSourceIn",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "ActivityFeeSource",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "feeSourceNotIn",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "ActivityFeeSource",
+                    "ofType": null
+                  }
+                }
               }
             },
             {

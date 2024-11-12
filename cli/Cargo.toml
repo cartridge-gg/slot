@@ -17,7 +17,12 @@ dialoguer = "0.11.0"
 env_logger = "0.10"
 log = "0.4"
 graphql_client.workspace = true
-katana-primitives = { git = "https://github.com/dojoengine/dojo", tag = "v0.7.0-alpha.3" }
+#katana-primitives = { git = "https://github.com/dojoengine/dojo", rev = "63e00ae" }
+#torii-cli = { git = "https://github.com/dojoengine/dojo", rev = "63e00ae" }
+#katana-cli = { git = "https://github.com/dojoengine/dojo", rev = "63e00ae" }
+katana-primitives = { path = "/Users/glihm/cgg/dojo/crates/katana/primitives" }
+torii-cli = { path = "/Users/glihm/cgg/dojo/crates/torii/cli" }
+katana-cli = { path = "/Users/glihm/cgg/dojo/crates/katana/cli" }
 hyper.workspace = true
 tokio.workspace = true
 thiserror.workspace = true

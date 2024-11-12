@@ -1,5 +1,7 @@
 #![allow(clippy::enum_variant_names)]
 
+use std::str::FromStr;
+
 use anyhow::Result;
 use clap::Args;
 use katana_primitives::contract::ContractAddress;
@@ -8,7 +10,6 @@ use katana_primitives::genesis::allocation::{
     DevAllocationsGenerator, DevGenesisAccount, GenesisAccount,
 };
 use katana_primitives::genesis::Genesis;
-use katana_primitives::FieldElement;
 use slot::graphql::deployments::katana_accounts::KatanaAccountsDeploymentConfig::KatanaConfig;
 use slot::graphql::deployments::{katana_accounts::*, KatanaAccounts};
 use slot::graphql::GraphQLQuery;
@@ -46,22 +47,10 @@ impl AccountsArgs {
                     Some(accounts) => {
                         let mut accounts_vec = Vec::new();
                         for account in accounts {
-                            // TODO(kariy): update these after updating katana-primitives
-                            let address = ContractAddress::from(
-                                FieldElement::from_bytes_be(
-                                    &Felt::from_hex(&account.address).unwrap().to_bytes_be(),
-                                )
-                                .unwrap(),
-                            );
+                            let address = ContractAddress::new(Felt::from_str(&account.address).unwrap());
 
-                            let public_key = FieldElement::from_bytes_be(
-                                &Felt::from_hex(&account.public_key).unwrap().to_bytes_be(),
-                            )
-                            .unwrap();
-                            let private_key = FieldElement::from_bytes_be(
-                                &Felt::from_hex(&account.private_key).unwrap().to_bytes_be(),
-                            )
-                            .unwrap();
+                            let public_key = Felt::from_str(&account.public_key).unwrap();
+                            let private_key = Felt::from_str(&account.private_key).unwrap();
 
                             let genesis_account = GenesisAccount {
                                 public_key,

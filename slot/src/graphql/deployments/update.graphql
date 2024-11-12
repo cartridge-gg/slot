@@ -14,17 +14,11 @@ mutation UpdateDeployment(
 
     ... on KatanaConfig {
       configFile
-      rpc
+      genesis
     }
 
     ... on ToriiConfig {
       configFile
-      graphql
-      grpc
-      rpc
-      world
-      startBlock
-      indexPending
     }
 
     ... on SayaConfig {

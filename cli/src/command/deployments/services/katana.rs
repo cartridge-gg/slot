@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use clap::Args;
+use katana_cli::NodeArgs;
 use katana_primitives::genesis;
 use katana_primitives::genesis::json::GenesisJson;
 
@@ -11,54 +12,8 @@ pub struct KatanaCreateArgs {
     #[arg(help = "Service version to use.")]
     pub version: Option<String>,
 
-    #[arg(long, short, value_name = "block_time")]
-    #[arg(help = "Block time.")]
-    pub block_time: Option<i64>,
-
-    #[arg(long, value_name = "fork_rpc_url")]
-    #[arg(help = "Fork RPC URL.")]
-    pub fork_rpc_url: Option<String>,
-
-    #[arg(long, value_name = "fork_block_number")]
-    #[arg(help = "Fork block number.")]
-    pub fork_block_number: Option<u64>,
-
-    #[arg(long, short, value_name = "seed")]
-    #[arg(help = "Seed.")]
-    pub seed: Option<String>,
-
-    #[arg(long, short, value_name = "accounts", default_value = "10")]
-    #[arg(help = "Accounts.")]
-    pub accounts: i64,
-
-    #[arg(long, value_name = "invoke_max_steps")]
-    #[arg(help = "Invoke Max Steps.")]
-    pub invoke_max_steps: Option<u64>,
-
-    #[arg(long, value_name = "validate_max_steps")]
-    #[arg(help = "Validate Max Steps.")]
-    pub validate_max_steps: Option<u64>,
-
-    #[arg(long, value_name = "disable_fee")]
-    #[arg(help = "Disable Fee.")]
-    pub disable_fee: Option<bool>,
-
-    #[arg(long, value_name = "gas_price")]
-    #[arg(help = "Gas Price.")]
-    pub gas_price: Option<u64>,
-
-    #[arg(long, value_name = "PATH")]
-    #[arg(help = "Path to a Katana genesis file.")]
-    #[arg(value_parser = genesis_value_parser)]
-    pub genesis: Option<String>,
-
-    #[arg(long)]
-    #[arg(help = "Enable Katana dev mode for specific endpoints.")]
-    pub dev: bool,
-
-    #[arg(long)]
-    #[arg(help = "Configuration file with Katana config, in TOML format.")]
-    pub config: Option<String>,
+    #[command(flatten)]
+    pub node_args: NodeArgs,
 }
 
 #[derive(Debug, Args, serde::Serialize)]
@@ -68,41 +23,8 @@ pub struct KatanaUpdateArgs {
     #[arg(help = "Service version to use.")]
     pub version: Option<String>,
 
-    #[arg(long, short, value_name = "block_time")]
-    #[arg(help = "Block time.")]
-    pub block_time: Option<i64>,
-
-    #[arg(long, short, value_name = "fork_rpc_url")]
-    #[arg(help = "Fork RPC URL.")]
-    pub fork_rpc_url: Option<String>,
-
-    #[arg(long, short, value_name = "fork_block_number")]
-    #[arg(help = "Fork Block Number.")]
-    pub fork_block_number: Option<u64>,
-
-    #[arg(long, value_name = "invoke_max_steps")]
-    #[arg(help = "Invoke Max Steps.")]
-    pub invoke_max_steps: Option<u64>,
-
-    #[arg(long, value_name = "validate_max_steps")]
-    #[arg(help = "Validate Max Steps.")]
-    pub validate_max_steps: Option<u64>,
-
-    #[arg(long, value_name = "disable_fee")]
-    #[arg(help = "Disable Fee.")]
-    pub disable_fee: Option<bool>,
-
-    #[arg(long, value_name = "gas_price")]
-    #[arg(help = "Gas Price.")]
-    pub gas_price: Option<u64>,
-
-    #[arg(long)]
-    #[arg(help = "Enable Katana dev mode for specific endpoints.")]
-    pub dev: bool,
-
-    #[arg(long)]
-    #[arg(help = "Configuration file with Katana config, in TOML format.")]
-    pub config: Option<String>,
+    #[command(flatten)]
+    pub node_args: NodeArgs,
 }
 
 #[derive(Debug, Args, serde::Serialize)]

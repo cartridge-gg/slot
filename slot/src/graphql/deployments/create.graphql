@@ -15,19 +15,11 @@ mutation CreateDeployment(
 		__typename
 
 		... on KatanaConfig {
-			rpc
+			configFile
+			genesis
 		}
 
 		... on ToriiConfig {
-			graphql
-			grpc
-			rpc
-			world
-			contracts
-			startBlock
-			indexPending
-			indexRawEvents
-			indexTransactions
 			configFile
 		}
 

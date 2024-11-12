@@ -42,23 +42,9 @@ impl CreateArgs {
                 version: config.version.clone(),
                 config: Some(CreateServiceConfigInput {
                     katana: Some(CreateKatanaConfigInput {
-                        block_time: config.block_time,
-                        fork_rpc_url: config.fork_rpc_url.clone(),
-                        fork_block_number: config.fork_block_number,
-                        seed: Some(match &config.seed {
-                            Some(seed) => seed.clone(),
-                            None => rand::random::<u64>().to_string(),
-                        }),
-                        accounts: Some(config.accounts),
-                        disable_fee: config.disable_fee,
-                        gas_price: config.gas_price,
-                        invoke_max_steps: config.invoke_max_steps,
-                        validate_max_steps: config.validate_max_steps,
-                        genesis: config.genesis.clone(),
-                        dev: config.dev.then_some(true),
-                        config_file: slot::read::read_and_encode_file_as_base64(
-                            config.config.as_ref().cloned(),
-                        )?,
+                        genesis: None,
+                        // TODO: TMP file to write the config and load it to base64.
+                        config_file: slot::read::read_and_encode_file_as_base64(None)?,
                     }),
                     torii: None,
                     saya: None,
@@ -71,20 +57,8 @@ impl CreateArgs {
                     config: Some(CreateServiceConfigInput {
                         katana: None,
                         torii: Some(CreateToriiConfigInput {
-                            rpc: config.clone().rpc,
-                            // provide world if provided
-                            world: match &config.world {
-                                Some(world) => format!("{:#x}", world).into(),
-                                None => None,
-                            },
-                            contracts: config.contracts.clone(),
-                            start_block: config.start_block,
-                            index_pending: config.index_pending,
-                            polling_interval: config.polling_interval,
-                            index_transactions: config.index_transactions,
-                            index_raw_events: config.index_raw_events,
                             config_file: slot::read::read_and_encode_file_as_base64(
-                                config.clone().config,
+                                None
                             )?,
                         }),
                         saya: None,
@@ -144,6 +118,7 @@ impl CreateArgs {
                 println!("  RPC URL: {}", config.rpc_url);
             }
             ToriiConfig(config) => {
+                /*
                 println!("\nConfiguration:");
                 println!("  World: {}", config.world);
                 println!("  RPC: {}", config.rpc);
@@ -165,10 +140,13 @@ impl CreateArgs {
                 println!("\nEndpoints:");
                 println!("  GRAPHQL: {}", config.graphql);
                 println!("  GRPC: {}", config.grpc);
+                */
             }
             KatanaConfig(config) => {
+                /*
                 println!("\nEndpoints:");
                 println!("  RPC: {}", config.rpc);
+                */
             }
         }
 
