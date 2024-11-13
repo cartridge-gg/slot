@@ -43,6 +43,12 @@ impl UpdateArgs {
                         torii: None,
                         katana: Some(UpdateKatanaConfigInput {
                             config_file: Some(slot::read::base64_encode_string(&service_config)),
+                            block_time: None,
+                            invoke_max_steps: None,
+                            validate_max_steps: None,
+                            disable_fee: None,
+                            gas_price: None,
+                            dev: None,
                         }),
                     }),
                 }

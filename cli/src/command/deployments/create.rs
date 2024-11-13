@@ -59,7 +59,18 @@ impl CreateArgs {
                     config: Some(CreateServiceConfigInput {
                         katana: Some(CreateKatanaConfigInput {
                             config_file: Some(slot::read::base64_encode_string(&service_config)),
-                            ..Default::default()
+                            // TODO: those must be changed on the server side to pull the schema correctly from the infra.
+                            block_time: None,
+                            accounts: None,
+                            dev: None,
+                            fork_rpc_url: None,
+                            fork_block_number: None,
+                            seed: None,
+                            invoke_max_steps: None,
+                            validate_max_steps: None,
+                            disable_fee: None,
+                            gas_price: None,
+                            genesis: None,
                         }),
                         torii: None,
                         saya: None,
@@ -83,7 +94,15 @@ impl CreateArgs {
                         katana: None,
                         torii: Some(CreateToriiConfigInput {
                             config_file: Some(slot::read::base64_encode_string(&service_config)),
-                            ..Default::default()
+                            // TODO: those must be changed on the server side to pull the schema correctly from the infra.
+                            rpc: None,
+                            world: None,
+                            contracts: None,
+                            start_block: None,
+                            index_pending: None,
+                            polling_interval: None,
+                            index_transactions: None,
+                            index_raw_events: None,
                         }),
                         saya: None,
                     }),

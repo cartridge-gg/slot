@@ -23,5 +23,6 @@ cargo install graphql-client
 graphql-client introspect-schema --output slot/schema.json https://api.cartridge.gg/query
 
 # Then regenerate the Rust code for the queries that you have modified.
-graphql-client generate --schema-path slot/schema.json slot/src/graphql/deployments/update.graphql
+# Using this command actually change the macro to something auto-generated. And we prefer macro expansion.
+# graphql-client generate --schema-path slot/schema.json slot/src/graphql/deployments/update.graphql
 ```
