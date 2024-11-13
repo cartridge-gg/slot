@@ -33,7 +33,4 @@ pub enum Error {
 
     #[error(transparent)]
     Api(#[from] api::GraphQLErrors),
-
-    #[error(transparent)]
-    Base64(#[from] base64::DecodeError),
 }
