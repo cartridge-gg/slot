@@ -47,7 +47,8 @@ impl AccountsArgs {
                     Some(accounts) => {
                         let mut accounts_vec = Vec::new();
                         for account in accounts {
-                            let address = ContractAddress::new(Felt::from_str(&account.address).unwrap());
+                            let address =
+                                ContractAddress::new(Felt::from_str(&account.address).unwrap());
 
                             let public_key = Felt::from_str(&account.public_key).unwrap();
                             let private_key = Felt::from_str(&account.private_key).unwrap();

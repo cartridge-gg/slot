@@ -1,5 +1,6 @@
 use anyhow::Result;
 use clap::Subcommand;
+use colored::*;
 
 use self::{
     accounts::AccountsArgs, create::CreateArgs, delete::DeleteArgs, describe::DescribeArgs,
@@ -57,4 +58,40 @@ pub enum Tier {
     Common,
     Rare,
     Epic,
+}
+
+/// Prints the configuration file for a given project and service.
+pub(crate) fn print_config_file(config: &str) {
+    println!("\n─────────────── Configuration ───────────────");
+    pretty_print_toml(config);
+    println!("──────────────────────────────────────────────");
+}
+
+/// Pretty prints a TOML string.
+pub(crate) fn pretty_print_toml(str: &str) {
+    for line in str.lines() {
+        if line.starts_with("[") {
+            // Print section headers.
+            println!("\n{}", line.bright_blue());
+        } else if line.contains('=') {
+            // Print key-value pairs with keys in green and values.
+            let parts: Vec<&str> = line.splitn(2, '=').collect();
+            if parts.len() == 2 {
+                let key = parts[0].trim();
+                let value = parts[1].trim().replace("\"", "");
+
+                println!("{}: {}", key.bright_black(), value);
+            } else {
+                println!("{}", line);
+            }
+        } else {
+            // Remove line that are empty to have more compact output.
+            if line.trim().is_empty() {
+                continue;
+            }
+
+            // Print other lines normally.
+            println!("{}", line);
+        }
+    }
 }

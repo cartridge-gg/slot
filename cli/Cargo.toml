@@ -12,26 +12,23 @@ rust-version.workspace = true
 anyhow.workspace = true
 axum.workspace = true
 clap = { version = "4.2", features = ["derive"] }
+colored = "2.0.0"
 ctrlc = "3.4.1"
 dialoguer = "0.11.0"
 env_logger = "0.10"
 log = "0.4"
 graphql_client.workspace = true
-#katana-primitives = { git = "https://github.com/dojoengine/dojo", rev = "63e00ae" }
-#torii-cli = { git = "https://github.com/dojoengine/dojo", rev = "63e00ae" }
-#katana-cli = { git = "https://github.com/dojoengine/dojo", rev = "63e00ae" }
-katana-primitives = { path = "/Users/glihm/cgg/dojo/crates/katana/primitives" }
-torii-cli = { path = "/Users/glihm/cgg/dojo/crates/torii/cli" }
-katana-cli = { path = "/Users/glihm/cgg/dojo/crates/katana/cli" }
+katana-primitives = { git = "https://github.com/dojoengine/dojo", rev = "c65649e9cf089fe698d668cc218f5f19156a000f" }
+torii-cli = { git = "https://github.com/dojoengine/dojo", rev = "c65649e9cf089fe698d668cc218f5f19156a000f", default-features = false }
+katana-cli = { git = "https://github.com/dojoengine/dojo", rev = "c65649e9cf089fe698d668cc218f5f19156a000f", default-features = false, features = ["slot"] }
 hyper.workspace = true
 tokio.workspace = true
 thiserror.workspace = true
 serde.workspace = true
 slot.workspace = true
 starknet.workspace = true
-shellexpand = "3.1.0"
+toml = "0.8"
 url.workspace = true
-rand.workspace = true
 
 [[bin]]
 name = "slot"

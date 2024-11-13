@@ -3037,6 +3037,7 @@ dependencies = [
 [[package]]
 name = "dojo-metrics"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "hyper 0.14.31",
  "jemalloc-ctl",
@@ -3053,6 +3054,7 @@ dependencies = [
 [[package]]
 name = "dojo-types"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "anyhow",
  "cainome 0.4.6",
@@ -3073,6 +3075,7 @@ dependencies = [
 [[package]]
 name = "dojo-utils"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "anyhow",
  "colored_json",
@@ -3089,6 +3092,7 @@ dependencies = [
 [[package]]
 name = "dojo-world"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -4671,6 +4675,7 @@ dependencies = [
 [[package]]
 name = "katana-cairo"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "cairo-lang-casm",
  "cairo-lang-runner",
@@ -4686,24 +4691,33 @@ dependencies = [
 [[package]]
 name = "katana-cli"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "alloy-primitives",
  "anyhow",
  "cainome-cairo-serde 0.1.0 (git+https://github.com/cartridge-gg/cainome?rev=5c2616c273faca7700d2ba565503fcefb5b9d720)",
  "clap",
+ "console",
+ "dojo-utils",
  "katana-core",
  "katana-node",
  "katana-primitives",
  "katana-slot-controller",
  "serde",
+ "serde_json",
  "shellexpand",
+ "tokio",
  "toml",
+ "tracing",
+ "tracing-log 0.1.4",
+ "tracing-subscriber",
  "url",
 ]
 
 [[package]]
 name = "katana-core"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "alloy-contract",
  "alloy-network",
@@ -4742,6 +4756,7 @@ dependencies = [
 [[package]]
 name = "katana-db"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "anyhow",
  "bitvec",
@@ -4767,6 +4782,7 @@ dependencies = [
 [[package]]
 name = "katana-executor"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "blockifier",
  "katana-cairo",
@@ -4781,6 +4797,7 @@ dependencies = [
 [[package]]
 name = "katana-node"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "anyhow",
  "const_format",
@@ -4811,6 +4828,7 @@ dependencies = [
 [[package]]
 name = "katana-pipeline"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -4827,6 +4845,7 @@ dependencies = [
 [[package]]
 name = "katana-pool"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "futures",
  "katana-executor",
@@ -4841,6 +4860,7 @@ dependencies = [
 [[package]]
 name = "katana-primitives"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -4865,6 +4885,7 @@ dependencies = [
 [[package]]
 name = "katana-provider"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "anyhow",
  "auto_impl",
@@ -4884,6 +4905,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "anyhow",
  "dojo-metrics",
@@ -4909,6 +4931,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc-api"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "jsonrpsee",
  "katana-core",
@@ -4920,6 +4943,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc-types"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -4943,6 +4967,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc-types-builder"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "anyhow",
  "katana-executor",
@@ -4955,6 +4980,7 @@ dependencies = [
 [[package]]
 name = "katana-slot-controller"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -4972,6 +4998,7 @@ dependencies = [
 [[package]]
 name = "katana-tasks"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "futures",
  "rayon",
@@ -4985,6 +5012,7 @@ dependencies = [
 [[package]]
 name = "katana-trie"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "anyhow",
  "bitvec",
@@ -7436,6 +7464,7 @@ dependencies = [
  "anyhow",
  "axum",
  "clap",
+ "colored",
  "ctrlc",
  "dialoguer",
  "env_logger",
@@ -7444,13 +7473,12 @@ dependencies = [
  "katana-cli",
  "katana-primitives",
  "log",
- "rand",
  "serde",
- "shellexpand",
  "slot 0.23.0",
  "starknet",
  "thiserror",
  "tokio",
+ "toml",
  "torii-cli",
  "url",
 ]
@@ -8529,6 +8557,7 @@ dependencies = [
 [[package]]
 name = "torii-cli"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "anyhow",
  "clap",
@@ -8543,6 +8572,7 @@ dependencies = [
 [[package]]
 name = "torii-core"
 version = "1.0.0"
+source = "git+https://github.com/dojoengine/dojo?rev=c65649e9cf089fe698d668cc218f5f19156a000f#c65649e9cf089fe698d668cc218f5f19156a000f"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -8702,6 +8732,17 @@ dependencies = [
 
 [[package]]
 name = "tracing-log"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f751112709b4e791d8ce53e32c4ed2d353565a795ce84da2285393f41557bdf2"
+dependencies = [
+ "log",
+ "once_cell",
+ "tracing-core",
+]
+
+[[package]]
+name = "tracing-log"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ee855f1f400bd0e5c02d150ae5de3840039a3f54b025156404e34c23c03f47c3"
@@ -8738,7 +8779,7 @@ dependencies = [
  "thread_local",
  "tracing",
  "tracing-core",
- "tracing-log",
+ "tracing-log 0.2.0",
  "tracing-serde",
 ]
 

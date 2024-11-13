@@ -1,5 +1,4 @@
 use clap::Args;
-use starknet::core::types::Felt;
 
 use torii_cli::ToriiArgs;
 

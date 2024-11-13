@@ -1,7 +1,10 @@
 #![allow(clippy::enum_variant_names)]
 
+use std::path::PathBuf;
+
 use anyhow::Result;
 use clap::Args;
+use katana_cli::NodeArgsConfig;
 use slot::api::Client;
 use slot::credential::Credentials;
 use slot::graphql::deployments::create_deployment::CreateDeploymentCreateDeployment::{
@@ -10,6 +13,7 @@ use slot::graphql::deployments::create_deployment::CreateDeploymentCreateDeploym
 use slot::graphql::deployments::create_deployment::*;
 use slot::graphql::deployments::CreateDeployment;
 use slot::graphql::GraphQLQuery;
+use torii_cli::args::ToriiArgsConfig;
 
 use super::{services::CreateServiceCommands, Tier};
 
@@ -30,6 +34,11 @@ pub struct CreateArgs {
     #[arg(value_delimiter = ',')]
     pub regions: Option<Vec<String>>,
 
+    #[arg(long)]
+    #[arg(help = "Writes the service configuration to a file and exits without deploying.")]
+    #[arg(global = true)]
+    pub output_service_config: Option<PathBuf>,
+
     #[command(subcommand)]
     create_commands: CreateServiceCommands,
 }
@@ -37,29 +46,45 @@ pub struct CreateArgs {
 impl CreateArgs {
     pub async fn run(&self) -> Result<()> {
         let service = match &self.create_commands {
-            CreateServiceCommands::Katana(config) => CreateServiceInput {
-                type_: DeploymentService::katana,
-                version: config.version.clone(),
-                config: Some(CreateServiceConfigInput {
-                    katana: Some(CreateKatanaConfigInput {
-                        genesis: None,
-                        // TODO: TMP file to write the config and load it to base64.
-                        config_file: slot::read::read_and_encode_file_as_base64(None)?,
+            CreateServiceCommands::Katana(config) => {
+                let service_config =
+                    toml::to_string(&NodeArgsConfig::try_from(config.node_args.clone())?)?;
+
+                if let Some(path) = &self.output_service_config {
+                    std::fs::write(path, &service_config)?;
+                    println!("Service config written to {}", path.display());
+                    return Ok(());
+                }
+
+                CreateServiceInput {
+                    type_: DeploymentService::katana,
+                    version: config.version.clone(),
+                    config: Some(CreateServiceConfigInput {
+                        katana: Some(CreateKatanaConfigInput {
+                            config_file: Some(slot::read::base64_encode_string(&service_config)),
+                        }),
+                        torii: None,
+                        saya: None,
                     }),
-                    torii: None,
-                    saya: None,
-                }),
-            },
+                }
+            }
             CreateServiceCommands::Torii(config) => {
+                let service_config =
+                    toml::to_string(&ToriiArgsConfig::try_from(config.torii_args.clone())?)?;
+
+                if let Some(path) = &self.output_service_config {
+                    std::fs::write(path, &service_config)?;
+                    println!("Service config written to {}", path.display());
+                    return Ok(());
+                }
+
                 CreateServiceInput {
                     type_: DeploymentService::torii,
                     version: config.version.clone(),
                     config: Some(CreateServiceConfigInput {
                         katana: None,
                         torii: Some(CreateToriiConfigInput {
-                            config_file: slot::read::read_and_encode_file_as_base64(
-                                None
-                            )?,
+                            config_file: Some(slot::read::base64_encode_string(&service_config)),
                         }),
                         saya: None,
                     }),
@@ -97,6 +122,8 @@ impl CreateArgs {
             Tier::Epic => DeploymentTier::epic,
         };
 
+        let service_toml = service.get_config_toml()?;
+
         let request_body = CreateDeployment::build_query(Variables {
             project: self.project.clone(),
             tier,
@@ -112,44 +139,6 @@ impl CreateArgs {
 
         println!("Deployment success 🚀");
 
-        match data.create_deployment {
-            SayaConfig(config) => {
-                println!("\nConfiguration:");
-                println!("  RPC URL: {}", config.rpc_url);
-            }
-            ToriiConfig(config) => {
-                /*
-                println!("\nConfiguration:");
-                println!("  World: {}", config.world);
-                println!("  RPC: {}", config.rpc);
-                if let Some(contracts) = config.contracts {
-                    println!("  Contracts: {}", contracts);
-                }
-                if let Some(start_block) = config.start_block {
-                    println!("  Start Block: {}", start_block);
-                }
-                if let Some(index_pending) = config.index_pending {
-                    println!("  Index Pending: {}", index_pending);
-                }
-                if let Some(index_raw_events) = config.index_raw_events {
-                    println!("  Index Raw Events: {}", index_raw_events);
-                }
-                if let Some(index_transactions) = config.index_transactions {
-                    println!("  Index Transactions: {}", index_transactions);
-                }
-                println!("\nEndpoints:");
-                println!("  GRAPHQL: {}", config.graphql);
-                println!("  GRPC: {}", config.grpc);
-                */
-            }
-            KatanaConfig(config) => {
-                /*
-                println!("\nEndpoints:");
-                println!("  RPC: {}", config.rpc);
-                */
-            }
-        }
-
         let service = match &self.create_commands {
             CreateServiceCommands::Katana(_) => "katana",
             CreateServiceCommands::Torii(_) => "torii",
@@ -160,6 +149,25 @@ impl CreateArgs {
             "\nStream logs with `slot deployments logs {} {service} -f`",
             self.project
         );
+
+        match data.create_deployment {
+            SayaConfig(_) => {
+                super::print_config_file("TODO");
+            }
+            ToriiConfig(_) => {
+                // Currently, the infra returns None for the config file.
+                // When hence use the config generated from the CLI:
+                if let Some(config) = service_toml {
+                    super::print_config_file(&config);
+                }
+            }
+            KatanaConfig(_) => {
+                // Once the infra returns the config, print it.
+                if let Some(config) = service_toml {
+                    super::print_config_file(&config);
+                }
+            }
+        }
 
         Ok(())
     }

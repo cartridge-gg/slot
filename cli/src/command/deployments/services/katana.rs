@@ -1,9 +1,5 @@
-use std::path::PathBuf;
-
 use clap::Args;
 use katana_cli::NodeArgs;
-use katana_primitives::genesis;
-use katana_primitives::genesis::json::GenesisJson;
 
 #[derive(Debug, Args, serde::Serialize)]
 #[command(next_help_heading = "Katana create options")]
@@ -41,10 +37,3 @@ pub struct KatanaForkArgs {
 #[derive(Debug, Args, serde::Serialize)]
 #[command(next_help_heading = "Katana account options")]
 pub struct KatanaAccountArgs {}
-
-fn genesis_value_parser(path: &str) -> Result<String, anyhow::Error> {
-    let path = PathBuf::from(shellexpand::full(path)?.into_owned());
-    let genesis = GenesisJson::load(path)?;
-    let encoded = genesis::json::to_base64(genesis)?;
-    Ok(String::from_utf8(encoded)?)
-}

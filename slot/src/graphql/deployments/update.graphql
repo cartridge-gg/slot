@@ -14,7 +14,6 @@ mutation UpdateDeployment(
 
     ... on KatanaConfig {
       configFile
-      genesis
     }
 
     ... on ToriiConfig {

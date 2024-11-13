@@ -1,10 +1,10 @@
-#[allow(clippy::all, warnings)]
+#![allow(clippy::all, warnings)]
 pub struct CreateDeployment;
 pub mod create_deployment {
     #![allow(dead_code)]
     use std::result::Result;
     pub const OPERATION_NAME: &str = "CreateDeployment";
-    pub const QUERY : & str = "mutation CreateDeployment(\n\t$project: String!\n\t$service: CreateServiceInput!\n\t$tier: DeploymentTier!\n\t$wait: Boolean\n\t$regions: [String!]\n) {\n\tcreateDeployment(\n\t\tname: $project\n\t\tservice: $service\n\t\ttier: $tier\n\t\twait: $wait\n\t\tregions: $regions\n\t) {\n\t\t__typename\n\n\t\t... on KatanaConfig {\n\t\t\tconfigFile\n\t\t\tgenesis\n\t\t}\n\n\t\t... on ToriiConfig {\n\t\t\tconfigFile\n\t\t}\n\n\t\t... on SayaConfig {\n\t\t\trpcUrl\n\t\t}\n\t}\n}\n" ;
+    pub const QUERY : & str = "mutation CreateDeployment(\n\t$project: String!\n\t$service: CreateServiceInput!\n\t$tier: DeploymentTier!\n\t$wait: Boolean\n\t$regions: [String!]\n) {\n\tcreateDeployment(\n\t\tname: $project\n\t\tservice: $service\n\t\ttier: $tier\n\t\twait: $wait\n\t\tregions: $regions\n\t) {\n\t\t__typename\n\n\t\t... on KatanaConfig {\n\t\t\tconfigFile\n\t\t}\n\n\t\t... on ToriiConfig {\n\t\t\tconfigFile\n\t\t}\n\n\t\t... on SayaConfig {\n\t\t\trpcUrl\n\t\t}\n\t}\n}\n" ;
     use super::*;
     use serde::{Deserialize, Serialize};
     #[allow(dead_code)]
@@ -85,7 +85,6 @@ pub mod create_deployment {
     }
     #[derive(Serialize)]
     pub struct CreateKatanaConfigInput {
-        pub genesis: Option<String>,
         #[serde(rename = "configFile")]
         pub config_file: Option<String>,
     }
@@ -142,30 +141,29 @@ pub mod create_deployment {
         pub regions: Option<Vec<String>>,
     }
     impl Variables {}
-    #[derive(Deserialize)]
+    #[derive(Deserialize, Debug)]
     pub struct ResponseData {
         #[serde(rename = "createDeployment")]
         pub create_deployment: CreateDeploymentCreateDeployment,
     }
-    #[derive(Deserialize)]
+    #[derive(Deserialize, Debug)]
     #[serde(tag = "__typename")]
     pub enum CreateDeploymentCreateDeployment {
         KatanaConfig(CreateDeploymentCreateDeploymentOnKatanaConfig),
         ToriiConfig(CreateDeploymentCreateDeploymentOnToriiConfig),
         SayaConfig(CreateDeploymentCreateDeploymentOnSayaConfig),
     }
-    #[derive(Deserialize)]
+    #[derive(Deserialize, Debug)]
     pub struct CreateDeploymentCreateDeploymentOnKatanaConfig {
         #[serde(rename = "configFile")]
         pub config_file: Option<String>,
-        pub genesis: Option<String>,
     }
-    #[derive(Deserialize)]
+    #[derive(Deserialize, Debug)]
     pub struct CreateDeploymentCreateDeploymentOnToriiConfig {
         #[serde(rename = "configFile")]
         pub config_file: Option<String>,
     }
-    #[derive(Deserialize)]
+    #[derive(Deserialize, Debug)]
     pub struct CreateDeploymentCreateDeploymentOnSayaConfig {
         #[serde(rename = "rpcUrl")]
         pub rpc_url: String,
