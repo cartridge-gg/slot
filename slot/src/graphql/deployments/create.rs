@@ -1,4 +1,5 @@
 #![allow(clippy::all, warnings)]
+use super::Long;
 pub struct CreateDeployment;
 pub mod create_deployment {
     #![allow(dead_code)]
@@ -83,8 +84,26 @@ pub mod create_deployment {
             }
         }
     }
-    #[derive(Serialize)]
+    #[derive(Serialize, Default)]
     pub struct CreateKatanaConfigInput {
+        #[serde(rename = "blockTime")]
+        pub block_time: Option<Int>,
+        #[serde(rename = "forkRpcUrl")]
+        pub fork_rpc_url: Option<String>,
+        #[serde(rename = "forkBlockNumber")]
+        pub fork_block_number: Option<Long>,
+        pub seed: Option<String>,
+        pub accounts: Option<Int>,
+        #[serde(rename = "invokeMaxSteps")]
+        pub invoke_max_steps: Option<Long>,
+        #[serde(rename = "validateMaxSteps")]
+        pub validate_max_steps: Option<Long>,
+        #[serde(rename = "disableFee")]
+        pub disable_fee: Option<Boolean>,
+        #[serde(rename = "gasPrice")]
+        pub gas_price: Option<Long>,
+        pub genesis: Option<String>,
+        pub dev: Option<Boolean>,
         #[serde(rename = "configFile")]
         pub config_file: Option<String>,
     }
@@ -127,8 +146,21 @@ pub mod create_deployment {
         pub version: Option<String>,
         pub config: Option<CreateServiceConfigInput>,
     }
-    #[derive(Serialize)]
+    #[derive(Serialize, Default)]
     pub struct CreateToriiConfigInput {
+        pub rpc: Option<String>,
+        pub world: Option<String>,
+        pub contracts: Option<String>,
+        #[serde(rename = "startBlock")]
+        pub start_block: Option<Long>,
+        #[serde(rename = "indexPending")]
+        pub index_pending: Option<Boolean>,
+        #[serde(rename = "pollingInterval")]
+        pub polling_interval: Option<Long>,
+        #[serde(rename = "indexTransactions")]
+        pub index_transactions: Option<Boolean>,
+        #[serde(rename = "indexRawEvents")]
+        pub index_raw_events: Option<Boolean>,
         #[serde(rename = "configFile")]
         pub config_file: Option<String>,
     }
@@ -141,29 +173,29 @@ pub mod create_deployment {
         pub regions: Option<Vec<String>>,
     }
     impl Variables {}
-    #[derive(Deserialize, Debug)]
+    #[derive(Deserialize)]
     pub struct ResponseData {
         #[serde(rename = "createDeployment")]
         pub create_deployment: CreateDeploymentCreateDeployment,
     }
-    #[derive(Deserialize, Debug)]
+    #[derive(Deserialize)]
     #[serde(tag = "__typename")]
     pub enum CreateDeploymentCreateDeployment {
         KatanaConfig(CreateDeploymentCreateDeploymentOnKatanaConfig),
         ToriiConfig(CreateDeploymentCreateDeploymentOnToriiConfig),
         SayaConfig(CreateDeploymentCreateDeploymentOnSayaConfig),
     }
-    #[derive(Deserialize, Debug)]
+    #[derive(Deserialize)]
     pub struct CreateDeploymentCreateDeploymentOnKatanaConfig {
         #[serde(rename = "configFile")]
         pub config_file: Option<String>,
     }
-    #[derive(Deserialize, Debug)]
+    #[derive(Deserialize)]
     pub struct CreateDeploymentCreateDeploymentOnToriiConfig {
         #[serde(rename = "configFile")]
         pub config_file: Option<String>,
     }
-    #[derive(Deserialize, Debug)]
+    #[derive(Deserialize)]
     pub struct CreateDeploymentCreateDeploymentOnSayaConfig {
         #[serde(rename = "rpcUrl")]
         pub rpc_url: String,

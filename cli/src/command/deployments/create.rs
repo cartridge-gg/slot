@@ -59,6 +59,7 @@ impl CreateArgs {
                     config: Some(CreateServiceConfigInput {
                         katana: Some(CreateKatanaConfigInput {
                             config_file: Some(slot::read::base64_encode_string(&service_config)),
+                            ..Default::default()
                         }),
                         torii: None,
                         saya: None,
@@ -82,6 +83,7 @@ impl CreateArgs {
                         katana: None,
                         torii: Some(CreateToriiConfigInput {
                             config_file: Some(slot::read::base64_encode_string(&service_config)),
+                            ..Default::default()
                         }),
                         saya: None,
                     }),

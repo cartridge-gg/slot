@@ -5,7 +5,6 @@ pub mod update_deployment {
     use std::result::Result;
     pub const OPERATION_NAME: &str = "UpdateDeployment";
     pub const QUERY : & str = "mutation UpdateDeployment(\n  $project: String!\n  $service: UpdateServiceInput!\n  $tier: DeploymentTier!\n  $wait: Boolean\n) {\n  updateDeployment(\n    name: $project\n    service: $service\n    tier: $tier\n    wait: $wait\n  ) {\n    __typename\n\n    ... on KatanaConfig {\n      configFile\n    }\n\n    ... on ToriiConfig {\n      configFile\n    }\n\n    ... on SayaConfig {\n      rpcUrl\n    }\n  }\n}\n" ;
-    use super::*;
     use serde::{Deserialize, Serialize};
     #[allow(dead_code)]
     type Boolean = bool;
