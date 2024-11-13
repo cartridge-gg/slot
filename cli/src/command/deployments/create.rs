@@ -4,7 +4,7 @@ use std::path::PathBuf;
 
 use anyhow::Result;
 use clap::Args;
-use katana_cli::NodeArgsConfig;
+use katana_cli::file::NodeArgsConfig;
 use slot::api::Client;
 use slot::credential::Credentials;
 use slot::graphql::deployments::create_deployment::CreateDeploymentCreateDeployment::{
