@@ -8,20 +8,12 @@ query DescribeDeployment($project: String!, $service: DeploymentService!) {
 
       ... on KatanaConfig {
         version
-        rpc
+        configFile
       }
 
       ... on ToriiConfig {
         version
-        graphql
-        grpc
-        rpc
-        world
-        contracts
-        startBlock
-        indexPending
-        indexRawEvents
-        indexTransactions
+        configFile
       }
 
       ... on SayaConfig {

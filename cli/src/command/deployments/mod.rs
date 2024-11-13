@@ -69,10 +69,15 @@ pub(crate) fn print_config_file(config: &str) {
 
 /// Pretty prints a TOML string.
 pub(crate) fn pretty_print_toml(str: &str) {
+    let mut first_line = true;
     for line in str.lines() {
         if line.starts_with("[") {
             // Print section headers.
-            println!("\n{}", line.bright_blue());
+            if !first_line {
+                println!();
+                first_line = false;
+            }
+            println!("{}", line.bright_blue());
         } else if line.contains('=') {
             // Print key-value pairs with keys in green and values.
             let parts: Vec<&str> = line.splitn(2, '=').collect();

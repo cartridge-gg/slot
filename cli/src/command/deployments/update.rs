@@ -7,9 +7,6 @@ use clap::Args;
 use katana_cli::file::NodeArgsConfig;
 use slot::api::Client;
 use slot::credential::Credentials;
-use slot::graphql::deployments::update_deployment::UpdateDeploymentUpdateDeployment::{
-    KatanaConfig, SayaConfig, ToriiConfig,
-};
 use slot::graphql::deployments::update_deployment::{
     self, UpdateKatanaConfigInput, UpdateServiceConfigInput, UpdateServiceInput,
     UpdateToriiConfigInput,
@@ -82,8 +79,6 @@ impl UpdateArgs {
             Tier::Epic => DeploymentTier::epic,
         };
 
-        let service_toml = service.get_config_toml()?;
-
         let request_body = UpdateDeployment::build_query(Variables {
             project: self.project.clone(),
             tier,
@@ -94,7 +89,7 @@ impl UpdateArgs {
         let user = Credentials::load()?;
         let client = Client::new_with_token(user.access_token);
 
-        let data: update_deployment::ResponseData = client.query(&request_body).await?;
+        let _: update_deployment::ResponseData = client.query(&request_body).await?;
 
         println!("Update success 🚀");
 
@@ -105,28 +100,14 @@ impl UpdateArgs {
         };
 
         println!(
+            "\nTo view the deployment configuration, run `slot deployments describe {} {}`",
+            self.project, service
+        );
+
+        println!(
             "\nStream logs with `slot deployments logs {} {service} -f`",
             self.project
         );
-
-        match data.update_deployment {
-            SayaConfig(_) => {
-                super::print_config_file("TODO");
-            }
-            ToriiConfig(_) => {
-                // Currently, the infra returns None for the config file.
-                // When hence use the config generated from the CLI:
-                if let Some(config) = service_toml {
-                    super::print_config_file(&config);
-                }
-            }
-            KatanaConfig(_) => {
-                // Once the infra returns the config, print it.
-                if let Some(config) = service_toml {
-                    super::print_config_file(&config);
-                }
-            }
-        }
 
         Ok(())
     }

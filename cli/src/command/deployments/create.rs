@@ -7,9 +7,6 @@ use clap::Args;
 use katana_cli::file::NodeArgsConfig;
 use slot::api::Client;
 use slot::credential::Credentials;
-use slot::graphql::deployments::create_deployment::CreateDeploymentCreateDeployment::{
-    KatanaConfig, SayaConfig, ToriiConfig,
-};
 use slot::graphql::deployments::create_deployment::*;
 use slot::graphql::deployments::CreateDeployment;
 use slot::graphql::GraphQLQuery;
@@ -122,8 +119,6 @@ impl CreateArgs {
             Tier::Epic => DeploymentTier::epic,
         };
 
-        let service_toml = service.get_config_toml()?;
-
         let request_body = CreateDeployment::build_query(Variables {
             project: self.project.clone(),
             tier,
@@ -135,7 +130,7 @@ impl CreateArgs {
         let user = Credentials::load()?;
         let client = Client::new_with_token(user.access_token);
 
-        let data: ResponseData = client.query(&request_body).await?;
+        let _: ResponseData = client.query(&request_body).await?;
 
         println!("Deployment success 🚀");
 
@@ -146,28 +141,14 @@ impl CreateArgs {
         };
 
         println!(
+            "\nTo view the deployment configuration, run `slot deployments describe {} {}`",
+            self.project, service
+        );
+
+        println!(
             "\nStream logs with `slot deployments logs {} {service} -f`",
             self.project
         );
-
-        match data.create_deployment {
-            SayaConfig(_) => {
-                super::print_config_file("TODO");
-            }
-            ToriiConfig(_) => {
-                // Currently, the infra returns None for the config file.
-                // When hence use the config generated from the CLI:
-                if let Some(config) = service_toml {
-                    super::print_config_file(&config);
-                }
-            }
-            KatanaConfig(_) => {
-                // Once the infra returns the config, print it.
-                if let Some(config) = service_toml {
-                    super::print_config_file(&config);
-                }
-            }
-        }
 
         Ok(())
     }
