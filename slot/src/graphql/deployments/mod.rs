@@ -1,5 +1,4 @@
 #![allow(clippy::enum_variant_names)]
-#![allow(non_camel_case_types)]
 
 pub type Long = u64;
 pub type Time = String;
