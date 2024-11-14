@@ -27,7 +27,7 @@ pub enum UpdateServiceCommands {
     #[command(about = "Katana deployment.")]
     Katana(KatanaUpdateArgs),
     #[command(about = "Torii deployment.")]
-    Torii(ToriiUpdateArgs),
+    Torii(Box<ToriiUpdateArgs>),
     #[command(about = "Saya deployment.")]
     Saya(SayaUpdateArgs),
 }

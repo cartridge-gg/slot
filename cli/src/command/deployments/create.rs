@@ -1,15 +1,16 @@
 #![allow(clippy::enum_variant_names)]
 
+use std::path::PathBuf;
+
 use anyhow::Result;
 use clap::Args;
+use katana_cli::file::NodeArgsConfig;
 use slot::api::Client;
 use slot::credential::Credentials;
-use slot::graphql::deployments::create_deployment::CreateDeploymentCreateDeployment::{
-    KatanaConfig, SayaConfig, ToriiConfig,
-};
 use slot::graphql::deployments::create_deployment::*;
 use slot::graphql::deployments::CreateDeployment;
 use slot::graphql::GraphQLQuery;
+use torii_cli::args::ToriiArgsConfig;
 
 use super::{services::CreateServiceCommands, Tier};
 
@@ -30,6 +31,11 @@ pub struct CreateArgs {
     #[arg(value_delimiter = ',')]
     pub regions: Option<Vec<String>>,
 
+    #[arg(long)]
+    #[arg(help = "Writes the service configuration to a file and exits without deploying.")]
+    #[arg(global = true)]
+    pub output_service_config: Option<PathBuf>,
+
     #[command(subcommand)]
     create_commands: CreateServiceCommands,
 }
@@ -37,55 +43,66 @@ pub struct CreateArgs {
 impl CreateArgs {
     pub async fn run(&self) -> Result<()> {
         let service = match &self.create_commands {
-            CreateServiceCommands::Katana(config) => CreateServiceInput {
-                type_: DeploymentService::katana,
-                version: config.version.clone(),
-                config: Some(CreateServiceConfigInput {
-                    katana: Some(CreateKatanaConfigInput {
-                        block_time: config.block_time,
-                        fork_rpc_url: config.fork_rpc_url.clone(),
-                        fork_block_number: config.fork_block_number,
-                        seed: Some(match &config.seed {
-                            Some(seed) => seed.clone(),
-                            None => rand::random::<u64>().to_string(),
+            CreateServiceCommands::Katana(config) => {
+                let service_config =
+                    toml::to_string(&NodeArgsConfig::try_from(config.node_args.clone())?)?;
+
+                if let Some(path) = &self.output_service_config {
+                    std::fs::write(path, &service_config)?;
+                    println!("Service config written to {}", path.display());
+                    return Ok(());
+                }
+
+                CreateServiceInput {
+                    type_: DeploymentService::katana,
+                    version: config.version.clone(),
+                    config: Some(CreateServiceConfigInput {
+                        katana: Some(CreateKatanaConfigInput {
+                            config_file: Some(slot::read::base64_encode_string(&service_config)),
+                            // TODO: those must be changed on the server side to pull the schema correctly from the infra.
+                            block_time: None,
+                            accounts: None,
+                            dev: None,
+                            fork_rpc_url: None,
+                            fork_block_number: None,
+                            seed: None,
+                            invoke_max_steps: None,
+                            validate_max_steps: None,
+                            disable_fee: None,
+                            gas_price: None,
+                            genesis: None,
                         }),
-                        accounts: Some(config.accounts),
-                        disable_fee: config.disable_fee,
-                        gas_price: config.gas_price,
-                        invoke_max_steps: config.invoke_max_steps,
-                        validate_max_steps: config.validate_max_steps,
-                        genesis: config.genesis.clone(),
-                        dev: config.dev.then_some(true),
-                        config_file: slot::read::read_and_encode_file_as_base64(
-                            config.config_file.as_ref().cloned(),
-                        )?,
+                        torii: None,
+                        saya: None,
                     }),
-                    torii: None,
-                    saya: None,
-                }),
-            },
+                }
+            }
             CreateServiceCommands::Torii(config) => {
+                let service_config =
+                    toml::to_string(&ToriiArgsConfig::try_from(config.torii_args.clone())?)?;
+
+                if let Some(path) = &self.output_service_config {
+                    std::fs::write(path, &service_config)?;
+                    println!("Service config written to {}", path.display());
+                    return Ok(());
+                }
+
                 CreateServiceInput {
                     type_: DeploymentService::torii,
                     version: config.version.clone(),
                     config: Some(CreateServiceConfigInput {
                         katana: None,
                         torii: Some(CreateToriiConfigInput {
-                            rpc: config.clone().rpc,
-                            // provide world if provided
-                            world: match &config.world {
-                                Some(world) => format!("{:#x}", world).into(),
-                                None => None,
-                            },
-                            contracts: config.contracts.clone(),
-                            start_block: config.start_block,
-                            index_pending: config.index_pending,
-                            polling_interval: config.polling_interval,
-                            index_transactions: config.index_transactions,
-                            index_raw_events: config.index_raw_events,
-                            config_file: slot::read::read_and_encode_file_as_base64(
-                                config.clone().config_file,
-                            )?,
+                            config_file: Some(slot::read::base64_encode_string(&service_config)),
+                            // TODO: those must be changed on the server side to pull the schema correctly from the infra.
+                            rpc: None,
+                            world: None,
+                            contracts: None,
+                            start_block: None,
+                            index_pending: None,
+                            polling_interval: None,
+                            index_transactions: None,
+                            index_raw_events: None,
                         }),
                         saya: None,
                     }),
@@ -134,43 +151,9 @@ impl CreateArgs {
         let user = Credentials::load()?;
         let client = Client::new_with_token(user.access_token);
 
-        let data: ResponseData = client.query(&request_body).await?;
+        let _: ResponseData = client.query(&request_body).await?;
 
         println!("Deployment success 🚀");
-
-        match data.create_deployment {
-            SayaConfig(config) => {
-                println!("\nConfiguration:");
-                println!("  RPC URL: {}", config.rpc_url);
-            }
-            ToriiConfig(config) => {
-                println!("\nConfiguration:");
-                println!("  World: {}", config.world);
-                println!("  RPC: {}", config.rpc);
-                if let Some(contracts) = config.contracts {
-                    println!("  Contracts: {}", contracts);
-                }
-                if let Some(start_block) = config.start_block {
-                    println!("  Start Block: {}", start_block);
-                }
-                if let Some(index_pending) = config.index_pending {
-                    println!("  Index Pending: {}", index_pending);
-                }
-                if let Some(index_raw_events) = config.index_raw_events {
-                    println!("  Index Raw Events: {}", index_raw_events);
-                }
-                if let Some(index_transactions) = config.index_transactions {
-                    println!("  Index Transactions: {}", index_transactions);
-                }
-                println!("\nEndpoints:");
-                println!("  GRAPHQL: {}", config.graphql);
-                println!("  GRPC: {}", config.grpc);
-            }
-            KatanaConfig(config) => {
-                println!("\nEndpoints:");
-                println!("  RPC: {}", config.rpc);
-            }
-        }
 
         let service = match &self.create_commands {
             CreateServiceCommands::Katana(_) => "katana",

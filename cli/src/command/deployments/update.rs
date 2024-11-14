@@ -4,17 +4,16 @@ use super::services::UpdateServiceCommands;
 use crate::command::deployments::Tier;
 use anyhow::Result;
 use clap::Args;
+use katana_cli::file::NodeArgsConfig;
 use slot::api::Client;
 use slot::credential::Credentials;
-use slot::graphql::deployments::update_deployment::UpdateDeploymentUpdateDeployment::{
-    KatanaConfig, SayaConfig, ToriiConfig,
-};
 use slot::graphql::deployments::update_deployment::{
     self, UpdateKatanaConfigInput, UpdateServiceConfigInput, UpdateServiceInput,
     UpdateToriiConfigInput,
 };
 use slot::graphql::deployments::{update_deployment::*, UpdateDeployment};
 use slot::graphql::GraphQLQuery;
+use torii_cli::args::ToriiArgsConfig;
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Update options")]
@@ -33,36 +32,42 @@ pub struct UpdateArgs {
 impl UpdateArgs {
     pub async fn run(&self) -> Result<()> {
         let service = match &self.update_commands {
-            UpdateServiceCommands::Katana(config) => UpdateServiceInput {
-                type_: DeploymentService::katana,
-                version: config.version.clone(),
-                config: Some(UpdateServiceConfigInput {
-                    torii: None,
-                    katana: Some(UpdateKatanaConfigInput {
-                        block_time: config.block_time,
-                        disable_fee: config.disable_fee,
-                        gas_price: config.gas_price,
-                        invoke_max_steps: config.invoke_max_steps,
-                        validate_max_steps: config.validate_max_steps,
-                        dev: config.dev.then_some(true),
-                        config_file: slot::read::read_and_encode_file_as_base64(
-                            config.config_file.as_ref().cloned(),
-                        )?,
+            UpdateServiceCommands::Katana(config) => {
+                let service_config =
+                    toml::to_string(&NodeArgsConfig::try_from(config.node_args.clone())?)?;
+
+                UpdateServiceInput {
+                    type_: DeploymentService::katana,
+                    version: config.version.clone(),
+                    config: Some(UpdateServiceConfigInput {
+                        torii: None,
+                        katana: Some(UpdateKatanaConfigInput {
+                            config_file: Some(slot::read::base64_encode_string(&service_config)),
+                            block_time: None,
+                            invoke_max_steps: None,
+                            validate_max_steps: None,
+                            disable_fee: None,
+                            gas_price: None,
+                            dev: None,
+                        }),
                     }),
-                }),
-            },
-            UpdateServiceCommands::Torii(config) => UpdateServiceInput {
-                type_: DeploymentService::torii,
-                version: config.version.clone(),
-                config: Some(UpdateServiceConfigInput {
-                    katana: None,
-                    torii: Some(UpdateToriiConfigInput {
-                        config_file: slot::read::read_and_encode_file_as_base64(
-                            config.clone().config_file,
-                        )?,
+                }
+            }
+            UpdateServiceCommands::Torii(config) => {
+                let service_config =
+                    toml::to_string(&ToriiArgsConfig::try_from(config.torii_args.clone())?)?;
+
+                UpdateServiceInput {
+                    type_: DeploymentService::torii,
+                    version: config.version.clone(),
+                    config: Some(UpdateServiceConfigInput {
+                        katana: None,
+                        torii: Some(UpdateToriiConfigInput {
+                            config_file: Some(slot::read::base64_encode_string(&service_config)),
+                        }),
                     }),
-                }),
-            },
+                }
+            }
             UpdateServiceCommands::Saya(config) => UpdateServiceInput {
                 type_: DeploymentService::saya,
                 version: config.version.clone(),
@@ -90,30 +95,9 @@ impl UpdateArgs {
         let user = Credentials::load()?;
         let client = Client::new_with_token(user.access_token);
 
-        let data: update_deployment::ResponseData = client.query(&request_body).await?;
+        let _: update_deployment::ResponseData = client.query(&request_body).await?;
 
         println!("Update success 🚀");
-
-        match data.update_deployment {
-            ToriiConfig(config) => {
-                println!("\nConfiguration:");
-                println!("  World: {}", config.world);
-                println!("  RPC: {}", config.rpc);
-                println!("  Start Block: {}", config.start_block.unwrap_or(0));
-                println!("  Index Pending: {}", config.index_pending.unwrap_or(false));
-                println!("\nEndpoints:");
-                println!("  GRAPHQL: {}", config.graphql);
-                println!("  GRPC: {}", config.grpc);
-            }
-            KatanaConfig(config) => {
-                println!("\nEndpoints:");
-                println!("  RPC: {}", config.rpc);
-            }
-            SayaConfig(config) => {
-                println!("\nConfiguration:");
-                println!("  RPC URL: {}", config.rpc_url);
-            }
-        }
 
         let service = match &self.update_commands {
             UpdateServiceCommands::Katana(_) => "katana",

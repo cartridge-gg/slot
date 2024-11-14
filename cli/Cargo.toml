@@ -12,21 +12,25 @@ rust-version.workspace = true
 anyhow.workspace = true
 axum.workspace = true
 clap = { version = "4.2", features = ["derive"] }
+colored = "2.0.0"
 ctrlc = "3.4.1"
 dialoguer = "0.11.0"
 env_logger = "0.10"
 log = "0.4"
 graphql_client.workspace = true
-katana-primitives = { git = "https://github.com/dojoengine/dojo", tag = "v0.7.0-alpha.3" }
+katana-primitives = { git = "https://github.com/dojoengine/dojo", rev = "4671d9c" }
+torii-cli = { git = "https://github.com/dojoengine/dojo", rev = "4671d9c", default-features = false }
+katana-cli = { git = "https://github.com/dojoengine/dojo", rev = "4671d9c", default-features = false, features = [
+	"slot",
+] }
 hyper.workspace = true
 tokio.workspace = true
 thiserror.workspace = true
 serde.workspace = true
 slot.workspace = true
 starknet.workspace = true
-shellexpand = "3.1.0"
+toml = "0.8"
 url.workspace = true
-rand.workspace = true
 
 [[bin]]
 name = "slot"

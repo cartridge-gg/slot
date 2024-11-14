@@ -1,5 +1,7 @@
 #![allow(clippy::enum_variant_names)]
 
+use crate::command::deployments::print_config_file;
+
 use super::services::Service;
 use anyhow::Result;
 use clap::Args;
@@ -48,33 +50,14 @@ impl DescribeArgs {
 
             match deployment.config {
                 ToriiConfig(config) => {
-                    println!("\nConfiguration:");
-                    println!("  Version: {}", config.version);
-                    println!("  World: {}", config.world);
-                    println!("  RPC: {}", config.rpc);
-                    if let Some(contracts) = config.contracts {
-                        println!("  Contracts: {}", contracts);
+                    if let Some(config_file) = config.config_file {
+                        print_config_file(&config_file);
                     }
-                    if let Some(start_block) = config.start_block {
-                        println!("  Start Block: {}", start_block);
-                    }
-                    if let Some(index_pending) = config.index_pending {
-                        println!("  Index Pending: {}", index_pending);
-                    }
-                    if let Some(index_raw_events) = config.index_raw_events {
-                        println!("  Index Raw Events: {}", index_raw_events);
-                    }
-                    if let Some(index_transactions) = config.index_transactions {
-                        println!("  Index Transactions: {}", index_transactions);
-                    }
-                    println!("\nEndpoints:");
-                    println!("  GraphQL: {}", config.graphql);
-                    println!("  GRPC: {}", config.grpc);
                 }
                 KatanaConfig(config) => {
-                    println!("\nEndpoints:");
-                    println!("  Version: {}", config.version);
-                    println!("  RPC: {}", config.rpc);
+                    if let Some(config_file) = config.config_file {
+                        print_config_file(&config_file);
+                    }
                 }
                 SayaConfig(config) => {
                     println!("\nEndpoints:");
