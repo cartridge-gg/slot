@@ -4,13 +4,14 @@ use colored::*;
 
 use self::{
     accounts::AccountsArgs, create::CreateArgs, delete::DeleteArgs, describe::DescribeArgs,
-    list::ListArgs, logs::LogsArgs, update::UpdateArgs,
+    fork::ForkArgs, list::ListArgs, logs::LogsArgs, update::UpdateArgs,
 };
 
 mod accounts;
 mod create;
 mod delete;
 mod describe;
+mod fork;
 mod list;
 mod logs;
 mod services;
@@ -24,6 +25,8 @@ pub enum Deployments {
     Delete(DeleteArgs),
     #[command(about = "Update a deployment.")]
     Update(UpdateArgs),
+    #[command(about = "Fork a deployment.")]
+    Fork(ForkArgs),
     #[command(about = "Describe a deployment's configuration.")]
     Describe(DescribeArgs),
     #[command(about = "List all deployments.", aliases = ["ls"])]
@@ -40,6 +43,7 @@ impl Deployments {
             Deployments::Create(args) => args.run().await,
             Deployments::Delete(args) => args.run().await,
             Deployments::Update(args) => args.run().await,
+            Deployments::Fork(args) => args.run().await,
             Deployments::Describe(args) => args.run().await,
             Deployments::List(args) => args.run().await,
             Deployments::Logs(args) => args.run().await,
