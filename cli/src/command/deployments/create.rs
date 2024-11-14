@@ -162,11 +162,6 @@ impl CreateArgs {
         };
 
         println!(
-            "\nTo view the deployment configuration, run `slot deployments describe {} {}`",
-            self.project, service
-        );
-
-        println!(
             "\nStream logs with `slot deployments logs {} {service} -f`",
             self.project
         );
