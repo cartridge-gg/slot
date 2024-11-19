@@ -20,10 +20,11 @@ use torii_cli::args::ToriiArgsConfig;
 pub struct UpdateArgs {
     #[arg(help = "The name of the project.")]
     pub project: String,
-    #[arg(short, long, default_value = "basic")]
+
+    #[arg(short, long)]
     #[arg(value_name = "tier")]
     #[arg(help = "Deployment tier.")]
-    pub tier: Tier,
+    pub tier: Option<Tier>,
 
     #[command(subcommand)]
     update_commands: UpdateServiceCommands,
@@ -79,10 +80,11 @@ impl UpdateArgs {
         };
 
         let tier = match &self.tier {
-            Tier::Basic => DeploymentTier::basic,
-            Tier::Common => DeploymentTier::common,
-            Tier::Rare => DeploymentTier::rare,
-            Tier::Epic => DeploymentTier::epic,
+            None => None,
+            Some(Tier::Basic) => Some(DeploymentTier::basic),
+            Some(Tier::Common) => Some(DeploymentTier::common),
+            Some(Tier::Rare) => Some(DeploymentTier::rare),
+            Some(Tier::Epic) => Some(DeploymentTier::epic),
         };
 
         let request_body = UpdateDeployment::build_query(Variables {
