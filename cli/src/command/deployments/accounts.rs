@@ -5,10 +5,8 @@ use std::str::FromStr;
 use anyhow::Result;
 use clap::Args;
 use katana_primitives::contract::ContractAddress;
-use katana_primitives::genesis::allocation::GenesisAccountAlloc;
-use katana_primitives::genesis::allocation::{
-    DevAllocationsGenerator, DevGenesisAccount, GenesisAccount,
-};
+use katana_primitives::genesis::allocation::{DevAllocationsGenerator, GenesisAccountAlloc};
+use katana_primitives::genesis::allocation::{DevGenesisAccount, GenesisAccount};
 use katana_primitives::genesis::Genesis;
 use slot::graphql::deployments::katana_accounts::KatanaAccountsDeploymentConfig::KatanaConfig;
 use slot::graphql::deployments::{katana_accounts::*, KatanaAccounts};
@@ -69,8 +67,15 @@ impl AccountsArgs {
                         print_genesis_accounts(accounts_vec.iter().map(|(a, b)| (a, b)), None);
                     }
                     None => {
-                        let accounts = DevAllocationsGenerator::new(10)
-                            .with_seed(parse_seed(&config.seed))
+                        // NOTICE: This is implementation assume that the Katana instance is configured with the default seed and total number of accounts. If not, the
+                        // generated addresses will be different from the ones in the Katana instance. This is rather a hack until `slot` can return the addresses directly (or
+                        // at least the exact configurations of the instance).
+
+                        let seed = "0";
+                        let total_accounts = 10;
+
+                        let accounts = DevAllocationsGenerator::new(total_accounts)
+                            .with_seed(parse_seed(seed))
                             .generate();
 
                         let mut genesis = Genesis::default();
@@ -127,6 +132,8 @@ ACCOUNTS SEED
     }
 }
 
+// Mimic how Katana parse the seed to generate the predeployed accounts
+// https://github.com/dojoengine/dojo/blob/85c0b025f108bd1ed64a5b35cfb574f61545a0ff/crates/katana/cli/src/utils.rs#L24-L34
 fn parse_seed(seed: &str) -> [u8; 32] {
     let seed = seed.as_bytes();
 
