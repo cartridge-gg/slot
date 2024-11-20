@@ -50,11 +50,13 @@ impl DescribeArgs {
 
             match deployment.config {
                 ToriiConfig(config) => {
+                    println!("Version: {}", config.version);
                     if let Some(config_file) = config.config_file {
                         print_config_file(&config_file);
                     }
                 }
                 KatanaConfig(config) => {
+                    println!("Version: {}", config.version);
                     if let Some(config_file) = config.config_file {
                         print_config_file(&config_file);
                     }
