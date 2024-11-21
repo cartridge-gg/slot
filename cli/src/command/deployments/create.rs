@@ -151,16 +151,20 @@ impl CreateArgs {
         let user = Credentials::load()?;
         let client = Client::new_with_token(user.access_token);
 
-        let _: ResponseData = client.query(&request_body).await?;
-
-        println!("Deployment success 🚀");
-
         let service = match &self.create_commands {
             CreateServiceCommands::Katana(_) => "katana",
             CreateServiceCommands::Torii(_) => "torii",
             CreateServiceCommands::Saya(_) => "saya",
         };
 
+        println!(
+            "Deploying {}...",
+            super::service_url(&self.project, service)
+        );
+
+        let _: ResponseData = client.query(&request_body).await?;
+
+        println!("\nDeployment success 🚀");
         println!(
             "\nStream logs with `slot deployments logs {} {service} -f`",
             self.project

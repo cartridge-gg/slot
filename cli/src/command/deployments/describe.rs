@@ -48,6 +48,11 @@ impl DescribeArgs {
             );
             println!("Tier: {:?}", deployment.tier);
 
+            println!(
+                "Url: {}",
+                super::service_url(&deployment.project, &self.service.to_string())
+            );
+
             match deployment.config {
                 ToriiConfig(config) => {
                     println!("Version: {}", config.version);

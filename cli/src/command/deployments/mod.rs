@@ -17,6 +17,8 @@ mod logs;
 mod services;
 mod update;
 
+pub const CARTRIDGE_BASE_URL: &str = "https://api.cartridge.gg/x";
+
 #[derive(Subcommand, Debug)]
 pub enum Deployments {
     #[command(about = "Create a new deployment.")]
@@ -58,6 +60,11 @@ pub enum Tier {
     Common,
     Rare,
     Epic,
+}
+
+/// Returns the service url for a given project and service.
+pub(crate) fn service_url(project: &str, service: &str) -> String {
+    format!("{}/{}/{}", CARTRIDGE_BASE_URL, project, service)
 }
 
 /// Prints the configuration file for a given project and service.
