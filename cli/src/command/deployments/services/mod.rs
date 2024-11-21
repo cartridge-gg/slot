@@ -54,3 +54,13 @@ pub enum Service {
     Torii,
     Saya,
 }
+
+impl std::fmt::Display for Service {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Service::Katana => write!(f, "katana"),
+            Service::Torii => write!(f, "torii"),
+            Service::Saya => write!(f, "saya"),
+        }
+    }
+}

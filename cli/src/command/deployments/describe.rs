@@ -48,13 +48,20 @@ impl DescribeArgs {
             );
             println!("Tier: {:?}", deployment.tier);
 
+            println!(
+                "Url: {}",
+                super::service_url(&deployment.project, &self.service.to_string())
+            );
+
             match deployment.config {
                 ToriiConfig(config) => {
+                    println!("Version: {}", config.version);
                     if let Some(config_file) = config.config_file {
                         print_config_file(&config_file);
                     }
                 }
                 KatanaConfig(config) => {
+                    println!("Version: {}", config.version);
                     if let Some(config_file) = config.config_file {
                         print_config_file(&config_file);
                     }
