@@ -3051,6 +3051,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "directories"
+version = "5.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9a49173b84e034382284f27f1af4dcbbd231ffa358c0fe316541a7337f376a35"
+dependencies = [
+ "dirs-sys 0.4.1",
+]
+
+[[package]]
 name = "dirs"
 version = "4.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7685,7 +7694,7 @@ dependencies = [
 
 [[package]]
 name = "slot"
-version = "0.25.3"
+version = "0.25.2"
 dependencies = [
  "account_sdk",
  "anyhow",
@@ -7711,7 +7720,7 @@ dependencies = [
 
 [[package]]
 name = "slot-cli"
-version = "0.25.3"
+version = "0.25.2"
 dependencies = [
  "anyhow",
  "axum",
@@ -7726,12 +7735,13 @@ dependencies = [
  "katana-primitives",
  "log",
  "serde",
- "slot 0.25.3",
+ "slot 0.25.2",
  "starknet",
  "thiserror",
  "tokio",
  "toml",
  "torii-cli",
+ "update-informer",
  "url",
 ]
 
@@ -9250,6 +9260,18 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
+]
+
+[[package]]
+name = "update-informer"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2f8811797a24ff123db3c6e1087aa42551d03d772b3724be421ad063da1f5f3f"
+dependencies = [
+ "directories",
+ "semver 1.0.23",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
