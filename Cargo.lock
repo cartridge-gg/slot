@@ -7694,7 +7694,7 @@ dependencies = [
 
 [[package]]
 name = "slot"
-version = "0.26.0"
+version = "0.26.1"
 dependencies = [
  "account_sdk",
  "anyhow",
@@ -7720,7 +7720,7 @@ dependencies = [
 
 [[package]]
 name = "slot-cli"
-version = "0.26.0"
+version = "0.26.1"
 dependencies = [
  "anyhow",
  "axum",
@@ -7735,7 +7735,7 @@ dependencies = [
  "katana-primitives",
  "log",
  "serde",
- "slot 0.26.0",
+ "slot 0.26.1",
  "starknet",
  "thiserror",
  "tokio",
@@ -9272,6 +9272,25 @@ dependencies = [
  "semver 1.0.23",
  "serde",
  "serde_json",
+ "ureq",
+]
+
+[[package]]
+name = "ureq"
+version = "2.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b30e6f97efe1fa43535ee241ee76967d3ff6ff3953ebb430d8d55c5393029e7b"
+dependencies = [
+ "base64 0.22.1",
+ "flate2",
+ "litemap",
+ "log",
+ "once_cell",
+ "serde",
+ "serde_json",
+ "url",
+ "yoke",
+ "zerofrom",
 ]
 
 [[package]]
