@@ -24,16 +24,5 @@ pub struct KatanaUpdateArgs {
 }
 
 #[derive(Debug, Args, serde::Serialize)]
-#[command(next_help_heading = "Katana fork options")]
-pub struct KatanaForkArgs {
-    #[arg(long, value_name = "fork_name")]
-    #[arg(help = "Specify the fork name")]
-    pub fork_name: String,
-    #[arg(long, value_name = "fork_block_number")]
-    #[arg(help = "Specify block number to fork. (latests if not provided)")]
-    pub fork_block_number: Option<u64>,
-}
-
-#[derive(Debug, Args, serde::Serialize)]
 #[command(next_help_heading = "Katana account options")]
 pub struct KatanaAccountArgs {}

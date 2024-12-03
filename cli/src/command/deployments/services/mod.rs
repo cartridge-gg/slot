@@ -1,7 +1,7 @@
 use clap::{Subcommand, ValueEnum};
 
 use self::{
-    katana::{KatanaAccountArgs, KatanaCreateArgs, KatanaForkArgs, KatanaUpdateArgs},
+    katana::{KatanaAccountArgs, KatanaCreateArgs, KatanaUpdateArgs},
     saya::{SayaCreateArgs, SayaUpdateArgs},
     torii::{ToriiCreateArgs, ToriiUpdateArgs},
 };
@@ -30,15 +30,6 @@ pub enum UpdateServiceCommands {
     Torii(Box<ToriiUpdateArgs>),
     #[command(about = "Saya deployment.")]
     Saya(SayaUpdateArgs),
-}
-
-#[derive(Debug, Subcommand, serde::Serialize)]
-#[serde(untagged)]
-pub enum ForkServiceCommands {
-    #[command(about = "Katana deployment.")]
-    Katana(KatanaForkArgs),
-    // #[command(about = "Torii deployment.")]
-    // Torii(ToriiUpdateArgs),
 }
 
 #[derive(Debug, Subcommand, serde::Serialize)]
