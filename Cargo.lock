@@ -7694,7 +7694,7 @@ dependencies = [
 
 [[package]]
 name = "slot"
-version = "0.26.2"
+version = "0.26.3"
 dependencies = [
  "account_sdk",
  "anyhow",
@@ -7720,7 +7720,7 @@ dependencies = [
 
 [[package]]
 name = "slot-cli"
-version = "0.26.2"
+version = "0.26.3"
 dependencies = [
  "anyhow",
  "axum",
@@ -7735,7 +7735,7 @@ dependencies = [
  "katana-primitives",
  "log",
  "serde",
- "slot 0.26.2",
+ "slot 0.26.3",
  "starknet",
  "thiserror",
  "tokio",
