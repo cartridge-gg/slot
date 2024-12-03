@@ -22,7 +22,8 @@ async fn main() {
 
     let name = "cartridge-gg/slot";
     let current = env!("CARGO_PKG_VERSION");
-    let informer = update_informer::new(registry::GitHub, name, current);
+    let informer = update_informer::new(registry::GitHub, name, current)
+        .interval(std::time::Duration::from_secs(60 * 60));
 
     match &cli.command.run().await {
         Ok(_) => {}
