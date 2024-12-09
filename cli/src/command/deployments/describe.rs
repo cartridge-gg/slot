@@ -5,9 +5,6 @@ use crate::command::deployments::print_config_file;
 use super::services::Service;
 use anyhow::Result;
 use clap::Args;
-use slot::graphql::deployments::describe_deployment::DescribeDeploymentDeploymentConfig::{
-    KatanaConfig, SayaConfig, ToriiConfig,
-};
 use slot::graphql::deployments::{describe_deployment::*, DescribeDeployment};
 use slot::graphql::GraphQLQuery;
 use slot::{api::Client, credential::Credentials};
@@ -53,24 +50,8 @@ impl DescribeArgs {
                 super::service_url(&deployment.project, &self.service.to_string())
             );
 
-            match deployment.config {
-                ToriiConfig(config) => {
-                    println!("Version: {}", config.version);
-                    if let Some(config_file) = config.config_file {
-                        print_config_file(&config_file);
-                    }
-                }
-                KatanaConfig(config) => {
-                    println!("Version: {}", config.version);
-                    if let Some(config_file) = config.config_file {
-                        print_config_file(&config_file);
-                    }
-                }
-                SayaConfig(config) => {
-                    println!("\nEndpoints:");
-                    println!("  RPC URL: {}", config.rpc_url);
-                }
-            }
+            // convert config of type String to &str
+            print_config_file(&deployment.config.config)
         }
 
         Ok(())

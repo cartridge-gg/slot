@@ -4,21 +4,8 @@ query DescribeDeployment($project: String!, $service: DeploymentService!) {
     branch
     tier
     config {
-      __typename
-
-      ... on KatanaConfig {
-        version
-        configFile
-      }
-
-      ... on ToriiConfig {
-        version
-        configFile
-      }
-
-      ... on SayaConfig {
-        rpcUrl
-      }
+      version
+      config
     }
   }
 }

@@ -4,16 +4,8 @@ query KatanaAccounts($project: String!) {
     branch
     tier
     config {
-      __typename
-      ... on KatanaConfig {
-        seed
-        genesis
-        accounts {
-          address
-          publicKey
-          privateKey
-        }
-      }
+      version
+      config
     }
   }
 }

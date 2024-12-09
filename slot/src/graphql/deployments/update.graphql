@@ -11,17 +11,7 @@ mutation UpdateDeployment(
     wait: $wait
   ) {
     __typename
-
-    ... on KatanaConfig {
-      configFile
-    }
-
-    ... on ToriiConfig {
-      configFile
-    }
-
-    ... on SayaConfig {
-      rpcUrl
-    }
+    version
+    config
   }
 }
