@@ -56,25 +56,7 @@ impl CreateArgs {
                 CreateServiceInput {
                     type_: DeploymentService::katana,
                     version: config.version.clone(),
-                    config: Some(CreateServiceConfigInput {
-                        katana: Some(CreateKatanaConfigInput {
-                            config_file: Some(slot::read::base64_encode_string(&service_config)),
-                            // TODO: those must be changed on the server side to pull the schema correctly from the infra.
-                            block_time: None,
-                            accounts: None,
-                            dev: None,
-                            fork_rpc_url: None,
-                            fork_block_number: None,
-                            seed: None,
-                            invoke_max_steps: None,
-                            validate_max_steps: None,
-                            disable_fee: None,
-                            gas_price: None,
-                            genesis: None,
-                        }),
-                        torii: None,
-                        saya: None,
-                    }),
+                    config: slot::read::base64_encode_string(&service_config),
                 }
             }
             CreateServiceCommands::Torii(config) => {
@@ -90,46 +72,13 @@ impl CreateArgs {
                 CreateServiceInput {
                     type_: DeploymentService::torii,
                     version: config.version.clone(),
-                    config: Some(CreateServiceConfigInput {
-                        katana: None,
-                        torii: Some(CreateToriiConfigInput {
-                            config_file: Some(slot::read::base64_encode_string(&service_config)),
-                            // TODO: those must be changed on the server side to pull the schema correctly from the infra.
-                            rpc: None,
-                            world: None,
-                            contracts: None,
-                            start_block: None,
-                            index_pending: None,
-                            polling_interval: None,
-                            index_transactions: None,
-                            index_raw_events: None,
-                        }),
-                        saya: None,
-                    }),
+                    config: slot::read::base64_encode_string(&service_config),
                 }
             }
             CreateServiceCommands::Saya(config) => CreateServiceInput {
                 type_: DeploymentService::saya,
                 version: config.version.clone(),
-                config: Some(CreateServiceConfigInput {
-                    katana: None,
-                    torii: None,
-                    saya: Some(CreateSayaConfigInput {
-                        mode: config.mode.clone(),
-                        rpc_url: config.rpc_url.clone(),
-                        registry: config.registry.clone(),
-                        settlement_contract: config.settlement_contract.clone(),
-                        world: config.world.clone().to_string(),
-                        prover_url: config.prover_url.clone(),
-                        store_proofs: config.store_proofs.unwrap_or(false),
-                        starknet_url: config.starknet_url.clone(),
-                        signer_key: config.signer_key.clone(),
-                        signer_address: config.signer_address.clone(),
-                        private_key: config.private_key.clone(),
-                        batch_size: config.batch_size.unwrap_or(1),
-                        start_block: config.start_block.unwrap_or(0),
-                    }),
-                }),
+                config: "TODO".to_string(),
             },
         };
 
