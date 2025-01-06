@@ -51,7 +51,7 @@ impl DescribeArgs {
             );
 
             // convert config of type String to &str
-            print_config_file(&deployment.config.config)
+            print_config_file(&deployment.config.config_file);
         }
 
         Ok(())

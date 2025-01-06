@@ -3,9 +3,9 @@ query KatanaAccounts($project: String!) {
     project
     branch
     tier
+    version
     config {
-      version
-      config
+      configFile
     }
   }
 }

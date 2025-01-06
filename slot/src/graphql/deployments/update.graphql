@@ -11,7 +11,10 @@ mutation UpdateDeployment(
     wait: $wait
   ) {
     __typename
+    id
     version
-    config
+    config {
+      configFile
+    }
   }
 }
