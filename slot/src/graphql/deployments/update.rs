@@ -1,4 +1,3 @@
-use crate::graphql::deployments::Long;
 use graphql_client::GraphQLQuery;
 
 #[derive(GraphQLQuery)]

@@ -7,10 +7,7 @@ use clap::Args;
 use katana_cli::file::NodeArgsConfig;
 use slot::api::Client;
 use slot::credential::Credentials;
-use slot::graphql::deployments::update_deployment::{
-    self, UpdateKatanaConfigInput, UpdateServiceConfigInput, UpdateServiceInput,
-    UpdateToriiConfigInput,
-};
+use slot::graphql::deployments::update_deployment::{self, UpdateServiceInput};
 use slot::graphql::deployments::{update_deployment::*, UpdateDeployment};
 use slot::graphql::GraphQLQuery;
 use torii_cli::args::ToriiArgsConfig;
@@ -40,18 +37,7 @@ impl UpdateArgs {
                 UpdateServiceInput {
                     type_: DeploymentService::katana,
                     version: config.version.clone(),
-                    config: Some(UpdateServiceConfigInput {
-                        torii: None,
-                        katana: Some(UpdateKatanaConfigInput {
-                            config_file: Some(slot::read::base64_encode_string(&service_config)),
-                            block_time: None,
-                            invoke_max_steps: None,
-                            validate_max_steps: None,
-                            disable_fee: None,
-                            gas_price: None,
-                            dev: None,
-                        }),
-                    }),
+                    config: Some(slot::read::base64_encode_string(&service_config)),
                 }
             }
             UpdateServiceCommands::Torii(config) => {
@@ -75,21 +61,13 @@ impl UpdateArgs {
                 UpdateServiceInput {
                     type_: DeploymentService::torii,
                     version: config.version.clone(),
-                    config: Some(UpdateServiceConfigInput {
-                        katana: None,
-                        torii: Some(UpdateToriiConfigInput {
-                            config_file: Some(slot::read::base64_encode_string(&service_config)),
-                        }),
-                    }),
+                    config: Some(slot::read::base64_encode_string(&service_config)),
                 }
             }
             UpdateServiceCommands::Saya(config) => UpdateServiceInput {
                 type_: DeploymentService::saya,
                 version: config.version.clone(),
-                config: Some(UpdateServiceConfigInput {
-                    katana: None,
-                    torii: None,
-                }),
+                config: None, // TODO
             },
         };
 
