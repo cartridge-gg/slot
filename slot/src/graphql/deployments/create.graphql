@@ -13,7 +13,10 @@ mutation CreateDeployment(
 		regions: $regions
 	) {
 		__typename
+		id
 		version
-		config
+		config {
+			configFile
+		}
 	}
 }
