@@ -1,8 +1,10 @@
+use self::{email::EmailArgs, info::InfoArgs, login::LoginArgs};
+use crate::command::auth::billing::BillingArgs;
 use anyhow::Result;
 use clap::Subcommand;
 
-use self::{info::InfoArgs, login::LoginArgs};
-
+mod billing;
+mod email;
 mod info;
 mod login;
 mod session;
@@ -11,8 +13,16 @@ mod session;
 pub enum Auth {
     #[command(about = "Login to your Cartridge account.")]
     Login(LoginArgs),
+
     #[command(about = "Display info about the authenticated user.")]
     Info(InfoArgs),
+
+    #[command(about = "Set the email address for the authenticated user.")]
+    SetEmail(EmailArgs),
+
+    #[command(about = "Manage slot billing for the authenticated user.")]
+    EnableSlotBilling(BillingArgs),
+
     // Mostly for testing purposes, will eventually turn it into a library call from `sozo`.
     #[command(hide = true)]
     CreateSession(session::CreateSession),
@@ -24,6 +34,8 @@ impl Auth {
             Auth::Login(args) => args.run().await,
             Auth::Info(args) => args.run().await,
             Auth::CreateSession(args) => args.run().await,
+            Auth::SetEmail(args) => args.run().await,
+            Auth::EnableSlotBilling(args) => args.run().await,
         }
     }
 }
