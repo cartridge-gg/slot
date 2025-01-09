@@ -14,6 +14,14 @@ use crate::account::{self};
 )]
 pub struct Me;
 
+#[derive(GraphQLQuery)]
+#[graphql(
+    schema_path = "schema.json",
+    query_path = "src/graphql/auth/update-me.graphql",
+    response_derives = "Debug, Clone, Serialize, PartialEq, Eq"
+)]
+pub struct UpdateMe;
+
 impl From<MeMe> for account::AccountInfo {
     fn from(value: MeMe) -> Self {
         let id = value.id;

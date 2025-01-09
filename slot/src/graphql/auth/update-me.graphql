@@ -1,0 +1,11 @@
+mutation UpdateMe(
+	$email: String
+	$slotBilling: Boolean
+) {
+	updateMe(data: {
+		slotBilling: $slotBilling
+		email: $email
+	}) {
+		id
+	}
+}
