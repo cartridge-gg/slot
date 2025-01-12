@@ -35,7 +35,7 @@ dependencies = [
  "starknet",
  "starknet-crypto 0.7.3",
  "starknet-types-core",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
  "toml",
  "tsify-next",
@@ -159,7 +159,7 @@ dependencies = [
  "alloy-transport",
  "futures",
  "futures-util",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -241,7 +241,7 @@ dependencies = [
  "alloy-sol-types",
  "serde",
  "serde_json",
- "thiserror",
+ "thiserror 1.0.69",
  "tracing",
 ]
 
@@ -263,7 +263,7 @@ dependencies = [
  "async-trait",
  "auto_impl",
  "futures-utils-wasm",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -337,7 +337,7 @@ dependencies = [
  "reqwest 0.12.9",
  "serde",
  "serde_json",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
  "tracing",
  "url",
@@ -429,7 +429,7 @@ dependencies = [
  "auto_impl",
  "elliptic-curve",
  "k256",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -517,7 +517,7 @@ dependencies = [
  "futures-utils-wasm",
  "serde",
  "serde_json",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
  "tower 0.5.1",
  "tracing",
@@ -1145,6 +1145,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "backon"
+version = "1.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ba5289ec98f68f28dd809fd601059e6aa908bb8f6108620930828283d4ee23d7"
+dependencies = [
+ "fastrand 2.2.0",
+ "gloo-timers",
+ "tokio",
+]
+
+[[package]]
 name = "backtrace"
 version = "0.3.74"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1382,7 +1393,7 @@ dependencies = [
  "starknet_api",
  "strum 0.25.0",
  "strum_macros 0.25.3",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -1413,17 +1424,20 @@ dependencies = [
 [[package]]
 name = "bonsai-trie"
 version = "0.1.0"
-source = "git+https://github.com/madara-alliance/bonsai-trie/?rev=56d7d62#56d7d62232fd72419f1d50de8bc747b70a9db68f"
+source = "git+https://github.com/dojoengine/bonsai-trie/?branch=kariy/indexmap#d2741d49d14210f675195a9a607910bf76bbed04"
 dependencies = [
  "bitvec",
  "derive_more 0.99.18",
  "hashbrown 0.14.5",
+ "indexmap 2.6.0",
  "log",
  "parity-scale-codec",
  "rayon",
  "serde",
+ "slotmap",
  "smallvec",
  "starknet-types-core",
+ "thiserror 2.0.11",
 ]
 
 [[package]]
@@ -1454,6 +1468,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "40723b8fb387abc38f4f4a37c09073622e41dd12327033091ef8950659e6dc0c"
 dependencies = [
  "memchr",
+ "regex-automata 0.4.9",
  "serde",
 ]
 
@@ -1539,7 +1554,7 @@ dependencies = [
  "hashbrown 0.13.2",
  "instant",
  "once_cell",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
 ]
 
@@ -1581,7 +1596,7 @@ dependencies = [
  "serde_json",
  "starknet",
  "starknet-types-core",
- "thiserror",
+ "thiserror 1.0.69",
  "tracing",
  "tracing-subscriber",
  "url",
@@ -1589,16 +1604,16 @@ dependencies = [
 
 [[package]]
 name = "cainome"
-version = "0.4.6"
-source = "git+https://github.com/cartridge-gg/cainome?rev=5c2616c273faca7700d2ba565503fcefb5b9d720#5c2616c273faca7700d2ba565503fcefb5b9d720"
+version = "0.4.11"
+source = "git+https://github.com/cartridge-gg/cainome?tag=v0.4.11#355b88b7b808656d729e9dfd16f81d80c5c30fbf"
 dependencies = [
  "anyhow",
  "async-trait",
- "cainome-cairo-serde 0.1.0 (git+https://github.com/cartridge-gg/cainome?rev=5c2616c273faca7700d2ba565503fcefb5b9d720)",
+ "cainome-cairo-serde 0.1.0 (git+https://github.com/cartridge-gg/cainome?tag=v0.4.11)",
  "cainome-cairo-serde-derive",
- "cainome-parser 0.1.0 (git+https://github.com/cartridge-gg/cainome?rev=5c2616c273faca7700d2ba565503fcefb5b9d720)",
- "cainome-rs 0.1.0 (git+https://github.com/cartridge-gg/cainome?rev=5c2616c273faca7700d2ba565503fcefb5b9d720)",
- "cainome-rs-macro 0.1.0 (git+https://github.com/cartridge-gg/cainome?rev=5c2616c273faca7700d2ba565503fcefb5b9d720)",
+ "cainome-parser 0.1.0 (git+https://github.com/cartridge-gg/cainome?tag=v0.4.11)",
+ "cainome-rs 0.1.0 (git+https://github.com/cartridge-gg/cainome?tag=v0.4.11)",
+ "cainome-rs-macro 0.1.0 (git+https://github.com/cartridge-gg/cainome?tag=v0.4.11)",
  "camino",
  "clap",
  "clap_complete",
@@ -1607,10 +1622,22 @@ dependencies = [
  "serde_json",
  "starknet",
  "starknet-types-core",
- "thiserror",
+ "thiserror 1.0.69",
  "tracing",
  "tracing-subscriber",
  "url",
+]
+
+[[package]]
+name = "cainome-cairo-serde"
+version = "0.1.0"
+source = "git+https://github.com/cartridge-gg/cainome?tag=v0.4.11#355b88b7b808656d729e9dfd16f81d80c5c30fbf"
+dependencies = [
+ "num-bigint",
+ "serde",
+ "serde_with",
+ "starknet",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -1620,23 +1647,13 @@ source = "git+https://github.com/cartridge-gg/cainome?tag=v0.4.2#4e3924fb82b7299
 dependencies = [
  "serde",
  "starknet",
- "thiserror",
-]
-
-[[package]]
-name = "cainome-cairo-serde"
-version = "0.1.0"
-source = "git+https://github.com/cartridge-gg/cainome?rev=5c2616c273faca7700d2ba565503fcefb5b9d720#5c2616c273faca7700d2ba565503fcefb5b9d720"
-dependencies = [
- "serde",
- "starknet",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
 name = "cainome-cairo-serde-derive"
 version = "0.1.0"
-source = "git+https://github.com/cartridge-gg/cainome?rev=5c2616c273faca7700d2ba565503fcefb5b9d720#5c2616c273faca7700d2ba565503fcefb5b9d720"
+source = "git+https://github.com/cartridge-gg/cainome?tag=v0.4.11#355b88b7b808656d729e9dfd16f81d80c5c30fbf"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1647,6 +1664,19 @@ dependencies = [
 [[package]]
 name = "cainome-parser"
 version = "0.1.0"
+source = "git+https://github.com/cartridge-gg/cainome?tag=v0.4.11#355b88b7b808656d729e9dfd16f81d80c5c30fbf"
+dependencies = [
+ "convert_case 0.6.0",
+ "quote",
+ "serde_json",
+ "starknet",
+ "syn 2.0.87",
+ "thiserror 1.0.69",
+]
+
+[[package]]
+name = "cainome-parser"
+version = "0.1.0"
 source = "git+https://github.com/cartridge-gg/cainome?tag=v0.4.2#4e3924fb82b7299d56d3619aa5d7b9863f581e0a"
 dependencies = [
  "convert_case 0.6.0",
@@ -1654,20 +1684,25 @@ dependencies = [
  "serde_json",
  "starknet",
  "syn 2.0.87",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
-name = "cainome-parser"
+name = "cainome-rs"
 version = "0.1.0"
-source = "git+https://github.com/cartridge-gg/cainome?rev=5c2616c273faca7700d2ba565503fcefb5b9d720#5c2616c273faca7700d2ba565503fcefb5b9d720"
+source = "git+https://github.com/cartridge-gg/cainome?tag=v0.4.11#355b88b7b808656d729e9dfd16f81d80c5c30fbf"
 dependencies = [
- "convert_case 0.6.0",
+ "anyhow",
+ "cainome-cairo-serde 0.1.0 (git+https://github.com/cartridge-gg/cainome?tag=v0.4.11)",
+ "cainome-parser 0.1.0 (git+https://github.com/cartridge-gg/cainome?tag=v0.4.11)",
+ "camino",
+ "prettyplease",
+ "proc-macro2",
  "quote",
  "serde_json",
  "starknet",
  "syn 2.0.87",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -1685,25 +1720,25 @@ dependencies = [
  "serde_json",
  "starknet",
  "syn 2.0.87",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
-name = "cainome-rs"
+name = "cainome-rs-macro"
 version = "0.1.0"
-source = "git+https://github.com/cartridge-gg/cainome?rev=5c2616c273faca7700d2ba565503fcefb5b9d720#5c2616c273faca7700d2ba565503fcefb5b9d720"
+source = "git+https://github.com/cartridge-gg/cainome?tag=v0.4.11#355b88b7b808656d729e9dfd16f81d80c5c30fbf"
 dependencies = [
  "anyhow",
- "cainome-cairo-serde 0.1.0 (git+https://github.com/cartridge-gg/cainome?rev=5c2616c273faca7700d2ba565503fcefb5b9d720)",
- "cainome-parser 0.1.0 (git+https://github.com/cartridge-gg/cainome?rev=5c2616c273faca7700d2ba565503fcefb5b9d720)",
- "camino",
- "prettyplease",
+ "cainome-cairo-serde 0.1.0 (git+https://github.com/cartridge-gg/cainome?tag=v0.4.11)",
+ "cainome-parser 0.1.0 (git+https://github.com/cartridge-gg/cainome?tag=v0.4.11)",
+ "cainome-rs 0.1.0 (git+https://github.com/cartridge-gg/cainome?tag=v0.4.11)",
+ "proc-macro-error",
  "proc-macro2",
  "quote",
  "serde_json",
  "starknet",
  "syn 2.0.87",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -1721,25 +1756,7 @@ dependencies = [
  "serde_json",
  "starknet",
  "syn 2.0.87",
- "thiserror",
-]
-
-[[package]]
-name = "cainome-rs-macro"
-version = "0.1.0"
-source = "git+https://github.com/cartridge-gg/cainome?rev=5c2616c273faca7700d2ba565503fcefb5b9d720#5c2616c273faca7700d2ba565503fcefb5b9d720"
-dependencies = [
- "anyhow",
- "cainome-cairo-serde 0.1.0 (git+https://github.com/cartridge-gg/cainome?rev=5c2616c273faca7700d2ba565503fcefb5b9d720)",
- "cainome-parser 0.1.0 (git+https://github.com/cartridge-gg/cainome?rev=5c2616c273faca7700d2ba565503fcefb5b9d720)",
- "cainome-rs 0.1.0 (git+https://github.com/cartridge-gg/cainome?rev=5c2616c273faca7700d2ba565503fcefb5b9d720)",
- "proc-macro-error",
- "proc-macro2",
- "quote",
- "serde_json",
- "starknet",
- "syn 2.0.87",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -1779,7 +1796,7 @@ dependencies = [
  "rust-analyzer-salsa",
  "semver 1.0.23",
  "smol_str",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -1863,7 +1880,7 @@ dependencies = [
  "rust-analyzer-salsa",
  "serde",
  "smol_str",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -1950,7 +1967,7 @@ dependencies = [
  "cairo-lang-utils",
  "serde",
  "smol_str",
- "thiserror",
+ "thiserror 1.0.69",
  "toml",
 ]
 
@@ -1982,7 +1999,7 @@ dependencies = [
  "sha2",
  "smol_str",
  "starknet-types-core",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -2035,7 +2052,7 @@ dependencies = [
  "sha3",
  "smol_str",
  "starknet-types-core",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -2051,7 +2068,7 @@ dependencies = [
  "itertools 0.12.1",
  "num-bigint",
  "num-traits",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -2067,7 +2084,7 @@ dependencies = [
  "itertools 0.12.1",
  "num-bigint",
  "num-traits",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -2112,7 +2129,7 @@ dependencies = [
  "num-bigint",
  "num-traits",
  "starknet-types-core",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -2152,7 +2169,7 @@ dependencies = [
  "serde_json",
  "smol_str",
  "starknet-types-core",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -2175,7 +2192,7 @@ dependencies = [
  "sha3",
  "smol_str",
  "starknet-types-core",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -2294,7 +2311,7 @@ dependencies = [
  "semver 1.0.23",
  "serde",
  "serde_json",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -2526,7 +2543,7 @@ dependencies = [
  "mime",
  "mime_guess",
  "rand",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -3010,7 +3027,7 @@ dependencies = [
  "console",
  "shell-words",
  "tempfile",
- "thiserror",
+ "thiserror 1.0.69",
  "zeroize",
 ]
 
@@ -3134,8 +3151,8 @@ dependencies = [
 
 [[package]]
 name = "dojo-metrics"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "hyper 0.14.31",
  "jemalloc-ctl",
@@ -3145,19 +3162,20 @@ dependencies = [
  "metrics-exporter-prometheus",
  "metrics-process",
  "metrics-util",
- "thiserror",
+ "thiserror 1.0.69",
  "tracing",
 ]
 
 [[package]]
 name = "dojo-types"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "anyhow",
- "cainome 0.4.6",
+ "cainome 0.4.11",
  "crypto-bigint",
  "hex",
+ "indexmap 2.6.0",
  "itertools 0.12.1",
  "num-traits",
  "regex",
@@ -3167,13 +3185,13 @@ dependencies = [
  "starknet-crypto 0.7.3",
  "strum 0.25.0",
  "strum_macros 0.25.3",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
 name = "dojo-utils"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "anyhow",
  "colored_json",
@@ -3182,19 +3200,19 @@ dependencies = [
  "rpassword",
  "serde_json",
  "starknet",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
  "tracing",
 ]
 
 [[package]]
 name = "dojo-world"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "anyhow",
  "async-trait",
- "cainome 0.4.6",
+ "cainome 0.4.11",
  "cairo-lang-starknet-classes",
  "dojo-types",
  "hex",
@@ -3206,7 +3224,7 @@ dependencies = [
  "serde_with",
  "starknet",
  "starknet-crypto 0.7.3",
- "thiserror",
+ "thiserror 1.0.69",
  "toml",
  "tracing",
  "url",
@@ -3373,7 +3391,7 @@ dependencies = [
  "serde_json",
  "sha2",
  "sha3",
- "thiserror",
+ "thiserror 1.0.69",
  "uuid 0.8.2",
 ]
 
@@ -3765,7 +3783,7 @@ dependencies = [
  "pin-project",
  "serde",
  "serde_json",
- "thiserror",
+ "thiserror 1.0.69",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
@@ -3822,7 +3840,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d2ebc8013b4426d5b81a4364c419a95ed0b404af2b82e2457de52d9348f0e474"
 dependencies = [
  "combine 3.8.1",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -4565,7 +4583,7 @@ dependencies = [
  "hyper-multipart-rfc7578",
  "hyper-rustls 0.23.2",
  "ipfs-api-prelude",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -4585,7 +4603,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_urlencoded",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
  "tokio-util",
  "tracing",
@@ -4709,7 +4727,7 @@ dependencies = [
  "combine 4.6.7",
  "jni-sys",
  "log",
- "thiserror",
+ "thiserror 1.0.69",
  "walkdir",
  "windows-sys 0.45.0",
 ]
@@ -4772,7 +4790,7 @@ dependencies = [
  "serde",
  "serde_json",
  "soketto",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
  "tracing",
 ]
@@ -4822,7 +4840,7 @@ dependencies = [
  "beef",
  "serde",
  "serde_json",
- "thiserror",
+ "thiserror 1.0.69",
  "tracing",
 ]
 
@@ -4841,8 +4859,8 @@ dependencies = [
 
 [[package]]
 name = "katana-cairo"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "cairo-lang-casm",
  "cairo-lang-runner",
@@ -4857,18 +4875,19 @@ dependencies = [
 
 [[package]]
 name = "katana-cli"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "alloy-primitives",
  "anyhow",
- "cainome-cairo-serde 0.1.0 (git+https://github.com/cartridge-gg/cainome?rev=5c2616c273faca7700d2ba565503fcefb5b9d720)",
+ "cainome-cairo-serde 0.1.0 (git+https://github.com/cartridge-gg/cainome?tag=v0.4.11)",
  "clap",
  "console",
  "dojo-utils",
  "katana-core",
  "katana-node",
  "katana-primitives",
+ "katana-rpc",
  "katana-slot-controller",
  "serde",
  "serde_json",
@@ -4883,8 +4902,8 @@ dependencies = [
 
 [[package]]
 name = "katana-core"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "alloy-contract",
  "alloy-network",
@@ -4914,7 +4933,7 @@ dependencies = [
  "serde_json",
  "starknet",
  "starknet-types-core",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
  "tracing",
  "url",
@@ -4922,11 +4941,10 @@ dependencies = [
 
 [[package]]
 name = "katana-db"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "anyhow",
- "bitvec",
  "dojo-metrics",
  "katana-primitives",
  "katana-trie",
@@ -4939,32 +4957,46 @@ dependencies = [
  "serde",
  "serde_json",
  "smallvec",
- "starknet",
- "starknet-types-core",
  "tempfile",
- "thiserror",
+ "thiserror 1.0.69",
  "tracing",
 ]
 
 [[package]]
 name = "katana-executor"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "blockifier",
  "katana-cairo",
  "katana-primitives",
  "katana-provider",
+ "katana-trie",
  "parking_lot",
  "starknet",
- "thiserror",
+ "thiserror 1.0.69",
  "tracing",
 ]
 
 [[package]]
+name = "katana-feeder-gateway"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
+dependencies = [
+ "katana-primitives",
+ "katana-rpc-types",
+ "reqwest 0.11.27",
+ "serde",
+ "starknet",
+ "thiserror 1.0.69",
+ "tracing",
+ "url",
+]
+
+[[package]]
 name = "katana-node"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "anyhow",
  "const_format",
@@ -4980,54 +5012,55 @@ dependencies = [
  "katana-primitives",
  "katana-rpc",
  "katana-rpc-api",
+ "katana-stage",
  "katana-tasks",
+ "serde",
  "serde_json",
  "starknet",
  "strum 0.25.0",
  "strum_macros 0.25.3",
+ "thiserror 1.0.69",
  "tower 0.4.13",
  "tower-http 0.4.4",
  "tracing",
+ "url",
  "vergen",
  "vergen-gitcl",
 ]
 
 [[package]]
 name = "katana-pipeline"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
- "anyhow",
- "async-trait",
  "futures",
- "katana-core",
- "katana-executor",
- "katana-pool",
- "katana-tasks",
- "thiserror",
+ "katana-primitives",
+ "katana-provider",
+ "katana-stage",
+ "thiserror 1.0.69",
  "tokio",
  "tracing",
 ]
 
 [[package]]
 name = "katana-pool"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "futures",
  "katana-executor",
  "katana-primitives",
  "katana-provider",
  "parking_lot",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
  "tracing",
 ]
 
 [[package]]
 name = "katana-primitives"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -5042,18 +5075,22 @@ dependencies = [
  "rand",
  "serde",
  "serde_json",
+ "serde_json_pythonic",
  "serde_with",
  "starknet",
  "starknet-crypto 0.7.3",
  "starknet-types-core",
- "thiserror",
+ "strum 0.25.0",
+ "strum_macros 0.25.3",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
 name = "katana-provider"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
+ "alloy-primitives",
  "anyhow",
  "auto_impl",
  "bitvec",
@@ -5062,21 +5099,23 @@ dependencies = [
  "katana-primitives",
  "katana-trie",
  "parking_lot",
+ "serde_json",
  "starknet",
  "starknet-types-core",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
  "tracing",
 ]
 
 [[package]]
 name = "katana-rpc"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "anyhow",
  "dojo-metrics",
  "futures",
+ "http 0.2.12",
  "jsonrpsee",
  "katana-core",
  "katana-executor",
@@ -5088,17 +5127,20 @@ dependencies = [
  "katana-rpc-types-builder",
  "katana-tasks",
  "metrics 0.23.0",
+ "serde_json",
  "starknet",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
+ "tower 0.4.13",
+ "tower-http 0.4.4",
  "tracing",
  "url",
 ]
 
 [[package]]
 name = "katana-rpc-api"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "jsonrpsee",
  "katana-core",
@@ -5109,12 +5151,13 @@ dependencies = [
 
 [[package]]
 name = "katana-rpc-types"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "alloy-primitives",
  "anyhow",
  "derive_more 0.99.18",
+ "flate2",
  "futures",
  "jsonrpsee",
  "katana-cairo",
@@ -5123,18 +5166,21 @@ dependencies = [
  "katana-pool",
  "katana-primitives",
  "katana-provider",
+ "katana-trie",
  "num-traits",
  "serde",
  "serde_json",
+ "serde_json_pythonic",
  "serde_with",
+ "similar-asserts",
  "starknet",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
 name = "katana-rpc-types-builder"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "anyhow",
  "katana-executor",
@@ -5146,8 +5192,8 @@ dependencies = [
 
 [[package]]
 name = "katana-slot-controller"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -5163,13 +5209,37 @@ dependencies = [
 ]
 
 [[package]]
+name = "katana-stage"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "backon",
+ "futures",
+ "katana-core",
+ "katana-executor",
+ "katana-feeder-gateway",
+ "katana-pool",
+ "katana-primitives",
+ "katana-provider",
+ "katana-rpc-types",
+ "katana-tasks",
+ "num-traits",
+ "starknet",
+ "thiserror 1.0.69",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
 name = "katana-tasks"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "futures",
  "rayon",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
  "tokio-metrics",
  "tokio-util",
@@ -5178,8 +5248,8 @@ dependencies = [
 
 [[package]]
 name = "katana-trie"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "anyhow",
  "bitvec",
@@ -5189,7 +5259,7 @@ dependencies = [
  "slab",
  "starknet",
  "starknet-types-core",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -5495,7 +5565,7 @@ dependencies = [
  "metrics 0.23.0",
  "metrics-util",
  "quanta",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
  "tracing",
 ]
@@ -6091,7 +6161,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "879952a81a83930934cbf1786752d6dedc3b1f29e8f8fb2ad1d0a36f377cf442"
 dependencies = [
  "memchr",
- "thiserror",
+ "thiserror 1.0.69",
  "ucd-trie",
 ]
 
@@ -6514,7 +6584,7 @@ dependencies = [
  "rustc-hash 2.0.0",
  "rustls 0.23.16",
  "socket2 0.5.7",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
  "tracing",
 ]
@@ -6531,7 +6601,7 @@ dependencies = [
  "rustc-hash 2.0.0",
  "rustls 0.23.16",
  "slab",
- "thiserror",
+ "thiserror 1.0.69",
  "tinyvec",
  "tracing",
 ]
@@ -6673,7 +6743,7 @@ checksum = "ba009ff324d1fc1b900bd1fdb31564febe58a8ccc8a6fdbb93b543d33b13ca43"
 dependencies = [
  "getrandom",
  "libredox",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -6821,7 +6891,7 @@ dependencies = [
  "libc",
  "parking_lot",
  "reth-mdbx-sys",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -7449,9 +7519,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.132"
+version = "1.0.135"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d726bfaff4b320266d395898905d0eba0345aae23b54aee3a737e260fd46db03"
+checksum = "2b0d7ba2887406110130a978386c4e1befb98c674b4fba677954e4db976630d9"
 dependencies = [
  "itoa",
  "memchr",
@@ -7646,6 +7716,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "similar"
+version = "2.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1de1d4f81173b03af4c0cbed3c898f6bff5b870e4a7f5d6f4057d62a7a4b686e"
+dependencies = [
+ "bstr",
+ "unicode-segmentation",
+]
+
+[[package]]
+name = "similar-asserts"
+version = "1.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cfe85670573cd6f0fa97940f26e7e6601213c3b0555246c24234131f88c5709e"
+dependencies = [
+ "console",
+ "similar",
+]
+
+[[package]]
 name = "siphasher"
 version = "0.3.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7683,7 +7773,7 @@ dependencies = [
  "serde_json",
  "starknet",
  "tempfile",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
  "tower-http 0.5.2",
  "tracing",
@@ -7709,7 +7799,7 @@ dependencies = [
  "serde_json",
  "starknet",
  "tempfile",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
  "tower-http 0.5.2",
  "tracing",
@@ -7737,12 +7827,21 @@ dependencies = [
  "serde",
  "slot 0.28.0",
  "starknet",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
  "toml",
  "torii-cli",
  "update-informer",
  "url",
+]
+
+[[package]]
+name = "slotmap"
+version = "1.0.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dbff4acf519f630b3a3ddcfaea6c06b42174d9a44bc70c620e9ed1649d58b82a"
+dependencies = [
+ "version_check",
 ]
 
 [[package]]
@@ -7894,7 +7993,7 @@ dependencies = [
  "sha2",
  "smallvec",
  "sqlformat",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
  "tokio-stream",
  "tracing",
@@ -7980,7 +8079,7 @@ dependencies = [
  "smallvec",
  "sqlx-core",
  "stringprep",
- "thiserror",
+ "thiserror 1.0.69",
  "tracing",
  "uuid 1.11.0",
  "whoami",
@@ -8020,7 +8119,7 @@ dependencies = [
  "smallvec",
  "sqlx-core",
  "stringprep",
- "thiserror",
+ "thiserror 1.0.69",
  "tracing",
  "uuid 1.11.0",
  "whoami",
@@ -8085,7 +8184,7 @@ dependencies = [
  "starknet-crypto 0.7.3",
  "starknet-providers",
  "starknet-signers",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -8100,7 +8199,7 @@ dependencies = [
  "starknet-accounts",
  "starknet-core",
  "starknet-providers",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -8258,7 +8357,7 @@ dependencies = [
  "serde_json",
  "serde_with",
  "starknet-core",
- "thiserror",
+ "thiserror 1.0.69",
  "url",
 ]
 
@@ -8276,7 +8375,7 @@ dependencies = [
  "rand",
  "starknet-core",
  "starknet-crypto 0.7.3",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -8316,7 +8415,7 @@ dependencies = [
  "starknet-types-core",
  "strum 0.24.1",
  "strum_macros 0.24.3",
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -8579,7 +8678,16 @@ version = "1.0.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b6aaf5339b578ea85b50e080feb250a3e8ae8cfcdff9a461c9ec2904bc923f52"
 dependencies = [
- "thiserror-impl",
+ "thiserror-impl 1.0.69",
+]
+
+[[package]]
+name = "thiserror"
+version = "2.0.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d452f284b73e6d76dd36758a0c8684b1d5be31f92b89d07fd5822175732206fc"
+dependencies = [
+ "thiserror-impl 2.0.11",
 ]
 
 [[package]]
@@ -8587,6 +8695,17 @@ name = "thiserror-impl"
 version = "1.0.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4fee6c4efc90059e10f81e6d42c60a18f76588c3d74cb83a0b242a2b6c7504c1"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.87",
+]
+
+[[package]]
+name = "thiserror-impl"
+version = "2.0.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "26afc1baea8a989337eeb52b6e72a039780ce45c3edfcc9c5b9d112feeb173c2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -8847,8 +8966,8 @@ dependencies = [
 
 [[package]]
 name = "torii-cli"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "anyhow",
  "camino",
@@ -8857,30 +8976,30 @@ dependencies = [
  "serde",
  "starknet",
  "toml",
- "torii-core",
+ "torii-sqlite",
  "url",
 ]
 
 [[package]]
-name = "torii-core"
-version = "1.0.1"
-source = "git+https://github.com/dojoengine/dojo?rev=0342464#0342464e7e36eda1771d9531038f0218fa596f0d"
+name = "torii-sqlite"
+version = "1.0.10"
+source = "git+https://github.com/dojoengine/dojo?rev=a5377ac#a5377ac673ee84a1653cdc5625538600faa226dd"
 dependencies = [
  "anyhow",
  "async-trait",
  "base64 0.21.7",
  "bitflags 2.6.0",
- "cainome 0.4.6",
+ "cainome 0.4.11",
  "chrono",
  "crypto-bigint",
  "data-url",
  "dojo-types",
+ "dojo-utils",
  "dojo-world",
  "futures-channel",
  "futures-util",
  "hashlink",
  "ipfs-api-backend-hyper",
- "num-traits",
  "once_cell",
  "reqwest 0.11.27",
  "serde",
@@ -8889,7 +9008,7 @@ dependencies = [
  "sqlx",
  "starknet",
  "starknet-crypto 0.7.3",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
  "tokio-util",
  "tracing",
@@ -9164,7 +9283,7 @@ version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c878a167baa8afd137494101a688ef8c67125089ff2249284bd2b5f9bfedb815"
 dependencies = [
- "thiserror",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
