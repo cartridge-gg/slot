@@ -26,3 +26,18 @@ graphql-client introspect-schema --output slot/schema.json https://api.cartridge
 # Using this command actually change the macro to something auto-generated. And we prefer macro expansion.
 # graphql-client generate --schema-path slot/schema.json slot/src/graphql/deployments/update.graphql
 ```
+
+## Local Development
+
+### Pointing to a local API
+
+Run the cartridge api locally.
+
+Then set these variables in your slot directory:
+
+```shell
+export CARTRIDGE_API_URL=http://localhost:8000
+export CARTRIDGE_KEYCHAIN_URL=http://localhost:3001
+```
+
+Then run `cargo run -- <cmd>`.
