@@ -1,10 +1,12 @@
 use self::{email::EmailArgs, info::InfoArgs, login::LoginArgs};
 use crate::command::auth::billing::BillingArgs;
+use crate::command::auth::fund::FundArgs;
 use anyhow::Result;
 use clap::Subcommand;
 
 mod billing;
 mod email;
+mod fund;
 mod info;
 mod login;
 mod session;
@@ -23,6 +25,9 @@ pub enum Auth {
     #[command(about = "Manage slot billing for the authenticated user.")]
     EnableSlotBilling(BillingArgs),
 
+    #[command(about = "Fund the authenticated user's account.")]
+    Fund(FundArgs),
+
     // Mostly for testing purposes, will eventually turn it into a library call from `sozo`.
     #[command(hide = true)]
     CreateSession(session::CreateSession),
@@ -36,6 +41,7 @@ impl Auth {
             Auth::CreateSession(args) => args.run().await,
             Auth::SetEmail(args) => args.run().await,
             Auth::EnableSlotBilling(args) => args.run().await,
+            Auth::Fund(args) => args.run().await,
         }
     }
 }
