@@ -25,7 +25,11 @@ pub struct CreateArgs {
     #[arg(help = "Deployment tier.")]
     pub tier: Tier,
 
-    #[arg(short, long)]
+    #[arg(long, default_value = "1")]
+    #[arg(help = "The number of replicas to deploy.")]
+    pub replicas: Option<i64>,
+
+    #[arg(long)]
     #[arg(help = "The list of regions to deploy to.")]
     #[arg(value_name = "regions")]
     #[arg(value_delimiter = ',')]
@@ -94,6 +98,7 @@ impl CreateArgs {
             tier,
             service,
             wait: Some(true),
+            replicas: self.replicas,
             regions: self.regions.clone(),
         });
 
