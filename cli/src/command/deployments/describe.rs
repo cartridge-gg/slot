@@ -39,6 +39,7 @@ impl DescribeArgs {
 
         if let Some(deployment) = data.deployment {
             println!("Project: {}", deployment.project);
+            println!("Version: {}", deployment.version);
             println!(
                 "Branch: {}",
                 deployment.branch.unwrap_or_else(|| String::from("Default"))
