@@ -6,11 +6,7 @@ use slot::{api::Client, credential::Credentials};
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Set billing options")]
-pub struct BillingArgs {
-    #[arg(help = "Enable slot billing for the authenticated user.")]
-    #[clap(long, short, action)]
-    pub enabled: bool,
-}
+pub struct BillingArgs {}
 
 impl BillingArgs {
     pub async fn run(&self) -> Result<()> {
@@ -19,7 +15,7 @@ impl BillingArgs {
 
         let request_body = UpdateMe::build_query(Variables {
             email: None,
-            slot_billing: Some(self.enabled),
+            slot_billing: Some(true),
         });
         let res: ResponseData = client.query(&request_body).await?;
         print!("{:?}", res);
