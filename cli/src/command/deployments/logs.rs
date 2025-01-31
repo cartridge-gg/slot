@@ -79,7 +79,6 @@ impl LogReader {
         let service = match self.service {
             Service::Katana => DeploymentService::katana,
             Service::Torii => DeploymentService::torii,
-            Service::Saya => DeploymentService::saya,
         };
 
         let request_body = DeploymentLogs::build_query(Variables {
