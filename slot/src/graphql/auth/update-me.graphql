@@ -6,6 +6,8 @@ mutation UpdateMe(
 		slotBilling: $slotBilling
 		email: $email
 	}) {
-		id
+		username
+		slotBilling
+		email
 	}
 }
