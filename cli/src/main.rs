@@ -7,7 +7,6 @@ use clap::Parser;
 use colored::*;
 use update_informer::{registry, Check};
 
-/// Slot CLI for Cartridge
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 pub struct Cli {
