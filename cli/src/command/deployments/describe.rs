@@ -24,7 +24,6 @@ impl DescribeArgs {
         let service = match self.service {
             Service::Torii => DeploymentService::torii,
             Service::Katana => DeploymentService::katana,
-            Service::Saya => DeploymentService::saya,
         };
 
         let request_body = DescribeDeployment::build_query(Variables {

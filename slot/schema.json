@@ -8742,12 +8742,6 @@
               "description": null,
               "isDeprecated": false,
               "name": "torii"
-            },
-            {
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "saya"
             }
           ],
           "fields": [],

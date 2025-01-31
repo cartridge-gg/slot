@@ -75,11 +75,6 @@ impl CreateArgs {
                     config: slot::read::base64_encode_string(&service_config),
                 }
             }
-            CreateServiceCommands::Saya(config) => CreateServiceInput {
-                type_: DeploymentService::saya,
-                version: config.version.clone(),
-                config: "TODO".to_string(),
-            },
         };
 
         let tier = match &self.tier {
@@ -103,7 +98,6 @@ impl CreateArgs {
         let service = match &self.create_commands {
             CreateServiceCommands::Katana(_) => "katana",
             CreateServiceCommands::Torii(_) => "torii",
-            CreateServiceCommands::Saya(_) => "saya",
         };
 
         println!(
