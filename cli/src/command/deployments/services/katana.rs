@@ -1,3 +1,4 @@
+use anyhow::anyhow;
 use clap::Args;
 use katana_cli::NodeArgs;
 
@@ -10,6 +11,26 @@ pub struct KatanaCreateArgs {
 
     #[command(flatten)]
     pub node_args: NodeArgs,
+
+    #[arg(long, short, value_name = "persistent mode")]
+    #[arg(help = "Whether to run the service in persistent mode (saya).")]
+    pub persistent: bool,
+
+    #[arg(long, short, value_name = "network")]
+    #[arg(help = "Network to use for the service. Only in persistent (saya) mode.")]
+    pub network: Option<String>,
+}
+
+impl KatanaCreateArgs {
+    /// Validate the provided arguments
+    pub fn validate(&self) -> Result<(), anyhow::Error> {
+        if self.network.is_some() && !self.persistent {
+            return Err(anyhow!(
+                "The `network` option can only be supplied when `--persistent` is enabled.",
+            ));
+        }
+        Ok(())
+    }
 }
 
 #[derive(Debug, Args, serde::Serialize)]

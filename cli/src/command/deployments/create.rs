@@ -44,6 +44,8 @@ impl CreateArgs {
     pub async fn run(&self) -> Result<()> {
         let service = match &self.create_commands {
             CreateServiceCommands::Katana(config) => {
+                config.validate()?;
+
                 let service_config =
                     toml::to_string(&NodeArgsConfig::try_from(config.node_args.clone())?)?;
 
@@ -57,6 +59,10 @@ impl CreateArgs {
                     type_: DeploymentService::katana,
                     version: config.version.clone(),
                     config: slot::read::base64_encode_string(&service_config),
+                    katana: Some(KatanaCreateInput {
+                        persistent: Some(config.persistent),
+                        network: config.network.clone(),
+                    }),
                 }
             }
             CreateServiceCommands::Torii(config) => {
@@ -73,6 +79,7 @@ impl CreateArgs {
                     type_: DeploymentService::torii,
                     version: config.version.clone(),
                     config: slot::read::base64_encode_string(&service_config),
+                    katana: None,
                 }
             }
         };
