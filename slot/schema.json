@@ -6284,6 +6284,16 @@
                   "ofType": null
                 }
               }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "katana",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "KatanaCreateInput",
+                "ofType": null
+              }
             }
           ],
           "interfaces": [],
@@ -11693,6 +11703,37 @@
           "interfaces": [],
           "kind": "SCALAR",
           "name": "JSON",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "persistent",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "network",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "KatanaCreateInput",
           "possibleTypes": []
         },
         {
