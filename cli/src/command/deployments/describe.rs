@@ -52,6 +52,12 @@ impl DescribeArgs {
 
             // convert config of type String to &str
             print_config_file(&deployment.config.config_file);
+
+            if deployment.error.is_some() {
+                println!("\n─────────────── ERROR INFO ───────────────");
+                println!("Error: {}", deployment.error.unwrap());
+                println!("\n─────────────── ERROR INFO ───────────────");
+            }
         }
 
         Ok(())

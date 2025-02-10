@@ -4,6 +4,7 @@ query DescribeDeployment($project: String!, $service: DeploymentService!) {
     branch
     tier
     version
+    error
     config {
       configFile
     }
