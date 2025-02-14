@@ -13,12 +13,16 @@ pub struct KatanaCreateArgs {
     pub node_args: NodeArgs,
 
     #[arg(long, short, value_name = "provable mode")]
-    #[arg(help = "Whether to run the service in provable mode (saya).")]
+    #[arg(help = "Whether to run the service in provable mode.")]
     pub provable: bool,
 
     #[arg(long, short, value_name = "network")]
-    #[arg(help = "Network to use for the service. Only in provable (saya) mode.")]
+    #[arg(help = "Network to use for the service. Only in provable mode.")]
     pub network: Option<String>,
+
+    #[arg(long, short, value_name = "network")]
+    #[arg(help = "Whether to use saya. Only in provable mode.")]
+    pub saya: Option<String>,
 }
 
 impl KatanaCreateArgs {
@@ -27,6 +31,11 @@ impl KatanaCreateArgs {
         if self.network.is_some() && !self.provable {
             return Err(anyhow!(
                 "The `network` option can only be supplied when `--provable` is enabled.",
+            ));
+        }
+        if self.saya.is_some() && !self.provable {
+            return Err(anyhow!(
+                "The `saya` option can only be supplied when `--provable` is enabled.",
             ));
         }
         Ok(())
