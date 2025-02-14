@@ -60,7 +60,7 @@ impl CreateArgs {
                     version: config.version.clone(),
                     config: slot::read::base64_encode_string(&service_config),
                     katana: Some(KatanaCreateInput {
-                        persistent: Some(config.persistent),
+                        provable: Some(config.provable),
                         network: config.network.clone(),
                     }),
                 }
