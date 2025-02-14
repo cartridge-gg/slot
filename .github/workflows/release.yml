@@ -108,7 +108,7 @@ jobs:
         shell: bash
 
       - name: Upload release artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: artifacts
           path: ${{ steps.artifacts.outputs.file_name }}
@@ -123,7 +123,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: artifacts
           path: artifacts
