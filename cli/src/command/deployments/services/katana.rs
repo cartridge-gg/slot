@@ -17,7 +17,7 @@ pub struct KatanaCreateArgs {
     pub provable: bool,
 
     #[arg(long, short, value_name = "network")]
-    #[arg(help = "Network to use for the service. Only in provable (saya) mode.")]
+    #[arg(help = "Network to use for the service. Only in provable mode.")]
     pub network: Option<String>,
 }
 
