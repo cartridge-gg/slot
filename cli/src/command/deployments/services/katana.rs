@@ -13,7 +13,7 @@ pub struct KatanaCreateArgs {
     pub node_args: NodeArgs,
 
     #[arg(long, short, value_name = "provable mode")]
-    #[arg(help = "Whether to run the service in provable mode (saya).")]
+    #[arg(help = "Whether to run the service in provable mode.")]
     pub provable: bool,
 
     #[arg(long, short, value_name = "network")]
