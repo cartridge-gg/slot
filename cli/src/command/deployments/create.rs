@@ -61,8 +61,8 @@ impl CreateArgs {
                     config: slot::read::base64_encode_string(&service_config),
                     katana: Some(KatanaCreateInput {
                         provable: Some(config.provable),
-                        saya: Some(config.saya),
                         network: config.network.clone(),
+                        saya: Some(config.saya),
                     }),
                 }
             }
