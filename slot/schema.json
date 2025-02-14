@@ -11903,7 +11903,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "persistent",
+              "name": "provable",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
