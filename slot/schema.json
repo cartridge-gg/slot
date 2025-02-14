@@ -11913,6 +11913,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "saya",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "network",
               "type": {
                 "kind": "SCALAR",

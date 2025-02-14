@@ -62,6 +62,7 @@ impl CreateArgs {
                     katana: Some(KatanaCreateInput {
                         provable: Some(config.provable),
                         network: config.network.clone(),
+                        saya: Some(config.saya),
                     }),
                 }
             }
