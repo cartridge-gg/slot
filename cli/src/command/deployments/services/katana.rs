@@ -21,7 +21,7 @@ pub struct KatanaCreateArgs {
     pub network: Option<String>,
 
     #[arg(long, short, value_name = "network")]
-    #[arg(help = "Whether to use saya. Only in provable mode.")]
+    #[arg(help = "Whether to start a saya instance alongside the provable Katana. Only in provable mode.")]
     pub saya: Option<String>,
 }
 
