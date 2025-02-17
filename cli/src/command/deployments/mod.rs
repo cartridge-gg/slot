@@ -54,8 +54,8 @@ impl Deployments {
 pub enum Tier {
     Basic,
     Common,
-    Rare,
     Epic,
+    Insane,
 }
 
 /// Returns the service url for a given project and service.

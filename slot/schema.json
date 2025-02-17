@@ -8827,18 +8827,6 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "uncommon"
-            },
-            {
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "rare"
-            },
-            {
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
               "name": "epic"
             },
             {
