@@ -70,8 +70,8 @@ impl UpdateArgs {
             None => None,
             Some(Tier::Basic) => Some(DeploymentTier::basic),
             Some(Tier::Common) => Some(DeploymentTier::common),
-            Some(Tier::Rare) => Some(DeploymentTier::rare),
             Some(Tier::Epic) => Some(DeploymentTier::epic),
+            Some(Tier::Insane) => Some(DeploymentTier::insane),
         };
 
         let request_body = UpdateDeployment::build_query(Variables {
