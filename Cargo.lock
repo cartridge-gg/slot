@@ -7827,6 +7827,7 @@ dependencies = [
  "serde",
  "slot 0.33.0",
  "starknet",
+ "strum_macros 0.25.3",
  "thiserror 1.0.69",
  "tokio",
  "toml",

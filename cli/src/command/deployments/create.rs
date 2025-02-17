@@ -4,6 +4,8 @@ use std::path::PathBuf;
 
 use anyhow::Result;
 use clap::Args;
+use dialoguer::theme::ColorfulTheme;
+use dialoguer::Confirm;
 use katana_cli::file::NodeArgsConfig;
 use slot::api::Client;
 use slot::credential::Credentials;
@@ -38,10 +40,43 @@ pub struct CreateArgs {
 
     #[command(subcommand)]
     create_commands: CreateServiceCommands,
+
+    #[arg(help = "Force create confirmation", short('f'))]
+    pub force: bool,
 }
 
 impl CreateArgs {
     pub async fn run(&self) -> Result<()> {
+        let tier_pricing = vec![
+            (Tier::Basic, "3"),
+            (Tier::Common, "5"),
+            (Tier::Epic, "15"),
+            (Tier::Legendary, "35"),
+            (Tier::Insane, "50"),
+        ]
+        .into_iter()
+        .collect::<std::collections::HashMap<_, _>>();
+
+        if self.tier != Tier::Basic {
+            // billing
+            if !self.force {
+                let confirmation = Confirm::with_theme(&ColorfulTheme::default())
+                  .with_prompt(format!(
+                      "You are creating a `{}` instance, which will cost you around ${} per month (billed daily). Do you want to proceed?",
+                      &self.tier,
+                      tier_pricing.get(&self.tier).unwrap()
+                  ))
+                  .default(false)
+                  .show_default(true)
+                  .wait_for_newline(true)
+                  .interact()?;
+
+                if !confirmation {
+                    return Ok(());
+                }
+            }
+        }
+
         let service = match &self.create_commands {
             CreateServiceCommands::Katana(config) => {
                 config.validate()?;
@@ -89,6 +124,7 @@ impl CreateArgs {
             Tier::Basic => DeploymentTier::basic,
             Tier::Common => DeploymentTier::common,
             Tier::Epic => DeploymentTier::epic,
+            Tier::Legendary => DeploymentTier::legendary,
             Tier::Insane => DeploymentTier::insane,
         };
 
