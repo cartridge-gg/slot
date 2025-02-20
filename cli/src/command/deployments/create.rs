@@ -25,10 +25,6 @@ pub struct CreateArgs {
     #[arg(help = "Deployment tier.")]
     pub tier: Tier,
 
-    #[arg(long, default_value = "1")]
-    #[arg(help = "The number of replicas to deploy.")]
-    pub replicas: Option<i64>,
-
     #[arg(long)]
     #[arg(help = "The list of regions to deploy to.")]
     #[arg(value_name = "regions")]
@@ -68,6 +64,7 @@ impl CreateArgs {
                         network: config.network.clone(),
                         saya: Some(config.saya),
                     }),
+                    torii: None,
                 }
             }
             CreateServiceCommands::Torii(config) => {
@@ -85,6 +82,9 @@ impl CreateArgs {
                     version: config.version.clone(),
                     config: slot::read::base64_encode_string(&service_config),
                     katana: None,
+                    torii: Some(ToriiCreateInput {
+                        replicas: config.replicas,
+                    }),
                 }
             }
         };
@@ -101,7 +101,6 @@ impl CreateArgs {
             tier,
             service,
             wait: Some(true),
-            replicas: self.replicas,
             regions: self.regions.clone(),
         });
 

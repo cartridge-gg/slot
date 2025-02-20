@@ -2,14 +2,12 @@ mutation UpdateDeployment(
   $project: String!
   $service: UpdateServiceInput!
   $tier: DeploymentTier
-  $replicas: Int
   $wait: Boolean
 ) {
   updateDeployment(
     name: $project
     service: $service
     tier: $tier
-    replicas: $replicas
     wait: $wait
   ) {
     __typename

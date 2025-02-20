@@ -42,6 +42,7 @@ impl UpdateArgs {
                     type_: DeploymentService::katana,
                     version: config.version.clone(),
                     config: Some(slot::read::base64_encode_string(&service_config)),
+                    torii: None,
                 }
             }
             UpdateServiceCommands::Torii(config) => {
@@ -66,6 +67,9 @@ impl UpdateArgs {
                     type_: DeploymentService::torii,
                     version: config.version.clone(),
                     config: Some(slot::read::base64_encode_string(&service_config)),
+                    torii: Some(ToriiUpdateInput {
+                        replicas: config.replicas,
+                    }),
                 }
             }
         };
@@ -82,7 +86,6 @@ impl UpdateArgs {
             project: self.project.clone(),
             tier,
             service,
-            replicas: self.replicas,
             wait: Some(true),
         });
 
