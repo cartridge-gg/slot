@@ -2,12 +2,10 @@ use clap::{Subcommand, ValueEnum};
 
 use self::{
     katana::{KatanaAccountArgs, KatanaCreateArgs, KatanaUpdateArgs},
-    saya::{SayaCreateArgs, SayaUpdateArgs},
     torii::{ToriiCreateArgs, ToriiUpdateArgs},
 };
 
 mod katana;
-mod saya;
 mod torii;
 
 #[derive(Debug, Subcommand, serde::Serialize)]
@@ -16,9 +14,7 @@ pub enum CreateServiceCommands {
     #[command(about = "Katana deployment.")]
     Katana(KatanaCreateArgs),
     #[command(about = "Torii deployment.")]
-    Torii(ToriiCreateArgs),
-    #[command(about = "Saya deployment.")]
-    Saya(SayaCreateArgs),
+    Torii(Box<ToriiCreateArgs>),
 }
 
 #[derive(Debug, Subcommand, serde::Serialize)]
@@ -28,8 +24,6 @@ pub enum UpdateServiceCommands {
     Katana(KatanaUpdateArgs),
     #[command(about = "Torii deployment.")]
     Torii(Box<ToriiUpdateArgs>),
-    #[command(about = "Saya deployment.")]
-    Saya(SayaUpdateArgs),
 }
 
 #[derive(Debug, Subcommand, serde::Serialize)]
@@ -43,7 +37,6 @@ pub enum KatanaAccountCommands {
 pub enum Service {
     Katana,
     Torii,
-    Saya,
 }
 
 impl std::fmt::Display for Service {
@@ -51,7 +44,6 @@ impl std::fmt::Display for Service {
         match self {
             Service::Katana => write!(f, "katana"),
             Service::Torii => write!(f, "torii"),
-            Service::Saya => write!(f, "saya"),
         }
     }
 }

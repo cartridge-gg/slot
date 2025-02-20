@@ -68,19 +68,14 @@ impl UpdateArgs {
                     config: Some(slot::read::base64_encode_string(&service_config)),
                 }
             }
-            UpdateServiceCommands::Saya(config) => UpdateServiceInput {
-                type_: DeploymentService::saya,
-                version: config.version.clone(),
-                config: None, // TODO
-            },
         };
 
         let tier = match &self.tier {
             None => None,
             Some(Tier::Basic) => Some(DeploymentTier::basic),
             Some(Tier::Common) => Some(DeploymentTier::common),
-            Some(Tier::Rare) => Some(DeploymentTier::rare),
             Some(Tier::Epic) => Some(DeploymentTier::epic),
+            Some(Tier::Insane) => Some(DeploymentTier::insane),
         };
 
         let request_body = UpdateDeployment::build_query(Variables {
@@ -101,7 +96,6 @@ impl UpdateArgs {
         let service = match &self.update_commands {
             UpdateServiceCommands::Katana(_) => "katana",
             UpdateServiceCommands::Torii(_) => "torii",
-            UpdateServiceCommands::Saya(_) => "saya",
         };
 
         println!(

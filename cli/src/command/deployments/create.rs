@@ -48,6 +48,8 @@ impl CreateArgs {
     pub async fn run(&self) -> Result<()> {
         let service = match &self.create_commands {
             CreateServiceCommands::Katana(config) => {
+                config.validate()?;
+
                 let service_config =
                     toml::to_string(&NodeArgsConfig::try_from(config.node_args.clone())?)?;
 
@@ -61,6 +63,11 @@ impl CreateArgs {
                     type_: DeploymentService::katana,
                     version: config.version.clone(),
                     config: slot::read::base64_encode_string(&service_config),
+                    katana: Some(KatanaCreateInput {
+                        provable: Some(config.provable),
+                        network: config.network.clone(),
+                        saya: Some(config.saya),
+                    }),
                 }
             }
             CreateServiceCommands::Torii(config) => {
@@ -77,20 +84,16 @@ impl CreateArgs {
                     type_: DeploymentService::torii,
                     version: config.version.clone(),
                     config: slot::read::base64_encode_string(&service_config),
+                    katana: None,
                 }
             }
-            CreateServiceCommands::Saya(config) => CreateServiceInput {
-                type_: DeploymentService::saya,
-                version: config.version.clone(),
-                config: "TODO".to_string(),
-            },
         };
 
         let tier = match &self.tier {
             Tier::Basic => DeploymentTier::basic,
             Tier::Common => DeploymentTier::common,
-            Tier::Rare => DeploymentTier::rare,
             Tier::Epic => DeploymentTier::epic,
+            Tier::Insane => DeploymentTier::insane,
         };
 
         let request_body = CreateDeployment::build_query(Variables {
@@ -108,7 +111,6 @@ impl CreateArgs {
         let service = match &self.create_commands {
             CreateServiceCommands::Katana(_) => "katana",
             CreateServiceCommands::Torii(_) => "torii",
-            CreateServiceCommands::Saya(_) => "saya",
         };
 
         println!(

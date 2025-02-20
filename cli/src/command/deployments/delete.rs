@@ -10,7 +10,6 @@ use slot::{api::Client, credential::Credentials};
 pub enum Service {
     Katana,
     Torii,
-    Saya,
 }
 
 #[derive(Debug, Args)]
@@ -48,7 +47,6 @@ impl DeleteArgs {
         let service = match &self.service {
             Service::Katana => DeploymentService::katana,
             Service::Torii => DeploymentService::torii,
-            Service::Saya => DeploymentService::saya,
         };
 
         let request_body = DeleteDeployment::build_query(Variables {

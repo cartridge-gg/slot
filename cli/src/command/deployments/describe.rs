@@ -24,7 +24,6 @@ impl DescribeArgs {
         let service = match self.service {
             Service::Torii => DeploymentService::torii,
             Service::Katana => DeploymentService::katana,
-            Service::Saya => DeploymentService::saya,
         };
 
         let request_body = DescribeDeployment::build_query(Variables {
@@ -39,6 +38,7 @@ impl DescribeArgs {
 
         if let Some(deployment) = data.deployment {
             println!("Project: {}", deployment.project);
+            println!("Version: {}", deployment.version);
             println!(
                 "Branch: {}",
                 deployment.branch.unwrap_or_else(|| String::from("Default"))
@@ -52,6 +52,12 @@ impl DescribeArgs {
 
             // convert config of type String to &str
             print_config_file(&deployment.config.config_file);
+
+            if deployment.error.is_some() {
+                println!("\n─────────────── ERROR INFO ───────────────");
+                println!("Error: {}", deployment.error.unwrap());
+                println!("\n─────────────── ERROR INFO ───────────────");
+            }
         }
 
         Ok(())
