@@ -32,6 +32,7 @@ starknet.workspace = true
 toml = "0.8"
 url.workspace = true
 update-informer = { version = "1.1", default-features = false, features = ["ureq", "github"] }
+strum_macros = "0.25.3"
 
 [[bin]]
 name = "slot"
