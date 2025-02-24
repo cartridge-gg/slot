@@ -93,6 +93,7 @@ impl CreateArgs {
             Tier::Basic => DeploymentTier::basic,
             Tier::Common => DeploymentTier::common,
             Tier::Epic => DeploymentTier::epic,
+            Tier::Legendary => DeploymentTier::legendary,
             Tier::Insane => DeploymentTier::insane,
         };
 
