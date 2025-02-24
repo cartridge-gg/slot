@@ -55,6 +55,7 @@ pub enum Tier {
     Basic,
     Common,
     Epic,
+    Legendary,
     Insane,
 }
 
