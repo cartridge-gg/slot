@@ -71,6 +71,7 @@ impl UpdateArgs {
             Some(Tier::Basic) => Some(DeploymentTier::basic),
             Some(Tier::Common) => Some(DeploymentTier::common),
             Some(Tier::Epic) => Some(DeploymentTier::epic),
+            Some(Tier::Legendary) => Some(DeploymentTier::legendary),
             Some(Tier::Insane) => Some(DeploymentTier::insane),
         };
 
