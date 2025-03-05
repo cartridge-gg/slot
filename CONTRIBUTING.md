@@ -5,9 +5,9 @@
 The commands that Slot CLI offers must reflect what's the internal infrastructure is expecting.
 The current design is the following:
 
-1. Slot CLI implements infra specific commands (like accounts, teams, etc..). Those one are directly mapped to the infra specific code.
+1. Slot CLI implements infra specific commands (like accounts, teams, etc..). Those ones are directly mapped to the infra specific code.
 2. To use the services like Katana, Torii, etc.. Slot CLI must know the arguments that each service expects. For this, Slot CLI is using the `cli` crate for each service.
-3. When creating or updating a service like Katana and Torii, Slot CLI will gather the arguments from the CLI and creates a TOML configuration file for each service, which will ease the process of creating the services and passing arguments to the corresponding service.
+3. When creating or updating a service like Katana and Torii, Slot CLI will gather the arguments from the CLI and create a TOML configuration file for each service, which will ease the process of creating the services and passing arguments to the corresponding service.
 
 ## GraphQL
 
