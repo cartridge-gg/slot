@@ -7940,6 +7940,7 @@ dependencies = [
  "dirs 5.0.1",
  "graphql_client",
  "hyper 1.6.0",
+ "num-bigint",
  "reqwest 0.12.12",
  "serde",
  "serde_json",

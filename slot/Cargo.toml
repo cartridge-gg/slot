@@ -29,6 +29,7 @@ hyper.workspace = true
 
 account_sdk = { git = "https://github.com/cartridge-gg/controller", rev = "61d2fd0" }
 base64 = "0.22.1"
+num-bigint = "0.4.6"
 
 [dev-dependencies]
 assert_matches = "1.5.0"

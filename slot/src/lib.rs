@@ -2,6 +2,7 @@
 
 pub mod account;
 pub mod api;
+pub mod bigint;
 pub mod browser;
 pub mod credential;
 pub mod graphql;
