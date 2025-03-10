@@ -1,0 +1,8 @@
+mutation Transfer($transfer: TransferInput!) {
+	transfer(data: $transfer) {
+		accountBefore
+		accountAfter
+		teamBefore
+		teamAfter
+	}
+}

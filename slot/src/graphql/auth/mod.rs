@@ -22,6 +22,14 @@ pub struct Me;
 )]
 pub struct UpdateMe;
 
+#[derive(GraphQLQuery)]
+#[graphql(
+    schema_path = "schema.json",
+    query_path = "src/graphql/auth/transfer.graphql",
+    response_derives = "Debug, Clone, Serialize"
+)]
+pub struct Transfer;
+
 impl From<MeMe> for account::AccountInfo {
     fn from(value: MeMe) -> Self {
         let id = value.id;
