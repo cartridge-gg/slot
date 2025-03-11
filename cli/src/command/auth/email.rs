@@ -18,7 +18,6 @@ impl EmailArgs {
 
         let request_body = UpdateMe::build_query(Variables {
             email: Some(self.email.clone()),
-            slot_billing: None,
         });
         let res: ResponseData = client.query(&request_body).await?;
         print!("{:?}", res);
