@@ -72,6 +72,11 @@ jobs:
         with:
           cache-on-failure: true
 
+      # Required to build Katana at the moment.
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
       - name: Apple M1 setup
         if: ${{ matrix.job.target == 'aarch64-apple-darwin' }}
         run: |
