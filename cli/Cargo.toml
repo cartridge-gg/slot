@@ -20,7 +20,7 @@ log = "0.4"
 graphql_client.workspace = true
 katana-primitives = { git = "https://github.com/dojoengine/dojo", rev = "e9f7e18" }
 torii-cli = { git = "https://github.com/dojoengine/dojo", rev = "e9f7e18", default-features = false }
-katana-cli = { git = "https://github.com/dojoengine/dojo", rev = "38dc02705b9a85e0a3bcf607181d4fb567a4957a", default-features = false, features = [
+katana-cli = { git = "https://github.com/dojoengine/dojo", rev = "3b15aa41e42582dadb44f6b9b5d053204ae28144", default-features = false, features = [
 	"slot",
 ] }
 
