@@ -8,7 +8,6 @@ use clap::Subcommand;
 use auth::Auth;
 use deployments::Deployments;
 use teams::Teams;
-use crate::command::teams::create::CreateTeamArgs;
 
 #[allow(clippy::large_enum_variant)]
 #[derive(Subcommand, Debug)]
