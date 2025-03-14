@@ -8,6 +8,7 @@ use clap::Subcommand;
 use auth::Auth;
 use deployments::Deployments;
 use teams::Teams;
+use crate::command::teams::create::CreateTeamArgs;
 
 #[allow(clippy::large_enum_variant)]
 #[derive(Subcommand, Debug)]
@@ -15,9 +16,11 @@ pub enum Command {
     #[command(subcommand)]
     #[command(about = "Manage auth credentials for the Slot CLI.", aliases = ["a"])]
     Auth(Auth),
+
     #[command(subcommand)]
     #[command(about = "Manage Slot deployments.", aliases = ["d"])]
     Deployments(Deployments),
+
     #[command(about = "Manage Slot team.", aliases = ["t"])]
     Teams(Teams),
 }

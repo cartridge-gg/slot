@@ -14,6 +14,7 @@ mod describe;
 mod list;
 mod logs;
 mod services;
+mod transfer;
 mod update;
 
 pub const CARTRIDGE_BASE_URL: &str = "https://api.cartridge.gg/x";
