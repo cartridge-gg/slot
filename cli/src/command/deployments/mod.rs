@@ -1,11 +1,11 @@
-use anyhow::Result;
-use clap::Subcommand;
-use colored::*;
-use crate::command::deployments::transfer::TransferArgs;
 use self::{
     accounts::AccountsArgs, create::CreateArgs, delete::DeleteArgs, describe::DescribeArgs,
     list::ListArgs, logs::LogsArgs, update::UpdateArgs,
 };
+use crate::command::deployments::transfer::TransferArgs;
+use anyhow::Result;
+use clap::Subcommand;
+use colored::*;
 
 mod accounts;
 mod create;
@@ -21,7 +21,6 @@ pub const CARTRIDGE_BASE_URL: &str = "https://api.cartridge.gg/x";
 
 #[derive(Subcommand, Debug)]
 pub enum Deployments {
-
     #[command(about = "Create a new deployment.")]
     Create(CreateArgs),
 

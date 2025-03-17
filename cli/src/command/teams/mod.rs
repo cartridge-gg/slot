@@ -1,10 +1,10 @@
+use self::members::{TeamAddArgs, TeamListArgs, TeamRemoveArgs};
+use crate::command::teams::create::CreateTeamArgs;
 use anyhow::Result;
 use clap::{Args, Subcommand};
-use crate::command::teams::create::CreateTeamArgs;
-use self::members::{TeamAddArgs, TeamListArgs, TeamRemoveArgs};
 
-mod members;
 mod create;
+mod members;
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Team options")]
