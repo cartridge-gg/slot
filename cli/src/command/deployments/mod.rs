@@ -1,6 +1,7 @@
 use anyhow::Result;
 use clap::Subcommand;
 use colored::*;
+use strum_macros::Display;
 
 use self::{
     accounts::AccountsArgs, create::CreateArgs, delete::DeleteArgs, describe::DescribeArgs,
@@ -50,7 +51,7 @@ impl Deployments {
     }
 }
 
-#[derive(clap::ValueEnum, Clone, Debug, serde::Serialize)]
+#[derive(clap::ValueEnum, Clone, Debug, serde::Serialize, PartialEq, Eq, Hash, Display)]
 pub enum Tier {
     Basic,
     Common,
