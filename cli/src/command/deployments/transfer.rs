@@ -2,6 +2,7 @@ use anyhow::Result;
 use clap::Args;
 use dialoguer::theme::ColorfulTheme;
 use dialoguer::Confirm;
+use slot::graphql::deployments::transfer_deployment::DeploymentService;
 use slot::graphql::deployments::{transfer_deployment::*, TransferDeployment};
 use slot::graphql::GraphQLQuery;
 use slot::{api::Client, credential::Credentials};
@@ -33,7 +34,7 @@ impl TransferArgs {
         if !self.force {
             let confirmation = Confirm::with_theme(&ColorfulTheme::default())
                 .with_prompt(format!(
-                    "Please confirm to Transfer {} {:?} to {}",
+                    "Please confirm to transfer {} {:?} to {}",
                     &self.project, &self.service, &self.team
                 ))
                 .default(false)
@@ -47,9 +48,15 @@ impl TransferArgs {
             }
         }
 
+        let service = match &self.service {
+            Service::Katana => DeploymentService::katana,
+            Service::Torii => DeploymentService::torii,
+        };
+
         let request_body = TransferDeployment::build_query(Variables {
             name: self.project.clone(),
             team: self.team.clone(),
+            service,
         });
 
         let user = Credentials::load()?;
