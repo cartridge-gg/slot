@@ -9,6 +9,7 @@ mod delete;
 mod describe;
 mod list;
 mod logs;
+mod transfer;
 mod update;
 
 pub use accounts::*;
@@ -17,4 +18,5 @@ pub use delete::*;
 pub use describe::*;
 pub use list::*;
 pub use logs::*;
+pub use transfer::*;
 pub use update::*;

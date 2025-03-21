@@ -1,0 +1,3 @@
+mutation TransferDeployment($name: String!, $service: DeploymentService!, $team: String!) {
+	transferDeployment(name: $name, service: $service, team: $team)
+}
