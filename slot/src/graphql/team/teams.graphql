@@ -1,3 +1,17 @@
+query TeamsList {
+  me {
+    id
+    name
+    teams {
+      edges {
+        node {
+          name
+        }
+      }
+    }
+  }
+}
+
 query TeamMembersList($team: ID!) {
   team(id: $team) {
     members {
