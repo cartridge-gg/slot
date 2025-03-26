@@ -122,6 +122,9 @@ mod tests {
                     }),
                 })]),
             },
+            teams: me::MeMeTeams {
+                edges: Some(vec![]),
+            },
         };
 
         let account = AccountInfo::from(me);
