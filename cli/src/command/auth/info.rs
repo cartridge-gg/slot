@@ -22,6 +22,7 @@ impl InfoArgs {
         let teams = res.me.unwrap().teams.edges.unwrap();
         for edge in teams {
             let team = edge.unwrap().node.unwrap();
+            println!();
             println!("  Name: {}", team.name);
 
             println!("  Deployments:");
