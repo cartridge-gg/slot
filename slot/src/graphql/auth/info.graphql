@@ -1,7 +1,7 @@
 query Me {
   me {
     id
-    name
+    username
 
     teams {
       edges {
