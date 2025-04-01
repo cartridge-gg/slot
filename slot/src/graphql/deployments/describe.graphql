@@ -1,5 +1,6 @@
 query DescribeDeployment($project: String!, $service: DeploymentService!) {
   deployment(name: $project, service: $service) {
+    deprecated
     project
     branch
     tier
