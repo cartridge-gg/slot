@@ -17,18 +17,4 @@ pub struct Controller {
     pub id: String,
     /// The address of the Controller contract.
     pub address: Felt,
-    pub signers: Vec<ControllerSigner>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum SignerType {
-    WebAuthn,
-    StarknetAccount,
-    Other(String),
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ControllerSigner {
-    pub id: String,
-    pub r#type: SignerType,
 }
