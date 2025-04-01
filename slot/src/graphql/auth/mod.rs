@@ -33,7 +33,7 @@ pub struct Transfer;
 impl From<MeMe> for account::AccountInfo {
     fn from(value: MeMe) -> Self {
         let id = value.id;
-        let name = value.name;
+        let username = value.username;
         let credentials = value.credentials.webauthn.unwrap_or_default();
         let controllers = value
             .controllers
@@ -46,7 +46,7 @@ impl From<MeMe> for account::AccountInfo {
 
         Self {
             id,
-            name,
+            username,
             controllers,
             credentials,
         }
@@ -103,7 +103,7 @@ mod tests {
     fn test_try_from_me() {
         let me = MeMe {
             id: "id".to_string(),
-            name: Some("name".to_string()),
+            username: "username".to_string(),
             credentials: me::MeMeCredentials {
                 webauthn: Some(vec![me::MeMeCredentialsWebauthn {
                     id: "id".to_string(),
@@ -130,7 +130,7 @@ mod tests {
         let account = AccountInfo::from(me);
 
         assert_eq!(account.id, "id");
-        assert_eq!(account.name, Some("name".to_string()));
+        assert_eq!(account.username, "username".to_string());
         assert_eq!(account.credentials.len(), 1);
         assert_eq!(account.credentials[0].id, "id".to_string());
         assert_eq!(account.credentials[0].public_key, "foo".to_string());

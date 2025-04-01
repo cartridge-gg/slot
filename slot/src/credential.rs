@@ -96,7 +96,7 @@ mod tests {
         let json = json!({
             "account": {
                 "id": "foo",
-                "name": "",
+                "username": "username",
                 "controllers": [
                     {
                         "id": "foo",
@@ -125,7 +125,7 @@ mod tests {
         let credentials: Credentials = serde_json::from_value(json.clone()).unwrap();
 
         assert_eq!(credentials.account.id, "foo".to_string());
-        assert_eq!(credentials.account.name, Some("".to_string()));
+        assert_eq!(credentials.account.username, "username".to_string());
         assert_eq!(credentials.account.credentials[0].id, "foobar");
         assert_eq!(credentials.account.credentials[0].public_key, "mypublickey");
         assert_eq!(credentials.access_token.token, "oauthtoken");

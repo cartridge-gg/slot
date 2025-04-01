@@ -15,7 +15,7 @@ impl InfoArgs {
 
         let request_body = Me::build_query(Variables {});
         let res: ResponseData = client.query(&request_body).await?;
-        println!("Username: {}", res.me.clone().unwrap().name.unwrap());
+        println!("Username: {}", res.me.clone().unwrap().username);
 
         println!();
         println!("Teams:");
