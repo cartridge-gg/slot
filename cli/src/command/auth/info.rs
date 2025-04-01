@@ -41,8 +41,7 @@ impl InfoArgs {
                 let member = edge.unwrap().node.unwrap();
                 println!(
                     "    Member: {} ({:?})",
-                    member.account.name.unwrap(),
-                    member.role
+                    member.account.username, member.role
                 );
             }
         }

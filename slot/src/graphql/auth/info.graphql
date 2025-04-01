@@ -14,7 +14,7 @@ query Me {
               node {
                 account {
                   id
-                  name
+                  username
                 }
                 role
               }
