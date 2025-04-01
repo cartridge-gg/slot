@@ -58,37 +58,8 @@ impl From<me::MeMeControllersEdges> for account::Controller {
         let node = value.node.unwrap();
         let id = node.id;
         let address = Felt::from_str(&node.address).expect("valid address");
-        let signers = node
-            .signers
-            .unwrap_or_default()
-            .into_iter()
-            .map(|s| s.into())
-            .collect::<Vec<_>>();
 
-        Self {
-            id,
-            address,
-            signers,
-        }
-    }
-}
-
-impl From<me::MeMeControllersEdgesNodeSigners> for account::ControllerSigner {
-    fn from(value: me::MeMeControllersEdgesNodeSigners) -> Self {
-        Self {
-            id: value.id,
-            r#type: value.type_.into(),
-        }
-    }
-}
-
-impl From<me::SignerType> for account::SignerType {
-    fn from(value: me::SignerType) -> Self {
-        match value {
-            me::SignerType::webauthn => Self::WebAuthn,
-            me::SignerType::starknet_account => Self::StarknetAccount,
-            me::SignerType::Other(other) => Self::Other(other),
-        }
+        Self { id, address }
     }
 }
 

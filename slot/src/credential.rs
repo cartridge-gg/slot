@@ -100,13 +100,7 @@ mod tests {
                 "controllers": [
                     {
                         "id": "foo",
-                        "address": "0x12345",
-                        "signers": [
-                            {
-                                "id": "bar",
-                                "type": "WebAuthn"
-                            }
-                        ]
+                        "address": "0x12345"
                     }
                 ],
                 "credentials": [
