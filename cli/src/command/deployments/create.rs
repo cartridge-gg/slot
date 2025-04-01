@@ -110,7 +110,7 @@ impl CreateArgs {
         };
 
         println!(
-            "Deploying {}...",
+            "Deploying {} ...",
             super::service_url(&self.project, service)
         );
 
