@@ -41,8 +41,11 @@ impl DescribeArgs {
             println!("Version: {}", deployment.version);
 
             if deployment.deprecated.unwrap_or(false) {
+                println!();
+                println!("NOTE:");
                 println!("This deployment is deprecated and immutable.");
                 println!("Please delete it and re-create. Note that this will reset the storage.");
+                println!();
             }
 
             println!(
