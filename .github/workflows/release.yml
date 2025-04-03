@@ -11,6 +11,7 @@ env:
   CARGO_TERM_COLOR: always
   RUST_VERSION: 1.85.0
   REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
+  CMAKE_POLICY_VERSION_MINIMUM: "3.5"
 
 jobs:
   prepare:
