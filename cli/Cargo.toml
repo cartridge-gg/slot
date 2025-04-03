@@ -18,9 +18,9 @@ dialoguer = "0.11.0"
 env_logger = "0.10"
 log = "0.4"
 graphql_client.workspace = true
-katana-primitives = { git = "https://github.com/dojoengine/dojo", rev = "8ad7ca6", default-features = false }
-torii-cli = { git = "https://github.com/dojoengine/dojo", rev = "8ad7ca6", default-features = false }
-katana-cli = { git = "https://github.com/dojoengine/dojo", rev = "8ad7ca6", default-features = false, features = [
+katana-primitives = { git = "https://github.com/dojoengine/dojo", rev = "e9f7e18" }
+torii-cli = { git = "https://github.com/dojoengine/dojo", rev = "e9f7e18", default-features = false }
+katana-cli = { git = "https://github.com/dojoengine/dojo", rev = "3b15aa41e42582dadb44f6b9b5d053204ae28144", default-features = false, features = [
 	"slot",
 ] }
 
