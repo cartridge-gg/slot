@@ -20,6 +20,10 @@ pub struct CreateArgs {
     #[arg(help = "The name of the project.")]
     pub project: String,
 
+    #[arg(long, short, value_name = "team")]
+    #[arg(help = "The name of the team. Defaults to a team named after your username.")]
+    pub team: Option<String>,
+
     #[arg(short, long, default_value = "basic")]
     #[arg(value_name = "tier")]
     #[arg(help = "Deployment tier.")]
@@ -103,6 +107,7 @@ impl CreateArgs {
             service,
             wait: Some(true),
             regions: self.regions.clone(),
+            team: self.team.clone(),
         });
 
         let user = Credentials::load()?;
