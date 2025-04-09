@@ -10,7 +10,7 @@ use slot::credential::Credentials;
 use slot::graphql::deployments::create_deployment::*;
 use slot::graphql::deployments::CreateDeployment;
 use slot::graphql::GraphQLQuery;
-use torii_cli::args::ToriiArgsConfig;
+use torii_cli::args::ToriiArgs;
 
 use super::{services::CreateServiceCommands, Tier};
 
@@ -69,7 +69,7 @@ impl CreateArgs {
             }
             CreateServiceCommands::Torii(config) => {
                 let service_config =
-                    toml::to_string(&ToriiArgsConfig::try_from(config.torii_args.clone())?)?;
+                    toml::to_string(&ToriiArgs::with_config_file(config.torii_args.clone())?)?;
 
                 if let Some(path) = &self.output_service_config {
                     std::fs::write(path, &service_config)?;

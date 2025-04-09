@@ -10,7 +10,7 @@ use slot::credential::Credentials;
 use slot::graphql::deployments::update_deployment::{self, UpdateServiceInput};
 use slot::graphql::deployments::{update_deployment::*, UpdateDeployment};
 use slot::graphql::GraphQLQuery;
-use torii_cli::args::ToriiArgsConfig;
+use torii_cli::args::ToriiArgs;
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Update options")]
@@ -61,7 +61,7 @@ impl UpdateArgs {
                 }
 
                 let service_config =
-                    toml::to_string(&ToriiArgsConfig::try_from(config.torii_args.clone())?)?;
+                    toml::to_string(&ToriiArgs::with_config_file(config.torii_args.clone())?)?;
 
                 UpdateServiceInput {
                     type_: DeploymentService::torii,
