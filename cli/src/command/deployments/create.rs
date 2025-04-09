@@ -20,7 +20,7 @@ pub struct CreateArgs {
     #[arg(help = "The name of the project.")]
     pub project: String,
 
-    #[arg(long, short, value_name = "team")]
+    #[arg(long, value_name = "team")]
     #[arg(help = "The name of the team. Defaults to a team named after your username.")]
     pub team: Option<String>,
 
