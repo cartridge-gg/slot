@@ -1,0 +1,24 @@
+name: e2e
+
+on: pull_request
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_VERSION: 1.85.0
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          components: clippy
+      # Required to build Katana at the moment.
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - run: sh ./scripts/e2e.sh
+        env:
+          SLOT_AUTH: ${{ secrets.SLOT_AUTH }}
