@@ -4,6 +4,7 @@ mutation CreateDeployment(
 	$tier: DeploymentTier!
 	$wait: Boolean
 	$regions: [String!]
+	$team: String
 ) {
 	createDeployment(
 		name: $project
@@ -11,6 +12,7 @@ mutation CreateDeployment(
 		tier: $tier
 		wait: $wait
 		regions: $regions
+		team: $team
 	) {
 		__typename
 		id
