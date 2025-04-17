@@ -8532,6 +8532,7 @@ dependencies = [
  "graphql_client",
  "hyper 1.6.0",
  "katana-cli",
+ "katana-primitives",
  "log",
  "serde",
  "slot 0.39.3",

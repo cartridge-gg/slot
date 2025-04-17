@@ -20,6 +20,7 @@ log = "0.4"
 graphql_client.workspace = true
 torii-cli = { git = "https://github.com/dojoengine/dojo", branch = "torii-sqlite-types", default-features = false }
 
+katana-primitives = { git = "https://github.com/dojoengine/katana", rev = "5618935" }
 katana-cli = { git = "https://github.com/dojoengine/katana", rev = "5618935", default-features = false, features = [
 	"slot",
 ] }
