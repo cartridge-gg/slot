@@ -4,6 +4,7 @@ use anyhow::Result;
 use clap::{Args, Subcommand};
 
 mod create;
+pub(crate) mod list;
 mod members;
 
 #[derive(Debug, Args)]

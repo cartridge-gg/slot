@@ -22,6 +22,9 @@ pub enum Command {
 
     #[command(about = "Manage Slot team.", aliases = ["t"])]
     Teams(Teams),
+
+    #[command(about = "List all available teams.")]
+    List(teams::list::TeamListAllArgs),
 }
 
 impl Command {
@@ -30,6 +33,7 @@ impl Command {
             Command::Auth(cmd) => cmd.run().await,
             Command::Deployments(cmd) => cmd.run().await,
             Command::Teams(cmd) => cmd.run().await,
+            Command::List(cmd) => cmd.run().await,
         }
     }
 }
