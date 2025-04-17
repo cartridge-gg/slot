@@ -673,7 +673,7 @@ checksum = "dcfed56ad506cb2c684a14971b8861fdc3baaaae314b9e5f9bb532cbe3ba7a4f"
 [[package]]
 name = "apollo_config"
 version = "0.0.0"
-source = "git+https://github.com/dojoengine/sequencer?rev=4b1587c5e#4b1587c5e3effc4cfbbb8551cdcab6454a2dbe30"
+source = "git+https://github.com/dojoengine/sequencer?rev=5d737b9c9#5d737b9c90a14bdf4483d759d1a1d4ce64aa9fd2"
 dependencies = [
  "apollo_infra_utils",
  "clap",
@@ -689,7 +689,7 @@ dependencies = [
 [[package]]
 name = "apollo_infra"
 version = "0.0.0"
-source = "git+https://github.com/dojoengine/sequencer?rev=4b1587c5e#4b1587c5e3effc4cfbbb8551cdcab6454a2dbe30"
+source = "git+https://github.com/dojoengine/sequencer?rev=5d737b9c9#5d737b9c90a14bdf4483d759d1a1d4ce64aa9fd2"
 dependencies = [
  "apollo_config",
  "apollo_infra_utils",
@@ -712,7 +712,7 @@ dependencies = [
 [[package]]
 name = "apollo_infra_utils"
 version = "0.0.0"
-source = "git+https://github.com/dojoengine/sequencer?rev=4b1587c5e#4b1587c5e3effc4cfbbb8551cdcab6454a2dbe30"
+source = "git+https://github.com/dojoengine/sequencer?rev=5d737b9c9#5d737b9c90a14bdf4483d759d1a1d4ce64aa9fd2"
 dependencies = [
  "assert-json-diff",
  "cached",
@@ -728,7 +728,7 @@ dependencies = [
 [[package]]
 name = "apollo_metrics"
 version = "0.0.0"
-source = "git+https://github.com/dojoengine/sequencer?rev=4b1587c5e#4b1587c5e3effc4cfbbb8551cdcab6454a2dbe30"
+source = "git+https://github.com/dojoengine/sequencer?rev=5d737b9c9#5d737b9c90a14bdf4483d759d1a1d4ce64aa9fd2"
 dependencies = [
  "indexmap 2.8.0",
  "metrics 0.24.1",
@@ -740,7 +740,7 @@ dependencies = [
 [[package]]
 name = "apollo_proc_macros"
 version = "0.0.0"
-source = "git+https://github.com/dojoengine/sequencer?rev=4b1587c5e#4b1587c5e3effc4cfbbb8551cdcab6454a2dbe30"
+source = "git+https://github.com/dojoengine/sequencer?rev=5d737b9c9#5d737b9c90a14bdf4483d759d1a1d4ce64aa9fd2"
 dependencies = [
  "quote",
  "syn 2.0.100",
@@ -749,7 +749,7 @@ dependencies = [
 [[package]]
 name = "apollo_sierra_multicompile"
 version = "0.0.0"
-source = "git+https://github.com/dojoengine/sequencer?rev=4b1587c5e#4b1587c5e3effc4cfbbb8551cdcab6454a2dbe30"
+source = "git+https://github.com/dojoengine/sequencer?rev=5d737b9c9#5d737b9c90a14bdf4483d759d1a1d4ce64aa9fd2"
 dependencies = [
  "apollo_config",
  "apollo_infra",
@@ -773,7 +773,7 @@ dependencies = [
 [[package]]
 name = "apollo_sierra_multicompile_types"
 version = "0.0.0"
-source = "git+https://github.com/dojoengine/sequencer?rev=4b1587c5e#4b1587c5e3effc4cfbbb8551cdcab6454a2dbe30"
+source = "git+https://github.com/dojoengine/sequencer?rev=5d737b9c9#5d737b9c90a14bdf4483d759d1a1d4ce64aa9fd2"
 dependencies = [
  "apollo_infra",
  "apollo_proc_macros",
@@ -1723,7 +1723,7 @@ dependencies = [
 [[package]]
 name = "blockifier"
 version = "0.0.0"
-source = "git+https://github.com/dojoengine/sequencer?rev=4b1587c5e#4b1587c5e3effc4cfbbb8551cdcab6454a2dbe30"
+source = "git+https://github.com/dojoengine/sequencer?rev=5d737b9c9#5d737b9c90a14bdf4483d759d1a1d4ce64aa9fd2"
 dependencies = [
  "anyhow",
  "apollo_config",
@@ -1768,7 +1768,7 @@ dependencies = [
 [[package]]
 name = "blockifier_test_utils"
 version = "0.0.0"
-source = "git+https://github.com/dojoengine/sequencer?rev=4b1587c5e#4b1587c5e3effc4cfbbb8551cdcab6454a2dbe30"
+source = "git+https://github.com/dojoengine/sequencer?rev=5d737b9c9#5d737b9c90a14bdf4483d759d1a1d4ce64aa9fd2"
 dependencies = [
  "apollo_infra_utils",
  "cairo-lang-starknet-classes",
@@ -3625,7 +3625,7 @@ dependencies = [
 [[package]]
 name = "dojo-metrics"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "hyper 0.14.32",
  "jemalloc-ctl",
@@ -5361,7 +5361,7 @@ dependencies = [
 [[package]]
 name = "katana-chain-spec"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -5380,7 +5380,7 @@ dependencies = [
 [[package]]
 name = "katana-cli"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -5408,7 +5408,7 @@ dependencies = [
 [[package]]
 name = "katana-core"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "alloy-provider",
  "alloy-rpc-types-eth",
@@ -5440,7 +5440,7 @@ dependencies = [
 [[package]]
 name = "katana-db"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "anyhow",
  "dojo-metrics",
@@ -5463,7 +5463,7 @@ dependencies = [
 [[package]]
 name = "katana-executor"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "blockifier",
  "cairo-vm",
@@ -5480,7 +5480,7 @@ dependencies = [
 [[package]]
 name = "katana-explorer"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "anyhow",
  "axum 0.6.20",
@@ -5500,7 +5500,7 @@ dependencies = [
 [[package]]
 name = "katana-feeder-gateway"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "katana-primitives",
  "katana-rpc-types",
@@ -5515,7 +5515,7 @@ dependencies = [
 [[package]]
 name = "katana-fork"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "anyhow",
  "futures",
@@ -5532,7 +5532,7 @@ dependencies = [
 [[package]]
 name = "katana-log"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "clap",
  "serde",
@@ -5545,7 +5545,7 @@ dependencies = [
 [[package]]
 name = "katana-messaging"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "alloy-contract",
  "alloy-network",
@@ -5574,7 +5574,7 @@ dependencies = [
 [[package]]
 name = "katana-node"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "anyhow",
  "const_format",
@@ -5613,7 +5613,7 @@ dependencies = [
 [[package]]
 name = "katana-pipeline"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "futures",
  "katana-primitives",
@@ -5627,7 +5627,7 @@ dependencies = [
 [[package]]
 name = "katana-pool"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "futures",
  "katana-executor",
@@ -5642,7 +5642,7 @@ dependencies = [
 [[package]]
 name = "katana-primitives"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -5651,7 +5651,6 @@ dependencies = [
  "cairo-lang-starknet-classes",
  "cairo-vm",
  "derive_more 0.99.19",
- "flate2",
  "heapless",
  "lazy_static",
  "num-bigint",
@@ -5673,7 +5672,7 @@ dependencies = [
 [[package]]
 name = "katana-provider"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -5697,7 +5696,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "anyhow",
  "dojo-metrics",
@@ -5728,7 +5727,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc-api"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "anyhow",
  "jsonrpsee",
@@ -5747,7 +5746,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc-types"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -5770,7 +5769,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc-types-builder"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "anyhow",
  "katana-executor",
@@ -5783,7 +5782,7 @@ dependencies = [
 [[package]]
 name = "katana-slot-controller"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -5801,7 +5800,7 @@ dependencies = [
 [[package]]
 name = "katana-stage"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -5826,7 +5825,7 @@ dependencies = [
 [[package]]
 name = "katana-tasks"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "futures",
  "rayon",
@@ -5840,7 +5839,7 @@ dependencies = [
 [[package]]
 name = "katana-trie"
 version = "1.2.3"
-source = "git+https://github.com/dojoengine/katana?rev=02f6b21#02f6b218db48c071bfbc52a0e9fd801627e1e18c"
+source = "git+https://github.com/dojoengine/katana?rev=5618935#56189358e37802ee6eab5da829218f2b1b1c54c1"
 dependencies = [
  "anyhow",
  "bitvec",
@@ -9226,7 +9225,7 @@ dependencies = [
 [[package]]
 name = "starknet_api"
 version = "0.0.0"
-source = "git+https://github.com/dojoengine/sequencer?rev=4b1587c5e#4b1587c5e3effc4cfbbb8551cdcab6454a2dbe30"
+source = "git+https://github.com/dojoengine/sequencer?rev=5d737b9c9#5d737b9c90a14bdf4483d759d1a1d4ce64aa9fd2"
 dependencies = [
  "apollo_infra_utils",
  "base64 0.13.1",
