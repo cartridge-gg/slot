@@ -10,10 +10,10 @@ query TeamMembersList($team: String!) {
   }
 }
 
-mutation TeamMemberAdd($team: ID!, $accounts: [ID!]!) {
-  addToTeam(name: $team, userIDs: $accounts)
+mutation TeamMemberAdd($team: ID!, $accounts: [String!]!) {
+  addToTeam(name: $team, usernames: $accounts)
 }
 
-mutation TeamMemberRemove($team: ID!, $accounts: [ID!]!) {
-  removeFromTeam(name: $team, userIDs: $accounts)
+mutation TeamMemberRemove($team: ID!, $accounts: [String!]!) {
+  removeFromTeam(name: $team, usernames: $accounts)
 }
