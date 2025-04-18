@@ -1,5 +1,5 @@
-query TeamMembersList($team: ID!) {
-  team(id: $team) {
+query TeamMembersList($team: String!) {
+  team(name: $team) {
     members {
       edges {
         node {
@@ -11,9 +11,9 @@ query TeamMembersList($team: ID!) {
 }
 
 mutation TeamMemberAdd($team: ID!, $accounts: [ID!]!) {
-  addToTeam(teamID: $team, userIDs: $accounts)
+  addToTeam(name: $team, userIDs: $accounts)
 }
 
 mutation TeamMemberRemove($team: ID!, $accounts: [ID!]!) {
-  removeFromTeam(teamID: $team, userIDs: $accounts)
+  removeFromTeam(name: $team, userIDs: $accounts)
 }

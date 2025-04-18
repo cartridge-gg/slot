@@ -15422,7 +15422,7 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "teamID",
+                  "name": "name",
                   "type": {
                     "kind": "NON_NULL",
                     "name": null,
@@ -15475,7 +15475,7 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "teamID",
+                  "name": "name",
                   "type": {
                     "kind": "NON_NULL",
                     "name": null,
@@ -19296,13 +19296,13 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "id",
+                  "name": "name",
                   "type": {
                     "kind": "NON_NULL",
                     "name": null,
                     "ofType": {
                       "kind": "SCALAR",
-                      "name": "ID",
+                      "name": "String",
                       "ofType": null
                     }
                   }
