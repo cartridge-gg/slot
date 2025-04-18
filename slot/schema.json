@@ -15436,7 +15436,7 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "userIDs",
+                  "name": "usernames",
                   "type": {
                     "kind": "NON_NULL",
                     "name": null,
@@ -15448,7 +15448,7 @@
                         "name": null,
                         "ofType": {
                           "kind": "SCALAR",
-                          "name": "ID",
+                          "name": "String",
                           "ofType": null
                         }
                       }
@@ -15489,7 +15489,7 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "userIDs",
+                  "name": "usernames",
                   "type": {
                     "kind": "NON_NULL",
                     "name": null,
@@ -15501,7 +15501,7 @@
                         "name": null,
                         "ofType": {
                           "kind": "SCALAR",
-                          "name": "ID",
+                          "name": "String",
                           "ofType": null
                         }
                       }
