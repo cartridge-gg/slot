@@ -8492,7 +8492,7 @@ dependencies = [
 
 [[package]]
 name = "slot"
-version = "0.39.3"
+version = "0.39.4"
 dependencies = [
  "account_sdk 0.1.0 (git+https://github.com/cartridge-gg/controller?rev=05fe96f4)",
  "anyhow",
@@ -8520,7 +8520,7 @@ dependencies = [
 
 [[package]]
 name = "slot-cli"
-version = "0.39.3"
+version = "0.39.4"
 dependencies = [
  "anyhow",
  "axum 0.7.9",
@@ -8535,7 +8535,7 @@ dependencies = [
  "katana-primitives",
  "log",
  "serde",
- "slot 0.39.3",
+ "slot 0.39.4",
  "starknet 0.14.0",
  "thiserror 1.0.69",
  "tokio",
