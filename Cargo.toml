@@ -3,7 +3,7 @@ resolver = "2"
 members = ["cli", "slot"]
 
 [workspace.package]
-version = "0.39.4"
+version = "0.39.5"
 license-file = "LICENSE"
 repository = "https://github.com/cartridge-gg/slot/"
 edition = "2021"
