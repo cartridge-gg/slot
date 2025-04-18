@@ -1,5 +1,5 @@
-query TeamMembersList($team: ID!) {
-  team(id: $team) {
+query TeamMembersList($team: String!) {
+  team(name: $team) {
     members {
       edges {
         node {
@@ -10,10 +10,10 @@ query TeamMembersList($team: ID!) {
   }
 }
 
-mutation TeamMemberAdd($team: ID!, $accounts: [ID!]!) {
-  addToTeam(teamID: $team, userIDs: $accounts)
+mutation TeamMemberAdd($team: ID!, $accounts: [String!]!) {
+  addToTeam(name: $team, usernames: $accounts)
 }
 
-mutation TeamMemberRemove($team: ID!, $accounts: [ID!]!) {
-  removeFromTeam(teamID: $team, userIDs: $accounts)
+mutation TeamMemberRemove($team: ID!, $accounts: [String!]!) {
+  removeFromTeam(name: $team, usernames: $accounts)
 }
