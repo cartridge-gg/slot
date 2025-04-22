@@ -1,0 +1,103 @@
+# Query to fetch a single paymaster by ID
+# Operation name `GetPaymaster` must match the struct name in Rust
+query GetPaymaster($id: ID!) {
+  paymaster(id: $id) {
+    # Include all fields you need from the Paymaster type
+    id
+    name
+    team {
+      id
+      name
+    }
+    policies {
+      edges {
+        node {
+          id
+          contractAddress
+          entryPoint
+          selector
+        }
+      }
+    }
+  }
+}
+
+# Mutation to create a new paymaster
+# Operation name `CreatePaymaster` must match the struct name in Rust
+mutation CreatePaymaster($name: String!, $teamName: String!, $budget: BigInt!) {
+  createPaymaster(name: $name, teamName: $teamName, budget: $budget) {
+    id
+    name
+    team {
+      id
+      name
+    }
+  }
+}
+
+# Mutation to add policies to a paymaster
+# Operation name `AddPaymasterPolicies` must match the struct name in Rust
+mutation AddPaymasterPolicies(
+  $paymasterId: ID!
+  $policies: [PaymasterPolicyInput!]!
+) {
+  addPaymasterPolicies(paymasterId: $paymasterId, policies: $policies) {
+    id
+    contractAddress
+    entryPoint
+    selector
+  }
+}
+
+# Mutation to remove policies from a paymaster
+# Operation name `RemovePaymasterPolicies` must match the struct name in Rust
+mutation RemovePaymasterPolicies($paymasterId: ID!, $policyIds: [ID!]!) {
+  removePaymasterPolicies(paymasterId: $paymasterId, policyIds: $policyIds)
+}
+
+# Mutation to increase a paymaster's budget
+# Operation name `IncreaseBudget` must match the struct name in Rust
+mutation IncreaseBudget($paymasterId: ID!, $amount: BigInt!) {
+  increaseBudget(paymasterId: $paymasterId, amount: $amount) {
+    id
+    name
+  }
+}
+
+# Mutation to decrease a paymaster's budget
+# Operation name `DecreaseBudget` must match the struct name in Rust
+mutation DecreaseBudget($paymasterId: ID!, $amount: BigInt!) {
+  decreaseBudget(paymasterId: $paymasterId, amount: $amount) {
+    id
+    name
+  }
+}
+
+# Query to list paymasters with pagination, filtering, and ordering
+# Operation name `ListPaymasters` must match the struct name in Rust
+query ListPaymasters {
+  me {
+    id
+    name
+    teams {
+      edges {
+        node {
+          name
+          paymasters {
+            edges {
+              node {
+                id
+                name
+                budget
+                team {
+                  id
+                  name
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
