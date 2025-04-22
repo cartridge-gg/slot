@@ -17,3 +17,4 @@ pub(crate) mod utils;
 
 pub use account_sdk;
 pub use error::Error;
+use update_informer as _;

@@ -1,10 +1,7 @@
 [package]
 name = "slot-cli"
-edition.workspace = true
-license-file.workspace = true
-repository.workspace = true
-version.workspace = true
-rust-version.workspace = true
+version = "0.0.0"
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -15,7 +12,7 @@ clap = { version = "4.2", features = ["derive"] }
 colored = "2.0.0"
 ctrlc = "3.4.1"
 dialoguer = "0.11.0"
-env_logger = "0.10"
+env_logger = "0.11.3"
 log = "0.4"
 graphql_client.workspace = true
 torii-cli = { git = "https://github.com/dojoengine/dojo", branch = "torii-sqlite-types", default-features = false }
@@ -25,16 +22,26 @@ katana-cli = { git = "https://github.com/dojoengine/katana", rev = "5618935", de
 	"slot",
 ] }
 
+comfy-table = "7.1"
 hyper.workspace = true
+num-bigint = { version = "0.4", features = ["serde"] }
 tokio.workspace = true
 thiserror.workspace = true
 serde.workspace = true
+serde_json = "1.0"
 slot.workspace = true
 starknet.workspace = true
 toml = "0.8"
 url.workspace = true
 strum_macros = "0.25.3"
+update-informer = { version = "1.1", default-features = false, features = [
+	"ureq",
+	"github",
+] }
 
 [[bin]]
 name = "slot"
 path = "src/main.rs"
+
+[features]
+default = []

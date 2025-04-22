@@ -1,4 +1,5 @@
 #![cfg_attr(not(test), warn(unused_crate_dependencies))]
+use update_informer as _;
 
 mod command;
 
