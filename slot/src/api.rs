@@ -56,7 +56,7 @@ impl Client {
             return Err(Error::InvalidOAuth);
         }
 
-        if response.status() != 200 {
+        if !response.status().is_success() {
             return Err(
                 anyhow::anyhow!("API error: {}", response.status()).into(),
             );
