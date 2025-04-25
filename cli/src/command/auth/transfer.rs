@@ -11,7 +11,7 @@ pub struct TransferArgs {
     pub team: String,
 
     #[arg(help = "The amount to transfer.", value_name = "amount")]
-    pub amount: f64,
+    pub amount: i64,
 }
 
 impl TransferArgs {
