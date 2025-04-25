@@ -56,6 +56,12 @@ impl Client {
             return Err(Error::InvalidOAuth);
         }
 
+        if response.status() != 200 {
+            return Err(
+                anyhow::anyhow!("API error: {}", response.status()).into(),
+            );
+        }
+
         let res: Response<R> = response.json().await?;
 
         if let Some(errors) = res.errors {
