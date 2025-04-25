@@ -57,9 +57,7 @@ impl Client {
         }
 
         if !response.status().is_success() {
-            return Err(
-                anyhow::anyhow!("API error: {}", response.status()).into(),
-            );
+            return Err(anyhow::anyhow!("API error: {}", response.status()).into());
         }
 
         let res: Response<R> = response.json().await?;
