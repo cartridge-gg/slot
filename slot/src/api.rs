@@ -6,6 +6,7 @@ use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use url::Url;
 
 use crate::error::Error;
+use crate::version;
 use crate::{credential::AccessToken, vars};
 
 #[derive(Debug)]
@@ -50,17 +51,25 @@ impl Client {
             .header("Authorization", bearer)
             .json(body)
             .send()
-            .await?;
+            .await;
 
-        if response.status() == 403 {
+        if response.is_err() {
+            version::check_for_new_version();
+            return Err(Error::ReqwestError(response.err().unwrap()));
+        }
+
+        let res = response?;
+
+        if res.status() == 403 {
             return Err(Error::InvalidOAuth);
         }
 
-        if !response.status().is_success() {
-            return Err(anyhow::anyhow!("API error: {}", response.status()).into());
+        if !res.status().is_success() {
+            version::check_for_new_version();
+            return Err(anyhow::anyhow!("API error: {}", res.status()).into());
         }
 
-        let res: Response<R> = response.json().await?;
+        let res: Response<R> = res.json().await?;
 
         if let Some(errors) = res.errors {
             Err(Error::Api(GraphQLErrors(errors)))
