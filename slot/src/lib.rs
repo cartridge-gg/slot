@@ -10,6 +10,7 @@ pub mod read;
 pub mod server;
 pub mod session;
 pub mod vars;
+pub mod version;
 
 pub(crate) mod error;
 pub(crate) mod utils;
