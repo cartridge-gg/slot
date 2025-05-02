@@ -7,6 +7,7 @@ use self::{
     accounts::AccountsArgs, create::CreateArgs, delete::DeleteArgs, describe::DescribeArgs,
     list::ListArgs, logs::LogsArgs, update::UpdateArgs,
 };
+use crate::command::deployments::transfer::TransferArgs;
 
 mod accounts;
 mod create;
@@ -15,6 +16,7 @@ mod describe;
 mod list;
 mod logs;
 mod services;
+mod transfer;
 mod update;
 
 pub const CARTRIDGE_BASE_URL: &str = "https://api.cartridge.gg/x";
@@ -23,16 +25,25 @@ pub const CARTRIDGE_BASE_URL: &str = "https://api.cartridge.gg/x";
 pub enum Deployments {
     #[command(about = "Create a new deployment.")]
     Create(CreateArgs),
+
     #[command(about = "Delete a deployment.")]
     Delete(DeleteArgs),
+
     #[command(about = "Update a deployment.")]
     Update(UpdateArgs),
+
     #[command(about = "Describe a deployment's configuration.")]
     Describe(DescribeArgs),
+
     #[command(about = "List all deployments.", aliases = ["ls"])]
     List(ListArgs),
+
+    #[command(about = "Transfer a deployment.")]
+    Transfer(TransferArgs),
+
     #[command(about = "Fetch logs for a deployment.")]
     Logs(LogsArgs),
+
     #[command(about = "Fetch Katana accounts.")]
     Accounts(AccountsArgs),
 }
@@ -45,6 +56,7 @@ impl Deployments {
             Deployments::Update(args) => args.run().await,
             Deployments::Describe(args) => args.run().await,
             Deployments::List(args) => args.run().await,
+            Deployments::Transfer(args) => args.run().await,
             Deployments::Logs(args) => args.run().await,
             Deployments::Accounts(args) => args.run().await,
         }

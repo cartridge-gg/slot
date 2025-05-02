@@ -12,7 +12,7 @@ use slot::credential::Credentials;
 use slot::graphql::deployments::create_deployment::*;
 use slot::graphql::deployments::CreateDeployment;
 use slot::graphql::GraphQLQuery;
-use torii_cli::args::ToriiArgsConfig;
+use torii_cli::args::ToriiArgs;
 
 use super::{services::CreateServiceCommands, Tier};
 
@@ -22,12 +22,16 @@ pub struct CreateArgs {
     #[arg(help = "The name of the project.")]
     pub project: String,
 
+    #[arg(long, value_name = "team")]
+    #[arg(help = "The name of the team. Defaults to a team named after your username.")]
+    pub team: Option<String>,
+
     #[arg(short, long, default_value = "basic")]
     #[arg(value_name = "tier")]
     #[arg(help = "Deployment tier.")]
     pub tier: Tier,
 
-    #[arg(short, long)]
+    #[arg(long)]
     #[arg(help = "The list of regions to deploy to.")]
     #[arg(value_name = "regions")]
     #[arg(value_delimiter = ',')]
@@ -99,11 +103,12 @@ impl CreateArgs {
                         network: config.network.clone(),
                         saya: Some(config.saya),
                     }),
+                    torii: None,
                 }
             }
             CreateServiceCommands::Torii(config) => {
                 let service_config =
-                    toml::to_string(&ToriiArgsConfig::try_from(config.torii_args.clone())?)?;
+                    toml::to_string(&ToriiArgs::with_config_file(config.torii_args.clone())?)?;
 
                 if let Some(path) = &self.output_service_config {
                     std::fs::write(path, &service_config)?;
@@ -116,6 +121,9 @@ impl CreateArgs {
                     version: config.version.clone(),
                     config: slot::read::base64_encode_string(&service_config),
                     katana: None,
+                    torii: Some(ToriiCreateInput {
+                        replicas: config.replicas,
+                    }),
                 }
             }
         };
@@ -134,6 +142,7 @@ impl CreateArgs {
             service,
             wait: Some(true),
             regions: self.regions.clone(),
+            team: self.team.clone(),
         });
 
         let user = Credentials::load()?;
@@ -145,7 +154,7 @@ impl CreateArgs {
         };
 
         println!(
-            "Deploying {}...",
+            "Deploying {} ...",
             super::service_url(&self.project, service)
         );
 

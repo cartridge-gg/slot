@@ -2,6 +2,7 @@
 
 pub mod account;
 pub mod api;
+pub mod bigint;
 pub mod browser;
 pub mod credential;
 pub mod graphql;
@@ -9,6 +10,7 @@ pub mod read;
 pub mod server;
 pub mod session;
 pub mod vars;
+pub mod version;
 
 pub(crate) mod error;
 pub(crate) mod utils;

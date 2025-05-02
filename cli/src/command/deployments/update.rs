@@ -10,7 +10,7 @@ use slot::credential::Credentials;
 use slot::graphql::deployments::update_deployment::{self, UpdateServiceInput};
 use slot::graphql::deployments::{update_deployment::*, UpdateDeployment};
 use slot::graphql::GraphQLQuery;
-use torii_cli::args::ToriiArgsConfig;
+use torii_cli::args::ToriiArgs;
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Update options")]
@@ -22,6 +22,10 @@ pub struct UpdateArgs {
     #[arg(value_name = "tier")]
     #[arg(help = "Deployment tier.")]
     pub tier: Option<Tier>,
+
+    #[arg(short, long, default_value = "1")]
+    #[arg(help = "The number of replicas to deploy.")]
+    pub replicas: Option<i64>,
 
     #[command(subcommand)]
     update_commands: UpdateServiceCommands,
@@ -38,6 +42,7 @@ impl UpdateArgs {
                     type_: DeploymentService::katana,
                     version: config.version.clone(),
                     config: Some(slot::read::base64_encode_string(&service_config)),
+                    torii: None,
                 }
             }
             UpdateServiceCommands::Torii(config) => {
@@ -56,12 +61,15 @@ impl UpdateArgs {
                 }
 
                 let service_config =
-                    toml::to_string(&ToriiArgsConfig::try_from(config.torii_args.clone())?)?;
+                    toml::to_string(&ToriiArgs::with_config_file(config.torii_args.clone())?)?;
 
                 UpdateServiceInput {
                     type_: DeploymentService::torii,
                     version: config.version.clone(),
                     config: Some(slot::read::base64_encode_string(&service_config)),
+                    torii: Some(ToriiUpdateInput {
+                        replicas: config.replicas,
+                    }),
                 }
             }
         };

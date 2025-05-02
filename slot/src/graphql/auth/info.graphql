@@ -1,7 +1,39 @@
 query Me {
   me {
     id
-    name
+    username
+
+    teams {
+      edges {
+        node {
+          id
+          name
+
+          membership {
+            edges {
+              node {
+                account {
+                  id
+                  username
+                }
+                role
+              }
+            }
+          }
+
+          deployments {
+            edges {
+              node {
+                id
+                project
+                branch
+                serviceID
+              }
+            }
+          }
+        }
+      }
+    }
 
     controllers {
       edges {
@@ -25,3 +57,4 @@ query Me {
     }
   }
 }
+

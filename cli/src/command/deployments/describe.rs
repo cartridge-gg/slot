@@ -39,6 +39,15 @@ impl DescribeArgs {
         if let Some(deployment) = data.deployment {
             println!("Project: {}", deployment.project);
             println!("Version: {}", deployment.version);
+
+            if deployment.deprecated.unwrap_or(false) {
+                println!();
+                println!("NOTE:");
+                println!("This deployment is deprecated and immutable.");
+                println!("Please delete it and re-create. Note that this will reset the storage.");
+                println!();
+            }
+
             println!(
                 "Branch: {}",
                 deployment.branch.unwrap_or_else(|| String::from("Default"))

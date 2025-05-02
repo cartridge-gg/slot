@@ -15,7 +15,36 @@ impl InfoArgs {
 
         let request_body = Me::build_query(Variables {});
         let res: ResponseData = client.query(&request_body).await?;
-        print!("{:?}", res);
+        println!("Username: {}", res.me.clone().unwrap().username);
+
+        println!();
+        println!("Teams:");
+        let teams = res.me.unwrap().teams.edges.unwrap();
+        for edge in teams {
+            let team = edge.unwrap().node.unwrap();
+            println!();
+            println!("  Name: {}", team.name);
+
+            println!("  Deployments:");
+            let deployments = team.deployments.edges.unwrap();
+            for edge in deployments {
+                let deployment = edge.unwrap().node.unwrap();
+                println!(
+                    "    Deployment: {}/{}",
+                    deployment.project, deployment.service_id
+                );
+            }
+
+            println!("  Members:");
+            let members = team.membership.edges.unwrap();
+            for edge in members {
+                let member = edge.unwrap().node.unwrap();
+                println!(
+                    "    Member: {} ({:?})",
+                    member.account.username, member.role
+                );
+            }
+        }
 
         Ok(())
     }

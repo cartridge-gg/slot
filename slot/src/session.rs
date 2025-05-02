@@ -1,12 +1,14 @@
 use std::path::Path;
 use std::{fs, path::PathBuf};
 
-use account_sdk::account::session::hash::{Policy, Session};
-use account_sdk::account::session::SessionAccount;
-use account_sdk::signers::{HashSigner, Signer};
+use account_sdk::account::session::account::SessionAccount;
+use account_sdk::account::session::hash::Session;
+use account_sdk::provider::CartridgeJsonRpcProvider;
+use account_sdk::signers::Signer;
 use anyhow::{anyhow, Context};
 use axum::response::{IntoResponse, Response};
 use axum::{extract::State, routing::post, Router};
+use cainome_cairo_serde::NonZero;
 use hyper::StatusCode;
 use serde::{Deserialize, Serialize};
 use starknet::core::types::Felt;
@@ -24,6 +26,7 @@ use crate::credential::Credentials;
 use crate::error::Error;
 use crate::utils::{self};
 use crate::{browser, server::LocalServer, vars};
+use account_sdk::account::session::policy::{CallPolicy, Policy};
 
 // Taken from: https://github.com/cartridge-gg/controller/blob/1d7352fce437ccd0b992ca5420aeb3719427e348/packages/account-wasm/src/lib.rs#L92-L95
 const GUARDIAN: Felt = short_string!("CARTRIDGE_GUARDIAN");
@@ -47,7 +50,7 @@ pub struct SessionAuth {
 /// A session object that has all the necessary information for creating the
 /// [Session] object and the [SessionAccount](account_sdk::account::session::SessionAccount)
 /// for using the session.
-#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct FullSessionInfo {
     pub chain_id: Felt,
     pub auth: SessionAuth,
@@ -56,10 +59,7 @@ pub struct FullSessionInfo {
 
 impl FullSessionInfo {
     /// Convert the session info into a [`SessionAccount`] instance.
-    pub fn into_account<P>(self, provider: P) -> SessionAccount<P>
-    where
-        P: Provider + Send,
-    {
+    pub fn into_account(self, provider: CartridgeJsonRpcProvider) -> SessionAccount {
         let session_signer = Signer::Starknet(SigningKey::from_secret_scalar(self.auth.signer));
 
         SessionAccount::new_as_registered(
@@ -133,12 +133,31 @@ pub async fn create(rpc_url: Url, policies: &[PolicyMethod]) -> Result<FullSessi
 
     let methods = policies
         .iter()
-        .map(Policy::try_from)
+        .map(|p| {
+            let selector = get_selector_from_name(&p.method)?;
+            Ok(account_sdk::account::session::policy::Policy::Call(
+                CallPolicy {
+                    contract_address: p.target,
+                    selector,
+                    authorized: Some(true),
+                },
+            ))
+        })
         .collect::<Result<Vec<_>, _>>()
         .map_err(Error::InvalidMethodName)?;
 
     let expires_at = response.expires_at.parse::<u64>().map_err(|e| anyhow!(e))?;
-    let session = Session::new(methods, expires_at, &signer.signer())?;
+    let session = Session::new(
+        methods,
+        expires_at,
+        &account_sdk::abigen::controller::Signer::Starknet(
+            account_sdk::abigen::controller::StarknetSigner {
+                pubkey: NonZero::new(signer.verifying_key().scalar())
+                    .expect("Public key scalar should not be zero"),
+            },
+        ),
+        Felt::ZERO,
+    )?;
     let chain_id = get_network_chain_id(rpc_url).await?;
 
     Ok(FullSessionInfo {
@@ -391,22 +410,22 @@ async fn get_network_chain_id(url: Url) -> anyhow::Result<Felt> {
     Ok(provider.chain_id().await?)
 }
 
-impl TryFrom<PolicyMethod> for account_sdk::account::session::hash::Policy {
+impl TryFrom<PolicyMethod> for Policy {
     type Error = NonAsciiNameError;
 
     fn try_from(value: PolicyMethod) -> Result<Self, Self::Error> {
-        Ok(Self::new(
+        Ok(Policy::new_call(
             value.target,
             get_selector_from_name(&value.method)?,
         ))
     }
 }
 
-impl TryFrom<&PolicyMethod> for account_sdk::account::session::hash::Policy {
+impl TryFrom<&PolicyMethod> for Policy {
     type Error = NonAsciiNameError;
 
     fn try_from(value: &PolicyMethod) -> Result<Self, Self::Error> {
-        Ok(Self::new(
+        Ok(Policy::new_call(
             value.target,
             get_selector_from_name(&value.method)?,
         ))
@@ -421,6 +440,8 @@ mod tests {
     use crate::error::Error::Unauthorized;
     use crate::session::{get_at, get_user_relative_file_path, store_at};
     use crate::utils;
+    use account_sdk::abigen::controller::StarknetSigner;
+    use starknet::signers::SigningKey;
     use starknet::{core::types::Felt, macros::felt};
     use std::ffi::OsStr;
     use std::path::{Component, Path};
@@ -484,7 +505,15 @@ mod tests {
         let username = authenticate(&config_dir);
 
         let chain = felt!("0x999");
-        let expected = FullSessionInfo::default();
+        let signer_key = SigningKey::from_random();
+        let session_signer = account_sdk::abigen::controller::Signer::Starknet(StarknetSigner {
+            pubkey: NonZero::new(signer_key.verifying_key().scalar()).unwrap(),
+        });
+        let expected = FullSessionInfo {
+            chain_id: chain,
+            auth: SessionAuth::default(),
+            session: Session::new_wildcard(0, &session_signer, Felt::ZERO).unwrap(),
+        };
         let path = store_at(&config_dir, chain, &expected).unwrap();
 
         let user_path = get_user_relative_file_path(username, chain);
@@ -499,7 +528,15 @@ mod tests {
         let config_dir = utils::config_dir();
 
         let chain = felt!("0x999");
-        let session = FullSessionInfo::default();
+        let signer_key = SigningKey::from_random();
+        let session_signer = account_sdk::abigen::controller::Signer::Starknet(StarknetSigner {
+            pubkey: NonZero::new(signer_key.verifying_key().scalar()).unwrap(),
+        });
+        let session = FullSessionInfo {
+            chain_id: chain,
+            auth: SessionAuth::default(),
+            session: Session::new_wildcard(0, &session_signer, Felt::ZERO).unwrap(),
+        };
 
         let err = store_at(config_dir, chain, &session).unwrap_err();
         assert!(err.to_string().contains("No credentials found"))

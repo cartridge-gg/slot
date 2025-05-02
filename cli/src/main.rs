@@ -4,8 +4,7 @@ mod command;
 
 use crate::command::Command;
 use clap::Parser;
-use colored::*;
-use update_informer::{registry, Check};
+use slot::version;
 
 /// Slot CLI for Cartridge
 #[derive(Parser, Debug)]
@@ -20,11 +19,6 @@ async fn main() {
     env_logger::init();
     let cli = Cli::parse();
 
-    let name = "cartridge-gg/slot";
-    let current = env!("CARGO_PKG_VERSION");
-    let informer = update_informer::new(registry::GitHub, name, current)
-        .interval(std::time::Duration::from_secs(60 * 60));
-
     match &cli.command.run().await {
         Ok(_) => {}
         Err(e) => {
@@ -33,19 +27,6 @@ async fn main() {
         }
     }
 
-    if let Some(version) = informer.check_version().ok().flatten() {
-        notify_new_version(current, version.to_string().as_str());
-    }
-}
-
-fn notify_new_version(current_version: &str, latest_version: &str) {
-    println!(
-        "\n{} {}{} → {}",
-        "Slot CLI update available:".bold(),
-        "v".red().bold(),
-        current_version.red().bold(),
-        latest_version.green().bold()
-    );
-    println!("To upgrade, run: {}", "`slotup`".cyan().bold());
-    println!("\n")
+    // Check for new version after command execution
+    version::check_for_new_version();
 }
