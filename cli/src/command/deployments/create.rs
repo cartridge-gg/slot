@@ -66,7 +66,7 @@ impl CreateArgs {
             if !self.force {
                 let confirmation = Confirm::with_theme(&ColorfulTheme::default())
                   .with_prompt(format!(
-                      "You are creating a `{}` instance, which will cost you around ${} per month (billed daily). Do you want to proceed?",
+                      "You are creating an of kind `{}`, which will cost you around ${} per month (billed daily). Do you want to proceed?",
                       &self.tier,
                       tier_pricing.get(&self.tier).unwrap()
                   ))
