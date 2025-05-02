@@ -1,10 +1,12 @@
 use self::members::{TeamAddArgs, TeamListArgs, TeamRemoveArgs};
 use crate::command::teams::create::CreateTeamArgs;
+use crate::command::teams::update::UpdateTeamArgs;
 use anyhow::Result;
 use clap::{Args, Subcommand};
 
 mod create;
 mod members;
+mod update;
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Team options")]
@@ -20,6 +22,9 @@ pub struct Teams {
 pub enum TeamsCommands {
     #[command(about = "Create a new team.")]
     Create(CreateTeamArgs),
+
+    #[command(about = "Update an existing team.")]
+    Update(UpdateTeamArgs),
 
     #[command(about = "List team members.", aliases = ["ls"])]
     List(TeamListArgs),
@@ -38,6 +43,7 @@ impl Teams {
             TeamsCommands::Add(args) => args.run(self.name.clone()).await,
             TeamsCommands::Remove(args) => args.run(self.name.clone()).await,
             TeamsCommands::Create(args) => args.run(self.name.clone()).await,
+            TeamsCommands::Update(args) => args.run(self.name.clone()).await,
         }
     }
 }
