@@ -33,6 +33,7 @@ slot.workspace = true
 starknet.workspace = true
 toml = "0.8"
 url.workspace = true
+strum_macros = "0.25.3"
 
 [[bin]]
 name = "slot"

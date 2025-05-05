@@ -1,11 +1,13 @@
+use anyhow::Result;
+use clap::Subcommand;
+use colored::*;
+use strum_macros::Display;
+
 use self::{
     accounts::AccountsArgs, create::CreateArgs, delete::DeleteArgs, describe::DescribeArgs,
     list::ListArgs, logs::LogsArgs, update::UpdateArgs,
 };
 use crate::command::deployments::transfer::TransferArgs;
-use anyhow::Result;
-use clap::Subcommand;
-use colored::*;
 
 mod accounts;
 mod create;
@@ -61,7 +63,7 @@ impl Deployments {
     }
 }
 
-#[derive(clap::ValueEnum, Clone, Debug, serde::Serialize)]
+#[derive(clap::ValueEnum, Clone, Debug, serde::Serialize, PartialEq, Eq, Hash, Display)]
 pub enum Tier {
     Basic,
     Common,
