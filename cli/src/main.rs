@@ -4,7 +4,6 @@ mod command;
 
 use crate::command::Command;
 use clap::Parser;
-use slot::version;
 
 /// Slot CLI for Cartridge
 #[derive(Parser, Debug)]
@@ -26,7 +25,4 @@ async fn main() {
             std::process::exit(1);
         }
     }
-
-    // Check for new version after command execution
-    version::check_for_new_version();
 }
