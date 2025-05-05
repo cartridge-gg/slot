@@ -121,9 +121,9 @@ pub fn re_execute_current_command() {
 /// Returns true if an update was performed
 pub fn check_and_auto_update() -> bool {
     // Skip auto-update if disabled or running via cargo
-    // if is_running_via_cargo_run() {
-    //     return false;
-    // }
+    if is_running_via_cargo_run() {
+        return false;
+    }
 
     if is_auto_update_disabled() {
         // Still check for updates to notify the user, but don't auto-update
