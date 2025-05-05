@@ -1,6 +1,6 @@
 use colored::*;
 use std::env;
-use std::process::Command;
+use std::process::{exit, Command};
 use update_informer::{registry, Check};
 
 /// Repository name for version checking
@@ -67,6 +67,7 @@ pub fn is_slotup_available() -> bool {
 }
 
 /// Runs the slotup command to update the CLI
+/// If update is successful, re-executes the current command with the updated version
 pub fn run_auto_update() -> bool {
     if !is_slotup_available() {
         return false;
@@ -75,9 +76,44 @@ pub fn run_auto_update() -> bool {
     println!("Updating Slot CLI first...");
 
     // Run slotup command
-    match Command::new("slotup").status() {
+    let update_success = match Command::new("slotup").status() {
         Ok(status) => status.success(),
         Err(_) => false,
+    };
+
+    if update_success {
+        println!("Update successful! Re-executing command with new version...");
+
+        // Re-execute the current command with the updated version
+        re_execute_current_command();
+
+        // This line should never be reached as re_execute_current_command will exit
+        // But we return true just in case
+        return true;
+    }
+
+    false
+}
+
+/// Re-executes the current command with all its arguments
+/// This function will exit the current process
+pub fn re_execute_current_command() {
+    // Get the current executable path (should be the updated slot binary)
+    if let Ok(current_exe) = env::current_exe() {
+        // Get all command line arguments
+        let args: Vec<String> = env::args().skip(1).collect();
+
+        // Execute the command
+        let result = Command::new(current_exe).args(args).status();
+
+        // Exit with the same status code as the re-executed command
+        match result {
+            Ok(status) => exit(status.code().unwrap_or(0)),
+            Err(_) => exit(1),
+        };
+    } else {
+        // If we can't get the current executable path, just continue with the current process
+        println!("Failed to re-execute command with new version.");
     }
 }
 
@@ -85,9 +121,9 @@ pub fn run_auto_update() -> bool {
 /// Returns true if an update was performed
 pub fn check_and_auto_update() -> bool {
     // Skip auto-update if disabled or running via cargo
-    if is_running_via_cargo_run() {
-        return false;
-    }
+    // if is_running_via_cargo_run() {
+    //     return false;
+    // }
 
     if is_auto_update_disabled() {
         // Still check for updates to notify the user, but don't auto-update
