@@ -59,14 +59,14 @@ impl TransferArgs {
             res.transfer.account_before,
             res.transfer.account_before / 100,
             res.transfer.account_after,
-            res.transfer.account_before / 100
+            res.transfer.account_after / 100
         );
         println!(
             "Team balance: {} credits (~${} USD) -> {} credits (~${} USD)",
             res.transfer.team_before,
             res.transfer.team_before / 100,
             res.transfer.team_after,
-            res.transfer.team_before / 100
+            res.transfer.team_after / 100
         );
 
         Ok(())
