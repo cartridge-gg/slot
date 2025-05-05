@@ -76,7 +76,7 @@ main() {
   if [[ "$SLOTUP_REPO" == "cartridge-gg/slot" && -z "$SLOTUP_BRANCH" && -z "$SLOTUP_COMMIT" ]]; then
     SLOTUP_VERSION=${SLOTUP_VERSION-stable}
     SLOTUP_TAG=$SLOTUP_VERSION
-    
+
     # Normalize versions (handle channels, versions without v prefix
     if [[ "$SLOTUP_VERSION" == "stable" ]]; then
       # Fetch the list of releases from the GitHub API and filter out `prerelease`` releases and `alpha`` releases
@@ -272,23 +272,23 @@ download() {
   fi
 }
 
-# Banner Function for Slot 
+# Banner Function for Slot
 banner() {
   printf '
 
 ═════════════════════════════════════════════════════════════════════════
- 
+
 
 
                   ███████╗██╗      ██████╗ ████████╗
                   ██╔════╝██║     ██╔═══██╗╚══██╔══╝
-                  ███████╗██║     ██║   ██║   ██║   
-                  ╚════██║██║     ██║   ██║   ██║   
-                  ███████║███████╗╚██████╔╝   ██║   
-                  ╚══════╝╚══════╝ ╚═════╝    ╚═╝   
+                  ███████╗██║     ██║   ██║   ██║
+                  ╚════██║██║     ██║   ██║   ██║
+                  ███████║███████╗╚██████╔╝   ██║
+                  ╚══════╝╚══════╝ ╚═════╝    ╚═╝
 
 
-              Repo : https://github.com/cartridge-gg/slot            
+              Repo : https://github.com/cartridge-gg/slot
 
 ═════════════════════════════════════════════════════════════════════════
 

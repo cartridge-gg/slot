@@ -73,8 +73,6 @@ pub fn run_auto_update() -> bool {
         return false;
     }
 
-    println!("Updating Slot CLI first...");
-
     // Run slotup command
     let update_success = match Command::new("slotup").status() {
         Ok(status) => status.success(),
@@ -139,9 +137,36 @@ pub fn check_and_auto_update() -> bool {
         return false;
     }
 
-    // Check for new version and run auto-update if available
-    if get_latest_version().is_some() {
-        return run_auto_update();
+    // Check for new version and prompt for auto-update if available
+    if let Some(version) = get_latest_version() {
+        let current = env!("CARGO_PKG_VERSION");
+
+        // We need to use std::io directly since we can't depend on dialoguer in the slot crate
+        println!(
+            "\n{} {}{} → {}",
+            "Slot CLI update available:".bold(),
+            "v".red().bold(),
+            current.red().bold(),
+            version.green().bold()
+        );
+
+        print!("Do you want to update now (recommended)? [y/N] ");
+        std::io::Write::flush(&mut std::io::stdout()).unwrap();
+
+        let mut input = String::new();
+        if std::io::stdin().read_line(&mut input).is_ok() {
+            let input = input.trim().to_lowercase();
+            if input == "y" || input == "yes" {
+                println!("Updating Slot CLI first...");
+                return run_auto_update();
+            }
+        }
+
+        // User declined the update, just show the notification
+        println!(
+            "Update skipped. You can update manually by running: {}",
+            "`slotup`".cyan().bold()
+        );
     }
 
     false
