@@ -40,10 +40,14 @@ pub fn notify_new_version(current_version: &str, latest_version: &str) {
     println!("\n");
 }
 
-/// Checks if auto-update is disabled via environment variable
-/// or if we're running via cargo run
+/// Checks if auto-update is disabled via environment variable (SLOT_DISABLE_AUTO_UPDATE)
 pub fn is_auto_update_disabled() -> bool {
     env::var("SLOT_DISABLE_AUTO_UPDATE").is_ok()
+}
+
+/// Checks if auto-update should be forced without confirmation (SLOT_FORCE_AUTO_UPDATE)
+pub fn is_auto_update_forced() -> bool {
+    env::var("SLOT_FORCE_AUTO_UPDATE").is_ok()
 }
 
 /// Detects if the current process is being run via `cargo run`
@@ -116,6 +120,11 @@ pub fn re_execute_current_command() {
 }
 
 /// Checks for a new version and runs auto-update if needed
+///
+/// Behavior is controlled by environment variables:
+/// - SLOT_DISABLE_AUTO_UPDATE: Disables auto-update completely
+/// - SLOT_FORCE_AUTO_UPDATE: Forces auto-update without confirmation
+///
 /// Returns true if an update was performed
 pub fn check_and_auto_update() -> bool {
     // Skip auto-update if disabled or running via cargo
@@ -137,11 +146,18 @@ pub fn check_and_auto_update() -> bool {
         return false;
     }
 
-    // Check for new version and prompt for auto-update if available
+    // Check for new version and run auto-update if available
     if let Some(version) = get_latest_version() {
         let current = env!("CARGO_PKG_VERSION");
 
-        // We need to use std::io directly since we can't depend on dialoguer in the slot crate
+        // If auto-update is forced, run it without confirmation
+        if is_auto_update_forced() {
+            println!("New version available: {} → {}", current, version);
+            println!("Auto-updating (SLOT_FORCE_AUTO_UPDATE is set)...");
+            return run_auto_update();
+        }
+
+        // Otherwise, prompt for confirmation
         println!(
             "\n{} {}{} → {}",
             "Slot CLI update available:".bold(),
