@@ -96,6 +96,7 @@ mod tests {
             teams: me::MeMeTeams {
                 edges: Some(vec![]),
             },
+            credits_plain: 0,
         };
 
         let account = AccountInfo::from(me);

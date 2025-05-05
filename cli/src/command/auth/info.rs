@@ -15,11 +15,22 @@ impl InfoArgs {
 
         let request_body = Me::build_query(Variables {});
         let res: ResponseData = client.query(&request_body).await?;
-        println!("Username: {}", res.me.clone().unwrap().username);
+        let info = res.me.clone().unwrap();
+        println!("Username: {}", info.username);
+        println!(
+            "Credits: {} (${})",
+            info.credits_plain,
+            info.credits_plain / 100
+        );
 
         println!();
         println!("Teams:");
         let teams = res.me.unwrap().teams.edges.unwrap();
+
+        if teams.is_empty() {
+            println!("  No teams yet");
+        }
+
         for edge in teams {
             let team = edge.unwrap().node.unwrap();
             println!();
@@ -27,6 +38,11 @@ impl InfoArgs {
 
             println!("  Deployments:");
             let deployments = team.deployments.edges.unwrap();
+
+            if deployments.is_empty() {
+                println!("    No deployments yet");
+            }
+
             for edge in deployments {
                 let deployment = edge.unwrap().node.unwrap();
                 println!(
