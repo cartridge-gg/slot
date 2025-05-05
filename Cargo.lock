@@ -8541,6 +8541,7 @@ dependencies = [
  "serde",
  "slot 0.41.1",
  "starknet 0.14.0",
+ "strum_macros 0.25.3",
  "thiserror 1.0.69",
  "tokio",
  "toml 0.8.20",
