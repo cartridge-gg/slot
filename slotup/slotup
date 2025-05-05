@@ -96,6 +96,19 @@ main() {
       SLOTUP_TAG="${SLOTUP_VERSION}"
     fi
 
+    # Check if slot is installed and has the latest version
+    CURRENT_SLOT="$SLOT_BIN_DIR/slot"
+    if [ -x "$CURRENT_SLOT" ] && [ "$SLOTUP_VERSION" != "nightly" ]; then
+      # Get installed version (remove "v" prefix for consistent comparison)
+      INSTALLED_VERSION="$($CURRENT_SLOT --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')"
+      LATEST_VERSION="$(echo "$SLOTUP_TAG" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')"
+      if [ "$INSTALLED_VERSION" = "$LATEST_VERSION" ]; then
+        say "slot version $INSTALLED_VERSION is already the latest. Skipping installation."
+        exit 0
+      fi
+    fi
+
+
     say "installing slot (version ${SLOTUP_VERSION}, tag ${SLOTUP_TAG})"
 
     PLATFORM="$(uname -s)"
