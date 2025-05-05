@@ -4,6 +4,7 @@ pub mod teams;
 
 use anyhow::Result;
 use clap::Subcommand;
+use slot::version;
 
 use auth::Auth;
 use deployments::Deployments;
@@ -26,6 +27,10 @@ pub enum Command {
 
 impl Command {
     pub async fn run(&self) -> Result<()> {
+        // Check for new version and run auto-update if available
+        version::check_and_auto_update();
+
+        // Run the actual command
         match &self {
             Command::Auth(cmd) => cmd.run().await,
             Command::Deployments(cmd) => cmd.run().await,

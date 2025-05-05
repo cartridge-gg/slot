@@ -1,23 +1,26 @@
 use colored::*;
+use std::env;
+use std::process::Command;
 use update_informer::{registry, Check};
 
-/// Checks if a new version of the slot CLI is available and notifies the user
-pub fn check_for_new_version() {
-    let name = "cartridge-gg/slot";
+/// Repository name for version checking
+pub const REPO_NAME: &str = "cartridge-gg/slot";
+
+/// Checks if a new version is available and returns it if so
+pub fn get_latest_version() -> Option<String> {
     let current = env!("CARGO_PKG_VERSION");
 
-    let informer = update_informer::new(registry::GitHub, name, current)
+    let informer = update_informer::new(registry::GitHub, REPO_NAME, current)
         .interval(std::time::Duration::from_secs(60 * 100));
 
     let check_result = informer.check_version();
 
     if check_result.is_err() {
         println!("error checking for new version");
+        return None;
     }
 
-    if let Some(version) = check_result.ok().flatten() {
-        notify_new_version(current, version.to_string().as_str());
-    }
+    check_result.ok().flatten().map(|v| v.to_string())
 }
 
 /// Prints a notification about a new version being available
@@ -35,4 +38,75 @@ pub fn notify_new_version(current_version: &str, latest_version: &str) {
     println!("{}", message);
     println!("{}", upgrade_message);
     println!("\n");
+}
+
+/// Checks if auto-update is disabled via environment variable
+/// or if we're running via cargo run
+pub fn is_auto_update_disabled() -> bool {
+    env::var("SLOT_DISABLE_AUTO_UPDATE").is_ok()
+}
+
+/// Detects if the current process is being run via `cargo run`
+pub fn is_running_via_cargo_run() -> bool {
+    // Get the current executable path
+    if let Ok(current_exe) = env::current_exe() {
+        // Check if the path contains "target/debug" or "target/release"
+        // which would indicate it's being run via cargo
+        let path_str = current_exe.to_string_lossy();
+        if path_str.contains("/target/debug/") || path_str.contains("/target/release/") {
+            return true;
+        }
+    }
+
+    false
+}
+
+/// Checks if slotup binary is available in PATH
+pub fn is_slotup_available() -> bool {
+    which::which("slotup").is_ok()
+}
+
+/// Runs the slotup command to update the CLI
+pub fn run_auto_update() -> bool {
+    if !is_slotup_available() {
+        return false;
+    }
+
+    println!("Updating Slot CLI first...");
+
+    // Run slotup command
+    match Command::new("slotup").status() {
+        Ok(status) => status.success(),
+        Err(_) => false,
+    }
+}
+
+/// Checks for a new version and runs auto-update if needed
+/// Returns true if an update was performed
+pub fn check_and_auto_update() -> bool {
+    // Skip auto-update if disabled or running via cargo
+    if is_running_via_cargo_run() {
+        return false;
+    }
+
+    if is_auto_update_disabled() {
+        // Still check for updates to notify the user, but don't auto-update
+        if let Some(version) = get_latest_version() {
+            let current = env!("CARGO_PKG_VERSION");
+            notify_new_version(current, version.as_str());
+        }
+        return false;
+    }
+
+    // Skip if slotup is not available
+    if !is_slotup_available() {
+        return false;
+    }
+
+    // Check for new version and run auto-update if available
+    if get_latest_version().is_some() {
+        return run_auto_update();
+    }
+
+    false
 }
