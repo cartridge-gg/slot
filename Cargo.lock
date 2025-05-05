@@ -8502,6 +8502,7 @@ dependencies = [
  "base64 0.22.1",
  "cainome-cairo-serde 0.2.0",
  "colored 2.2.0",
+ "dialoguer",
  "dirs 5.0.1",
  "graphql_client",
  "hyper 1.6.0",

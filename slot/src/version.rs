@@ -1,4 +1,6 @@
 use colored::*;
+use dialoguer::theme::ColorfulTheme;
+use dialoguer::Confirm;
 use std::env;
 use std::process::{exit, Command};
 use update_informer::{registry, Check};
@@ -157,7 +159,7 @@ pub fn check_and_auto_update() -> bool {
             return run_auto_update();
         }
 
-        // Otherwise, prompt for confirmation
+        // Otherwise, prompt for confirmation using dialoguer
         println!(
             "\n{} {}{} → {}",
             "Slot CLI update available:".bold(),
@@ -166,16 +168,17 @@ pub fn check_and_auto_update() -> bool {
             version.green().bold()
         );
 
-        print!("Do you want to update now (recommended)? [y/N] ");
-        std::io::Write::flush(&mut std::io::stdout()).unwrap();
+        let confirmation = Confirm::with_theme(&ColorfulTheme::default())
+            .with_prompt("Do you want to update now (recommended)?")
+            .default(true)
+            .show_default(true)
+            .wait_for_newline(true)
+            .interact()
+            .unwrap_or(false);
 
-        let mut input = String::new();
-        if std::io::stdin().read_line(&mut input).is_ok() {
-            let input = input.trim().to_lowercase();
-            if input == "y" || input == "yes" {
-                println!("Updating Slot CLI first...");
-                return run_auto_update();
-            }
+        if confirmation {
+            println!("Updating Slot CLI first...");
+            return run_auto_update();
         }
 
         // User declined the update, just show the notification
