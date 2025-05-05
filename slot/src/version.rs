@@ -2,6 +2,7 @@ use colored::*;
 use dialoguer::theme::ColorfulTheme;
 use dialoguer::Confirm;
 use std::env;
+use std::path::PathBuf;
 use std::process::{exit, Command};
 use update_informer::{registry, Check};
 
@@ -102,23 +103,29 @@ pub fn run_auto_update() -> bool {
 /// Re-executes the current command with all its arguments
 /// This function will exit the current process
 pub fn re_execute_current_command() {
-    // Get the current executable path (should be the updated slot binary)
-    if let Ok(current_exe) = env::current_exe() {
-        // Get all command line arguments
-        let args: Vec<String> = env::args().skip(1).collect();
+    // Get the path to the installed slot binary in ~/.slot/bin/slot
+    let home_dir = dirs::home_dir().unwrap_or_else(|| PathBuf::from("."));
+    let config_dir = env::var("XDG_CONFIG_HOME")
+        .map(PathBuf::from)
+        .unwrap_or_else(|_| home_dir.clone());
+    let slot_bin_path = config_dir.join(".slot").join("bin").join("slot");
 
-        // Execute the command
-        let result = Command::new(current_exe).args(args).status();
+    // Get all command line arguments
+    let args: Vec<String> = env::args().skip(1).collect();
 
-        // Exit with the same status code as the re-executed command
-        match result {
-            Ok(status) => exit(status.code().unwrap_or(0)),
-            Err(_) => exit(1),
-        };
-    } else {
-        // If we can't get the current executable path, just continue with the current process
-        println!("Failed to re-execute command with new version.");
-    }
+    println!("Re-executing with binary: {:?}", slot_bin_path);
+
+    // Execute the command with the installed binary path
+    let result = Command::new(slot_bin_path).args(args).status();
+
+    // Exit with the same status code as the re-executed command
+    match result {
+        Ok(status) => exit(status.code().unwrap_or(0)),
+        Err(e) => {
+            println!("Failed to re-execute command: {}", e);
+            exit(1);
+        }
+    };
 }
 
 /// Checks for a new version and runs auto-update if needed
