@@ -7,6 +7,13 @@ use slot::{api::Client, credential::Credentials};
 #[derive(Debug, Args)]
 pub struct InfoArgs;
 
+fn format_usd(credits: i64) -> String {
+    // format two digits currency
+    let amount = credits as f64 / 100f64;
+    // format two digits e.g. $1.02
+    format!("${:.2}", amount)
+}
+
 impl InfoArgs {
     // TODO: find the account info from `credentials.json` first before making a request
     pub async fn run(&self) -> Result<()> {
@@ -18,9 +25,10 @@ impl InfoArgs {
         let info = res.me.clone().unwrap();
         println!("Username: {}", info.username);
         println!(
-            "Credits: {} (${})",
+            "Credits: {} ({})",
             info.credits_plain,
-            info.credits_plain / 100
+            // round usd to 2 digits
+            format_usd(info.credits_plain)
         );
 
         println!();
@@ -35,6 +43,12 @@ impl InfoArgs {
             let team = edge.unwrap().node.unwrap();
             println!();
             println!("  Name: {}", team.name);
+            println!(
+                "  Credits: {} ({})",
+                (team.credits / 1e6 as i64),
+                // round usd to 2 digits
+                format_usd((team.credits as f64 / 1e6) as i64)
+            );
 
             println!("  Deployments:");
             let deployments = team.deployments.edges.unwrap();
