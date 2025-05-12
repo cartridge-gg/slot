@@ -30,7 +30,6 @@ pub enum TeamsCommands {
 
     // #[command(about = "Delete a team.")]
     // Delete(DeleteTeamArgs),
-
     #[command(about = "List team members.", aliases = ["ls"])]
     List(TeamListArgs),
 
