@@ -1,0 +1,3 @@
+mutation DeleteTeam($name: String!) {
+  deleteTeam(name: $name)
+}

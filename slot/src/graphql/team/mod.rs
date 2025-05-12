@@ -38,3 +38,11 @@ pub struct TeamMemberAdd;
     query_path = "src/graphql/team/members.graphql"
 )]
 pub struct TeamMemberRemove;
+
+// #[derive(GraphQLQuery)]
+// #[graphql(
+//     response_derives = "Debug",
+//     schema_path = "schema.json",
+//     query_path = "src/graphql/team/delete.graphql"
+// )]
+// pub struct DeleteTeam;
