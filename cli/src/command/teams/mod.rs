@@ -1,12 +1,12 @@
 use self::members::{TeamAddArgs, TeamListArgs, TeamRemoveArgs};
 use crate::command::teams::create::CreateTeamArgs;
-// use crate::command::teams::delete::DeleteTeamArgs;
+use crate::command::teams::delete::DeleteTeamArgs;
 use crate::command::teams::update::UpdateTeamArgs;
 use anyhow::Result;
 use clap::{Args, Subcommand};
 
 mod create;
-// mod delete;
+mod delete;
 mod members;
 mod update;
 
@@ -28,8 +28,8 @@ pub enum TeamsCommands {
     #[command(about = "Update an existing team.")]
     Update(UpdateTeamArgs),
 
-    // #[command(about = "Delete a team.")]
-    // Delete(DeleteTeamArgs),
+    #[command(about = "Delete a team.")]
+    Delete(DeleteTeamArgs),
     #[command(about = "List team members.", aliases = ["ls"])]
     List(TeamListArgs),
 
@@ -48,7 +48,7 @@ impl Teams {
             TeamsCommands::Remove(args) => args.run(self.name.clone()).await,
             TeamsCommands::Create(args) => args.run(self.name.clone()).await,
             TeamsCommands::Update(args) => args.run(self.name.clone()).await,
-            // TeamsCommands::Delete(args) => args.run(self.name.clone()).await,
+            TeamsCommands::Delete(args) => args.run(self.name.clone()).await,
         }
     }
 }
