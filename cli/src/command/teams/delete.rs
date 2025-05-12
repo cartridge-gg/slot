@@ -11,9 +11,7 @@ pub struct DeleteTeamArgs {}
 
 impl DeleteTeamArgs {
     pub async fn run(&self, name: String) -> Result<()> {
-        let request_body = DeleteTeam::build_query(delete_team::Variables {
-            name: name.clone(),
-        });
+        let request_body = DeleteTeam::build_query(delete_team::Variables { name: name.clone() });
 
         let credentials = Credentials::load()?;
         let client = Client::new_with_token(credentials.access_token);
