@@ -11,6 +11,7 @@ query ListDeployments {
               node {
                 project
                 branch
+                status
                 service {
                   id
                 }
