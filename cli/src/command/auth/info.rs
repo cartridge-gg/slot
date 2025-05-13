@@ -41,6 +41,9 @@ impl InfoArgs {
 
         for edge in teams {
             let team = edge.unwrap().node.unwrap();
+            if team.deleted {
+                continue;
+            }
             println!();
             println!("  Name: {}", team.name);
             println!(

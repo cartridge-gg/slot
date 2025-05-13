@@ -22,15 +22,23 @@ impl TeamListArgs {
 
         let data: team_members_list::ResponseData = client.query(&request_body).await?;
 
-        data.team
-            .and_then(|team_list| team_list.members.edges)
-            .into_iter()
-            .flatten()
-            .for_each(|edge| {
-                if let Some(node) = edge.and_then(|edge| edge.node) {
-                    println!("  {}", node.id)
-                }
-            });
+        if let Some(team_list) = data.team {
+            if team_list.deleted {
+                println!("Team '{}' not found or has been deleted", team);
+                return Ok(());
+            }
+
+            team_list
+                .members
+                .edges
+                .into_iter()
+                .flatten()
+                .for_each(|edge| {
+                    if let Some(node) = edge.and_then(|edge| edge.node) {
+                        println!("  {}", node.id)
+                    }
+                });
+        }
 
         Ok(())
     }
