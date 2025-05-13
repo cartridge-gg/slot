@@ -18,12 +18,10 @@ dialoguer = "0.11.0"
 env_logger = "0.10"
 log = "0.4"
 graphql_client.workspace = true
-torii-cli = { git = "https://github.com/dojoengine/dojo", branch = "torii-sqlite-types", default-features = false }
+torii-cli = { git = "https://github.com/dojoengine/torii", tag = "v1.5.3", default-features = false }
 
-katana-primitives = { git = "https://github.com/dojoengine/katana", rev = "5618935" }
-katana-cli = { git = "https://github.com/dojoengine/katana", rev = "5618935", default-features = false, features = [
-	"slot",
-] }
+katana-primitives = { git = "https://github.com/dojoengine/katana", tag = "v1.5.1" }
+katana-cli = { git = "https://github.com/dojoengine/katana", tag = "v1.5.1" }
 
 hyper.workspace = true
 tokio.workspace = true
