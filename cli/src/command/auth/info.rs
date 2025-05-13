@@ -52,13 +52,18 @@ impl InfoArgs {
 
             println!("  Deployments:");
             let deployments = team.deployments.edges.unwrap();
+            let active_deployments: Vec<_> = deployments
+                .iter()
+                .filter_map(|edge| edge.as_ref())
+                .filter_map(|edge| edge.node.as_ref())
+                .filter(|deployment| format!("{:?}", deployment.status) != "deleted")
+                .collect();
 
-            if deployments.is_empty() {
+            if active_deployments.is_empty() {
                 println!("    No deployments yet");
             }
 
-            for edge in deployments {
-                let deployment = edge.unwrap().node.unwrap();
+            for deployment in active_deployments {
                 println!(
                     "    Deployment: {}/{}",
                     deployment.project, deployment.service_id

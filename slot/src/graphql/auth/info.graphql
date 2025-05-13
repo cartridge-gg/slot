@@ -30,6 +30,7 @@ query Me {
                 project
                 branch
                 serviceID
+                status
               }
             }
           }

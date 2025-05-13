@@ -32,7 +32,13 @@ impl ListArgs {
                     .iter()
                     .filter_map(|team| team.deployments.edges.as_ref())
                     .flatten()
-                    .map(|deployment| deployment.as_ref().unwrap())
+                    .filter_map(|deployment| deployment.as_ref())
+                    .filter(|deployment| {
+                        deployment
+                            .node
+                            .as_ref()
+                            .is_some_and(|node| format!("{:?}", node.status) != "deleted")
+                    })
                     .collect();
 
                 for deployment in deployments {
