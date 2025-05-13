@@ -30483,7 +30483,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "Credits to use for slot billing. 1 credit = 0.001 USDC.",
+              "description": "Credits to use for slot billing. 1 credit = 0.01 USD.",
               "isDeprecated": false,
               "name": "credits",
               "type": {
@@ -30492,6 +30492,22 @@
                 "ofType": {
                   "kind": "SCALAR",
                   "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Soft delete flag for legal and billing purposes.",
+              "isDeprecated": false,
+              "name": "deleted",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
                   "ofType": null
                 }
               }
@@ -32697,6 +32713,26 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "deleted field predicates",
+              "name": "deleted",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "deletedNEQ",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             },
