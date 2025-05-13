@@ -1,5 +1,6 @@
 use anyhow::Result;
 use clap::Args;
+use colored::*;
 use slot::graphql::auth::{me::*, Me};
 use slot::graphql::GraphQLQuery;
 use slot::{api::Client, credential::Credentials};
@@ -67,9 +68,15 @@ impl InfoArgs {
             }
 
             for deployment in active_deployments {
+                let deprecated_indicator = if deployment.deprecated.unwrap_or(false) {
+                    format!(" {}", "(deprecated!)".bold())
+                } else {
+                    String::new()
+                };
+
                 println!(
-                    "    Deployment: {}/{}",
-                    deployment.project, deployment.service_id
+                    "    Deployment: {}/{}{}",
+                    deployment.project, deployment.service_id, deprecated_indicator
                 );
             }
 
