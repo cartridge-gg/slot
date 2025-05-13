@@ -1,5 +1,6 @@
 query TeamMembersList($team: String!) {
   team(name: $team) {
+    deleted
     members {
       edges {
         node {
