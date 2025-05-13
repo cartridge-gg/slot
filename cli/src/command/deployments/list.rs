@@ -34,9 +34,10 @@ impl ListArgs {
                     .flatten()
                     .filter_map(|deployment| deployment.as_ref())
                     .filter(|deployment| {
-                        deployment.node.as_ref().is_some_and(|node| {
-                            format!("{:?}", node.status) != "deleted"
-                        })
+                        deployment
+                            .node
+                            .as_ref()
+                            .is_some_and(|node| format!("{:?}", node.status) != "deleted")
                     })
                     .collect();
 
