@@ -73,7 +73,7 @@ impl InfoArgs {
                 } else {
                     String::new()
                 };
-                
+
                 println!(
                     "    Deployment: {}/{}{}",
                     deployment.project, deployment.service_id, deprecated_indicator
