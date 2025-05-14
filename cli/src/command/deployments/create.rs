@@ -96,7 +96,7 @@ impl CreateArgs {
 
                 CreateServiceInput {
                     type_: DeploymentService::katana,
-                    version: config.version.clone(),
+                    version: None,
                     config: slot::read::base64_encode_string(&service_config),
                     katana: Some(KatanaCreateInput {
                         provable: Some(config.provable),
@@ -118,7 +118,7 @@ impl CreateArgs {
 
                 CreateServiceInput {
                     type_: DeploymentService::torii,
-                    version: config.version.clone(),
+                    version: None,
                     config: slot::read::base64_encode_string(&service_config),
                     katana: None,
                     torii: Some(ToriiCreateInput {
