@@ -1,0 +1,17 @@
+repos:
+  - repo: local
+    hooks:
+      - id: clippy
+        name: clippy
+        description: Run clippy on all targets and features
+        entry: scripts/clippy.sh
+        language: system
+        types: [rust]
+        pass_filenames: false
+      - id: rustfmt
+        name: rustfmt
+        description: Format Rust code with cargo +nightly fmt
+        entry: scripts/rust_fmt_fix.sh
+        language: system
+        types: [rust]
+        pass_filenames: false
