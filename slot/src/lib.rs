@@ -6,6 +6,7 @@ pub mod bigint;
 pub mod browser;
 pub mod credential;
 pub mod graphql;
+pub mod presets;
 pub mod read;
 pub mod server;
 pub mod session;
