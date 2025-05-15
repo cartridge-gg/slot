@@ -118,7 +118,7 @@ impl CreateArgs {
 
                 CreateServiceInput {
                     type_: DeploymentService::torii,
-                    version: None,
+                    version: config.version.clone(),
                     config: slot::read::base64_encode_string(&service_config),
                     katana: None,
                     torii: Some(ToriiCreateInput {

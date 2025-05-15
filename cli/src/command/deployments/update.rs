@@ -65,7 +65,7 @@ impl UpdateArgs {
 
                 UpdateServiceInput {
                     type_: DeploymentService::torii,
-                    version: None,
+                    version: config.version.clone(),
                     config: Some(slot::read::base64_encode_string(&service_config)),
                     torii: Some(ToriiUpdateInput {
                         replicas: config.replicas,
