@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+echo "Running pre-commit hook..."
+
+# Run clippy
+echo "Running cargo clippy..."
+./scripts/clippy.sh
+
+# Run rustfmt
+echo "Running cargo +nightly fmt..."
+./scripts/rust_fmt_fix.sh
+
+echo "Pre-commit hook completed successfully."
