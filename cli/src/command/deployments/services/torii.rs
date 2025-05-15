@@ -9,6 +9,10 @@ pub struct ToriiCreateArgs {
     #[arg(help = "The number of replicas to deploy.")]
     pub replicas: Option<i64>,
 
+    #[arg(long)]
+    #[arg(help = "The version of Torii to deploy.")]
+    pub version: Option<String>,
+
     #[command(flatten)]
     pub torii_args: ToriiArgs,
 }
@@ -19,6 +23,10 @@ pub struct ToriiUpdateArgs {
     #[arg(long)]
     #[arg(help = "The number of replicas to deploy.")]
     pub replicas: Option<i64>,
+
+    #[arg(long)]
+    #[arg(help = "The version of Torii to deploy.")]
+    pub version: Option<String>,
 
     #[command(flatten)]
     pub torii_args: ToriiArgs,
