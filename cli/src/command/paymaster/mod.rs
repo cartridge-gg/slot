@@ -7,12 +7,14 @@ use self::create::CreateArgs;
 use self::get::GetArgs;
 use self::list::ListArgs;
 use self::policy::PolicyCmd;
+use self::update::UpdateArgs;
 
 mod budget;
 mod create;
 mod get;
 mod list;
 mod policy;
+mod update;
 
 /// Command group for managing Paymasters
 #[derive(Debug, Args)]
@@ -39,6 +41,9 @@ enum PaymasterSubcommand {
 
     #[command(about = "Manage paymaster budget.")]
     Budget(BudgetCmd),
+
+    #[command(about = "Update paymaster configuration from a preset.")]
+    Update(UpdateArgs),
 }
 
 impl PaymasterCmd {
@@ -50,6 +55,7 @@ impl PaymasterCmd {
             PaymasterSubcommand::Get(args) => args.run().await,
             PaymasterSubcommand::Policy(cmd) => cmd.run().await,
             PaymasterSubcommand::Budget(cmd) => cmd.run().await,
+            PaymasterSubcommand::Update(args) => args.run().await,
         }
     }
 }
