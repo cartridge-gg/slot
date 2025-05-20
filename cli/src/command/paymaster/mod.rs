@@ -31,7 +31,7 @@ enum PaymasterSubcommand {
     #[command(about = "Create a new paymaster.")]
     Create(CreateArgs),
 
-    #[command(about = "Get paymaster details by ID.")]
+    #[command(about = "Get paymaster details by Name.")]
     Get(GetArgs),
 
     #[command(about = "Manage paymaster policies.")]

@@ -1,7 +1,7 @@
 # Query to fetch a single paymaster by ID
 # Operation name `GetPaymaster` must match the struct name in Rust
-query GetPaymaster($id: ID!) {
-  paymaster(id: $id) {
+query GetPaymaster($name: ID!) {
+  paymaster(name: $name) {
     # Include all fields you need from the Paymaster type
     id
     name
@@ -24,8 +24,8 @@ query GetPaymaster($id: ID!) {
 
 # Mutation to create a new paymaster
 # Operation name `CreatePaymaster` must match the struct name in Rust
-mutation CreatePaymaster($name: String!, $teamName: String!, $budget: BigInt!) {
-  createPaymaster(name: $name, teamName: $teamName, budget: $budget) {
+mutation CreatePaymaster($name: String!, $teamName: String!, $budget: Int!, $unit: FeeUnit!) {
+  createPaymaster(name: $name, teamName: $teamName, budget: $budget, unit: $unit) {
     id
     name
     team {
@@ -36,12 +36,12 @@ mutation CreatePaymaster($name: String!, $teamName: String!, $budget: BigInt!) {
 }
 
 # Mutation to add policies to a paymaster
-# Operation name `AddPaymasterPolicies` must match the struct name in Rust
-mutation AddPaymasterPolicies(
-  $paymasterId: ID!
-  $policies: [PaymasterPolicyInput!]!
+# Operation name `AddPolicies` must match the struct name in Rust
+mutation AddPolicies(
+  $paymasterName: ID!
+  $policies: [PolicyInput!]!
 ) {
-  addPaymasterPolicies(paymasterId: $paymasterId, policies: $policies) {
+  addPolicies(paymasterName: $paymasterName, policies: $policies) {
     id
     contractAddress
     entryPoint
@@ -50,15 +50,21 @@ mutation AddPaymasterPolicies(
 }
 
 # Mutation to remove policies from a paymaster
-# Operation name `RemovePaymasterPolicies` must match the struct name in Rust
-mutation RemovePaymasterPolicies($paymasterId: ID!, $policyIds: [ID!]!) {
-  removePaymasterPolicies(paymasterId: $paymasterId, policyIds: $policyIds)
+# Operation name `RemovePolicies` must match the struct name in Rust
+mutation RemovePolicies($paymasterName: ID!, $policyIds: [ID!]!) {
+  removePolicies(paymasterName: $paymasterName, policyIds: $policyIds)
+}
+
+# Mutation to remove all policies from a paymaster
+# Operation name `RemoveAllPolicies` must match the struct name in Rust
+mutation RemoveAllPolicies($paymasterName: ID!) {
+  removeAllPolicies(paymasterName: $paymasterName)
 }
 
 # Mutation to increase a paymaster's budget
 # Operation name `IncreaseBudget` must match the struct name in Rust
-mutation IncreaseBudget($paymasterId: ID!, $amount: BigInt!) {
-  increaseBudget(paymasterId: $paymasterId, amount: $amount) {
+mutation IncreaseBudget($paymasterName: ID!, $amount: Int!, $unit: FeeUnit!) {
+  increaseBudget(paymasterName: $paymasterName, amount: $amount, unit: $unit) {
     id
     name
   }
@@ -66,8 +72,8 @@ mutation IncreaseBudget($paymasterId: ID!, $amount: BigInt!) {
 
 # Mutation to decrease a paymaster's budget
 # Operation name `DecreaseBudget` must match the struct name in Rust
-mutation DecreaseBudget($paymasterId: ID!, $amount: BigInt!) {
-  decreaseBudget(paymasterId: $paymasterId, amount: $amount) {
+mutation DecreaseBudget($paymasterName: ID!, $amount: Int!, $unit: FeeUnit!) {
+  decreaseBudget(paymasterName: $paymasterName, amount: $amount, unit: $unit) {
     id
     name
   }
@@ -78,7 +84,6 @@ mutation DecreaseBudget($paymasterId: ID!, $amount: BigInt!) {
 query ListPaymasters {
   me {
     id
-    name
     teams {
       edges {
         node {
@@ -88,7 +93,9 @@ query ListPaymasters {
               node {
                 id
                 name
+                active
                 budget
+                budgetFeeUnit
                 team {
                   id
                   name

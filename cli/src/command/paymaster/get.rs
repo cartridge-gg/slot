@@ -9,8 +9,8 @@ use slot::graphql::GraphQLQuery;
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Get paymaster options")]
 pub struct GetArgs {
-    #[arg(long, help = "ID of the paymaster to retrieve.")]
-    id: String, // Assuming ID is string type
+    #[arg(long, help = "Name of the paymaster to retrieve.")]
+    name: String,
 }
 
 impl GetArgs {
@@ -20,7 +20,7 @@ impl GetArgs {
 
         // 2. Build Query Variables
         let variables = get_paymaster::Variables {
-            id: self.id.clone(),
+            name: self.name.clone(),
         };
         let request_body = GetPaymaster::build_query(variables);
 
@@ -28,17 +28,16 @@ impl GetArgs {
         let client = Client::new_with_token(credentials.access_token);
 
         // 4. Execute Query
-        println!("Fetching paymaster with ID: {}", self.id);
+        println!("Fetching paymaster: {}", self.name);
         let data: get_paymaster::ResponseData = client.query(&request_body).await?;
 
         // 5. Print Result (using Debug format as workaround for Serialize issue)
         match data.paymaster {
             Some(paymaster_data) => {
-                // Use Debug format {:?}
                 println!("Paymaster details:\n{:?}", paymaster_data);
             }
             None => {
-                println!("Paymaster with ID '{}' not found.", self.id);
+                println!("Paymaster '{}' not found.", self.name);
             }
         }
 
