@@ -1,8 +1,9 @@
 use anyhow::Result;
 use clap::{Args, Subcommand};
-use num_bigint::BigInt;
 use slot::api::Client;
 use slot::credential::Credentials;
+use slot::graphql::paymaster::decrease_budget::FeeUnit as DecreaseBudgetFeeUnit;
+use slot::graphql::paymaster::increase_budget::FeeUnit as IncreaseBudgetFeeUnit;
 use slot::graphql::paymaster::{decrease_budget, increase_budget};
 use slot::graphql::paymaster::{DecreaseBudget, IncreaseBudget};
 use slot::graphql::GraphQLQuery;
@@ -24,18 +25,22 @@ enum BudgetSubcommand {
 
 #[derive(Debug, Args)]
 struct IncreaseBudgetArgs {
-    #[arg(long, help = "ID of the paymaster.")]
-    paymaster_id: String,
-    #[arg(long, help = "Amount to increase the budget by (in wei).")]
-    amount: BigInt,
+    #[arg(long, help = "Name of the paymaster.")]
+    name: String,
+    #[arg(long, help = "Amount to decrease the budget.")]
+    amount: u64,
+    #[arg(long, help = "Unit for the budget (CREDIT or STRK).")]
+    unit: String,
 }
 
 #[derive(Debug, Args)]
 struct DecreaseBudgetArgs {
-    #[arg(long, help = "ID of the paymaster.")]
-    paymaster_id: String,
-    #[arg(long, help = "Amount to decrease the budget by (in wei).")]
-    amount: BigInt,
+    #[arg(long, help = "Name of the paymaster.")]
+    name: String,
+    #[arg(long, help = "Amount to decrease the budget.")]
+    amount: u64,
+    #[arg(long, help = "Unit for the budget (CREDIT or STRK).")]
+    unit: String,
 }
 
 impl BudgetCmd {
@@ -50,10 +55,17 @@ impl BudgetCmd {
         // 1. Load Credentials
         let credentials = Credentials::load()?;
 
+        let unit = match args.unit.to_uppercase().as_str() {
+            "CREDIT" => IncreaseBudgetFeeUnit::CREDIT,
+            "STRK" => IncreaseBudgetFeeUnit::STRK,
+            _ => return Err(anyhow::anyhow!("Invalid unit: {}", args.unit)),
+        };
+
         // 2. Build Query Variables
         let variables = increase_budget::Variables {
-            paymaster_id: args.paymaster_id.clone(),
-            amount: args.amount.clone(), // Pass BigInt directly
+            paymaster_name: args.name.clone(),
+            amount: args.amount as i64,
+            unit,
         };
         let request_body = IncreaseBudget::build_query(variables);
 
@@ -62,17 +74,16 @@ impl BudgetCmd {
 
         // 4. Execute Query
         println!(
-            "Increasing budget for paymaster ID: {} by {}...",
-            args.paymaster_id, args.amount
+            "Increasing budget for paymaster ID: {} by {} {:?}...",
+            args.name, args.amount, args.unit
         );
         let data: increase_budget::ResponseData = client.query(&request_body).await?;
 
         // 5. Print Result (assuming mutation returns name and id)
         // Check the .graphql file - budget might not be returned
         println!(
-            "Budget increased successfully for Paymaster '{}' (ID: {}).",
-            data.increase_budget.name.unwrap_or_default(),
-            data.increase_budget.id
+            "Budget increased successfully for Paymaster '{}'.",
+            data.increase_budget.name
         );
 
         Ok(())
@@ -82,10 +93,17 @@ impl BudgetCmd {
         // 1. Load Credentials
         let credentials = Credentials::load()?;
 
+        let unit = match args.unit.to_uppercase().as_str() {
+            "CREDIT" => DecreaseBudgetFeeUnit::CREDIT,
+            "STRK" => DecreaseBudgetFeeUnit::STRK,
+            _ => return Err(anyhow::anyhow!("Invalid unit: {}", args.unit)),
+        };
+
         // 2. Build Query Variables
         let variables = decrease_budget::Variables {
-            paymaster_id: args.paymaster_id.clone(),
-            amount: args.amount.clone(), // Pass BigInt directly
+            paymaster_name: args.name.clone(),
+            amount: args.amount as i64,
+            unit,
         };
         let request_body = DecreaseBudget::build_query(variables);
 
@@ -94,17 +112,16 @@ impl BudgetCmd {
 
         // 4. Execute Query
         println!(
-            "Decreasing budget for paymaster ID: {} by {}...",
-            args.paymaster_id, args.amount
+            "Decreasing budget for paymaster ID: {} by {} {:?}...",
+            args.name, args.amount, args.unit
         );
         let data: decrease_budget::ResponseData = client.query(&request_body).await?;
 
         // 5. Print Result (assuming mutation returns name and id)
         // Check the .graphql file - budget might not be returned
         println!(
-            "Budget decreased successfully for Paymaster '{}' (ID: {}).",
-            data.decrease_budget.name.unwrap_or_default(),
-            data.decrease_budget.id
+            "Budget decreased successfully for Paymaster '{}'.",
+            data.decrease_budget.name
         );
 
         Ok(())

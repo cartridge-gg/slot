@@ -2979,6 +2979,46 @@
             {
               "args": [],
               "deprecationReason": null,
+              "description": "Credits fee for the activity",
+              "isDeprecated": false,
+              "name": "creditsFee",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Actual fee for the activity",
+              "isDeprecated": false,
+              "name": "actualFee",
+              "type": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Fee unit for the activity",
+              "isDeprecated": false,
+              "name": "feeUnit",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "ActivityFeeUnit",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
               "name": "createdAt",
@@ -3369,6 +3409,29 @@
           "possibleTypes": []
         },
         {
+          "description": "ActivityFeeUnit is enum for the field fee_unit",
+          "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "FRI"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "WEI"
+            }
+          ],
+          "fields": [],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "ENUM",
+          "name": "ActivityFeeUnit",
+          "possibleTypes": []
+        },
+        {
           "description": null,
           "enumValues": [],
           "fields": [
@@ -3658,6 +3721,12 @@
               "description": null,
               "isDeprecated": false,
               "name": "PENDING"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "PENDING_BACKLOG"
             },
             {
               "deprecationReason": null,
@@ -5014,6 +5083,294 @@
                   "ofType": {
                     "kind": "ENUM",
                     "name": "ActivityFeeSource",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "credits_fee field predicates",
+              "name": "creditsFee",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "creditsFeeNEQ",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "creditsFeeIn",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "creditsFeeNotIn",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "creditsFeeGT",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "creditsFeeGTE",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "creditsFeeLT",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "creditsFeeLTE",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "creditsFeeIsNil",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "creditsFeeNotNil",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "actual_fee field predicates",
+              "name": "actualFee",
+              "type": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "actualFeeNEQ",
+              "type": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "actualFeeIn",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "BigInt",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "actualFeeNotIn",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "BigInt",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "actualFeeGT",
+              "type": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "actualFeeGTE",
+              "type": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "actualFeeLT",
+              "type": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "actualFeeLTE",
+              "type": {
+                "kind": "SCALAR",
+                "name": "BigInt",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "actualFeeIsNil",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "actualFeeNotNil",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "fee_unit field predicates",
+              "name": "feeUnit",
+              "type": {
+                "kind": "ENUM",
+                "name": "ActivityFeeUnit",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "feeUnitNEQ",
+              "type": {
+                "kind": "ENUM",
+                "name": "ActivityFeeUnit",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "feeUnitIn",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "ActivityFeeUnit",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "feeUnitNotIn",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "ActivityFeeUnit",
                     "ofType": null
                   }
                 }
@@ -12656,6 +13013,29 @@
         },
         {
           "description": null,
+          "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "CREDIT"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "STRK"
+            }
+          ],
+          "fields": [],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "ENUM",
+          "name": "FeeUnit",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
           "enumValues": [],
           "fields": [],
           "inputFields": [],
@@ -15497,7 +15877,21 @@
                     "name": null,
                     "ofType": {
                       "kind": "SCALAR",
-                      "name": "BigInt",
+                      "name": "Int",
+                      "ofType": null
+                    }
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "unit",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "FeeUnit",
                       "ofType": null
                     }
                   }
@@ -15522,7 +15916,132 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "paymasterId",
+                  "name": "paymasterName",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "removePaymaster",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "paymasterName",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null
+                    }
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "active",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Boolean",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "togglePaymaster",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Paymaster",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "paymasterName",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null
+                    }
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "presetId",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "addPoliciesFromPreset",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "PaymasterPolicy",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "paymasterName",
                   "type": {
                     "kind": "NON_NULL",
                     "name": null,
@@ -15545,7 +16064,7 @@
                       "name": null,
                       "ofType": {
                         "kind": "INPUT_OBJECT",
-                        "name": "PaymasterPolicyInput",
+                        "name": "PolicyInput",
                         "ofType": null
                       }
                     }
@@ -15555,7 +16074,7 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "addPaymasterPolicies",
+              "name": "addPolicies",
               "type": {
                 "kind": "LIST",
                 "name": null,
@@ -15575,7 +16094,7 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "paymasterId",
+                  "name": "paymasterName",
                   "type": {
                     "kind": "NON_NULL",
                     "name": null,
@@ -15608,7 +16127,7 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "removePaymasterPolicies",
+              "name": "removePolicies",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -15624,7 +16143,38 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "paymasterId",
+                  "name": "paymasterName",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "removeAllPolicies",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "paymasterName",
                   "type": {
                     "kind": "NON_NULL",
                     "name": null,
@@ -15644,7 +16194,21 @@
                     "name": null,
                     "ofType": {
                       "kind": "SCALAR",
-                      "name": "BigInt",
+                      "name": "Int",
+                      "ofType": null
+                    }
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "unit",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "FeeUnit",
                       "ofType": null
                     }
                   }
@@ -15669,7 +16233,7 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "paymasterId",
+                  "name": "paymasterName",
                   "type": {
                     "kind": "NON_NULL",
                     "name": null,
@@ -15689,7 +16253,21 @@
                     "name": null,
                     "ofType": {
                       "kind": "SCALAR",
-                      "name": "BigInt",
+                      "name": "Int",
+                      "ofType": null
+                    }
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "unit",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "FeeUnit",
                       "ofType": null
                     }
                   }
@@ -16819,23 +17397,59 @@
               "isDeprecated": false,
               "name": "name",
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
               }
             },
             {
               "args": [],
               "deprecationReason": null,
-              "description": "Accumulated USD value of all fees. 18 decimal precision",
+              "description": "Accumulated STRK fees in 6 decimal precision",
               "isDeprecated": false,
-              "name": "spend",
+              "name": "strkFees",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
                   "kind": "SCALAR",
-                  "name": "BigInt",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Accumulated CREDITS fees in 6 decimal precision",
+              "isDeprecated": false,
+              "name": "creditFees",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Budget in 6 decimal precision",
+              "isDeprecated": false,
+              "name": "budget",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
                   "ofType": null
                 }
               }
@@ -16845,13 +17459,13 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "budget",
+              "name": "budgetFeeUnit",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "SCALAR",
-                  "name": "BigInt",
+                  "kind": "ENUM",
+                  "name": "PaymasterBudgetFeeUnit",
                   "ofType": null
                 }
               }
@@ -17158,6 +17772,29 @@
           ],
           "kind": "OBJECT",
           "name": "Paymaster",
+          "possibleTypes": []
+        },
+        {
+          "description": "PaymasterBudgetFeeUnit is enum for the field budget_fee_unit",
+          "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "STRK"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "CREDIT"
+            }
+          ],
+          "fields": [],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "ENUM",
+          "name": "PaymasterBudgetFeeUnit",
           "possibleTypes": []
         },
         {
@@ -17547,59 +18184,6 @@
           "interfaces": [],
           "kind": "OBJECT",
           "name": "PaymasterPolicyEdge",
-          "possibleTypes": []
-        },
-        {
-          "description": null,
-          "enumValues": [],
-          "fields": [],
-          "inputFields": [
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "contractAddress",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "entryPoint",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "selector",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
-            }
-          ],
-          "interfaces": [],
-          "kind": "INPUT_OBJECT",
-          "name": "PaymasterPolicyInput",
           "possibleTypes": []
         },
         {
@@ -18951,26 +19535,6 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "nameIsNil",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "nameNotNil",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
               "name": "nameEqualFold",
               "type": {
                 "kind": "SCALAR",
@@ -18990,28 +19554,28 @@
             },
             {
               "defaultValue": null,
-              "description": "usd_total field predicates",
-              "name": "usdTotal",
+              "description": "strk_fees field predicates",
+              "name": "strkFees",
               "type": {
                 "kind": "SCALAR",
-                "name": "BigInt",
+                "name": "Int",
                 "ofType": null
               }
             },
             {
               "defaultValue": null,
               "description": null,
-              "name": "usdTotalNEQ",
+              "name": "strkFeesNEQ",
               "type": {
                 "kind": "SCALAR",
-                "name": "BigInt",
+                "name": "Int",
                 "ofType": null
               }
             },
             {
               "defaultValue": null,
               "description": null,
-              "name": "usdTotalIn",
+              "name": "strkFeesIn",
               "type": {
                 "kind": "LIST",
                 "name": null,
@@ -19020,7 +19584,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "BigInt",
+                    "name": "Int",
                     "ofType": null
                   }
                 }
@@ -19029,7 +19593,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "usdTotalNotIn",
+              "name": "strkFeesNotIn",
               "type": {
                 "kind": "LIST",
                 "name": null,
@@ -19038,7 +19602,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "BigInt",
+                    "name": "Int",
                     "ofType": null
                   }
                 }
@@ -19047,40 +19611,136 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "usdTotalGT",
+              "name": "strkFeesGT",
               "type": {
                 "kind": "SCALAR",
-                "name": "BigInt",
+                "name": "Int",
                 "ofType": null
               }
             },
             {
               "defaultValue": null,
               "description": null,
-              "name": "usdTotalGTE",
+              "name": "strkFeesGTE",
               "type": {
                 "kind": "SCALAR",
-                "name": "BigInt",
+                "name": "Int",
                 "ofType": null
               }
             },
             {
               "defaultValue": null,
               "description": null,
-              "name": "usdTotalLT",
+              "name": "strkFeesLT",
               "type": {
                 "kind": "SCALAR",
-                "name": "BigInt",
+                "name": "Int",
                 "ofType": null
               }
             },
             {
               "defaultValue": null,
               "description": null,
-              "name": "usdTotalLTE",
+              "name": "strkFeesLTE",
               "type": {
                 "kind": "SCALAR",
-                "name": "BigInt",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "credit_fees field predicates",
+              "name": "creditFees",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "creditFeesNEQ",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "creditFeesIn",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "creditFeesNotIn",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "creditFeesGT",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "creditFeesGTE",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "creditFeesLT",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "creditFeesLTE",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
                 "ofType": null
               }
             },
@@ -19090,7 +19750,7 @@
               "name": "budget",
               "type": {
                 "kind": "SCALAR",
-                "name": "BigInt",
+                "name": "Int",
                 "ofType": null
               }
             },
@@ -19100,7 +19760,7 @@
               "name": "budgetNEQ",
               "type": {
                 "kind": "SCALAR",
-                "name": "BigInt",
+                "name": "Int",
                 "ofType": null
               }
             },
@@ -19116,7 +19776,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "BigInt",
+                    "name": "Int",
                     "ofType": null
                   }
                 }
@@ -19134,7 +19794,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "BigInt",
+                    "name": "Int",
                     "ofType": null
                   }
                 }
@@ -19146,7 +19806,7 @@
               "name": "budgetGT",
               "type": {
                 "kind": "SCALAR",
-                "name": "BigInt",
+                "name": "Int",
                 "ofType": null
               }
             },
@@ -19156,7 +19816,7 @@
               "name": "budgetGTE",
               "type": {
                 "kind": "SCALAR",
-                "name": "BigInt",
+                "name": "Int",
                 "ofType": null
               }
             },
@@ -19166,7 +19826,7 @@
               "name": "budgetLT",
               "type": {
                 "kind": "SCALAR",
-                "name": "BigInt",
+                "name": "Int",
                 "ofType": null
               }
             },
@@ -19176,8 +19836,64 @@
               "name": "budgetLTE",
               "type": {
                 "kind": "SCALAR",
-                "name": "BigInt",
+                "name": "Int",
                 "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "budget_fee_unit field predicates",
+              "name": "budgetFeeUnit",
+              "type": {
+                "kind": "ENUM",
+                "name": "PaymasterBudgetFeeUnit",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "budgetFeeUnitNEQ",
+              "type": {
+                "kind": "ENUM",
+                "name": "PaymasterBudgetFeeUnit",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "budgetFeeUnitIn",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "PaymasterBudgetFeeUnit",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "budgetFeeUnitNotIn",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "PaymasterBudgetFeeUnit",
+                    "ofType": null
+                  }
+                }
               }
             },
             {
@@ -19717,6 +20433,332 @@
           "interfaces": [],
           "kind": "OBJECT",
           "name": "PlayerAchievementResult",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "callerAddress",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "sessionStart",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "sessionEnd",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "actionCount",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "entrypoints",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "PlaythroughEntry",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "meta",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "PlaythroughMeta",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "playthroughs",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "OBJECT",
+                      "name": "PlaythroughEntry",
+                      "ofType": null
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "PlaythroughItem",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "error",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "project",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "limit",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "count",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "PlaythroughMeta",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "project",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "limit",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Int",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "PlaythroughProject",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "items",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "OBJECT",
+                      "name": "PlaythroughItem",
+                      "ofType": null
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "PlaythroughResult",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "contractAddress",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "entryPoint",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "PolicyInput",
           "possibleTypes": []
         },
         {
@@ -20919,6 +21961,41 @@
                       "name": null,
                       "ofType": {
                         "kind": "INPUT_OBJECT",
+                        "name": "PlaythroughProject",
+                        "ofType": null
+                      }
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "playthroughs",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "PlaythroughResult",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "projects",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
                         "name": "MetricsProject",
                         "ofType": null
                       }
@@ -21085,7 +22162,7 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "id",
+                  "name": "name",
                   "type": {
                     "kind": "NON_NULL",
                     "name": null,

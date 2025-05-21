@@ -3,9 +3,12 @@ use clap::Args;
 use comfy_table::{presets::UTF8_FULL, Cell, ContentArrangement, Table};
 use slot::api::Client;
 use slot::credential::Credentials;
+use slot::graphql::paymaster::list_paymasters::PaymasterBudgetFeeUnit;
 use slot::graphql::paymaster::list_paymasters::{ResponseData, Variables};
 use slot::graphql::paymaster::ListPaymasters;
 use slot::graphql::GraphQLQuery;
+
+const BUDGET_DECIMALS: i64 = 1_000_000;
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "List paymasters options")]
@@ -23,7 +26,7 @@ impl ListArgs {
         table
             .load_preset(UTF8_FULL)
             .set_content_arrangement(ContentArrangement::Dynamic)
-            .set_header(vec!["ID", "Name", "Budget", "Team Name"]);
+            .set_header(vec!["Paymaster", "Team", "Budget", "Active"]);
 
         let data: ResponseData = client.query(&request_body).await?;
         let mut paymasters_found = false; // Ensure this is declared before the selection or adjust scope
@@ -57,11 +60,20 @@ impl ListArgs {
                 // Populate the table
                 for (team_node, pm_node) in paymasters_data {
                     paymasters_found = true;
+                    let budget = format!(
+                        "{} {}",
+                        pm_node.budget / BUDGET_DECIMALS,
+                        match pm_node.budget_fee_unit {
+                            PaymasterBudgetFeeUnit::CREDIT => "CREDIT",
+                            PaymasterBudgetFeeUnit::STRK => "STRK",
+                            _ => "UNKNOWN",
+                        }
+                    );
                     table.add_row(vec![
-                        Cell::new(&pm_node.id),
-                        Cell::new(pm_node.name.as_deref().unwrap_or("N/A")),
-                        Cell::new(&pm_node.budget),
+                        Cell::new(pm_node.name.as_str()),
                         Cell::new(&team_node.name),
+                        Cell::new(&budget),
+                        Cell::new(pm_node.active.to_string()),
                     ]);
                 }
             }

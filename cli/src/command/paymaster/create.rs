@@ -1,9 +1,9 @@
 use anyhow::{Ok, Result};
 use clap::Args;
-use num_bigint::BigInt;
 use slot::api::Client;
 use slot::credential::Credentials;
 use slot::graphql::paymaster::create_paymaster;
+use slot::graphql::paymaster::create_paymaster::FeeUnit;
 use slot::graphql::paymaster::CreatePaymaster;
 use slot::graphql::GraphQLQuery;
 
@@ -14,8 +14,10 @@ pub struct CreateArgs {
     name: String,
     #[arg(long, help = "Team name to associate the paymaster with.")]
     team: String,
-    #[arg(long, help = "Initial budget for the paymaster (in wei).")]
-    budget: BigInt,
+    #[arg(long, help = "Initial budget for the paymaster.")]
+    budget: u64,
+    #[arg(long, help = "Unit for the budget (CREDIT or STRK).")]
+    unit: String,
 }
 
 impl CreateArgs {
@@ -23,11 +25,18 @@ impl CreateArgs {
         // 1. Load Credentials
         let credentials = Credentials::load()?;
 
+        let unit = match self.unit.to_uppercase().as_str() {
+            "CREDIT" => FeeUnit::CREDIT,
+            "STRK" => FeeUnit::STRK,
+            _ => return Err(anyhow::anyhow!("Invalid unit: {}", self.unit)),
+        };
+
         // 2. Build Query Variables
         let variables = create_paymaster::Variables {
             name: self.name.clone(),
             team_name: self.team.clone(),
-            budget: self.budget.clone(),
+            budget: self.budget as i64,
+            unit,
         };
         let request_body = CreatePaymaster::build_query(variables);
 
@@ -39,14 +48,13 @@ impl CreateArgs {
             "Creating paymaster '{}' for team '{}'...",
             self.name, self.team
         );
+
         let data: create_paymaster::ResponseData = client.query(&request_body).await?;
 
         // 5. Print Result
-        // Note: name is Option<String>, budget field removed based on .graphql file
         println!(
-            "Paymaster '{}' created successfully with ID: {}",
-            data.create_paymaster.name.unwrap_or_default(), // Handle Option
-            data.create_paymaster.id,
+            "Paymaster '{}' created successfully",
+            data.create_paymaster.name,
         );
 
         Ok(())
