@@ -31,8 +31,6 @@ enum PolicySubcommand {
 
 #[derive(Debug, Args)]
 struct AddPolicyArgs {
-    #[arg(long, help = "Name of the paymaster to add policies to.")]
-    name: String,
     #[arg(
         long,
         help = "Path to a JSON file containing an array of policies to add. Each policy should have 'contractAddress', 'entryPoint', and 'selector'."
@@ -42,8 +40,6 @@ struct AddPolicyArgs {
 
 #[derive(Debug, Args)]
 struct RemovePolicyArgs {
-    #[arg(long, help = "Name the paymaster to remove policies from.")]
-    name: String,
     #[arg(
         long,
         required = true,
@@ -54,10 +50,7 @@ struct RemovePolicyArgs {
 }
 
 #[derive(Debug, Args)]
-struct RemoveAllArgs {
-    #[arg(long, help = "Name of the paymaster to remove all policies from.")]
-    name: String,
-}
+struct RemoveAllArgs {}
 
 // Temporary struct for deserializing policy JSON from file
 #[derive(Deserialize, Debug)]
@@ -69,18 +62,18 @@ struct PolicyInputJson {
 }
 
 impl PolicyCmd {
-    pub async fn run(&self) -> Result<()> {
+    pub async fn run(&self, name: String) -> Result<()> {
         match &self.command {
-            PolicySubcommand::Add(args) => Self::run_add(args).await,
-            PolicySubcommand::Remove(args) => Self::run_remove(args).await,
-            PolicySubcommand::RemoveAll(args) => Self::run_remove_all(args).await,
+            PolicySubcommand::Add(args) => Self::run_add(args, name.clone()).await,
+            PolicySubcommand::Remove(args) => Self::run_remove(args, name.clone()).await,
+            PolicySubcommand::RemoveAll(_) => Self::run_remove_all(name.clone()).await,
         }
     }
 
-    async fn run_add(args: &AddPolicyArgs) -> Result<()> {
+    async fn run_add(args: &AddPolicyArgs, name: String) -> Result<()> {
         println!(
             "Adding policies to paymaster: {} from file: {:?}...",
-            args.name, args.policies_file
+            name, args.policies_file
         );
 
         let file_content = fs::read_to_string(&args.policies_file).context(format!(
@@ -110,7 +103,7 @@ impl PolicyCmd {
         let credentials = Credentials::load()?;
 
         let variables = add_policies::Variables {
-            paymaster_name: args.name.clone(),
+            paymaster_name: name.clone(),
             policies: policies_gql,
         };
         let request_body = AddPolicies::build_query(variables);
@@ -138,10 +131,10 @@ impl PolicyCmd {
         Ok(())
     }
 
-    async fn run_remove(args: &RemovePolicyArgs) -> Result<()> {
+    async fn run_remove(args: &RemovePolicyArgs, name: String) -> Result<()> {
         println!(
             "Removing policies {:?} from paymaster: {}...",
-            args.policy_ids, args.name
+            args.policy_ids, name
         );
 
         if args.policy_ids.is_empty() {
@@ -154,7 +147,7 @@ impl PolicyCmd {
 
         // 2. Build Query Variables
         let variables = remove_policies::Variables {
-            paymaster_name: args.name.clone(),
+            paymaster_name: name.clone(),
             policy_ids: args.policy_ids.clone(),
         };
         let request_body = RemovePolicies::build_query(variables);
@@ -172,7 +165,7 @@ impl PolicyCmd {
             // The boolean response doesn't give much detail, maybe log a warning or error
             println!(
                 "Failed to remove policies or some/all IDs were not found for paymaster {}.",
-                args.name
+                name
             );
             // Consider returning an error or specific exit code?
         }
@@ -180,9 +173,9 @@ impl PolicyCmd {
         Ok(())
     }
 
-    async fn run_remove_all(args: &RemoveAllArgs) -> Result<()> {
+    async fn run_remove_all(name: String) -> Result<()> {
         // Ask for confirmation
-        print!("Remove all policies from paymaster {}? [y/N]: ", args.name);
+        print!("Remove all policies from paymaster {}? [y/N]: ", name);
         io::stdout().flush()?;
 
         let mut input = String::new();
@@ -193,14 +186,14 @@ impl PolicyCmd {
             return Ok(());
         }
 
-        println!("Removing all policies from paymaster {}...", args.name);
+        println!("Removing all policies from paymaster {}...", name);
 
         // 1. Load Credentials
         let credentials = Credentials::load()?;
 
         // 2. Build Query Variables
         let variables = remove_all_policies::Variables {
-            paymaster_name: args.name.clone(),
+            paymaster_name: name.clone(),
         };
         let request_body = RemoveAllPolicies::build_query(variables);
 
@@ -212,12 +205,9 @@ impl PolicyCmd {
 
         // 5. Print Result
         if data.remove_all_policies {
-            println!(
-                "Successfully removed all policies from paymaster {}",
-                args.name
-            );
+            println!("Successfully removed all policies from paymaster {}", name);
         } else {
-            println!("Failed to remove all policies from paymaster {}", args.name);
+            println!("Failed to remove all policies from paymaster {}", name);
         }
 
         Ok(())

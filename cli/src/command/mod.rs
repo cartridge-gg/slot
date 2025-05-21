@@ -1,6 +1,7 @@
 pub mod auth;
 pub mod deployments;
 pub mod paymaster;
+pub mod paymasters;
 pub mod teams;
 
 use anyhow::Result;
@@ -10,6 +11,7 @@ use slot::version;
 use auth::Auth;
 use deployments::Deployments;
 use paymaster::PaymasterCmd;
+use paymasters::PaymastersCmd;
 use teams::Teams;
 
 #[allow(clippy::large_enum_variant)]
@@ -26,7 +28,11 @@ pub enum Command {
     #[command(about = "Manage Slot team.", aliases = ["t"])]
     Teams(Teams),
 
-    #[command(about = "Manage Slot paymasters.", aliases = ["p"])]
+    #[command(subcommand)]
+    #[command(about = "Manage paymasters.", aliases = ["ps"])]
+    Paymasters(PaymastersCmd),
+
+    #[command(about = "Operate on a specific paymaster.", aliases = ["p"])]
     Paymaster(PaymasterCmd),
 }
 
@@ -40,6 +46,7 @@ impl Command {
             Command::Auth(cmd) => cmd.run().await,
             Command::Deployments(cmd) => cmd.run().await,
             Command::Teams(cmd) => cmd.run().await,
+            Command::Paymasters(cmd) => cmd.run().await,
             Command::Paymaster(cmd) => cmd.run().await,
         }
     }

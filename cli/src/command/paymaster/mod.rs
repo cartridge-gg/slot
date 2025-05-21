@@ -5,19 +5,20 @@ use clap::{Args, Subcommand};
 use self::budget::BudgetCmd;
 use self::create::CreateArgs;
 use self::get::GetArgs;
-use self::list::ListArgs;
 use self::policy::PolicyCmd;
 
 mod budget;
 mod create;
 mod get;
-mod list;
 mod policy;
 
 /// Command group for managing Paymasters
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Paymaster options")]
 pub struct PaymasterCmd {
+    #[arg(help = "the name of the paymaster to manage.")]
+    name: String,
+
     #[command(subcommand)]
     command: PaymasterSubcommand,
 }
@@ -25,9 +26,6 @@ pub struct PaymasterCmd {
 // Enum defining the specific paymaster actions
 #[derive(Subcommand, Debug)]
 enum PaymasterSubcommand {
-    #[command(about = "List paymasters for the current user.", aliases = ["ls"])]
-    List(ListArgs),
-
     #[command(about = "Create a new paymaster.")]
     Create(CreateArgs),
 
@@ -45,11 +43,10 @@ impl PaymasterCmd {
     // Main entry point for the paymaster command group
     pub async fn run(&self) -> Result<()> {
         match &self.command {
-            PaymasterSubcommand::List(args) => args.run().await,
-            PaymasterSubcommand::Create(args) => args.run().await,
-            PaymasterSubcommand::Get(args) => args.run().await,
-            PaymasterSubcommand::Policy(cmd) => cmd.run().await,
-            PaymasterSubcommand::Budget(cmd) => cmd.run().await,
+            PaymasterSubcommand::Create(args) => args.run(self.name.clone()).await,
+            PaymasterSubcommand::Get(args) => args.run(self.name.clone()).await,
+            PaymasterSubcommand::Policy(cmd) => cmd.run(self.name.clone()).await,
+            PaymasterSubcommand::Budget(cmd) => cmd.run(self.name.clone()).await,
         }
     }
 }
