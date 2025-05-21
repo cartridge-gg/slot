@@ -25,8 +25,6 @@ enum BudgetSubcommand {
 
 #[derive(Debug, Args)]
 struct IncreaseBudgetArgs {
-    #[arg(long, help = "Name of the paymaster.")]
-    name: String,
     #[arg(long, help = "Amount to decrease the budget.")]
     amount: u64,
     #[arg(long, help = "Unit for the budget (CREDIT or STRK).")]
@@ -35,8 +33,6 @@ struct IncreaseBudgetArgs {
 
 #[derive(Debug, Args)]
 struct DecreaseBudgetArgs {
-    #[arg(long, help = "Name of the paymaster.")]
-    name: String,
     #[arg(long, help = "Amount to decrease the budget.")]
     amount: u64,
     #[arg(long, help = "Unit for the budget (CREDIT or STRK).")]
@@ -44,14 +40,14 @@ struct DecreaseBudgetArgs {
 }
 
 impl BudgetCmd {
-    pub async fn run(&self) -> Result<()> {
+    pub async fn run(&self, name: String) -> Result<()> {
         match &self.command {
-            BudgetSubcommand::Increase(args) => Self::run_increase(args).await,
-            BudgetSubcommand::Decrease(args) => Self::run_decrease(args).await,
+            BudgetSubcommand::Increase(args) => Self::run_increase(args, name.clone()).await,
+            BudgetSubcommand::Decrease(args) => Self::run_decrease(args, name.clone()).await,
         }
     }
 
-    async fn run_increase(args: &IncreaseBudgetArgs) -> Result<()> {
+    async fn run_increase(args: &IncreaseBudgetArgs, name: String) -> Result<()> {
         // 1. Load Credentials
         let credentials = Credentials::load()?;
 
@@ -63,7 +59,7 @@ impl BudgetCmd {
 
         // 2. Build Query Variables
         let variables = increase_budget::Variables {
-            paymaster_name: args.name.clone(),
+            paymaster_name: name.clone(),
             amount: args.amount as i64,
             unit,
         };
@@ -75,7 +71,7 @@ impl BudgetCmd {
         // 4. Execute Query
         println!(
             "Increasing budget for paymaster ID: {} by {} {:?}...",
-            args.name, args.amount, args.unit
+            name, args.amount, args.unit
         );
         let data: increase_budget::ResponseData = client.query(&request_body).await?;
 
@@ -89,7 +85,7 @@ impl BudgetCmd {
         Ok(())
     }
 
-    async fn run_decrease(args: &DecreaseBudgetArgs) -> Result<()> {
+    async fn run_decrease(args: &DecreaseBudgetArgs, name: String) -> Result<()> {
         // 1. Load Credentials
         let credentials = Credentials::load()?;
 
@@ -101,7 +97,7 @@ impl BudgetCmd {
 
         // 2. Build Query Variables
         let variables = decrease_budget::Variables {
-            paymaster_name: args.name.clone(),
+            paymaster_name: name.clone(),
             amount: args.amount as i64,
             unit,
         };
@@ -113,7 +109,7 @@ impl BudgetCmd {
         // 4. Execute Query
         println!(
             "Decreasing budget for paymaster ID: {} by {} {:?}...",
-            args.name, args.amount, args.unit
+            name, args.amount, args.unit
         );
         let data: decrease_budget::ResponseData = client.query(&request_body).await?;
 
