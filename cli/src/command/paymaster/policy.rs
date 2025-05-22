@@ -1,13 +1,13 @@
 use anyhow::{Context, Result};
 use clap::{Args, Subcommand};
 use comfy_table::{presets::UTF8_FULL, Cell, ContentArrangement, Table};
-use serde::Deserialize;
 use slot::api::Client;
 use slot::credential::Credentials;
 use slot::graphql::paymaster::add_policies::PolicyInput;
 use slot::graphql::paymaster::{add_policies, remove_all_policies, remove_policies};
 use slot::graphql::paymaster::{AddPolicies, RemoveAllPolicies, RemovePolicies};
 use slot::graphql::GraphQLQuery;
+use slot::preset::{extract_paymaster_policies, load_preset, PaymasterPolicyInput};
 use std::fs;
 use std::io::{self, Write};
 use std::path::PathBuf;
@@ -21,21 +21,47 @@ pub struct PolicyCmd {
 
 #[derive(Subcommand, Debug)]
 enum PolicySubcommand {
-    #[command(about = "Add policies to a paymaster from a JSON file.")]
+    #[command(about = "Add policy to a paymaster")]
     Add(AddPolicyArgs),
+
+    #[command(about = "Add policies to a paymaster from preset")]
+    AddFromPreset(AddPresetPolicyArgs),
+
+    #[command(about = "Add policies to a paymaster from a JSON file.")]
+    AddFromJson(AddJsonPolicyArgs),
+
     #[command(about = "Remove policies from a paymaster by ID.")]
     Remove(RemovePolicyArgs),
+
     #[command(about = "Remove all policies from a paymaster.")]
     RemoveAll(RemoveAllArgs),
 }
 
 #[derive(Debug, Args)]
 struct AddPolicyArgs {
+    #[arg(long, help = "Contract address of the policy")]
+    contract: String,
+
+    #[arg(long, help = "Entrypoint name")]
+    entrypoint: String,
+}
+
+#[derive(Debug, Args)]
+struct AddJsonPolicyArgs {
     #[arg(
         long,
         help = "Path to a JSON file containing an array of policies to add. Each policy should have 'contractAddress', 'entryPoint', and 'selector'."
     )]
-    policies_file: PathBuf,
+    file: PathBuf,
+}
+
+#[derive(Debug, Args)]
+struct AddPresetPolicyArgs {
+    #[arg(
+        long,
+        help = "The name of the preset to add. https://github.com/cartridge-gg/presets/tree/main/configs"
+    )]
+    name: String,
 }
 
 #[derive(Debug, Args)]
@@ -52,38 +78,55 @@ struct RemovePolicyArgs {
 #[derive(Debug, Args)]
 struct RemoveAllArgs {}
 
-// Temporary struct for deserializing policy JSON from file
-#[derive(Deserialize, Debug)]
-struct PolicyInputJson {
-    #[serde(rename = "contractAddress")]
-    contract_address: String,
-    #[serde(rename = "entryPoint")]
-    entry_point: String,
-}
-
 impl PolicyCmd {
     pub async fn run(&self, name: String) -> Result<()> {
         match &self.command {
             PolicySubcommand::Add(args) => Self::run_add(args, name.clone()).await,
+            PolicySubcommand::AddFromJson(args) => {
+                Self::run_add_from_json(args, name.clone()).await
+            }
+            PolicySubcommand::AddFromPreset(args) => {
+                Self::run_add_from_preset(args, name.clone()).await
+            }
             PolicySubcommand::Remove(args) => Self::run_remove(args, name.clone()).await,
             PolicySubcommand::RemoveAll(_) => Self::run_remove_all(name.clone()).await,
         }
     }
 
     async fn run_add(args: &AddPolicyArgs, name: String) -> Result<()> {
+        println!("Adding policy to paymaster: {} ", name);
+
+        let credentials = Credentials::load()?;
+        let variables = add_policies::Variables {
+            paymaster_name: name.clone(),
+            policies: vec![PolicyInput {
+                contract_address: args.contract.clone(),
+                entry_point: args.entrypoint.clone(),
+            }],
+        };
+        let request_body = AddPolicies::build_query(variables);
+        let client = Client::new_with_token(credentials.access_token);
+        let data: add_policies::ResponseData = client.query(&request_body).await?;
+        let added_policies = data.add_policies.unwrap_or_default();
+        println!("Successfully added {} policy:", added_policies.len());
+
+        Self::print_policies_table(&added_policies);
+
+        Ok(())
+    }
+
+    async fn run_add_from_json(args: &AddJsonPolicyArgs, name: String) -> Result<()> {
         println!(
             "Adding policies to paymaster: {} from file: {:?}...",
-            name, args.policies_file
+            name, args.file
         );
 
-        let file_content = fs::read_to_string(&args.policies_file).context(format!(
-            "Failed to read policies file: {:?}",
-            args.policies_file
-        ))?;
-        let policies_json: Vec<PolicyInputJson> =
-            serde_json::from_str(&file_content).context(format!(
+        let file_content = fs::read_to_string(&args.file)
+            .context(format!("Failed to read policies file: {:?}", args.file))?;
+        let policies_json: Vec<PaymasterPolicyInput> = serde_json::from_str(&file_content)
+            .context(format!(
                 "Failed to parse policies JSON from file: {:?}",
-                args.policies_file
+                args.file
             ))?;
 
         // Map JSON input to GraphQL input type
@@ -112,21 +155,46 @@ impl PolicyCmd {
         let added_policies = data.add_policies.unwrap_or_default();
         println!("Successfully added {} policies:", added_policies.len());
 
-        let mut table = Table::new();
-        table
-            .load_preset(UTF8_FULL)
-            .set_content_arrangement(ContentArrangement::Dynamic)
-            .set_header(vec!["ID", "Contract Address", "Entry Point"]);
+        Self::print_policies_table(&added_policies);
 
-        for policy_item in added_policies {
-            table.add_row(vec![
-                Cell::new(&policy_item.id),
-                Cell::new(&policy_item.contract_address),
-                Cell::new(&policy_item.entry_point),
-            ]);
+        Ok(())
+    }
+
+    async fn run_add_from_preset(args: &AddPresetPolicyArgs, name: String) -> Result<()> {
+        println!(
+            "Adding policies to paymaster: {} from preset name: {}",
+            name, args.name
+        );
+
+        let config = load_preset(&args.name).await?;
+        let policies = extract_paymaster_policies(&config, "SN_MAIN");
+
+        let policies_gql: Vec<PolicyInput> = policies
+            .into_iter()
+            .map(|p| PolicyInput {
+                contract_address: p.contract_address,
+                entry_point: p.entry_point,
+            })
+            .collect();
+
+        if policies_gql.is_empty() {
+            println!("Warning: No policies found in preset.");
+            return Ok(());
         }
 
-        println!("{}", table);
+        let credentials = Credentials::load()?;
+
+        let variables = add_policies::Variables {
+            paymaster_name: name.clone(),
+            policies: policies_gql,
+        };
+        let request_body = AddPolicies::build_query(variables);
+        let client = Client::new_with_token(credentials.access_token);
+        let data: add_policies::ResponseData = client.query(&request_body).await?;
+        let added_policies = data.add_policies.unwrap_or_default();
+        println!("Successfully added {} policies:", added_policies.len());
+
+        Self::print_policies_table(&added_policies);
 
         Ok(())
     }
@@ -211,5 +279,23 @@ impl PolicyCmd {
         }
 
         Ok(())
+    }
+
+    // Helper method to print policies in a table
+    fn print_policies_table(policies: &[add_policies::AddPoliciesAddPolicies]) {
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_header(vec!["Contract Address", "Entry Point"]);
+
+        for policy_item in policies {
+            table.add_row(vec![
+                Cell::new(&policy_item.contract_address),
+                Cell::new(&policy_item.entry_point),
+            ]);
+        }
+
+        println!("{}", table);
     }
 }
