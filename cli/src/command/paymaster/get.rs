@@ -6,6 +6,8 @@ use slot::graphql::paymaster::get_paymaster;
 use slot::graphql::paymaster::GetPaymaster;
 use slot::graphql::GraphQLQuery;
 
+use crate::command::paymaster::PolicyArgs;
+
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Get paymaster options")]
 pub struct GetArgs {}
@@ -28,8 +30,29 @@ impl GetArgs {
 
         // 5. Print Result (using Debug format as workaround for Serialize issue)
         match data.paymaster {
-            Some(paymaster_data) => {
-                println!("Paymaster details:\n{:?}", paymaster_data);
+            Some(paymaster) => {
+                let policies_list: Vec<_> = paymaster
+                    .policies
+                    .edges
+                    .into_iter()
+                    .flatten()
+                    .filter_map(|edge| edge.unwrap().node)
+                    .collect();
+
+                if policies_list.is_empty() {
+                    println!("No policies found for paymaster '{}'.", name);
+                    return Ok(());
+                }
+
+                let policy_args: Vec<PolicyArgs> = policies_list
+                    .iter()
+                    .map(|p| PolicyArgs {
+                        contract: p.contract_address.clone(),
+                        entrypoint: p.entry_point.clone(),
+                    })
+                    .collect();
+
+                super::print_policies_table(&policy_args);
             }
             None => {
                 println!("Paymaster '{}' not found.", name);
