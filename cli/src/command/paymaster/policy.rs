@@ -1,6 +1,5 @@
 use anyhow::{Context, Result};
 use clap::{Args, Subcommand};
-use comfy_table::{presets::UTF8_FULL, Cell, ContentArrangement, Table};
 use slot::api::Client;
 use slot::credential::Credentials;
 use slot::graphql::paymaster::add_policies::PolicyInput;
@@ -12,6 +11,8 @@ use std::fs;
 use std::io::{self, Write};
 use std::path::PathBuf;
 
+use super::PolicyArgs;
+
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Paymaster policy options")]
 pub struct PolicyCmd {
@@ -22,7 +23,7 @@ pub struct PolicyCmd {
 #[derive(Subcommand, Debug)]
 enum PolicySubcommand {
     #[command(about = "Add policy to a paymaster")]
-    Add(AddPolicyArgs),
+    Add(PolicyArgs),
 
     #[command(about = "Add policies to a paymaster from preset")]
     AddFromPreset(AddPresetPolicyArgs),
@@ -35,15 +36,6 @@ enum PolicySubcommand {
 
     #[command(about = "Remove all policies from a paymaster.")]
     RemoveAll(RemoveAllArgs),
-}
-
-#[derive(Debug, Args)]
-struct AddPolicyArgs {
-    #[arg(long, help = "Contract address of the policy")]
-    contract: String,
-
-    #[arg(long, help = "Entrypoint name")]
-    entrypoint: String,
 }
 
 #[derive(Debug, Args)]
@@ -93,7 +85,7 @@ impl PolicyCmd {
         }
     }
 
-    async fn run_add(args: &AddPolicyArgs, name: String) -> Result<()> {
+    async fn run_add(args: &PolicyArgs, name: String) -> Result<()> {
         println!("Adding policy to paymaster: {} ", name);
 
         let credentials = Credentials::load()?;
@@ -108,9 +100,15 @@ impl PolicyCmd {
         let client = Client::new_with_token(credentials.access_token);
         let data: add_policies::ResponseData = client.query(&request_body).await?;
         let added_policies = data.add_policies.unwrap_or_default();
-        println!("Successfully added {} policy:", added_policies.len());
+        let policy_args: Vec<PolicyArgs> = added_policies
+            .iter()
+            .map(|p| PolicyArgs {
+                contract: p.contract_address.clone(),
+                entrypoint: p.entry_point.clone(),
+            })
+            .collect();
 
-        Self::print_policies_table(&added_policies);
+        super::print_policies_table(&policy_args);
 
         Ok(())
     }
@@ -153,9 +151,15 @@ impl PolicyCmd {
         let client = Client::new_with_token(credentials.access_token);
         let data: add_policies::ResponseData = client.query(&request_body).await?;
         let added_policies = data.add_policies.unwrap_or_default();
-        println!("Successfully added {} policies:", added_policies.len());
+        let policy_args: Vec<PolicyArgs> = added_policies
+            .iter()
+            .map(|p| PolicyArgs {
+                contract: p.contract_address.clone(),
+                entrypoint: p.entry_point.clone(),
+            })
+            .collect();
 
-        Self::print_policies_table(&added_policies);
+        super::print_policies_table(&policy_args);
 
         Ok(())
     }
@@ -192,9 +196,15 @@ impl PolicyCmd {
         let client = Client::new_with_token(credentials.access_token);
         let data: add_policies::ResponseData = client.query(&request_body).await?;
         let added_policies = data.add_policies.unwrap_or_default();
-        println!("Successfully added {} policies:", added_policies.len());
+        let policy_args: Vec<PolicyArgs> = added_policies
+            .iter()
+            .map(|p| PolicyArgs {
+                contract: p.contract_address.clone(),
+                entrypoint: p.entry_point.clone(),
+            })
+            .collect();
 
-        Self::print_policies_table(&added_policies);
+        super::print_policies_table(&policy_args);
 
         Ok(())
     }
@@ -279,23 +289,5 @@ impl PolicyCmd {
         }
 
         Ok(())
-    }
-
-    // Helper method to print policies in a table
-    fn print_policies_table(policies: &[add_policies::AddPoliciesAddPolicies]) {
-        let mut table = Table::new();
-        table
-            .load_preset(UTF8_FULL)
-            .set_content_arrangement(ContentArrangement::Dynamic)
-            .set_header(vec!["Contract Address", "Entry Point"]);
-
-        for policy_item in policies {
-            table.add_row(vec![
-                Cell::new(&policy_item.contract_address),
-                Cell::new(&policy_item.entry_point),
-            ]);
-        }
-
-        println!("{}", table);
     }
 }

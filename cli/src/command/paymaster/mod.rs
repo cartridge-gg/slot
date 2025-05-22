@@ -1,5 +1,7 @@
 use anyhow::Result;
 use clap::{Args, Subcommand};
+use comfy_table::{presets::UTF8_FULL, Cell, ContentArrangement, Table};
+use serde::{Deserialize, Serialize};
 
 // Import the structs defined in the subcommand files
 use self::budget::BudgetCmd;
@@ -11,6 +13,17 @@ mod budget;
 mod create;
 mod get;
 mod policy;
+
+#[derive(Debug, Args, Serialize, Deserialize)]
+pub struct PolicyArgs {
+    #[arg(long, help = "Contract address of the policy")]
+    #[serde(rename = "contractAddress")]
+    contract: String,
+
+    #[arg(long, help = "Entrypoint name")]
+    #[serde(rename = "entrypoint")]
+    entrypoint: String,
+}
 
 /// Command group for managing Paymasters
 #[derive(Debug, Args)]
@@ -49,4 +62,21 @@ impl PaymasterCmd {
             PaymasterSubcommand::Budget(cmd) => cmd.run(self.name.clone()).await,
         }
     }
+}
+
+pub fn print_policies_table(policies: &[PolicyArgs]) {
+    let mut table = Table::new();
+    table
+        .load_preset(UTF8_FULL)
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_header(vec!["Contract Address", "Entry Point"]);
+
+    for policy in policies {
+        table.add_row(vec![
+            Cell::new(&policy.contract),
+            Cell::new(&policy.entrypoint),
+        ]);
+    }
+
+    println!("{}", table);
 }
