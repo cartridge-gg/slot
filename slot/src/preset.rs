@@ -43,13 +43,18 @@ pub async fn load_preset(preset_name: &str) -> Result<ControllerConfig> {
     let client = Client::new();
     let url = format!("{}/{}/config.json", CONFIG_BASE_URL, preset_name);
 
-    println!("Loading preset: {}", url);
-
     let response = client
         .get(&url)
         .send()
         .await
         .context(format!("Failed to fetch preset: {}", preset_name))?;
+
+    if response.status() == 404 {
+        return Err(anyhow::anyhow!(
+            "Preset '{}' not found. Check available presets at https://github.com/cartridge-gg/presets/tree/main/configs",
+            preset_name
+        ));
+    }
 
     if !response.status().is_success() {
         return Err(anyhow::anyhow!(
