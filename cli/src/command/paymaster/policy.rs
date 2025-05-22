@@ -40,10 +40,10 @@ enum PolicySubcommand {
 #[derive(Debug, Args)]
 struct AddPolicyArgs {
     #[arg(long, help = "Contract address of the policy")]
-    contract_address: String,
+    contract: String,
 
     #[arg(long, help = "Entrypoint name")]
-    entry_point: String,
+    entrypoint: String,
 }
 
 #[derive(Debug, Args)]
@@ -52,7 +52,7 @@ struct AddJsonPolicyArgs {
         long,
         help = "Path to a JSON file containing an array of policies to add. Each policy should have 'contractAddress', 'entryPoint', and 'selector'."
     )]
-    policies_file: PathBuf,
+    file: PathBuf,
 }
 
 #[derive(Debug, Args)]
@@ -100,8 +100,8 @@ impl PolicyCmd {
         let variables = add_policies::Variables {
             paymaster_name: name.clone(),
             policies: vec![PolicyInput {
-                contract_address: args.contract_address.clone(),
-                entry_point: args.entry_point.clone(),
+                contract_address: args.contract.clone(),
+                entry_point: args.entrypoint.clone(),
             }],
         };
         let request_body = AddPolicies::build_query(variables);
@@ -118,17 +118,15 @@ impl PolicyCmd {
     async fn run_add_from_json(args: &AddJsonPolicyArgs, name: String) -> Result<()> {
         println!(
             "Adding policies to paymaster: {} from file: {:?}...",
-            name, args.policies_file
+            name, args.file
         );
 
-        let file_content = fs::read_to_string(&args.policies_file).context(format!(
-            "Failed to read policies file: {:?}",
-            args.policies_file
-        ))?;
+        let file_content = fs::read_to_string(&args.file)
+            .context(format!("Failed to read policies file: {:?}", args.file))?;
         let policies_json: Vec<PaymasterPolicyInput> = serde_json::from_str(&file_content)
             .context(format!(
                 "Failed to parse policies JSON from file: {:?}",
-                args.policies_file
+                args.file
             ))?;
 
         // Map JSON input to GraphQL input type
