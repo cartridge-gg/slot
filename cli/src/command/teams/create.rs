@@ -11,7 +11,7 @@ use slot::graphql::GraphQLQuery;
 pub struct CreateTeamArgs {
     #[arg(long)]
     #[arg(help = "The email address for team notifications.")]
-    pub email: Option<String>,
+    pub email: String,
 }
 
 impl CreateTeamArgs {
@@ -19,7 +19,7 @@ impl CreateTeamArgs {
         let request_body = CreateTeam::build_query(create_team::Variables {
             name: team.clone(),
             input: Some(create_team::TeamInput {
-                email: self.email.clone(),
+                email: Some(self.email.clone()),
             }),
         });
 
