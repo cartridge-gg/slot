@@ -32,12 +32,6 @@ pub struct CreateArgs {
     pub tier: Tier,
 
     #[arg(long)]
-    #[arg(help = "The list of regions to deploy to.")]
-    #[arg(value_name = "regions")]
-    #[arg(value_delimiter = ',')]
-    pub regions: Option<Vec<String>>,
-
-    #[arg(long)]
     #[arg(help = "Writes the service configuration to a file and exits without deploying.")]
     #[arg(global = true)]
     pub output_service_config: Option<PathBuf>,
@@ -123,6 +117,7 @@ impl CreateArgs {
                     katana: None,
                     torii: Some(ToriiCreateInput {
                         replicas: config.replicas,
+                        regions: config.regions.clone(),
                     }),
                 }
             }
@@ -141,7 +136,6 @@ impl CreateArgs {
             tier,
             service,
             wait: Some(true),
-            regions: self.regions.clone(),
             team: self.team.clone(),
         });
 

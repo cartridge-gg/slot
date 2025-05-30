@@ -65,6 +65,7 @@ impl UpdateArgs {
                     config: Some(slot::read::base64_encode_string(&service_config)),
                     torii: Some(ToriiUpdateInput {
                         replicas: config.replicas,
+                        regions: config.regions.clone(),
                     }),
                 }
             }
