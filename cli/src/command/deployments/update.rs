@@ -23,10 +23,6 @@ pub struct UpdateArgs {
     #[arg(help = "Deployment tier.")]
     pub tier: Option<Tier>,
 
-    #[arg(short, long, default_value = "1")]
-    #[arg(help = "The number of replicas to deploy.")]
-    pub replicas: Option<i64>,
-
     #[command(subcommand)]
     update_commands: UpdateServiceCommands,
 }
