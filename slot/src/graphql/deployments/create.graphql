@@ -3,7 +3,6 @@ mutation CreateDeployment(
 	$service: CreateServiceInput!
 	$tier: DeploymentTier!
 	$wait: Boolean
-	$regions: [String!]
 	$team: String
 ) {
 	createDeployment(
@@ -11,7 +10,6 @@ mutation CreateDeployment(
 		service: $service
 		tier: $tier
 		wait: $wait
-		regions: $regions
 		team: $team
 	) {
 		__typename
