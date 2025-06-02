@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use anyhow::anyhow;
 use clap::Args;
 use katana_cli::NodeArgs;
@@ -40,11 +42,20 @@ impl KatanaCreateArgs {
     }
 }
 
+/// Update a Katana deployment.
+///
+/// The main purpose of update is usually to change slot configuration (regions, tier, etc...),
+/// but it can also be used to change Katana parameters.
+/// For the latter, it is only possible using the configuration file (and not each individual parameter in the CLI),
+/// since the deployment has already been created with a configuration.
 #[derive(Debug, Args, serde::Serialize)]
 #[command(next_help_heading = "Katana update options")]
 pub struct KatanaUpdateArgs {
-    #[command(flatten)]
-    pub node_args: NodeArgs,
+    #[arg(long)]
+    #[arg(
+        help = "The path to the configuration file to use for the update. This will replace the existing configuration."
+    )]
+    pub config: Option<PathBuf>,
 }
 
 #[derive(Debug, Args, serde::Serialize)]
