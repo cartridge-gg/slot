@@ -42,20 +42,6 @@ impl UpdateArgs {
                 }
             }
             UpdateServiceCommands::Torii(config) => {
-                // Enforce the use of the `--config` flag, to have the infra
-                // actually override the config file with the new behavior without relying
-                // on default values.
-                if config.torii_args.config.is_none() {
-                    let describe_command = format!(
-                        "slot deployments describe {project} torii",
-                        project = self.project
-                    );
-
-                    return Err(anyhow::anyhow!(
-                        "The `--config` flag is required to update the torii service and ensure the new configuration is applied. If you don't have a config file yet, you can use `{describe_command}` to inspect the current one."
-                    ));
-                }
-
                 let service_config =
                     toml::to_string(&ToriiArgs::with_config_file(config.torii_args.clone())?)?;
 
