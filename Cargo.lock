@@ -5162,7 +5162,7 @@ dependencies = [
 [[package]]
 name = "katana-chain-spec"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -5181,7 +5181,7 @@ dependencies = [
 [[package]]
 name = "katana-cli"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -5208,7 +5208,7 @@ dependencies = [
 [[package]]
 name = "katana-core"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "alloy-provider",
  "alloy-rpc-types-eth",
@@ -5240,7 +5240,7 @@ dependencies = [
 [[package]]
 name = "katana-db"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "anyhow",
  "katana-metrics",
@@ -5263,7 +5263,7 @@ dependencies = [
 [[package]]
 name = "katana-executor"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "blockifier",
  "cairo-vm",
@@ -5280,7 +5280,7 @@ dependencies = [
 [[package]]
 name = "katana-explorer"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "anyhow",
  "axum 0.6.20",
@@ -5300,7 +5300,7 @@ dependencies = [
 [[package]]
 name = "katana-feeder-gateway"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "katana-primitives",
  "katana-rpc-types",
@@ -5315,7 +5315,7 @@ dependencies = [
 [[package]]
 name = "katana-fork"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "anyhow",
  "futures",
@@ -5332,7 +5332,7 @@ dependencies = [
 [[package]]
 name = "katana-log"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "clap",
  "serde",
@@ -5345,7 +5345,7 @@ dependencies = [
 [[package]]
 name = "katana-messaging"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "alloy-contract",
  "alloy-network",
@@ -5374,7 +5374,7 @@ dependencies = [
 [[package]]
 name = "katana-metrics"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "hyper 0.14.32",
  "jemalloc-ctl",
@@ -5392,7 +5392,7 @@ dependencies = [
 [[package]]
 name = "katana-node"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "anyhow",
  "futures",
@@ -5429,7 +5429,7 @@ dependencies = [
 [[package]]
 name = "katana-pipeline"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "futures",
  "katana-primitives",
@@ -5443,7 +5443,7 @@ dependencies = [
 [[package]]
 name = "katana-pool"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "futures",
  "katana-executor",
@@ -5458,7 +5458,7 @@ dependencies = [
 [[package]]
 name = "katana-primitives"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -5488,7 +5488,7 @@ dependencies = [
 [[package]]
 name = "katana-provider"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -5512,7 +5512,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "account_sdk 0.1.0 (git+https://github.com/cartridge-gg/controller?rev=dbbe0353d64de743739d425f8aab91ca3ac0e16f)",
  "anyhow",
@@ -5547,7 +5547,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc-api"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "account_sdk 0.1.0 (git+https://github.com/cartridge-gg/controller?rev=dbbe0353d64de743739d425f8aab91ca3ac0e16f)",
  "anyhow",
@@ -5567,7 +5567,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc-types"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -5590,7 +5590,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc-types-builder"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "anyhow",
  "katana-executor",
@@ -5603,7 +5603,7 @@ dependencies = [
 [[package]]
 name = "katana-slot-controller"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "account_sdk 0.1.0 (git+https://github.com/cartridge-gg/controller?rev=dbbe0353d64de743739d425f8aab91ca3ac0e16f)",
  "katana-primitives",
@@ -5612,7 +5612,7 @@ dependencies = [
 [[package]]
 name = "katana-stage"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -5637,7 +5637,7 @@ dependencies = [
 [[package]]
 name = "katana-tasks"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "futures",
  "rayon",
@@ -5651,7 +5651,7 @@ dependencies = [
 [[package]]
 name = "katana-trie"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=a019bab48c7ec161e849008c81f9efddd351fcea#a019bab48c7ec161e849008c81f9efddd351fcea"
+source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
 dependencies = [
  "anyhow",
  "bitvec",
