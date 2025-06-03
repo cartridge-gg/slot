@@ -91,7 +91,7 @@ test_katana() {
     local project=$1
     local config_path=$2
 
-    cargo run -- d create --team cartridge "$project" katana
+    cargo run -- d create "$project" katana
 
     sleep 10
 
@@ -133,7 +133,7 @@ test_torii() {
     local config_path=$2
 
     create_torii_config "$config_path"
-    cargo run -- d create --team cartridge "$project" torii --config "$config_path"
+    cargo run -- d create "$project" torii --config "$config_path"
 
     sleep 15
 
