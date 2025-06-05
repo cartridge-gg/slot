@@ -93,8 +93,6 @@ impl PolicyCmd {
     }
 
     async fn run_add(args: &PolicyArgs, name: String) -> Result<()> {
-        println!("Adding policy to paymaster: {} ", name);
-
         let credentials = Credentials::load()?;
         let variables = add_policies::Variables {
             paymaster_name: name.clone(),
@@ -121,11 +119,6 @@ impl PolicyCmd {
     }
 
     async fn run_add_from_json(args: &AddJsonPolicyArgs, name: String) -> Result<()> {
-        println!(
-            "Adding policies to paymaster: {} from file: {:?}...",
-            name, args.file
-        );
-
         let file_content = fs::read_to_string(&args.file)
             .context(format!("Failed to read policies file: {:?}", args.file))?;
         let policies_json: Vec<PaymasterPolicyInput> = serde_json::from_str(&file_content)
@@ -172,11 +165,6 @@ impl PolicyCmd {
     }
 
     async fn run_add_from_preset(args: &AddPresetPolicyArgs, name: String) -> Result<()> {
-        println!(
-            "Adding policies to paymaster: {} from preset name: {}",
-            name, args.name
-        );
-
         let config = load_preset(&args.name).await?;
         let policies = extract_paymaster_policies(&config, "SN_MAIN");
 
@@ -217,11 +205,6 @@ impl PolicyCmd {
     }
 
     async fn run_remove(args: &RemovePolicyArgs, name: String) -> Result<()> {
-        println!(
-            "Removing policies {:?} from paymaster: {}...",
-            args.policy_ids, name
-        );
-
         if args.policy_ids.is_empty() {
             println!("Warning: No policy IDs provided for removal.");
             return Ok(());
@@ -310,7 +293,6 @@ impl PolicyCmd {
         let client = Client::new_with_token(credentials.access_token);
 
         // 4. Execute Query
-        println!("Fetching paymaster: {}", name);
         let data: list_policies::ResponseData = client.query(&request_body).await?;
 
         // 5. Print Result (using Debug format as workaround for Serialize issue)

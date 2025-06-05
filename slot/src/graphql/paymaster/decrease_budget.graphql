@@ -4,5 +4,6 @@ mutation DecreaseBudget($paymasterName: ID!, $amount: Int!, $unit: FeeUnit!) {
   decreaseBudget(paymasterName: $paymasterName, amount: $amount, unit: $unit) {
     id
     name
+    budget
   }
 } 

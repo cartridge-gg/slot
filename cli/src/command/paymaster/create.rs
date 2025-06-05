@@ -20,7 +20,6 @@ pub struct CreateArgs {
 
 impl CreateArgs {
     pub async fn run(&self, name: String) -> Result<()> {
-        // 1. Load Credentials
         let credentials = Credentials::load()?;
 
         let unit = match self.unit.to_uppercase().as_str() {
@@ -29,7 +28,6 @@ impl CreateArgs {
             _ => return Err(anyhow::anyhow!("Invalid unit: {}", self.unit)),
         };
 
-        // 2. Build Query Variables
         let variables = create_paymaster::Variables {
             name: name.clone(),
             team_name: self.team.clone(),
@@ -38,18 +36,15 @@ impl CreateArgs {
         };
         let request_body = CreatePaymaster::build_query(variables);
 
-        // 3. Create Client
         let client = Client::new_with_token(credentials.access_token);
-
-        // 4. Execute Query
-        println!("Creating paymaster '{}' for team '{}'...", name, self.team);
 
         let data: create_paymaster::ResponseData = client.query(&request_body).await?;
 
-        // 5. Print Result
         println!(
-            "Paymaster '{}' created successfully",
+            "Paymaster '{}' created with budget of {} {}",
             data.create_paymaster.name,
+            self.budget,
+            self.unit.to_uppercase()
         );
 
         Ok(())
