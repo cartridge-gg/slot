@@ -6,15 +6,15 @@ use serde::{Deserialize, Serialize};
 // Import the structs defined in the subcommand files
 use self::budget::BudgetCmd;
 use self::create::CreateArgs;
-use self::stats::StatsArgs;
-//use self::get::GetArgs;
+use self::info::InfoArgs;
 use self::policy::PolicyCmd;
+use self::stats::StatsArgs;
 
 mod budget;
 mod create;
-mod stats;
-//mod get;
+mod info;
 mod policy;
+mod stats;
 
 #[derive(Debug, Args, Serialize, Deserialize)]
 pub struct PolicyArgs {
@@ -54,6 +54,9 @@ enum PaymasterSubcommand {
 
     #[command(about = "Manage paymaster stats.")]
     Stats(StatsArgs),
+
+    #[command(about = "Get paymaster info.")]
+    Info(InfoArgs),
 }
 
 impl PaymasterCmd {
@@ -65,6 +68,7 @@ impl PaymasterCmd {
             PaymasterSubcommand::Policy(cmd) => cmd.run(self.name.clone()).await,
             PaymasterSubcommand::Budget(cmd) => cmd.run(self.name.clone()).await,
             PaymasterSubcommand::Stats(cmd) => cmd.run(self.name.clone()).await,
+            PaymasterSubcommand::Info(cmd) => cmd.run(self.name.clone()).await,
         }
     }
 }

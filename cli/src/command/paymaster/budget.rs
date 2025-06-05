@@ -67,14 +67,38 @@ impl BudgetCmd {
 
         let data: increase_budget::ResponseData = client.query(&request_body).await?;
 
-        println!(
-            "Increased '{}' budget by {} {}\nNew budget: {} {}",
-            data.increase_budget.name,
-            args.amount,
-            args.unit.to_uppercase(),
-            data.increase_budget.budget as f64 / 1e6,
-            args.unit.to_uppercase()
-        );
+        let new_budget_formatted = data.increase_budget.budget as f64 / 1e6;
+
+        // Calculate USD equivalent for CREDIT only
+        let usd_equivalent = match args.unit.to_uppercase().as_str() {
+            "CREDIT" => new_budget_formatted * 0.01, // 100 credit = 1 USD
+            _ => 0.0,
+        };
+
+        println!("\n✅ Budget Increased Successfully");
+        println!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+        println!("🏢 Paymaster: {}", data.increase_budget.name);
+
+        println!("\n📈 Operation:");
+        println!("  • Action: Increased");
+        println!("  • Amount: {} {}", args.amount, args.unit.to_uppercase());
+
+        println!("\n💰 New Budget:");
+        if usd_equivalent > 0.0 {
+            println!(
+                "  • Amount: {} {} (${:.2} USD)",
+                new_budget_formatted as i64,
+                args.unit.to_uppercase(),
+                usd_equivalent
+            );
+        } else {
+            println!(
+                "  • Amount: {} {}",
+                new_budget_formatted as i64,
+                args.unit.to_uppercase()
+            );
+        }
 
         Ok(())
     }
@@ -102,16 +126,38 @@ impl BudgetCmd {
 
         let data: decrease_budget::ResponseData = client.query(&request_body).await?;
 
-        // 5. Print Result (assuming mutation returns name and id)
-        // Check the .graphql file - budget might not be returned
-        println!(
-            "Decreased '{}' budget by {} {}\nNew budget: {} {}",
-            data.decrease_budget.name,
-            args.amount,
-            args.unit.to_uppercase(),
-            data.decrease_budget.budget as f64 / 1e6,
-            args.unit.to_uppercase()
-        );
+        let new_budget_formatted = data.decrease_budget.budget as f64 / 1e6;
+
+        // Calculate USD equivalent for CREDIT only
+        let usd_equivalent = match args.unit.to_uppercase().as_str() {
+            "CREDIT" => new_budget_formatted * 0.01, // 100 credit = 1 USD
+            _ => 0.0,
+        };
+
+        println!("\n✅ Budget Decreased Successfully");
+        println!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+        println!("🏢 Paymaster: {}", data.decrease_budget.name);
+
+        println!("\n📉 Operation:");
+        println!("  • Action: Decreased");
+        println!("  • Amount: {} {}", args.amount, args.unit.to_uppercase());
+
+        println!("\n💰 New Budget:");
+        if usd_equivalent > 0.0 {
+            println!(
+                "  • Amount: {} {} (${:.2} USD)",
+                new_budget_formatted as i64,
+                args.unit.to_uppercase(),
+                usd_equivalent
+            );
+        } else {
+            println!(
+                "  • Amount: {} {}",
+                new_budget_formatted as i64,
+                args.unit.to_uppercase()
+            );
+        }
 
         Ok(())
     }

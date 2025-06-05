@@ -79,8 +79,18 @@ pub struct ListPaymasters;
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "schema.json",
-    query_path = "src/graphql/paymaster/paymaster_stats.graphql",
+    query_path = "src/graphql/paymaster/stats.graphql",
     response_derives = "Debug, Serialize, Clone",
     variables_derives = "Debug"
 )]
 pub struct PaymasterStats;
+
+// Query for paymaster
+#[derive(GraphQLQuery)]
+#[graphql(
+    schema_path = "schema.json",
+    query_path = "src/graphql/paymaster/info.graphql",
+    response_derives = "Debug, Serialize, Clone",
+    variables_derives = "Debug"
+)]
+pub struct PaymasterInfo;

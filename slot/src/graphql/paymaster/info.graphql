@@ -1,0 +1,15 @@
+query PaymasterInfo($name: ID!) {
+  paymaster(name: $name) {
+    budget
+    budgetFeeUnit
+    strkFees
+    creditFees
+    active
+    policies {
+      totalCount
+    }
+    team {
+      name
+    }
+  }
+} 
