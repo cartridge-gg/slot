@@ -1,0 +1,8 @@
+# Mutation to decrease a paymaster's budget
+# Operation name `DecreaseBudget` must match the struct name in Rust
+mutation DecreaseBudget($paymasterName: ID!, $amount: Int!, $unit: FeeUnit!) {
+  decreaseBudget(paymasterName: $paymasterName, amount: $amount, unit: $unit) {
+    id
+    name
+  }
+} 

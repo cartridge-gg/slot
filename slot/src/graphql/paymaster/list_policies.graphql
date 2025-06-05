@@ -1,0 +1,22 @@
+# Query to list policies from a paymaster
+# Operation name `ListPolicies` must match the struct name in Rust
+query ListPolicies($name: ID!) {
+  paymaster(name: $name) {
+    id
+    name
+    team {
+      id
+      name
+    }
+    policies {
+      edges {
+        node {
+          id
+          contractAddress
+          entryPoint
+          selector
+        }
+      }
+    }
+  }
+} 

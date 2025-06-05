@@ -8590,6 +8590,7 @@ version = "0.0.0"
 dependencies = [
  "anyhow",
  "axum 0.7.9",
+ "chrono",
  "clap",
  "colored 2.2.0",
  "comfy-table",

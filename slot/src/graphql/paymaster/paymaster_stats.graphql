@@ -1,0 +1,12 @@
+query PaymasterStats($paymasterName: ID!, $since: Time!) {
+  paymasterStats(paymasterName: $paymasterName, since: $since) {
+    minUsdFee
+    maxUsdFee
+    avgUsdFee
+    totalUsdFees
+    totalTransactions
+    successfulTransactions
+    revertedTransactions
+    uniqueUsers
+  }
+} 

@@ -1,0 +1,12 @@
+# Mutation to create a new paymaster
+# Operation name `CreatePaymaster` must match the struct name in Rust
+mutation CreatePaymaster($name: String!, $teamName: String!, $budget: Int!, $unit: FeeUnit!) {
+  createPaymaster(name: $name, teamName: $teamName, budget: $budget, unit: $unit) {
+    id
+    name
+    team {
+      id
+      name
+    }
+  }
+} 
