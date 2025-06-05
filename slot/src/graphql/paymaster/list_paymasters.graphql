@@ -1,0 +1,29 @@
+# Query to list paymasters with pagination, filtering, and ordering
+# Operation name `ListPaymasters` must match the struct name in Rust
+query ListPaymasters {
+  me {
+    id
+    teams {
+      edges {
+        node {
+          name
+          paymasters {
+            edges {
+              node {
+                id
+                name
+                active
+                budget
+                budgetFeeUnit
+                team {
+                  id
+                  name
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+} 

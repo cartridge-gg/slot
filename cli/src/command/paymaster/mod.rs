@@ -6,12 +6,14 @@ use serde::{Deserialize, Serialize};
 // Import the structs defined in the subcommand files
 use self::budget::BudgetCmd;
 use self::create::CreateArgs;
-use self::get::GetArgs;
+use self::stats::StatsArgs;
+//use self::get::GetArgs;
 use self::policy::PolicyCmd;
 
 mod budget;
 mod create;
-mod get;
+mod stats;
+//mod get;
 mod policy;
 
 #[derive(Debug, Args, Serialize, Deserialize)]
@@ -42,14 +44,16 @@ enum PaymasterSubcommand {
     #[command(about = "Create a new paymaster.")]
     Create(CreateArgs),
 
-    #[command(about = "Get paymaster details by Name.")]
-    Get(GetArgs),
-
+    // #[command(about = "Get paymaster details by Name.")]
+    // Get(GetArgs),
     #[command(about = "Manage paymaster policies.")]
     Policy(PolicyCmd),
 
     #[command(about = "Manage paymaster budget.")]
     Budget(BudgetCmd),
+
+    #[command(about = "Manage paymaster stats.")]
+    Stats(StatsArgs),
 }
 
 impl PaymasterCmd {
@@ -57,9 +61,10 @@ impl PaymasterCmd {
     pub async fn run(&self) -> Result<()> {
         match &self.command {
             PaymasterSubcommand::Create(args) => args.run(self.name.clone()).await,
-            PaymasterSubcommand::Get(args) => args.run(self.name.clone()).await,
+            //PaymasterSubcommand::Get(args) => args.run(self.name.clone()).await,
             PaymasterSubcommand::Policy(cmd) => cmd.run(self.name.clone()).await,
             PaymasterSubcommand::Budget(cmd) => cmd.run(self.name.clone()).await,
+            PaymasterSubcommand::Stats(cmd) => cmd.run(self.name.clone()).await,
         }
     }
 }

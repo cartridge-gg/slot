@@ -3,8 +3,8 @@ use clap::{Args, Subcommand};
 use slot::api::Client;
 use slot::credential::Credentials;
 use slot::graphql::paymaster::add_policies::PolicyInput;
-use slot::graphql::paymaster::{add_policies, remove_all_policies, remove_policies};
-use slot::graphql::paymaster::{AddPolicies, RemoveAllPolicies, RemovePolicies};
+use slot::graphql::paymaster::{add_policies, list_policies, remove_all_policies, remove_policies};
+use slot::graphql::paymaster::{AddPolicies, ListPolicies, RemoveAllPolicies, RemovePolicies};
 use slot::graphql::GraphQLQuery;
 use slot::preset::{extract_paymaster_policies, load_preset, PaymasterPolicyInput};
 use std::fs;
@@ -36,6 +36,9 @@ enum PolicySubcommand {
 
     #[command(about = "Remove all policies from a paymaster.")]
     RemoveAll(RemoveAllArgs),
+
+    #[command(about = "List policies from a paymaster.")]
+    List(ListPolicyArgs),
 }
 
 #[derive(Debug, Args)]
@@ -70,6 +73,9 @@ struct RemovePolicyArgs {
 #[derive(Debug, Args)]
 struct RemoveAllArgs {}
 
+#[derive(Debug, Args)]
+struct ListPolicyArgs {}
+
 impl PolicyCmd {
     pub async fn run(&self, name: String) -> Result<()> {
         match &self.command {
@@ -82,6 +88,7 @@ impl PolicyCmd {
             }
             PolicySubcommand::Remove(args) => Self::run_remove(args, name.clone()).await,
             PolicySubcommand::RemoveAll(_) => Self::run_remove_all(name.clone()).await,
+            PolicySubcommand::List(_) => Self::run_list(name.clone()).await,
         }
     }
 
@@ -286,6 +293,55 @@ impl PolicyCmd {
             println!("Successfully removed all policies from paymaster {}", name);
         } else {
             println!("Failed to remove all policies from paymaster {}", name);
+        }
+
+        Ok(())
+    }
+
+    async fn run_list(name: String) -> Result<()> {
+        // 1. Load Credentials
+        let credentials = Credentials::load()?;
+
+        // 2. Build Query Variables
+        let variables = list_policies::Variables { name: name.clone() };
+        let request_body = ListPolicies::build_query(variables);
+
+        // 3. Create Client
+        let client = Client::new_with_token(credentials.access_token);
+
+        // 4. Execute Query
+        println!("Fetching paymaster: {}", name);
+        let data: list_policies::ResponseData = client.query(&request_body).await?;
+
+        // 5. Print Result (using Debug format as workaround for Serialize issue)
+        match data.paymaster {
+            Some(paymaster) => {
+                let policies_list: Vec<_> = paymaster
+                    .policies
+                    .edges
+                    .into_iter()
+                    .flatten()
+                    .filter_map(|edge| edge.unwrap().node)
+                    .collect();
+
+                if policies_list.is_empty() {
+                    println!("No policies found for paymaster '{}'.", name);
+                    return Ok(());
+                }
+
+                let policy_args: Vec<PolicyArgs> = policies_list
+                    .iter()
+                    .map(|p| PolicyArgs {
+                        contract: p.contract_address.clone(),
+                        entrypoint: p.entry_point.clone(),
+                    })
+                    .collect();
+
+                super::print_policies_table(&policy_args);
+            }
+            None => {
+                println!("Paymaster '{}' not found.", name);
+            }
         }
 
         Ok(())

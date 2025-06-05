@@ -1,0 +1,13 @@
+# Mutation to add policies to a paymaster
+# Operation name `AddPolicies` must match the struct name in Rust
+mutation AddPolicies(
+  $paymasterName: ID!
+  $policies: [PolicyInput!]!
+) {
+  addPolicies(paymasterName: $paymasterName, policies: $policies) {
+    id
+    contractAddress
+    entryPoint
+    selector
+  }
+} 
