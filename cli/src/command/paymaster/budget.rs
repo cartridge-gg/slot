@@ -48,7 +48,6 @@ impl BudgetCmd {
     }
 
     async fn run_increase(args: &IncreaseBudgetArgs, name: String) -> Result<()> {
-        // 1. Load Credentials
         let credentials = Credentials::load()?;
 
         let unit = match args.unit.to_uppercase().as_str() {
@@ -57,7 +56,6 @@ impl BudgetCmd {
             _ => return Err(anyhow::anyhow!("Invalid unit: {}", args.unit)),
         };
 
-        // 2. Build Query Variables
         let variables = increase_budget::Variables {
             paymaster_name: name.clone(),
             amount: args.amount as i64,
@@ -65,21 +63,17 @@ impl BudgetCmd {
         };
         let request_body = IncreaseBudget::build_query(variables);
 
-        // 3. Create Client
         let client = Client::new_with_token(credentials.access_token);
 
-        // 4. Execute Query
-        println!(
-            "Increasing budget for paymaster ID: {} by {} {:?}...",
-            name, args.amount, args.unit
-        );
         let data: increase_budget::ResponseData = client.query(&request_body).await?;
 
-        // 5. Print Result (assuming mutation returns name and id)
-        // Check the .graphql file - budget might not be returned
         println!(
-            "Budget increased successfully for Paymaster '{}'.",
-            data.increase_budget.name
+            "Increased '{}' budget by {} {}\nNew budget: {} {}",
+            data.increase_budget.name,
+            args.amount,
+            args.unit.to_uppercase(),
+            data.increase_budget.budget as f64 / 1e6,
+            args.unit.to_uppercase()
         );
 
         Ok(())
@@ -106,18 +100,17 @@ impl BudgetCmd {
         // 3. Create Client
         let client = Client::new_with_token(credentials.access_token);
 
-        // 4. Execute Query
-        println!(
-            "Decreasing budget for paymaster ID: {} by {} {:?}...",
-            name, args.amount, args.unit
-        );
         let data: decrease_budget::ResponseData = client.query(&request_body).await?;
 
         // 5. Print Result (assuming mutation returns name and id)
         // Check the .graphql file - budget might not be returned
         println!(
-            "Budget decreased successfully for Paymaster '{}'.",
-            data.decrease_budget.name
+            "Decreased '{}' budget by {} {}\nNew budget: {} {}",
+            data.decrease_budget.name,
+            args.amount,
+            args.unit.to_uppercase(),
+            data.decrease_budget.budget as f64 / 1e6,
+            args.unit.to_uppercase()
         );
 
         Ok(())

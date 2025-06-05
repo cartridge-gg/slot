@@ -4,5 +4,6 @@ mutation IncreaseBudget($paymasterName: ID!, $amount: Int!, $unit: FeeUnit!) {
   increaseBudget(paymasterName: $paymasterName, amount: $amount, unit: $unit) {
     id
     name
+    budget
   }
 } 
