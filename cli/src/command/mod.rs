@@ -6,7 +6,7 @@ pub mod teams;
 
 use anyhow::Result;
 use clap::Subcommand;
-use slot::version;
+use slot::{eula, version};
 
 use auth::Auth;
 use deployments::Deployments;
@@ -40,6 +40,15 @@ impl Command {
     pub async fn run(&self) -> Result<()> {
         // Check for new version and run auto-update if available
         version::check_and_auto_update();
+
+        // Check if EULA has been accepted (skip for login command)
+        let needs_eula_check = !matches!(self, Command::Auth(Auth::Login(_)));
+        
+        if needs_eula_check && !eula::has_accepted_current_eula()? {
+            eprintln!("You must accept the End User License Agreement before using the Slot CLI.");
+            eprintln!("Please run 'slot auth login' to review and accept the EULA.");
+            return Err(anyhow::anyhow!("EULA not accepted"));
+        }
 
         // Run the actual command
         match &self {

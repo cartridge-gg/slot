@@ -17,6 +17,7 @@ use slot::{
     api::Client,
     browser,
     credential::Credentials,
+    eula,
     graphql::auth::{
         me::{ResponseData, Variables},
         Me,
@@ -121,6 +122,19 @@ async fn handler(
             Credentials::new(account, token).store()?;
 
             println!("You are now logged in!\n");
+
+            // 4. Check and prompt for EULA acceptance
+            if !eula::has_accepted_current_eula()? {
+                println!("Before using the Slot CLI, you must accept the End User License Agreement.\n");
+                
+                if !eula::display_and_accept_eula()? {
+                    error!("EULA not accepted. You must accept the EULA to use the Slot CLI.");
+                    return Ok(Redirect::permanent(&format!(
+                        "{}/failure",
+                        vars::get_cartridge_keychain_url()
+                    )));
+                }
+            }
 
             Ok(Redirect::permanent(&format!(
                 "{}/success",

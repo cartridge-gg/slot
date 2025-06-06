@@ -5,6 +5,7 @@ pub mod api;
 pub mod bigint;
 pub mod browser;
 pub mod credential;
+pub mod eula;
 pub(crate) mod error;
 pub mod graphql;
 pub mod preset;
