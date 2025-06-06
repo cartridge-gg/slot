@@ -34,7 +34,7 @@ dependencies = [
  "starknet-types-core",
  "thiserror 1.0.69",
  "tokio",
- "toml 0.8.20",
+ "toml",
  "tsify-next",
  "u256-literal",
  "url",
@@ -73,7 +73,7 @@ dependencies = [
  "starknet-types-core",
  "thiserror 1.0.69",
  "tokio",
- "toml 0.8.20",
+ "toml",
  "tsify-next",
  "u256-literal",
  "url",
@@ -713,7 +713,7 @@ dependencies = [
  "serde_json",
  "socket2 0.5.8",
  "tokio",
- "toml 0.8.20",
+ "toml",
  "tracing",
 ]
 
@@ -1115,12 +1115,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
 
 [[package]]
-name = "ascii"
-version = "1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d92bec98840b8f03a5ff5413de5293bfcd8bf96467cf5452609f939ec6f5de16"
-
-[[package]]
 name = "ascii-canvas"
 version = "4.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1395,44 +1389,12 @@ dependencies = [
 
 [[package]]
 name = "axum"
-version = "0.6.20"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3b829e4e32b91e643de6eafe82b1d90675f5874230191a4ffbc1b336dec4d6bf"
-dependencies = [
- "async-trait",
- "axum-core 0.3.4",
- "bitflags 1.3.2",
- "bytes",
- "futures-util",
- "http 0.2.12",
- "http-body 0.4.6",
- "hyper 0.14.32",
- "itoa",
- "matchit",
- "memchr",
- "mime",
- "percent-encoding",
- "pin-project-lite",
- "rustversion",
- "serde",
- "serde_json",
- "serde_path_to_error",
- "serde_urlencoded",
- "sync_wrapper 0.1.2",
- "tokio",
- "tower 0.4.13",
- "tower-layer",
- "tower-service",
-]
-
-[[package]]
-name = "axum"
 version = "0.7.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "edca88bc138befd0323b20752846e6587272d3b03b0343c8ea28a6f819e6e71f"
 dependencies = [
  "async-trait",
- "axum-core 0.4.5",
+ "axum-core",
  "bytes",
  "futures-util",
  "http 1.3.0",
@@ -1457,23 +1419,6 @@ dependencies = [
  "tower-layer",
  "tower-service",
  "tracing",
-]
-
-[[package]]
-name = "axum-core"
-version = "0.3.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "759fa577a247914fd3f7f76d62972792636412fbfd634cd452f6a385a74d2d2c"
-dependencies = [
- "async-trait",
- "bytes",
- "futures-util",
- "http 0.2.12",
- "http-body 0.4.6",
- "mime",
- "rustversion",
- "tower-layer",
- "tower-service",
 ]
 
 [[package]]
@@ -1552,15 +1497,6 @@ name = "base64ct"
 version = "1.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bb97d56060ee67d285efb8001fec9d2a4c710c32efd2e14b5cbb5ba71930fc2d"
-
-[[package]]
-name = "beef"
-version = "0.5.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3a8241f3ebb85c056b509d4327ad0358fbbba6ffb340bf388f26350aeda225b1"
-dependencies = [
- "serde",
-]
 
 [[package]]
 name = "bincode"
@@ -1682,15 +1618,6 @@ dependencies = [
  "radium",
  "tap",
  "wyz",
-]
-
-[[package]]
-name = "block-buffer"
-version = "0.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4152116fd6e9dadb291ae18fc1ec3575ed6d84c29642d97890f4b4a3417297e4"
-dependencies = [
- "generic-array",
 ]
 
 [[package]]
@@ -2244,7 +2171,7 @@ dependencies = [
  "semver 1.0.26",
  "serde",
  "smol_str",
- "toml 0.8.20",
+ "toml",
 ]
 
 [[package]]
@@ -2361,7 +2288,7 @@ dependencies = [
  "cairo-lang-utils",
  "serde",
  "thiserror 2.0.12",
- "toml 0.8.20",
+ "toml",
 ]
 
 [[package]]
@@ -2436,7 +2363,7 @@ dependencies = [
  "rust-analyzer-salsa",
  "sha3",
  "smol_str",
- "toml 0.8.20",
+ "toml",
 ]
 
 [[package]]
@@ -2756,12 +2683,6 @@ dependencies = [
  "wasm-bindgen",
  "windows-link",
 ]
-
-[[package]]
-name = "chunked_transfer"
-version = "1.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6e4de3bc4ea267985becf712dc6d9eed8b04c953b3fcfb339ebc87acd9804901"
 
 [[package]]
 name = "cipher"
@@ -3391,7 +3312,7 @@ version = "0.10.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292"
 dependencies = [
- "block-buffer 0.10.4",
+ "block-buffer",
  "const-oid",
  "crypto-common",
  "subtle",
@@ -4464,9 +4385,9 @@ dependencies = [
 
 [[package]]
 name = "http-range-header"
-version = "0.3.1"
+version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "add0ab9360ddbd88cfeb3bd9574a1d85cfdfa14db10b3e21d3700dbc4328758f"
+checksum = "9171a2ea8a68358193d15dd5d70c1c10a2afc3e7e4c5bc92bc9f025cebd7359c"
 
 [[package]]
 name = "httparse"
@@ -5060,90 +4981,93 @@ dependencies = [
 
 [[package]]
 name = "jsonrpsee"
-version = "0.16.3"
+version = "0.25.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "367a292944c07385839818bb71c8d76611138e2dedb0677d035b8da21d29c78b"
+checksum = "1fba77a59c4c644fd48732367624d1bcf6f409f9c9a286fbc71d2f1fc0b2ea16"
 dependencies = [
  "jsonrpsee-core",
  "jsonrpsee-proc-macros",
  "jsonrpsee-server",
  "jsonrpsee-types",
+ "tokio",
  "tracing",
 ]
 
 [[package]]
 name = "jsonrpsee-core"
-version = "0.16.3"
+version = "0.25.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2b5dde66c53d6dcdc8caea1874a45632ec0fcf5b437789f1e45766a1512ce803"
+checksum = "693c93cbb7db25f4108ed121304b671a36002c2db67dff2ee4391a688c738547"
 dependencies = [
- "anyhow",
- "arrayvec",
  "async-trait",
- "beef",
- "futures-channel",
+ "bytes",
  "futures-util",
- "globset",
- "hyper 0.14.32",
+ "http 1.3.0",
+ "http-body 1.0.1",
+ "http-body-util",
  "jsonrpsee-types",
  "parking_lot",
- "rand 0.8.5",
- "rustc-hash 1.1.0",
+ "pin-project",
+ "rand 0.9.0",
+ "rustc-hash 2.1.1",
  "serde",
  "serde_json",
- "soketto",
- "thiserror 1.0.69",
+ "thiserror 2.0.12",
  "tokio",
+ "tower 0.5.2",
  "tracing",
 ]
 
 [[package]]
 name = "jsonrpsee-proc-macros"
-version = "0.16.3"
+version = "0.25.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "44e8ab85614a08792b9bff6c8feee23be78c98d0182d4c622c05256ab553892a"
+checksum = "2fa4f5daed39f982a1bb9d15449a28347490ad42b212f8eaa2a2a344a0dce9e9"
 dependencies = [
- "heck 0.4.1",
- "proc-macro-crate 1.1.3",
+ "heck 0.5.0",
+ "proc-macro-crate",
  "proc-macro2",
  "quote",
- "syn 1.0.109",
+ "syn 2.0.100",
 ]
 
 [[package]]
 name = "jsonrpsee-server"
-version = "0.16.3"
+version = "0.25.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cf4d945a6008c9b03db3354fb3c83ee02d2faa9f2e755ec1dfb69c3551b8f4ba"
+checksum = "d38b0bcf407ac68d241f90e2d46041e6a06988f97fe1721fb80b91c42584fae6"
 dependencies = [
- "futures-channel",
  "futures-util",
- "http 0.2.12",
- "hyper 0.14.32",
+ "http 1.3.0",
+ "http-body 1.0.1",
+ "http-body-util",
+ "hyper 1.6.0",
+ "hyper-util",
  "jsonrpsee-core",
  "jsonrpsee-types",
+ "pin-project",
+ "route-recognizer",
  "serde",
  "serde_json",
  "soketto",
+ "thiserror 2.0.12",
  "tokio",
  "tokio-stream",
  "tokio-util",
- "tower 0.4.13",
+ "tower 0.5.2",
  "tracing",
 ]
 
 [[package]]
 name = "jsonrpsee-types"
-version = "0.16.3"
+version = "0.25.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "245ba8e5aa633dd1c1e4fae72bce06e71f42d34c14a2767c6b4d173b57bee5e5"
+checksum = "66df7256371c45621b3b7d2fb23aea923d577616b9c0e9c0b950a6ea5c2be0ca"
 dependencies = [
- "anyhow",
- "beef",
+ "http 1.3.0",
  "serde",
  "serde_json",
- "thiserror 1.0.69",
- "tracing",
+ "thiserror 2.0.12",
 ]
 
 [[package]]
@@ -5162,7 +5086,7 @@ dependencies = [
 [[package]]
 name = "katana-chain-spec"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -5174,14 +5098,14 @@ dependencies = [
  "serde_json",
  "starknet 0.12.0",
  "thiserror 1.0.69",
- "toml 0.8.20",
+ "toml",
  "url",
 ]
 
 [[package]]
 name = "katana-cli"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -5200,7 +5124,7 @@ dependencies = [
  "serde_json",
  "shellexpand",
  "tokio",
- "toml 0.8.20",
+ "toml",
  "tracing",
  "url",
 ]
@@ -5208,7 +5132,7 @@ dependencies = [
 [[package]]
 name = "katana-core"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "alloy-provider",
  "alloy-rpc-types-eth",
@@ -5240,7 +5164,7 @@ dependencies = [
 [[package]]
 name = "katana-db"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "anyhow",
  "katana-metrics",
@@ -5263,7 +5187,7 @@ dependencies = [
 [[package]]
 name = "katana-executor"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "blockifier",
  "cairo-vm",
@@ -5278,29 +5202,9 @@ dependencies = [
 ]
 
 [[package]]
-name = "katana-explorer"
-version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
-dependencies = [
- "anyhow",
- "axum 0.6.20",
- "http 0.2.12",
- "jsonrpsee",
- "katana-tasks",
- "rust-embed",
- "tiny_http",
- "tokio",
- "tower 0.4.13",
- "tower-http 0.4.4",
- "tracing",
- "url",
- "urlencoding",
-]
-
-[[package]]
 name = "katana-feeder-gateway"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "katana-primitives",
  "katana-rpc-types",
@@ -5315,7 +5219,7 @@ dependencies = [
 [[package]]
 name = "katana-fork"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "anyhow",
  "futures",
@@ -5332,7 +5236,7 @@ dependencies = [
 [[package]]
 name = "katana-log"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "clap",
  "serde",
@@ -5345,7 +5249,7 @@ dependencies = [
 [[package]]
 name = "katana-messaging"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "alloy-contract",
  "alloy-network",
@@ -5374,7 +5278,7 @@ dependencies = [
 [[package]]
 name = "katana-metrics"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "hyper 0.14.32",
  "jemalloc-ctl",
@@ -5392,17 +5296,16 @@ dependencies = [
 [[package]]
 name = "katana-node"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "anyhow",
  "futures",
- "hyper 0.14.32",
+ "http 1.3.0",
  "jsonrpsee",
  "katana-chain-spec",
  "katana-core",
  "katana-db",
  "katana-executor",
- "katana-explorer",
  "katana-messaging",
  "katana-metrics",
  "katana-pipeline",
@@ -5419,9 +5322,9 @@ dependencies = [
  "strum 0.25.0",
  "strum_macros 0.25.3",
  "thiserror 1.0.69",
- "toml 0.8.20",
- "tower 0.4.13",
- "tower-http 0.4.4",
+ "toml",
+ "tower 0.5.2",
+ "tower-http",
  "tracing",
  "url",
 ]
@@ -5429,7 +5332,7 @@ dependencies = [
 [[package]]
 name = "katana-pipeline"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "futures",
  "katana-primitives",
@@ -5443,7 +5346,7 @@ dependencies = [
 [[package]]
 name = "katana-pool"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "futures",
  "katana-executor",
@@ -5458,7 +5361,7 @@ dependencies = [
 [[package]]
 name = "katana-primitives"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -5488,7 +5391,7 @@ dependencies = [
 [[package]]
 name = "katana-provider"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -5512,17 +5415,16 @@ dependencies = [
 [[package]]
 name = "katana-rpc"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "account_sdk 0.1.0 (git+https://github.com/cartridge-gg/controller?rev=dbbe0353d64de743739d425f8aab91ca3ac0e16f)",
  "anyhow",
  "cainome 0.5.1",
  "futures",
- "http 0.2.12",
+ "http 1.3.0",
  "jsonrpsee",
  "katana-core",
  "katana-executor",
- "katana-explorer",
  "katana-metrics",
  "katana-pool",
  "katana-primitives",
@@ -5538,8 +5440,8 @@ dependencies = [
  "starknet 0.12.0",
  "thiserror 1.0.69",
  "tokio",
- "tower 0.4.13",
- "tower-http 0.4.4",
+ "tower 0.5.2",
+ "tower-http",
  "tracing",
  "url",
 ]
@@ -5547,7 +5449,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc-api"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "account_sdk 0.1.0 (git+https://github.com/cartridge-gg/controller?rev=dbbe0353d64de743739d425f8aab91ca3ac0e16f)",
  "anyhow",
@@ -5567,7 +5469,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc-types"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "alloy-primitives",
  "anyhow",
@@ -5590,7 +5492,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc-types-builder"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "anyhow",
  "katana-executor",
@@ -5603,7 +5505,7 @@ dependencies = [
 [[package]]
 name = "katana-slot-controller"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "account_sdk 0.1.0 (git+https://github.com/cartridge-gg/controller?rev=dbbe0353d64de743739d425f8aab91ca3ac0e16f)",
  "katana-primitives",
@@ -5612,7 +5514,7 @@ dependencies = [
 [[package]]
 name = "katana-stage"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -5637,7 +5539,7 @@ dependencies = [
 [[package]]
 name = "katana-tasks"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "futures",
  "rayon",
@@ -5651,7 +5553,7 @@ dependencies = [
 [[package]]
 name = "katana-trie"
 version = "1.5.3"
-source = "git+https://github.com/dojoengine/katana?rev=d9514a9#d9514a9996c51bd8083da9b7fd1029a41480cfdd"
+source = "git+https://github.com/dojoengine/katana?rev=d615ff05#d615ff0573fda269f0de1c8d506c4282a9f1ec8a"
 dependencies = [
  "anyhow",
  "bitvec",
@@ -6398,12 +6300,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d6790f58c7ff633d8771f42965289203411a5e5c68388703c06e14f24770b41e"
 
 [[package]]
-name = "opaque-debug"
-version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c08d65885ee38876c4f86fa503fb49d7b507c2b62552df7c70b2fce627e06381"
-
-[[package]]
 name = "openssl-probe"
 version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6462,7 +6358,7 @@ version = "3.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "581c837bb6b9541ce7faa9377c20616e4fb7650f6b0f68bc93c827ee504fb7b3"
 dependencies = [
- "proc-macro-crate 3.3.0",
+ "proc-macro-crate",
  "proc-macro2",
  "quote",
  "syn 2.0.100",
@@ -6828,16 +6724,6 @@ dependencies = [
  "impl-rlp",
  "impl-serde",
  "uint",
-]
-
-[[package]]
-name = "proc-macro-crate"
-version = "1.1.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e17d47ce914bf4de440332250b0edd23ce48c005f59fab39d3335866b114f11a"
-dependencies = [
- "thiserror 1.0.69",
- "toml 0.5.11",
 ]
 
 [[package]]
@@ -7424,6 +7310,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "route-recognizer"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "afab94fb28594581f62d981211a9a4d53cc8130bbcbbb89a0440d9b8e81a7746"
+
+[[package]]
 name = "rpassword"
 version = "7.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7590,40 +7482,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.100",
-]
-
-[[package]]
-name = "rust-embed"
-version = "6.8.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a36224c3276f8c4ebc8c20f158eca7ca4359c8db89991c4925132aaaf6702661"
-dependencies = [
- "rust-embed-impl",
- "rust-embed-utils",
- "walkdir",
-]
-
-[[package]]
-name = "rust-embed-impl"
-version = "6.8.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "49b94b81e5b2c284684141a2fb9e2a31be90638caf040bf9afbc5a0416afe1ac"
-dependencies = [
- "proc-macro2",
- "quote",
- "rust-embed-utils",
- "syn 2.0.100",
- "walkdir",
-]
-
-[[package]]
-name = "rust-embed-utils"
-version = "7.8.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d38ff6bf570dc3bb7100fce9f7b60c33fa71d80e88da3f2580df4ff2bdded74"
-dependencies = [
- "sha2",
- "walkdir",
 ]
 
 [[package]]
@@ -8112,19 +7970,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "sha-1"
-version = "0.9.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "99cd6713db3cf16b6c84e06321e049a9b9f699826e16096d23bbcc44d15d51a6"
-dependencies = [
- "block-buffer 0.9.0",
- "cfg-if",
- "cpufeatures",
- "digest 0.9.0",
- "opaque-debug",
-]
-
-[[package]]
 name = "sha1"
 version = "0.10.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -8263,7 +8108,7 @@ dependencies = [
  "account_sdk 0.1.0 (git+https://github.com/cartridge-gg/controller?rev=05fe96f4)",
  "anyhow",
  "assert_matches",
- "axum 0.7.9",
+ "axum",
  "base64 0.22.1",
  "cainome-cairo-serde 0.2.0",
  "colored 2.2.0",
@@ -8279,7 +8124,7 @@ dependencies = [
  "tempfile",
  "thiserror 1.0.69",
  "tokio",
- "tower-http 0.5.2",
+ "tower-http",
  "tracing",
  "update-informer",
  "url",
@@ -8293,7 +8138,7 @@ name = "slot-cli"
 version = "0.44.0"
 dependencies = [
  "anyhow",
- "axum 0.7.9",
+ "axum",
  "chrono",
  "clap",
  "colored 2.2.0",
@@ -8314,7 +8159,7 @@ dependencies = [
  "strum_macros 0.25.3",
  "thiserror 1.0.69",
  "tokio",
- "toml 0.8.20",
+ "toml",
  "torii-cli",
  "update-informer",
  "url",
@@ -8369,18 +8214,18 @@ dependencies = [
 
 [[package]]
 name = "soketto"
-version = "0.7.1"
+version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "41d1c5305e39e09653383c2c7244f2f78b3bcae37cf50c64cb4789c9f5096ec2"
+checksum = "2e859df029d160cb88608f5d7df7fb4753fd20fdfb4de5644f3d8b8440841721"
 dependencies = [
- "base64 0.13.1",
+ "base64 0.22.1",
  "bytes",
  "futures",
- "http 0.2.12",
+ "http 1.3.0",
  "httparse",
  "log",
  "rand 0.8.5",
- "sha-1",
+ "sha1",
 ]
 
 [[package]]
@@ -9373,18 +9218,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "tiny_http"
-version = "0.12.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "389915df6413a2e74fb181895f933386023c71110878cd0825588928e64cdc82"
-dependencies = [
- "ascii",
- "chunked_transfer",
- "httpdate",
- "log",
-]
-
-[[package]]
 name = "tinystr"
 version = "0.7.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -9500,15 +9333,6 @@ dependencies = [
 
 [[package]]
 name = "toml"
-version = "0.5.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f4f7f0dd8d50a853a531c426359045b1998f04219d88799810762cd4ad314234"
-dependencies = [
- "serde",
-]
-
-[[package]]
-name = "toml"
 version = "0.8.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cd87a5cdd6ffab733b2f74bc4fd7ee5fff6634124999ac278c35fc78c6120148"
@@ -9553,7 +9377,7 @@ dependencies = [
  "merge-options",
  "serde",
  "starknet 0.12.0",
- "toml 0.8.20",
+ "toml",
  "torii-sqlite-types",
  "url",
 ]
@@ -9579,12 +9403,8 @@ checksum = "b8fa9be0de6cf49e536ce1851f987bd21a43b771b09473c3549a6c853db37c1c"
 dependencies = [
  "futures-core",
  "futures-util",
- "hdrhistogram",
- "indexmap 1.9.3",
  "pin-project",
  "pin-project-lite",
- "rand 0.8.5",
- "slab",
  "tokio",
  "tokio-util",
  "tower-layer",
@@ -9600,9 +9420,13 @@ checksum = "d039ad9159c98b70ecfd540b2573b97f7f52c3e8d9f8ad57a24b916a536975f9"
 dependencies = [
  "futures-core",
  "futures-util",
+ "hdrhistogram",
+ "indexmap 2.8.0",
  "pin-project-lite",
+ "slab",
  "sync_wrapper 1.0.2",
  "tokio",
+ "tokio-util",
  "tower-layer",
  "tower-service",
  "tracing",
@@ -9610,9 +9434,9 @@ dependencies = [
 
 [[package]]
 name = "tower-http"
-version = "0.4.4"
+version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61c5bb1d698276a2443e5ecfabc1008bf15a36c12e6a7176e7bf089ea9131140"
+checksum = "1e9cd434a998747dd2c4276bc96ee2e0c7a2eadf3cae88e52be55a05fa9053f5"
 dependencies = [
  "async-compression",
  "base64 0.21.7",
@@ -9620,8 +9444,9 @@ dependencies = [
  "bytes",
  "futures-core",
  "futures-util",
- "http 0.2.12",
- "http-body 0.4.6",
+ "http 1.3.0",
+ "http-body 1.0.1",
+ "http-body-util",
  "http-range-header",
  "httpdate",
  "iri-string",
@@ -9636,23 +9461,6 @@ dependencies = [
  "tower-service",
  "tracing",
  "uuid 1.15.1",
-]
-
-[[package]]
-name = "tower-http"
-version = "0.5.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1e9cd434a998747dd2c4276bc96ee2e0c7a2eadf3cae88e52be55a05fa9053f5"
-dependencies = [
- "bitflags 2.9.0",
- "bytes",
- "http 1.3.0",
- "http-body 1.0.1",
- "http-body-util",
- "pin-project-lite",
- "tower-layer",
- "tower-service",
- "tracing",
 ]
 
 [[package]]
