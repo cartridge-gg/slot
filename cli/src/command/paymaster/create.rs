@@ -40,12 +40,36 @@ impl CreateArgs {
 
         let data: create_paymaster::ResponseData = client.query(&request_body).await?;
 
-        println!(
-            "Paymaster '{}' created with budget of {} {}",
-            data.create_paymaster.name,
-            self.budget,
-            self.unit.to_uppercase()
-        );
+        let budget_formatted = data.create_paymaster.budget as f64 / 1e6;
+
+        // Calculate USD equivalent for CREDIT only
+        let usd_equivalent = match self.unit.to_uppercase().as_str() {
+            "CREDIT" => budget_formatted * 0.01, // 100 credit = 1 USD
+            _ => 0.0,
+        };
+
+        println!("\n✅ Paymaster Created Successfully");
+        println!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+        println!("🏢 Details:");
+        println!("  • Name: {}", data.create_paymaster.name);
+        println!("  • Team: {}", self.team);
+
+        println!("\n💰 Initial Budget:");
+        if usd_equivalent > 0.0 {
+            println!(
+                "  • Amount: {} {} (${:.2} USD)",
+                budget_formatted as i64,
+                self.unit.to_uppercase(),
+                usd_equivalent
+            );
+        } else {
+            println!(
+                "  • Amount: {} {}",
+                budget_formatted as i64,
+                self.unit.to_uppercase()
+            );
+        }
 
         Ok(())
     }
