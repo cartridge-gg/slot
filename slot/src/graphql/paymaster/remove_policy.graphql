@@ -1,0 +1,5 @@
+# Mutation to remove policies from a paymaster
+# Operation name `RemovePolicy` must match the struct name in Rust
+mutation RemovePolicy($paymasterName: ID!, $policy: PolicyInput!) {
+  removePolicy(paymasterName: $paymasterName, policy: $policy)
+} 
