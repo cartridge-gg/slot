@@ -34,7 +34,7 @@ cargo run -- d delete "$project" katana -f
 
 echo 'world_address = "0x585a28495ca41bece7640b0ccf2eff199ebe70cc381fa73cb34cc5721614fbd"\nrpc = "https://api.cartridge.gg/x/starknet/sepolia"' > /tmp/config.toml
 
-cargo run -- d create "$project" torii --config /tmp/config.toml
+cargo run -- d create "$project" torii --config /tmp/config.toml --regions localhost
 
 sleep 10
 

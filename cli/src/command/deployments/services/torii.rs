@@ -13,6 +13,12 @@ pub struct ToriiCreateArgs {
     #[arg(help = "The version of Torii to deploy.")]
     pub version: Option<String>,
 
+    #[arg(long)]
+    #[arg(help = "The list of regions to deploy to.")]
+    #[arg(value_name = "regions")]
+    #[arg(value_delimiter = ',')]
+    pub regions: Option<Vec<String>>,
+
     #[command(flatten)]
     pub torii_args: ToriiArgs,
 }
@@ -27,6 +33,12 @@ pub struct ToriiUpdateArgs {
     #[arg(long)]
     #[arg(help = "The version of Torii to deploy.")]
     pub version: Option<String>,
+
+    #[arg(long)]
+    #[arg(help = "The list of regions to deploy to.")]
+    #[arg(value_name = "regions")]
+    #[arg(value_delimiter = ',')]
+    pub regions: Option<Vec<String>>,
 
     #[command(flatten)]
     pub torii_args: ToriiArgs,
