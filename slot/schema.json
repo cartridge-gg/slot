@@ -16171,18 +16171,14 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "policyIds",
+                  "name": "policy",
                   "type": {
-                    "kind": "LIST",
+                    "kind": "NON_NULL",
                     "name": null,
                     "ofType": {
-                      "kind": "NON_NULL",
-                      "name": null,
-                      "ofType": {
-                        "kind": "SCALAR",
-                        "name": "ID",
-                        "ofType": null
-                      }
+                      "kind": "INPUT_OBJECT",
+                      "name": "PolicyInput",
+                      "ofType": null
                     }
                   }
                 }
@@ -16190,7 +16186,7 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "removePolicies",
+              "name": "removePolicy",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,

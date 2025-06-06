@@ -2,9 +2,10 @@ use anyhow::{Context, Result};
 use clap::{Args, Subcommand};
 use slot::api::Client;
 use slot::credential::Credentials;
-use slot::graphql::paymaster::add_policies::PolicyInput;
-use slot::graphql::paymaster::{add_policies, list_policies, remove_all_policies, remove_policies};
-use slot::graphql::paymaster::{AddPolicies, ListPolicies, RemoveAllPolicies, RemovePolicies};
+use slot::graphql::paymaster::add_policies::PolicyInput as AddPolicyInput;
+use slot::graphql::paymaster::remove_policy::PolicyInput as RemovePolicyInput;
+use slot::graphql::paymaster::{add_policies, list_policies, remove_all_policies, remove_policy};
+use slot::graphql::paymaster::{AddPolicies, ListPolicies, RemoveAllPolicies, RemovePolicy};
 use slot::graphql::GraphQLQuery;
 use slot::preset::{extract_paymaster_policies, load_preset, PaymasterPolicyInput};
 use std::fs;
@@ -31,8 +32,8 @@ enum PolicySubcommand {
     #[command(about = "Add policies to a paymaster from a JSON file.")]
     AddFromJson(AddJsonPolicyArgs),
 
-    #[command(about = "Remove policies from a paymaster by ID.")]
-    Remove(RemovePolicyArgs),
+    #[command(about = "Remove policy by contract address and entry point.")]
+    Remove(PolicyArgs),
 
     #[command(about = "Remove all policies from a paymaster.")]
     RemoveAll(RemoveAllArgs),
@@ -57,17 +58,6 @@ struct AddPresetPolicyArgs {
         help = "The name of the preset to add. https://github.com/cartridge-gg/presets/tree/main/configs"
     )]
     name: String,
-}
-
-#[derive(Debug, Args)]
-struct RemovePolicyArgs {
-    #[arg(
-        long,
-        required = true,
-        value_delimiter = ',',
-        help = "Comma-separated list of policy IDs to remove."
-    )]
-    policy_ids: Vec<String>,
 }
 
 #[derive(Debug, Args)]
@@ -96,7 +86,7 @@ impl PolicyCmd {
         let credentials = Credentials::load()?;
         let variables = add_policies::Variables {
             paymaster_name: name.clone(),
-            policies: vec![PolicyInput {
+            policies: vec![AddPolicyInput {
                 contract_address: args.contract.clone(),
                 entry_point: args.entrypoint.clone(),
             }],
@@ -128,9 +118,9 @@ impl PolicyCmd {
             ))?;
 
         // Map JSON input to GraphQL input type
-        let policies_gql: Vec<PolicyInput> = policies_json
+        let policies_gql: Vec<AddPolicyInput> = policies_json
             .into_iter()
-            .map(|p| PolicyInput {
+            .map(|p| AddPolicyInput {
                 contract_address: p.contract_address,
                 entry_point: p.entry_point,
             })
@@ -168,9 +158,9 @@ impl PolicyCmd {
         let config = load_preset(&args.name).await?;
         let policies = extract_paymaster_policies(&config, "SN_MAIN");
 
-        let policies_gql: Vec<PolicyInput> = policies
+        let policies_gql: Vec<AddPolicyInput> = policies
             .into_iter()
-            .map(|p| PolicyInput {
+            .map(|p| AddPolicyInput {
                 contract_address: p.contract_address,
                 entry_point: p.entry_point,
             })
@@ -204,38 +194,23 @@ impl PolicyCmd {
         Ok(())
     }
 
-    async fn run_remove(args: &RemovePolicyArgs, name: String) -> Result<()> {
-        if args.policy_ids.is_empty() {
-            println!("Warning: No policy IDs provided for removal.");
-            return Ok(());
-        }
-
-        // 1. Load Credentials
+    async fn run_remove(args: &PolicyArgs, name: String) -> Result<()> {
         let credentials = Credentials::load()?;
-
-        // 2. Build Query Variables
-        let variables = remove_policies::Variables {
+        let variables = remove_policy::Variables {
             paymaster_name: name.clone(),
-            policy_ids: args.policy_ids.clone(),
+            policy: RemovePolicyInput {
+                contract_address: args.contract.clone(),
+                entry_point: args.entrypoint.clone(),
+            },
         };
-        let request_body = RemovePolicies::build_query(variables);
-
-        // 3. Create Client
+        let request_body = RemovePolicy::build_query(variables);
         let client = Client::new_with_token(credentials.access_token);
+        let data: remove_policy::ResponseData = client.query(&request_body).await?;
 
-        // 4. Execute Query
-        let data: remove_policies::ResponseData = client.query(&request_body).await?;
-
-        // 5. Print Result
-        if data.remove_policies {
-            println!("Successfully removed policies: {:?}", args.policy_ids);
+        if data.remove_policy {
+            println!("Successfully removed policy: {:?}", args);
         } else {
-            // The boolean response doesn't give much detail, maybe log a warning or error
-            println!(
-                "Failed to remove policies or some/all IDs were not found for paymaster {}.",
-                name
-            );
-            // Consider returning an error or specific exit code?
+            println!("Failed to remove policy: {:?}", args);
         }
 
         Ok(())

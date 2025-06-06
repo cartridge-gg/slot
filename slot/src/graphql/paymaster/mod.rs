@@ -33,10 +33,10 @@ pub struct AddPolicies;
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "schema.json",
-    query_path = "src/graphql/paymaster/remove_policies.graphql",
+    query_path = "src/graphql/paymaster/remove_policy.graphql",
     variables_derives = "Debug"
 )]
-pub struct RemovePolicies;
+pub struct RemovePolicy;
 
 // Mutation for removing all policies
 #[derive(GraphQLQuery)]
