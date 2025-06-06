@@ -18,9 +18,12 @@ log = "0.4"
 graphql_client.workspace = true
 torii-cli = { git = "https://github.com/dojoengine/dojo", branch = "torii-sqlite-types", default-features = false }
 
-katana-primitives = { git = "https://github.com/dojoengine/katana", rev = "5618935" }
-katana-cli = { git = "https://github.com/dojoengine/katana", rev = "5618935", default-features = false, features = [
-	"slot",
+# Revision that includes the `config` field being public.
+# Should be bumped once a new version is released with this commit:
+# <https://github.com/dojoengine/katana/commit/d9514a9996c51bd8083da9b7fd1029a41480cfdd>
+katana-primitives = { git = "https://github.com/dojoengine/katana", rev = "d615ff05" }
+katana-cli = { git = "https://github.com/dojoengine/katana", rev = "d615ff05", default-features = false, features = [
+	"cartridge",
 ] }
 
 comfy-table = "7.1"

@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use clap::Args;
 
 use torii_cli::ToriiArgs;
@@ -17,6 +19,12 @@ pub struct ToriiCreateArgs {
     pub torii_args: ToriiArgs,
 }
 
+/// Update a Torii deployment.
+///
+/// The main purpose of update is usually to change slot configuration (replicate, regions, tier, etc...),
+/// but it can also be used to change Torii parameters.
+/// For the latter, it is only possible using the configuration file (and not each individual parameter in the CLI),
+/// since the deployment has already been created with a configuration.
 #[derive(Clone, Debug, Args, serde::Serialize)]
 #[command(next_help_heading = "Torii update options")]
 pub struct ToriiUpdateArgs {
@@ -28,6 +36,9 @@ pub struct ToriiUpdateArgs {
     #[arg(help = "The version of Torii to deploy.")]
     pub version: Option<String>,
 
-    #[command(flatten)]
-    pub torii_args: ToriiArgs,
+    #[arg(long)]
+    #[arg(
+        help = "The path to the configuration file to use for the update. This will replace the existing configuration."
+    )]
+    pub config: Option<PathBuf>,
 }

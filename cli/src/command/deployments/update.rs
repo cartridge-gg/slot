@@ -5,6 +5,7 @@ use crate::command::deployments::Tier;
 use anyhow::Result;
 use clap::Args;
 use katana_cli::file::NodeArgsConfig;
+use katana_cli::NodeArgs;
 use slot::api::Client;
 use slot::credential::Credentials;
 use slot::graphql::deployments::update_deployment::{self, UpdateServiceInput};
@@ -30,41 +31,46 @@ pub struct UpdateArgs {
 impl UpdateArgs {
     pub async fn run(&self) -> Result<()> {
         let service = match &self.update_commands {
-            UpdateServiceCommands::Katana(config) => {
-                let service_config =
-                    toml::to_string(&NodeArgsConfig::try_from(config.node_args.clone())?)?;
+            UpdateServiceCommands::Katana(args) => {
+                let config = if let Some(config) = args.config.clone() {
+                    let node_args = NodeArgs {
+                        config: Some(config),
+                        ..Default::default()
+                    };
+
+                    let service_config = toml::to_string(&NodeArgsConfig::try_from(node_args)?)?;
+
+                    Some(slot::read::base64_encode_string(&service_config))
+                } else {
+                    None
+                };
 
                 UpdateServiceInput {
                     type_: DeploymentService::katana,
                     version: None,
-                    config: Some(slot::read::base64_encode_string(&service_config)),
+                    config,
                     torii: None,
                 }
             }
-            UpdateServiceCommands::Torii(config) => {
-                // Enforce the use of the `--config` flag, to have the infra
-                // actually override the config file with the new behavior without relying
-                // on default values.
-                if config.torii_args.config.is_none() {
-                    let describe_command = format!(
-                        "slot deployments describe {project} torii",
-                        project = self.project
-                    );
+            UpdateServiceCommands::Torii(args) => {
+                let config = if let Some(config) = args.config.clone() {
+                    let torii_args = ToriiArgs {
+                        config: Some(config),
+                        ..Default::default()
+                    };
 
-                    return Err(anyhow::anyhow!(
-                        "The `--config` flag is required to update the torii service and ensure the new configuration is applied. If you don't have a config file yet, you can use `{describe_command}` to inspect the current one."
-                    ));
-                }
-
-                let service_config =
-                    toml::to_string(&ToriiArgs::with_config_file(config.torii_args.clone())?)?;
+                    let service_config = toml::to_string(&torii_args.with_config_file()?)?;
+                    Some(slot::read::base64_encode_string(&service_config))
+                } else {
+                    None
+                };
 
                 UpdateServiceInput {
                     type_: DeploymentService::torii,
-                    version: config.version.clone(),
-                    config: Some(slot::read::base64_encode_string(&service_config)),
+                    version: args.version.clone(),
+                    config,
                     torii: Some(ToriiUpdateInput {
-                        replicas: config.replicas,
+                        replicas: args.replicas,
                     }),
                 }
             }
