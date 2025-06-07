@@ -123,7 +123,7 @@ impl CreateArgs {
                     katana: None,
                     torii: Some(ToriiCreateInput {
                         replicas: config.replicas,
-                        replication: Some(config.replication),
+                        replication: if config.replication { Some(true) } else { None },
                     }),
                 }
             }
