@@ -35,6 +35,29 @@ impl InfoArgs {
                     PaymasterBudgetFeeUnit::STRK => "STRK",
                     _ => "UNKNOWN",
                 };
+
+                // Calculate usage percentage and create progress bar
+                let spent_amount = match paymaster.budget_fee_unit {
+                    PaymasterBudgetFeeUnit::STRK => strk_fees_formatted,
+                    PaymasterBudgetFeeUnit::CREDIT => credit_fees_formatted,
+                    _ => 0.0,
+                };
+
+                let usage_percentage = if budget_formatted > 0.0 {
+                    (spent_amount / budget_formatted * 100.0).min(100.0)
+                } else {
+                    0.0
+                };
+
+                // Create progress bar (40 characters wide)
+                let bar_width = 30;
+                let filled_width = (usage_percentage / 100.0 * bar_width as f64) as usize;
+                let progress_bar = format!(
+                    "[{}{}]",
+                    "█".repeat(filled_width),
+                    "░".repeat(bar_width - filled_width)
+                );
+
                 println!("\n🔍 Paymaster Info for '{}'", name);
                 println!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
@@ -64,22 +87,31 @@ impl InfoArgs {
 
                 if usd_equivalent > 0.0 {
                     println!(
-                        "  • Amount: {} {} (${:.2} USD)",
+                        "  • Total: {} {} (${:.2} USD)",
                         budget_formatted as i64, budget_unit, usd_equivalent
                     );
                 } else {
-                    println!("  • Amount: {} {}", budget_formatted as i64, budget_unit);
+                    println!("  • Total: {} {}", budget_formatted as i64, budget_unit);
                 }
 
                 // Only display the relevant fee type based on budget unit
                 match paymaster.budget_fee_unit {
                     PaymasterBudgetFeeUnit::STRK => {
-                        println!("  • Total Spent: {:.2} STRK", strk_fees_formatted);
+                        println!("  • Spent: {:.2} STRK", strk_fees_formatted);
                     }
                     PaymasterBudgetFeeUnit::CREDIT => {
-                        println!("  • Total Spent: {:.2} CREDIT", credit_fees_formatted);
+                        let spent_usd_equivalent = credit_fees_formatted * 0.01; // 100 credit = 1 USD
+                        println!(
+                            "  • Spent: {:.2} CREDIT (${:.2} USD)",
+                            credit_fees_formatted, spent_usd_equivalent
+                        );
                     }
                     _ => {}
+                }
+
+                // Display usage progress bar
+                if budget_formatted > 0.0 {
+                    println!("  • Usage: {} {:.1}%", progress_bar, usage_percentage);
                 }
 
                 println!("\n📋 Policies:");
