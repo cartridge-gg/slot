@@ -67,6 +67,11 @@ impl StatsArgs {
             let success_rate =
                 (stats.successful_transactions as f64 / stats.total_transactions as f64) * 100.0;
             println!("  • Success Rate: {:.1}%", success_rate);
+
+            // Calculate TPS
+            let duration_seconds = duration.as_secs() as f64;
+            let tps = stats.total_transactions as f64 / duration_seconds;
+            println!("  • TPS: {:.4}", tps);
         }
 
         println!("\n💰 Fees (USD):");
