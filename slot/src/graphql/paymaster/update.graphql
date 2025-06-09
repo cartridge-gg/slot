@@ -1,0 +1,5 @@
+# Mutation to update a paymaster
+# Operation name `UpdatePaymaster` must match the struct name in Rust
+mutation UpdatePaymaster($paymasterName: ID!, $newName: String, $teamName: String, $active: Boolean) {
+  updatePaymaster(paymasterName: $paymasterName, newName: $newName, teamName: $teamName, active: $active)
+} 
