@@ -16,10 +16,7 @@ use super::utils;
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Transaction query options")]
 pub struct TransactionArgs {
-    #[arg(
-        long,
-        help = "Filter transactions by status (SUCCESSFUL, REVERTED, ALL)."
-    )]
+    #[arg(long, help = "Filter transactions by status (SUCCESS, REVERTED, ALL).")]
     filter: Option<String>,
 
     #[arg(
@@ -58,12 +55,12 @@ impl TransactionArgs {
         // Parse the filter enum
         let filter = match self.filter.as_deref() {
             Some(f) => match f.to_uppercase().as_str() {
-                "SUCCESSFUL" => Some(PaymasterTransactionFilter::SUCCESSFUL),
+                "SUCCESS" => Some(PaymasterTransactionFilter::SUCCESS),
                 "REVERTED" => Some(PaymasterTransactionFilter::REVERTED),
                 "ALL" => Some(PaymasterTransactionFilter::ALL),
                 _ => {
                     return Err(anyhow!(
-                        "Invalid filter: {}. Use SUCCESSFUL, REVERTED, or ALL",
+                        "Invalid filter: {}. Use SUCCESS, REVERTED, or ALL",
                         f
                     ))
                 }

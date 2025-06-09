@@ -19499,7 +19499,7 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "SUCCESSFUL"
+              "name": "SUCCESS"
             },
             {
               "deprecationReason": null,
