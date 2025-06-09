@@ -9,16 +9,16 @@ use self::create::CreateArgs;
 use self::info::InfoArgs;
 use self::policy::PolicyCmd;
 use self::stats::StatsArgs;
-use self::update::UpdateArgs;
 use self::transactions::TransactionArgs;
+use self::update::UpdateArgs;
 
 mod budget;
 mod create;
 mod info;
 mod policy;
 mod stats;
-mod update;
 mod transactions;
+mod update;
 mod utils;
 
 #[derive(Debug, Args, Serialize, Deserialize)]

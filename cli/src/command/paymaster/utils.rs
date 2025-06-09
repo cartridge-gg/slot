@@ -45,4 +45,4 @@ pub fn parse_duration(duration_str: &str) -> Result<Duration> {
     }
 
     Ok(duration)
-} 
+}

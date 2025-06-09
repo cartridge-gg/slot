@@ -105,7 +105,6 @@ pub struct PaymasterInfo;
 )]
 pub struct UpdatePaymaster;
 
-
 // Query for paymaster transactions
 #[derive(GraphQLQuery)]
 #[graphql(
@@ -115,4 +114,3 @@ pub struct UpdatePaymaster;
     variables_derives = "Debug"
 )]
 pub struct PaymasterTransactions;
-
