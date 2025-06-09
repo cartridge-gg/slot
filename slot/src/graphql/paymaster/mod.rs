@@ -94,3 +94,13 @@ pub struct PaymasterStats;
     variables_derives = "Debug"
 )]
 pub struct PaymasterInfo;
+
+// Update paymaster
+#[derive(GraphQLQuery)]
+#[graphql(
+    schema_path = "schema.json",
+    query_path = "src/graphql/paymaster/update.graphql",
+    response_derives = "Debug, Serialize, Clone",
+    variables_derives = "Debug"
+)]
+pub struct UpdatePaymaster;
