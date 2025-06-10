@@ -19499,7 +19499,7 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
-              "name": "SUCCESSFUL"
+              "name": "SUCCESS"
             },
             {
               "deprecationReason": null,
@@ -19519,6 +19519,41 @@
           "interfaces": [],
           "kind": "ENUM",
           "name": "PaymasterTransactionFilter",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "FEES_ASC"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "FEES_DESC"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "EXECUTED_AT_ASC"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "EXECUTED_AT_DESC"
+            }
+          ],
+          "fields": [],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "ENUM",
+          "name": "PaymasterTransactionOrder",
           "possibleTypes": []
         },
         {
@@ -22563,6 +22598,30 @@
                     "kind": "ENUM",
                     "name": "PaymasterTransactionFilter",
                     "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": "EXECUTED_AT_DESC",
+                  "description": null,
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "PaymasterTransactionOrder",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "since",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Time",
+                      "ofType": null
+                    }
                   }
                 },
                 {

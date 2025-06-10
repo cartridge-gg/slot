@@ -1,0 +1,22 @@
+# Query to fetch paymaster transactions
+# Operation name `PaymasterTransactions` must match the struct name in Rust
+query PaymasterTransactions(
+  $paymasterName: ID!
+  $filter: PaymasterTransactionFilter
+  $orderBy: PaymasterTransactionOrder
+  $since: Time!
+  $limit: Int
+) {
+  paymasterTransactions(
+    paymasterName: $paymasterName
+    filter: $filter
+    orderBy: $orderBy
+    since: $since
+    limit: $limit
+  ) {
+    transactionHash
+    status
+    usdFee
+    executedAt
+  }
+}

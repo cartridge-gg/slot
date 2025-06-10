@@ -9,6 +9,7 @@ use self::create::CreateArgs;
 use self::info::InfoArgs;
 use self::policy::PolicyCmd;
 use self::stats::StatsArgs;
+use self::transactions::TransactionArgs;
 use self::update::UpdateArgs;
 
 mod budget;
@@ -16,7 +17,9 @@ mod create;
 mod info;
 mod policy;
 mod stats;
+mod transactions;
 mod update;
+mod utils;
 
 #[derive(Debug, Args, Serialize, Deserialize)]
 pub struct PolicyArgs {
@@ -60,6 +63,9 @@ enum PaymasterSubcommand {
 
     #[command(about = "Get paymaster info.")]
     Info(InfoArgs),
+
+    #[command(about = "Get paymaster transactions.")]
+    Transactions(TransactionArgs),
 }
 
 impl PaymasterCmd {
@@ -73,6 +79,7 @@ impl PaymasterCmd {
             PaymasterSubcommand::Stats(cmd) => cmd.run(self.name.clone()).await,
             PaymasterSubcommand::Info(cmd) => cmd.run(self.name.clone()).await,
             PaymasterSubcommand::Update(cmd) => cmd.run(self.name.clone()).await,
+            PaymasterSubcommand::Transactions(cmd) => cmd.run(self.name.clone()).await,
         }
     }
 }

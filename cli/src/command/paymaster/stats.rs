@@ -6,7 +6,9 @@ use slot::credential::Credentials;
 use slot::graphql::paymaster::paymaster_stats;
 use slot::graphql::paymaster::PaymasterStats;
 use slot::graphql::GraphQLQuery;
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use std::time::{SystemTime, UNIX_EPOCH};
+
+use super::utils;
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Paymaster stats options")]
@@ -25,7 +27,7 @@ impl StatsArgs {
         let credentials = Credentials::load()?;
 
         // 2. Parse the time duration
-        let duration = self.parse_duration(&self.last)?;
+        let duration = utils::parse_duration(&self.last)?;
 
         // 3. Calculate the "since" timestamp
         let now = SystemTime::now();
@@ -88,51 +90,5 @@ impl StatsArgs {
         println!("  • Unique Users: {}", stats.unique_users);
 
         Ok(())
-    }
-
-    fn parse_duration(&self, duration_str: &str) -> Result<Duration> {
-        // Parse duration strings like "1hr", "2min", "24hr", "1day", "1week"
-        let duration_str = duration_str.to_lowercase();
-
-        // Extract number and unit
-        let (number_str, unit) = if let Some(pos) = duration_str.find(char::is_alphabetic) {
-            duration_str.split_at(pos)
-        } else {
-            return Err(anyhow!("Invalid duration format: {}", duration_str));
-        };
-
-        let number: u64 = number_str
-            .parse()
-            .map_err(|_| anyhow!("Invalid number in duration: {}", number_str))?;
-
-        let duration = match unit {
-            "min" | "mins" | "minute" | "minutes" => Duration::from_secs(number * 60),
-            "hr" | "hrs" | "hour" | "hours" => Duration::from_secs(number * 3600),
-            "day" | "days" => Duration::from_secs(number * 86400),
-            "week" | "weeks" => {
-                if number > 1 {
-                    return Err(anyhow!("Maximum duration is 1 week"));
-                }
-                Duration::from_secs(number * 604800)
-            }
-            _ => {
-                return Err(anyhow!(
-                    "Invalid time unit: {}. Supported units: min, hr, day, week",
-                    unit
-                ))
-            }
-        };
-
-        // Check maximum duration (1 week)
-        let max_duration = Duration::from_secs(604800); // 1 week in seconds
-        if duration > max_duration {
-            return Err(anyhow!("Duration exceeds maximum of 1 week"));
-        }
-
-        if duration.as_secs() == 0 {
-            return Err(anyhow!("Duration must be greater than 0"));
-        }
-
-        Ok(duration)
     }
 }
