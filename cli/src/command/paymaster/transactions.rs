@@ -23,7 +23,7 @@ pub struct TransactionArgs {
         long,
         help = "Order transactions by (FEES_ASC, FEES_DESC, EXECUTED_AT_ASC, EXECUTED_AT_DESC)."
     )]
-    order_by: Option<String>,
+    order: Option<String>,
 
     #[arg(
         long,
@@ -68,8 +68,8 @@ impl TransactionArgs {
             None => None,
         };
 
-        // Parse the order_by enum, default to EXECUTED_AT_DESC if None
-        let order_by = match self.order_by.as_deref() {
+        // Parse the order enum, default to EXECUTED_AT_DESC if None
+        let order = match self.order.as_deref() {
             Some(o) => match o.to_uppercase().as_str() {
                 "FEES_ASC" => Some(PaymasterTransactionOrder::FEES_ASC),
                 "FEES_DESC" => Some(PaymasterTransactionOrder::FEES_DESC),
@@ -99,7 +99,7 @@ impl TransactionArgs {
         let variables = paymaster_transactions::Variables {
             paymaster_name: paymaster_name.clone(),
             filter,
-            order_by,
+            order_by: order,
             since: since_rfc3339,
             limit: self.limit,
         };
