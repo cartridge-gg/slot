@@ -46,25 +46,25 @@ pub struct PaymasterCmd {
 // Enum defining the specific paymaster actions
 #[derive(Subcommand, Debug)]
 enum PaymasterSubcommand {
-    #[command(about = "Create a new paymaster.")]
+    #[command(about = "Create a new paymaster.", alias = "c")]
     Create(CreateArgs),
 
-    #[command(about = "Update paymaster.")]
+    #[command(about = "Update paymaster.", alias = "u")]
     Update(UpdateArgs),
 
-    #[command(about = "Manage paymaster policies.")]
+    #[command(about = "Manage paymaster policies.", alias = "p")]
     Policy(PolicyCmd),
 
-    #[command(about = "Manage paymaster budget.")]
+    #[command(about = "Manage paymaster budget.", alias = "b")]
     Budget(BudgetCmd),
 
-    #[command(about = "Manage paymaster stats.")]
+    #[command(about = "Manage paymaster stats.", alias = "s")]
     Stats(StatsArgs),
 
-    #[command(about = "Get paymaster info.")]
+    #[command(about = "Get paymaster info.", alias = "i")]
     Info(InfoArgs),
 
-    #[command(about = "Get paymaster transactions.")]
+    #[command(about = "Get paymaster transactions.", alias = "t")]
     Transactions(TransactionArgs),
 }
 
