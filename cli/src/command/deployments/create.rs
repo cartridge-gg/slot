@@ -51,6 +51,10 @@ pub struct CreateArgs {
 
 impl CreateArgs {
     pub async fn run(&self) -> Result<()> {
+        if self.tier == Tier::Common {
+            return Err(anyhow::anyhow!("The 'common' tier has been deprecated and is no longer available for new deployments"));
+        }
+
         let tier_pricing = vec![
             (Tier::Basic, "3"),
             (Tier::Common, "5"),

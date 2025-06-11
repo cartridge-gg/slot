@@ -30,6 +30,10 @@ pub struct UpdateArgs {
 
 impl UpdateArgs {
     pub async fn run(&self) -> Result<()> {
+        if let Some(Tier::Common) = &self.tier {
+            return Err(anyhow::anyhow!("The 'common' tier has been deprecated and is no longer available for deployment updates"));
+        }
+
         let service = match &self.update_commands {
             UpdateServiceCommands::Katana(args) => {
                 let config = if let Some(config) = args.config.clone() {
