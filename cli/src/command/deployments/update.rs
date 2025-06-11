@@ -82,7 +82,7 @@ impl UpdateArgs {
             Some(Tier::Pro) => Some(DeploymentTier::pro),
             Some(Tier::Epic) => Some(DeploymentTier::epic),
             Some(Tier::Legendary) => Some(DeploymentTier::legendary),
-            Some(Tier::Insane) => Some(DeploymentTier::insane),
+            Some(Tier::Insane) => Some(DeploymentTier::insane), // deprecated tier, kept for backwards compatibility
         };
 
         let request_body = UpdateDeployment::build_query(Variables {

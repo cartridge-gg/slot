@@ -56,7 +56,7 @@ impl CreateArgs {
             (Tier::Pro, "50"),
             (Tier::Epic, "100"),
             (Tier::Legendary, "250"),
-            (Tier::Insane, "50"),
+            (Tier::Insane, "50"), // deprecated tier, kept for backwards compatibility
         ]
         .into_iter()
         .collect::<std::collections::HashMap<_, _>>();
@@ -134,7 +134,7 @@ impl CreateArgs {
             Tier::Pro => DeploymentTier::pro,
             Tier::Epic => DeploymentTier::epic,
             Tier::Legendary => DeploymentTier::legendary,
-            Tier::Insane => DeploymentTier::insane,
+            Tier::Insane => DeploymentTier::insane, // deprecated tier, kept for backwards compatibility
         };
 
         let request_body = CreateDeployment::build_query(Variables {
