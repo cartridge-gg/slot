@@ -91,7 +91,7 @@ impl InfoArgs {
                         budget_formatted as i64, budget_unit, usd_equivalent
                     );
                 } else {
-                    println!("  • Total: {} {}", budget_formatted as i64, budget_unit);
+                    println!("  • Total: NONE (Please Top Up)");
                 }
 
                 // Only display the relevant fee type based on budget unit
@@ -113,6 +113,29 @@ impl InfoArgs {
                 if budget_formatted > 0.0 {
                     println!("  • Usage: {} {:.1}%", progress_bar, usage_percentage);
                 }
+
+                if paymaster.legacy_strk_fees > 0 || paymaster.legacy_eth_fees > 0 {
+                    let legacy_strk_formatted = paymaster.legacy_strk_fees as f64 / 1e6;
+                    let legacy_eth_formatted = paymaster.legacy_eth_fees as f64 / 1e6;
+                    println!("\n💸 Outstanding Balance:");
+                    println!("  • This is the balance due prior to self service migration.");
+                    if paymaster.legacy_strk_fees > 0 {
+                        println!("  • Spent STRK: {:.2}", legacy_strk_formatted);
+                    }
+
+                    if paymaster.legacy_eth_fees > 0 {
+                        println!("  • Spent ETH: {:.4}", legacy_eth_formatted);
+                    }
+                }
+
+                println!("\n🧾 Lifetime Transactions:");
+                let total_successful =
+                    paymaster.successful_transactions + paymaster.legacy_successful_transactions;
+                let total_reverted =
+                    paymaster.reverted_transactions + paymaster.legacy_reverted_transactions;
+                println!("  • Total: {}", total_successful + total_reverted);
+                println!("  • Successful: {}", total_successful);
+                println!("  • Reverted: {}", total_reverted);
 
                 println!("\n📋 Policies:");
                 println!("  • Count: {}", paymaster.policies.total_count);
