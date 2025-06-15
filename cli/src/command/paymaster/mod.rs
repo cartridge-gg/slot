@@ -11,7 +11,7 @@ use self::policy::PolicyCmd;
 use self::stats::StatsArgs;
 use self::transactions::TransactionArgs;
 use self::update::UpdateArgs;
-
+use self::dune::DuneArgs;
 mod budget;
 mod create;
 mod info;
@@ -20,6 +20,7 @@ mod stats;
 mod transactions;
 mod update;
 mod utils;
+mod dune;
 
 #[derive(Debug, Args, Serialize, Deserialize)]
 pub struct PolicyArgs {
@@ -66,6 +67,9 @@ enum PaymasterSubcommand {
 
     #[command(about = "Get paymaster transactions.", alias = "t")]
     Transactions(TransactionArgs),
+
+    #[command(about = "Generate Dune SQL query for paymaster policies")]
+    Dune(DuneArgs),
 }
 
 impl PaymasterCmd {
@@ -80,6 +84,7 @@ impl PaymasterCmd {
             PaymasterSubcommand::Info(cmd) => cmd.run(self.name.clone()).await,
             PaymasterSubcommand::Update(cmd) => cmd.run(self.name.clone()).await,
             PaymasterSubcommand::Transactions(cmd) => cmd.run(self.name.clone()).await,
+            PaymasterSubcommand::Dune(cmd) => cmd.run(self.name.clone()).await,
         }
     }
 }
