@@ -1,15 +1,19 @@
+-- Exhaustive query that:
+-- 1. Finds all execute_from_outside_v3 selectors in calldata
+-- 2. Uses each selector as an anchor to locate contract addresses
+-- 3. Matches all patterns including nested VRF calls
+-- Trade-off: Much slower, may timeout on long time periods
 WITH exploded AS (
   SELECT
     t.transaction_hash,
     t.block_date,
     t.actual_fee_amount / 1e18 AS fee,
-    CASE WHEN t.actual_fee_unit = 'FRI' THEN 'STRK' ELSE 'ETH' END AS token,
     elem AS calldata_item,
     idx AS calldata_index,
     t.calldata
   FROM starknet.transactions t
   CROSS JOIN UNNEST(t.calldata) WITH ORDINALITY AS u(elem, idx)
-  WHERE t.block_number >= 1350000
+  WHERE t.block_time >= TIMESTAMP '{created_at}'
 ),
 
 anchor AS (
@@ -17,7 +21,6 @@ anchor AS (
     transaction_hash,
     block_date,
     fee,
-    token,
     calldata,
     calldata_index AS anchor_index
   FROM exploded
@@ -30,7 +33,6 @@ target_and_user AS (
     a.transaction_hash,
     a.block_date,
     a.fee,
-    a.token,
     a.calldata,
     target.calldata_item AS target_address,
     user.calldata_item AS user_address
@@ -42,26 +44,19 @@ target_and_user AS (
     ON user.transaction_hash = a.transaction_hash
     AND user.calldata_index = a.anchor_index - 1
   WHERE target.calldata_item IN (
-    {contract_addresses}
+    {contract_addresses} 
   )
 ),
 
 prices AS (
   SELECT
     DATE_TRUNC('day', minute) AS time,
-    AVG(price) AS price,
-    CASE
-      WHEN contract_address = 0xca14007eff0db1f8135f4c25b34de49ab0d42766 THEN 'STRK'
-      ELSE 'ETH'
-    END AS token
+    AVG(price) AS price
   FROM prices.usd
   WHERE
     blockchain = 'ethereum'
-    AND contract_address IN (
-      0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2,  -- WETH
-      0xca14007eff0db1f8135f4c25b34de49ab0d42766   -- STRK
-    )
-  GROUP BY 1, 3
+    AND contract_address = 0xca14007eff0db1f8135f4c25b34de49ab0d42766  -- STRK
+  GROUP BY 1
 ),
 
 daily_stats AS (
@@ -73,7 +68,6 @@ daily_stats AS (
   FROM target_and_user t
   JOIN prices p
     ON DATE_TRUNC('day', t.block_date) = p.time
-    AND t.token = p.token
   GROUP BY 1
 ),
 
@@ -85,7 +79,6 @@ overall_totals AS (
   FROM target_and_user t
   JOIN prices p
     ON DATE_TRUNC('day', t.block_date) = p.time
-    AND t.token = p.token
 )
 
 SELECT
@@ -95,4 +88,4 @@ SELECT
   o.overall_fees_usd
 FROM daily_stats d
 CROSS JOIN overall_totals o
-ORDER BY d.day; 
+ORDER BY d.day;

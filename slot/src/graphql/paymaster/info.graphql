@@ -11,6 +11,7 @@ query PaymasterInfo($name: ID!) {
     legacyEthFees
     legacyRevertedTransactions
     legacySuccessfulTransactions
+    createdAt
     policies {
       totalCount
     }
