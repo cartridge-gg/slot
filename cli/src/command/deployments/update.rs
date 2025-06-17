@@ -11,20 +11,7 @@ use slot::credential::Credentials;
 use slot::graphql::deployments::update_deployment::{self, UpdateServiceInput};
 use slot::graphql::deployments::{update_deployment::*, UpdateDeployment};
 use slot::graphql::GraphQLQuery;
-use std::fs;
-use toml::Value;
 use torii_cli::args::ToriiArgs;
-
-fn warn_if_blocks_chunk_size_present_in_file(config_path: &std::path::Path) -> Result<()> {
-    if let Ok(file_content) = fs::read_to_string(config_path) {
-        if let Ok(parsed) = toml::from_str::<Value>(&file_content) {
-            if parsed.get("blocks_chunk_size").is_some() {
-                println!("⚠️  Warning: 'blocks_chunk_size' option found in config file but is ignored and overridden in slot.");
-            }
-        }
-    }
-    Ok(())
-}
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Update options")]
@@ -46,7 +33,7 @@ impl UpdateArgs {
         let service = match &self.update_commands {
             UpdateServiceCommands::Katana(args) => {
                 let config = if let Some(config) = args.config.clone() {
-                    warn_if_blocks_chunk_size_present_in_file(&config)?;
+                    super::warn_checks(&config)?;
 
                     let node_args = NodeArgs {
                         config: Some(config),
@@ -69,7 +56,7 @@ impl UpdateArgs {
             }
             UpdateServiceCommands::Torii(args) => {
                 let config = if let Some(config) = args.config.clone() {
-                    warn_if_blocks_chunk_size_present_in_file(&config)?;
+                    super::warn_checks(&config)?;
 
                     let torii_args = ToriiArgs {
                         config: Some(config),

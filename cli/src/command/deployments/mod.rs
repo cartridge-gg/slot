@@ -1,7 +1,9 @@
 use anyhow::Result;
 use clap::Subcommand;
 use colored::*;
+use std::fs;
 use strum_macros::Display;
+use toml::Value;
 
 use self::{
     accounts::AccountsArgs, create::CreateArgs, delete::DeleteArgs, describe::DescribeArgs,
@@ -116,4 +118,15 @@ pub(crate) fn pretty_print_toml(str: &str) {
             println!("{}", line);
         }
     }
+}
+
+pub(crate) fn warn_checks(config_path: &std::path::Path) -> Result<()> {
+    if let Ok(file_content) = fs::read_to_string(config_path) {
+        if let Ok(parsed) = toml::from_str::<Value>(&file_content) {
+            if parsed.get("blocks_chunk_size").is_some() {
+                println!("⚠️  Warning: 'blocks_chunk_size' option found in config file but is ignored and overridden in slot.");
+            }
+        }
+    }
+    Ok(())
 }

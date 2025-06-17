@@ -12,22 +12,9 @@ use slot::credential::Credentials;
 use slot::graphql::deployments::create_deployment::*;
 use slot::graphql::deployments::CreateDeployment;
 use slot::graphql::GraphQLQuery;
-use std::fs;
-use toml::Value;
 use torii_cli::args::ToriiArgs;
 
 use super::{services::CreateServiceCommands, Tier};
-
-fn warn_if_blocks_chunk_size_present_in_file(config_path: &std::path::Path) -> Result<()> {
-    if let Ok(file_content) = fs::read_to_string(config_path) {
-        if let Ok(parsed) = toml::from_str::<Value>(&file_content) {
-            if parsed.get("blocks_chunk_size").is_some() {
-                println!("⚠️  Warning: 'blocks_chunk_size' option found in config file but is ignored and overridden in slot.");
-            }
-        }
-    }
-    Ok(())
-}
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Create options")]
@@ -99,7 +86,7 @@ impl CreateArgs {
                 config.validate()?;
 
                 if let Some(config_path) = &config.node_args.config {
-                    warn_if_blocks_chunk_size_present_in_file(config_path)?;
+                    super::warn_checks(config_path)?;
                 }
 
                 let service_config =
@@ -125,7 +112,7 @@ impl CreateArgs {
             }
             CreateServiceCommands::Torii(config) => {
                 if let Some(config_path) = &config.torii_args.config {
-                    warn_if_blocks_chunk_size_present_in_file(config_path)?;
+                    super::warn_checks(config_path)?;
                 }
 
                 let service_config =
