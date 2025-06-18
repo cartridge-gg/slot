@@ -1,14 +1,8 @@
-name: Claude Code Review
+name: claude
 
 on:
   pull_request:
     types: [opened, synchronize]
-    # Optional: Only run on specific file changes
-    # paths:
-    #   - "src/**/*.ts"
-    #   - "src/**/*.tsx"
-    #   - "src/**/*.js"
-    #   - "src/**/*.jsx"
 
 jobs:
   claude-review:
@@ -20,32 +14,26 @@ jobs:
 
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       pull-requests: write
-      issues: write
+      issues: read
       id-token: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 1
 
-      - name: Check if most recent commit is from Claude
+      - name: Check if commit is from Claude
         id: check-author
         run: |
-          # Get the most recent actual commit (HEAD~1 to skip the merge commit)
-          AUTHOR_EMAIL=$(git log HEAD~1 -1 --pretty=format:'%ae')
-          AUTHOR_NAME=$(git log HEAD~1 -1 --pretty=format:'%an')
-          
-          echo "Most recent commit author: $AUTHOR_NAME <$AUTHOR_EMAIL>"
-          
+          AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae')
+          AUTHOR_NAME=$(git log -1 --pretty=format:'%an')
           if [[ "$AUTHOR_EMAIL" == *"claude[bot]"* ]] || [[ "$AUTHOR_NAME" == *"claude[bot]"* ]]; then
             echo "skip=true" >> $GITHUB_OUTPUT
-            echo "Skipping review - most recent commit is from Claude"
           else
             echo "skip=false" >> $GITHUB_OUTPUT
-            echo "Proceeding with review - most recent commit is not from Claude"
           fi
 
       - name: Run Claude Code Review
@@ -55,22 +43,70 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
 
+          # Optional: Specify model (defaults to Claude Sonnet 4, uncomment for Claude Opus 4)
+          # model: "claude-opus-4-20250514"
+
+          # Direct prompt for automated review (no @claude mention needed)
           direct_prompt: |
-            Please review this pull request and provide feedback on:
-            - Code quality and best practices
-            - Potential bugs or issues
-            - Performance considerations
-            - Security concerns
-            - Test coverage
-            
+            Please review this Rust CLI application PR and provide inline feedback using the GitHub review system. Follow these steps:
+
             1. **Start a review**: Use `mcp__github__create_pending_pull_request_review` to begin a pending review
             2. **Get diff information**: Use `mcp__github__get_pull_request_diff` to understand the code changes and line numbers
-            3. **Add inline comments**: Use `mcp__github__add_pull_request_review_comment_to_pending_review` for each specific piece of feedback on particular lines, including code change suggestions where appropriate
+            3. **Add inline comments**: Use `mcp__github__add_pull_request_review_comment_to_pending_review` for each specific piece of feedback on particular lines, including code change suggestions where appropriate using multiline comments and the suggestion syntax:
+
+            ```suggestion
+              // Improved Rust code here
+            ```
+
             4. **Submit the review**: Use `mcp__github__submit_pending_pull_request_review` with event type "COMMENT" (not "REQUEST_CHANGES") to publish all comments as a non-blocking review
 
-            Only comment when something is off, wrong, or could be improved; if a given implementation is already perfect do not comment on it.
-            
-            Provide specific, actionable feedback with inline comments for line-specific issues and include an overall summary when submitting the review. **Important**: Submit as "COMMENT" type so the review doesn't block the PR.
+            Only comment when something is off, wrong, or could be improved but don't be overly pedantic; if a given implementation is already good, do not comment on it.
 
-          # Add MCP GitHub tools for inline comments and commands
-          allowed_tools: "Bash(sh scripts/rust_fmt_fix.sh),Bash(sh scripts/clippy.sh),mcp__github__create_pending_pull_request_review,mcp__github__add_pull_request_review_comment_to_pending_review,mcp__github__submit_pending_pull_request_review,mcp__github__get_pull_request_diff"
+            Focus your review on:
+
+            **Rust Code Quality:**
+            - Memory safety and ownership patterns (borrow checker compliance)
+            - Error handling with Result<T, E> and proper error propagation
+            - Iterator usage and functional programming patterns
+            - Struct design and trait implementations
+            - Async/await usage in tokio contexts
+
+            **CLI Application Design:**
+            - Command-line argument parsing with clap
+            - User experience and error messaging
+            - Configuration management and environment variables
+            - Logging and debugging capabilities
+            - Cross-platform compatibility
+
+            **Blockchain Integration:**
+            - Starknet SDK usage and best practices
+            - GraphQL client implementation and error handling
+            - Authentication and session management
+            - API rate limiting and retry logic
+            - Transaction signing and validation
+
+            **Performance & Architecture:**
+            - Cargo workspace organization and dependencies
+            - Async runtime usage and task management
+            - Memory allocation patterns and potential leaks
+            - Compilation time optimization
+            - Binary size considerations
+
+            **Testing & Quality:**
+            - Unit test coverage and integration tests
+            - End-to-end test scenarios with service deployments
+            - Mock usage and test isolation
+            - Error condition testing
+            - Documentation and code comments
+
+            **Security:**
+            - Credential management and storage
+            - Input validation and sanitization
+            - API key handling and environment variables
+            - Network communication security
+            - Dependency security and supply chain
+
+            Provide specific, actionable feedback with inline comments and suggestions for line-specific issues and include an concise overall summary when submitting the review. **Important**: Submit as "COMMENT" type so the review doesn't block the PR.
+
+          # Add MCP GitHub tools for inline comments and project-specific testing
+          allowed_tools: "mcp__github__create_pending_pull_request_review,mcp__github__add_pull_request_review_comment_to_pending_review,mcp__github__submit_pending_pull_request_review,mcp__github__get_pull_request_diff,Bash"
