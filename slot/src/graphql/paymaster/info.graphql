@@ -5,6 +5,13 @@ query PaymasterInfo($name: ID!) {
     strkFees
     creditFees
     active
+    successfulTransactions
+    revertedTransactions
+    legacyStrkFees
+    legacyEthFees
+    legacyRevertedTransactions
+    legacySuccessfulTransactions
+    createdAt
     policies {
       totalCount
     }
