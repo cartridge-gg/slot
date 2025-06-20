@@ -53,10 +53,10 @@ impl CreateArgs {
     pub async fn run(&self) -> Result<()> {
         let tier_pricing = vec![
             (Tier::Basic, "3"),
-            (Tier::Common, "5"),
-            (Tier::Epic, "15"),
-            (Tier::Legendary, "35"),
-            (Tier::Insane, "50"),
+            (Tier::Pro, "50"),
+            (Tier::Epic, "100"),
+            (Tier::Legendary, "250"),
+            (Tier::Insane, "50"), // deprecated tier, kept for backwards compatibility
         ]
         .into_iter()
         .collect::<std::collections::HashMap<_, _>>();
@@ -139,10 +139,10 @@ impl CreateArgs {
 
         let tier = match &self.tier {
             Tier::Basic => DeploymentTier::basic,
-            Tier::Common => DeploymentTier::common,
+            Tier::Pro => DeploymentTier::pro,
             Tier::Epic => DeploymentTier::epic,
             Tier::Legendary => DeploymentTier::legendary,
-            Tier::Insane => DeploymentTier::insane,
+            Tier::Insane => DeploymentTier::insane, // deprecated tier, kept for backwards compatibility
         };
 
         let request_body = CreateDeployment::build_query(Variables {

@@ -68,7 +68,7 @@ impl Deployments {
 #[derive(clap::ValueEnum, Clone, Debug, serde::Serialize, PartialEq, Eq, Hash, Display)]
 pub enum Tier {
     Basic,
-    Common,
+    Pro,
     Epic,
     Legendary,
     Insane,
