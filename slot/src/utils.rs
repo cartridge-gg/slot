@@ -1,8 +1,11 @@
 use regex::Regex;
-use std::{fs, path::PathBuf};
+use std::{fs, path::PathBuf, sync::OnceLock};
 
 /// The default directory name where the Slot-generated files (e.g credentials/session keys) are stored.
 const SLOT_DIR: &str = "slot";
+
+/// Static instance of the email validation regex, compiled once on first use.
+static EMAIL_REGEX: OnceLock<Regex> = OnceLock::new();
 
 /// Get the path to the config directory where the Slot-generated files (e.g credentials/session keys) are stored.
 ///  This function guarantees that the config directory exists.
@@ -38,8 +41,10 @@ pub fn config_dir() -> PathBuf {
 /// # Returns
 /// * `true` if the email format is valid, `false` otherwise
 pub fn is_valid_email(email: &str) -> bool {
-    let email_regex = Regex::new(r"^[a-zA-Z0-9]([a-zA-Z0-9._%+-]*[a-zA-Z0-9])?@[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$").unwrap();
-    email_regex.is_match(email)
+    let regex = EMAIL_REGEX.get_or_init(|| {
+        Regex::new(r"^[a-zA-Z0-9]([a-zA-Z0-9._%+-]*[a-zA-Z0-9])?@[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$").unwrap()
+    });
+    regex.is_match(email)
         && !email.contains("..")
         && !email.starts_with('.')
         && !email.ends_with('.')
@@ -73,5 +78,19 @@ mod tests {
         assert!(!super::is_valid_email("test@domain"));
         assert!(!super::is_valid_email(""));
         assert!(!super::is_valid_email("test..email@example.com"));
+    }
+
+    #[test]
+    fn test_edge_case_emails() {
+        // Single character local/domain parts
+        assert!(super::is_valid_email("a@b.com"));
+        assert!(super::is_valid_email("x@example.co"));
+        
+        // Valid special characters
+        assert!(super::is_valid_email("test-email@example.com"));
+        assert!(super::is_valid_email("user_name@sub-domain.com"));
+        
+        // Domain with numbers
+        assert!(super::is_valid_email("test@123domain.com"));
     }
 }
