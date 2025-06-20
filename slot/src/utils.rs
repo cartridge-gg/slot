@@ -1,3 +1,4 @@
+use regex::Regex;
 use std::{fs, path::PathBuf};
 
 /// The default directory name where the Slot-generated files (e.g credentials/session keys) are stored.
@@ -23,6 +24,27 @@ pub fn config_dir() -> PathBuf {
     }
 }
 
+/// Validates if the provided string is a valid email address format.
+///
+/// Uses a regex pattern to check for basic email format:
+/// - Local part: alphanumeric characters, dots, hyphens, underscores
+/// - @ symbol
+/// - Domain part: alphanumeric characters, dots, hyphens
+/// - At least one dot in domain part
+///
+/// # Arguments
+/// * `email` - The email string to validate
+///
+/// # Returns
+/// * `true` if the email format is valid, `false` otherwise
+pub fn is_valid_email(email: &str) -> bool {
+    let email_regex = Regex::new(r"^[a-zA-Z0-9]([a-zA-Z0-9._%+-]*[a-zA-Z0-9])?@[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$").unwrap();
+    email_regex.is_match(email)
+        && !email.contains("..")
+        && !email.starts_with('.')
+        && !email.ends_with('.')
+}
+
 #[cfg(test)]
 mod tests {
     use crate::utils::SLOT_DIR;
@@ -32,5 +54,24 @@ mod tests {
         let path = super::config_dir();
         assert!(path.exists());
         assert!(path.ends_with(SLOT_DIR));
+    }
+
+    #[test]
+    fn test_valid_emails() {
+        assert!(super::is_valid_email("test@example.com"));
+        assert!(super::is_valid_email("user.name@domain.co.uk"));
+        assert!(super::is_valid_email("firstname+lastname@example.org"));
+        assert!(super::is_valid_email("test_email@sub.domain.com"));
+    }
+
+    #[test]
+    fn test_invalid_emails() {
+        assert!(!super::is_valid_email("invalid-email"));
+        assert!(!super::is_valid_email("@example.com"));
+        assert!(!super::is_valid_email("test@"));
+        assert!(!super::is_valid_email("test@.com"));
+        assert!(!super::is_valid_email("test@domain"));
+        assert!(!super::is_valid_email(""));
+        assert!(!super::is_valid_email("test..email@example.com"));
     }
 }

@@ -8117,6 +8117,7 @@ dependencies = [
  "graphql_client",
  "hyper 1.6.0",
  "num-bigint",
+ "regex",
  "reqwest 0.12.12",
  "serde",
  "serde_json",

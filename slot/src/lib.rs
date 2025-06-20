@@ -11,7 +11,7 @@ pub mod preset;
 pub mod read;
 pub mod server;
 pub mod session;
-pub(crate) mod utils;
+pub mod utils;
 pub mod vars;
 pub mod version;
 
