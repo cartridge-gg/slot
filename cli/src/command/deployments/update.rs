@@ -33,6 +33,8 @@ impl UpdateArgs {
         let service = match &self.update_commands {
             UpdateServiceCommands::Katana(args) => {
                 let config = if let Some(config) = args.config.clone() {
+                    super::warn_checks(&config)?;
+
                     let node_args = NodeArgs {
                         config: Some(config),
                         ..Default::default()
@@ -54,12 +56,15 @@ impl UpdateArgs {
             }
             UpdateServiceCommands::Torii(args) => {
                 let config = if let Some(config) = args.config.clone() {
+                    super::warn_checks(&config)?;
+
                     let torii_args = ToriiArgs {
                         config: Some(config),
                         ..Default::default()
                     };
 
                     let service_config = toml::to_string(&torii_args.with_config_file()?)?;
+
                     Some(slot::read::base64_encode_string(&service_config))
                 } else {
                     None

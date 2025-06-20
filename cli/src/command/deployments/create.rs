@@ -85,6 +85,10 @@ impl CreateArgs {
             CreateServiceCommands::Katana(config) => {
                 config.validate()?;
 
+                if let Some(config_path) = &config.node_args.config {
+                    super::warn_checks(config_path)?;
+                }
+
                 let service_config =
                     toml::to_string(&NodeArgsConfig::try_from(config.node_args.clone())?)?;
 
@@ -107,6 +111,10 @@ impl CreateArgs {
                 }
             }
             CreateServiceCommands::Torii(config) => {
+                if let Some(config_path) = &config.torii_args.config {
+                    super::warn_checks(config_path)?;
+                }
+
                 let service_config =
                     toml::to_string(&ToriiArgs::with_config_file(config.torii_args.clone())?)?;
 
