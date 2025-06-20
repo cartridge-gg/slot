@@ -85,11 +85,11 @@ mod tests {
         // Single character local/domain parts
         assert!(super::is_valid_email("a@b.com"));
         assert!(super::is_valid_email("x@example.co"));
-        
+
         // Valid special characters
         assert!(super::is_valid_email("test-email@example.com"));
         assert!(super::is_valid_email("user_name@sub-domain.com"));
-        
+
         // Domain with numbers
         assert!(super::is_valid_email("test@123domain.com"));
     }
