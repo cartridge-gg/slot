@@ -1,10 +1,11 @@
-use anyhow::Result;
+use anyhow::{bail, Result};
 use clap::Args;
 use slot::api::Client;
 use slot::credential::Credentials;
 use slot::graphql::team::create_team;
 use slot::graphql::team::CreateTeam;
 use slot::graphql::GraphQLQuery;
+use slot::utils::is_valid_email;
 
 #[derive(Debug, Args, serde::Serialize)]
 #[command(next_help_heading = "Team create options")]
@@ -16,6 +17,11 @@ pub struct CreateTeamArgs {
 
 impl CreateTeamArgs {
     pub async fn run(&self, team: String) -> Result<()> {
+        // Validate email format
+        if !is_valid_email(&self.email) {
+            bail!("Invalid email format: {}", self.email);
+        }
+
         let request_body = CreateTeam::build_query(create_team::Variables {
             name: team.clone(),
             input: Some(create_team::TeamInput {

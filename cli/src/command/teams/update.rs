@@ -1,10 +1,11 @@
-use anyhow::Result;
+use anyhow::{bail, Result};
 use clap::Args;
 use slot::api::Client;
 use slot::credential::Credentials;
 use slot::graphql::team::update_team;
 use slot::graphql::team::UpdateTeam;
 use slot::graphql::GraphQLQuery;
+use slot::utils::is_valid_email;
 
 #[derive(Debug, Args, serde::Serialize)]
 #[command(next_help_heading = "Team update options")]
@@ -16,6 +17,13 @@ pub struct UpdateTeamArgs {
 
 impl UpdateTeamArgs {
     pub async fn run(&self, team: String) -> Result<()> {
+        // Validate email format if provided
+        if let Some(email) = &self.email {
+            if !is_valid_email(email) {
+                bail!("Invalid email format: {}", email);
+            }
+        }
+
         let request_body = UpdateTeam::build_query(update_team::Variables {
             name: team.clone(),
             input: update_team::TeamInput {
