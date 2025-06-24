@@ -101,8 +101,12 @@ impl DuneArgs {
                     return Ok(());
                 }
 
-                // Format contract addresses and ensure uniqueness
-                let contract_addresses: Vec<String> = policies_list
+                // Separate active and inactive policies
+                let active_policies: Vec<_> = policies_list.iter().filter(|p| p.active).collect();
+                let inactive_policies: Vec<_> = policies_list.iter().filter(|p| !p.active).collect();
+
+                // Format active contract addresses
+                let active_addresses: Vec<String> = active_policies
                     .iter()
                     .map(|p| {
                         let addr = p.contract_address.trim_start_matches("0x");
@@ -112,6 +116,26 @@ impl DuneArgs {
                     .into_iter()
                     .collect();
 
+                // Format inactive contract addresses
+                let inactive_addresses: Vec<String> = inactive_policies
+                    .iter()
+                    .map(|p| {
+                        let addr = p.contract_address.trim_start_matches("0x");
+                        format!("    0x{:0>64}", addr) // Pad with zeros to 64 chars
+                    })
+                    .collect::<HashSet<_>>()
+                    .into_iter()
+                    .collect();
+
+                // Combine all addresses for the query
+                let mut all_addresses = active_addresses.clone();
+                all_addresses.extend(inactive_addresses.clone());
+                
+                if all_addresses.is_empty() {
+                    println!("No policies found for paymaster '{}'.", name);
+                    return Ok(());
+                }
+
                 // Load the appropriate template
                 let template_path = Path::new(env!("CARGO_MANIFEST_DIR"))
                     .join("src/command/paymaster/dune")
@@ -120,9 +144,35 @@ impl DuneArgs {
                 let template = fs::read_to_string(template_path)
                     .context("Failed to read SQL template file")?;
 
+                // Create formatted address list with comments
+                let mut formatted_addresses = Vec::new();
+                
+                if !active_addresses.is_empty() {
+                    formatted_addresses.push("-- Active policies".to_string());
+                    formatted_addresses.extend(active_addresses.iter().map(|addr| format!("{},", addr)));
+                    
+                    // Remove comma from last active address if there are no inactive addresses
+                    if inactive_addresses.is_empty() {
+                        if let Some(last) = formatted_addresses.last_mut() {
+                            *last = last.trim_end_matches(',').to_string();
+                        }
+                    }
+                }
+                
+                if !inactive_addresses.is_empty() {
+                    formatted_addresses.push("    -- Inactive policies (soft deleted)".to_string());
+                    formatted_addresses.extend(inactive_addresses.iter().enumerate().map(|(i, addr)| {
+                        if i == inactive_addresses.len() - 1 {
+                            addr.clone() // No comma for last item
+                        } else {
+                            format!("{},", addr)
+                        }
+                    }));
+                }
+
                 // Replace placeholders in template
                 let mut sql_query = template
-                    .replace("{contract_addresses}", &contract_addresses.join(",\n"))
+                    .replace("{contract_addresses}", &formatted_addresses.join("\n"))
                     .replace("{start_time}", &start_time);
 
                 // Only add end_time constraint if using dune params
