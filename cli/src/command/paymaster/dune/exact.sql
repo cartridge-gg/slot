@@ -13,7 +13,8 @@ WITH exploded AS (
     t.calldata
   FROM starknet.transactions t
   CROSS JOIN UNNEST(t.calldata) WITH ORDINALITY AS u(elem, idx)
-  WHERE t.block_time >= TIMESTAMP '{created_at}'
+  WHERE t.block_time >= TIMESTAMP '{start_time}'
+    {end_time_constraint}
 ),
 
 anchor AS (
@@ -64,6 +65,7 @@ daily_stats AS (
     DATE_TRUNC('day', t.block_date) AS day,
     COUNT(DISTINCT t.transaction_hash) AS daily_transactions,
     COUNT(DISTINCT t.user_address) AS daily_users,
+    SUM(t.fee) AS daily_fees_strk,
     SUM(t.fee * p.price) AS daily_fees_usd
   FROM target_and_user t
   JOIN prices p
@@ -75,6 +77,7 @@ overall_totals AS (
   SELECT
     COUNT(DISTINCT transaction_hash) AS overall_transactions,
     COUNT(DISTINCT user_address) AS overall_unique_users,
+    SUM(fee) AS overall_fees_strk,
     SUM(fee * p.price) AS overall_fees_usd
   FROM target_and_user t
   JOIN prices p
@@ -85,6 +88,7 @@ SELECT
   d.*,
   o.overall_transactions,
   o.overall_unique_users,
+  o.overall_fees_strk,
   o.overall_fees_usd
 FROM daily_stats d
 CROSS JOIN overall_totals o

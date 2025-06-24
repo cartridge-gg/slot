@@ -22,7 +22,8 @@ WITH base_tx AS (
     END AS matched_user
   FROM starknet.transactions t
   WHERE
-    t.block_time >= TIMESTAMP '{created_at}'
+    t.block_time >= TIMESTAMP '{start_time}'
+    {end_time_constraint}
     AND CARDINALITY(t.calldata) > 20
     AND (
       t.calldata[11] IN (
@@ -42,7 +43,7 @@ prices AS (
   FROM prices.usd
   WHERE
     blockchain = 'ethereum'
-    AND contract_address = 0xca14007eff0db1f8135f4c25b34de49ab0d42766
+    AND contract_address = 0xca14007eff0db1f8135f4c25b34de49ab0d42766  -- STRK
   GROUP BY 1
 ),
 
@@ -51,6 +52,7 @@ daily_stats AS (
     DATE_TRUNC('day', b.block_date) AS day,
     COUNT(DISTINCT b.transaction_hash) AS daily_transactions,
     COUNT(DISTINCT b.matched_user) AS daily_users,
+    SUM(b.fee) AS daily_fees_strk,
     SUM(b.fee * p.price) AS daily_fees_usd
   FROM base_tx b
   JOIN prices p
@@ -62,6 +64,7 @@ overall_totals AS (
   SELECT
     COUNT(DISTINCT transaction_hash) AS overall_transactions,
     COUNT(DISTINCT matched_user) AS overall_unique_users,
+    SUM(fee) AS overall_fees_strk,
     SUM(fee * p.price) AS overall_fees_usd
   FROM base_tx b
   JOIN prices p
@@ -72,6 +75,7 @@ SELECT
   d.*,
   o.overall_transactions,
   o.overall_unique_users,
+  o.overall_fees_strk,
   o.overall_fees_usd
 FROM daily_stats d
 CROSS JOIN overall_totals o
