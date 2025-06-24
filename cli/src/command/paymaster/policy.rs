@@ -279,6 +279,7 @@ impl PolicyCmd {
                     .into_iter()
                     .flatten()
                     .filter_map(|edge| edge.unwrap().node)
+                    .filter(|policy| policy.active)
                     .collect();
 
                 if policies_list.is_empty() {

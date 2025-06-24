@@ -7808,6 +7808,89 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "username",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "network",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "LayerswapNetwork",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "purchaseType",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "PurchaseType",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "credits",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "CreditsInput",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "starterpackId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "isMainnet",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "CreateLayerswapPaymentInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "type",
               "type": {
                 "kind": "NON_NULL",
@@ -14520,6 +14603,205 @@
         },
         {
           "description": null,
+          "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "BASE"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "ETHEREUM"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "ARBITRUM"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "OPTIMISM"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "SOLANA"
+            }
+          ],
+          "fields": [],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "ENUM",
+          "name": "LayerswapNetwork",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "swapId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "network",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "LayerswapNetwork",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "tokenAmount",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "BigInt",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "tokenAddress",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "depositAddress",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "status",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "LayerswapPaymentStatus",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "expiresAt",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Time",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "LayerswapPayment",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "PENDING"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "CONFIRMED"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "EXPIRED"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "FAILED"
+            }
+          ],
+          "fields": [],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "ENUM",
+          "name": "LayerswapPaymentStatus",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
           "enumValues": [],
           "fields": [
             {
@@ -16410,6 +16692,37 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
+                      "name": "CreateLayerswapPaymentInput",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "createLayerswapPayment",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "LayerswapPayment",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "input",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "INPUT_OBJECT",
                       "name": "CreateStripePaymentIntentInput",
                       "ofType": null
                     }
@@ -17560,18 +17873,6 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "Start block of the paymaster",
-              "isDeprecated": false,
-              "name": "startBlock",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
               "name": "active",
@@ -18192,6 +18493,22 @@
                 "kind": "SCALAR",
                 "name": "ID",
                 "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "active",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
               }
             },
             {
@@ -19173,6 +19490,26 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "active field predicates",
+              "name": "active",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "activeNEQ",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             },
@@ -20510,122 +20847,6 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": "start_block field predicates",
-              "name": "startBlock",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "startBlockNEQ",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "startBlockIn",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "startBlockNotIn",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "startBlockGT",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "startBlockGTE",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "startBlockLT",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "startBlockLTE",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "startBlockIsNil",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "startBlockNotNil",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
                 "ofType": null
               }
             },
@@ -23526,6 +23747,33 @@
               "type": {
                 "kind": "OBJECT",
                 "name": "CryptoPayment",
+                "ofType": null
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "swapId",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "ID",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "layerswapPayment",
+              "type": {
+                "kind": "OBJECT",
+                "name": "LayerswapPayment",
                 "ofType": null
               }
             },
