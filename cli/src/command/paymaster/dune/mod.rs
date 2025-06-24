@@ -103,7 +103,8 @@ impl DuneArgs {
 
                 // Separate active and inactive policies
                 let active_policies: Vec<_> = policies_list.iter().filter(|p| p.active).collect();
-                let inactive_policies: Vec<_> = policies_list.iter().filter(|p| !p.active).collect();
+                let inactive_policies: Vec<_> =
+                    policies_list.iter().filter(|p| !p.active).collect();
 
                 // Format active contract addresses
                 let active_addresses: Vec<String> = active_policies
@@ -130,7 +131,7 @@ impl DuneArgs {
                 // Combine all addresses for the query
                 let mut all_addresses = active_addresses.clone();
                 all_addresses.extend(inactive_addresses.clone());
-                
+
                 if all_addresses.is_empty() {
                     println!("No policies found for paymaster '{}'.", name);
                     return Ok(());
@@ -146,11 +147,12 @@ impl DuneArgs {
 
                 // Create formatted address list with comments
                 let mut formatted_addresses = Vec::new();
-                
+
                 if !active_addresses.is_empty() {
                     formatted_addresses.push("-- Active policies".to_string());
-                    formatted_addresses.extend(active_addresses.iter().map(|addr| format!("{},", addr)));
-                    
+                    formatted_addresses
+                        .extend(active_addresses.iter().map(|addr| format!("{},", addr)));
+
                     // Remove comma from last active address if there are no inactive addresses
                     if inactive_addresses.is_empty() {
                         if let Some(last) = formatted_addresses.last_mut() {
@@ -158,16 +160,18 @@ impl DuneArgs {
                         }
                     }
                 }
-                
+
                 if !inactive_addresses.is_empty() {
                     formatted_addresses.push("    -- Inactive policies (soft deleted)".to_string());
-                    formatted_addresses.extend(inactive_addresses.iter().enumerate().map(|(i, addr)| {
-                        if i == inactive_addresses.len() - 1 {
-                            addr.clone() // No comma for last item
-                        } else {
-                            format!("{},", addr)
-                        }
-                    }));
+                    formatted_addresses.extend(inactive_addresses.iter().enumerate().map(
+                        |(i, addr)| {
+                            if i == inactive_addresses.len() - 1 {
+                                addr.clone() // No comma for last item
+                            } else {
+                                format!("{},", addr)
+                            }
+                        },
+                    ));
                 }
 
                 // Replace placeholders in template
