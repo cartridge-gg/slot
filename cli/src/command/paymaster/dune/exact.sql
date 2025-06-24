@@ -13,7 +13,8 @@ WITH exploded AS (
     t.calldata
   FROM starknet.transactions t
   CROSS JOIN UNNEST(t.calldata) WITH ORDINALITY AS u(elem, idx)
-  WHERE t.block_time >= TIMESTAMP '{created_at}'
+  WHERE t.block_time >= TIMESTAMP '{start_time}'
+    {end_time_constraint}
 ),
 
 anchor AS (

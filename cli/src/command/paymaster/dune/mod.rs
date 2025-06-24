@@ -27,6 +27,13 @@ pub struct DuneArgs {
         help = "Time period to look back (e.g., 1hr, 2min, 24hr, 1day, 1week). If not specified, uses paymaster creation time."
     )]
     last: Option<String>,
+
+    #[arg(
+        long,
+        help = "Use Dune template parameters ({{start_time}}/{{end_time}}) instead of actual timestamps",
+        default_value = "false"
+    )]
+    dune_params: bool,
 }
 
 impl DuneArgs {
@@ -37,37 +44,41 @@ impl DuneArgs {
         // Create client once
         let client = Client::new_with_token(credentials.access_token);
 
-        // 2. Get timestamp
-        let created_at = if let Some(last) = &self.last {
-            // Calculate time from --last parameter
-            let duration = utils::parse_duration(last)?;
-            let now = SystemTime::now();
-            let since_time = now - duration;
-            let since_timestamp = since_time
-                .duration_since(UNIX_EPOCH)
-                .map_err(|_| anyhow!("Invalid time calculation"))?
-                .as_secs();
-
-            DateTime::<Utc>::from_timestamp(since_timestamp as i64, 0)
-                .ok_or_else(|| anyhow!("Invalid timestamp"))?
-                .to_rfc3339()
+        // 2. Get timestamp - skip if using dune params
+        let start_time = if self.dune_params {
+            "{{start_time}}".to_string()
         } else {
-            // Get creation time from paymaster
-            let info_variables = paymaster_info::Variables { name: name.clone() };
-            let info_request = PaymasterInfo::build_query(info_variables);
-            let info_data: paymaster_info::ResponseData = client.query(&info_request).await?;
+            let created_at = if let Some(last) = &self.last {
+                // Calculate time from --last parameter
+                let duration = utils::parse_duration(last)?;
+                let now = SystemTime::now();
+                let since_time = now - duration;
+                let since_timestamp = since_time
+                    .duration_since(UNIX_EPOCH)
+                    .map_err(|_| anyhow!("Invalid time calculation"))?
+                    .as_secs();
 
-            match info_data.paymaster {
-                Some(pm) => pm.created_at,
-                None => {
-                    println!("Paymaster '{}' not found.", name);
-                    return Ok(());
+                DateTime::<Utc>::from_timestamp(since_timestamp as i64, 0)
+                    .ok_or_else(|| anyhow!("Invalid timestamp"))?
+                    .to_rfc3339()
+            } else {
+                // Get creation time from paymaster
+                let info_variables = paymaster_info::Variables { name: name.clone() };
+                let info_request = PaymasterInfo::build_query(info_variables);
+                let info_data: paymaster_info::ResponseData = client.query(&info_request).await?;
+
+                match info_data.paymaster {
+                    Some(pm) => pm.created_at,
+                    None => {
+                        println!("Paymaster '{}' not found.", name);
+                        return Ok(());
+                    }
                 }
-            }
-        };
+            };
 
-        // Format the timestamp for Dune
-        let created_at = created_at.replace("T", " ").replace("Z", "");
+            // Format the timestamp for Dune
+            created_at.replace("T", " ").replace("Z", "")
+        };
 
         // 3. Get policies
         let variables = list_policies::Variables { name: name.clone() };
@@ -109,10 +120,20 @@ impl DuneArgs {
                 let template = fs::read_to_string(template_path)
                     .context("Failed to read SQL template file")?;
 
-                // Replace both placeholders in template
-                let sql_query = template
+                // Replace placeholders in template
+                let mut sql_query = template
                     .replace("{contract_addresses}", &contract_addresses.join(",\n"))
-                    .replace("{created_at}", &created_at);
+                    .replace("{start_time}", &start_time);
+
+                // Only add end_time constraint if using dune params
+                if self.dune_params {
+                    sql_query = sql_query.replace(
+                        "{end_time_constraint}",
+                        "AND t.block_time <= TIMESTAMP '{{end_time}}'",
+                    );
+                } else {
+                    sql_query = sql_query.replace("{end_time_constraint}", "");
+                }
 
                 println!("{}", sql_query);
             }

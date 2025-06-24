@@ -22,7 +22,8 @@ WITH base_tx AS (
     END AS matched_user
   FROM starknet.transactions t
   WHERE
-    t.block_time >= TIMESTAMP '{created_at}'
+    t.block_time >= TIMESTAMP '{start_time}'
+    {end_time_constraint}
     AND CARDINALITY(t.calldata) > 20
     AND (
       t.calldata[11] IN (
