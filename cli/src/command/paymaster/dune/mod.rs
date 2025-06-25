@@ -40,7 +40,7 @@ pub struct DuneArgs {
 fn format_policy_addresses(
     policies: &[&list_policies::ListPoliciesPaymasterPoliciesEdgesNode],
 ) -> Vec<String> {
-    policies
+    let mut addresses: Vec<String> = policies
         .iter()
         .map(|p| {
             let addr = p.contract_address.trim_start_matches("0x");
@@ -48,7 +48,10 @@ fn format_policy_addresses(
         })
         .collect::<HashSet<_>>()
         .into_iter()
-        .collect()
+        .collect();
+
+    addresses.sort();
+    addresses
 }
 
 impl DuneArgs {

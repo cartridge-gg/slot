@@ -1,15 +1,15 @@
 -- Exhaustive query that:
 -- 1. Finds all execute_from_outside_v3 selectors in calldata
--- 2. Uses each selector as an anchor to locate contract addresses
+-- 2. Handles both normal calls and multi-call VRF helpers
 -- 3. Matches all patterns including nested VRF calls
--- Trade-off: Much slower, may timeout on long time periods
-WITH exploded AS (
+-- Heavy, may timeout on very long ranges
+WITH exploded AS (          -- unnest calldata once
   SELECT
     t.transaction_hash,
     t.block_date,
-    t.actual_fee_amount / 1e18 AS fee,
-    elem AS calldata_item,
-    idx AS calldata_index,
+    t.actual_fee_amount / 1e18      AS fee,
+    elem                            AS calldata_item,
+    idx                             AS calldata_index,
     t.calldata
   FROM starknet.transactions t
   CROSS JOIN UNNEST(t.calldata) WITH ORDINALITY AS u(elem, idx)
@@ -17,68 +17,91 @@ WITH exploded AS (
     {end_time_constraint}
 ),
 
-anchor AS (
+anchor AS (                 -- normal selector position
   SELECT
     transaction_hash,
     block_date,
     fee,
     calldata,
-    calldata_index AS anchor_index
+    calldata_index            AS anchor_index
   FROM exploded
-  -- execute_from_outside_v3 selector
   WHERE calldata_item = 0x03dbc508ba4afd040c8dc4ff8a61113a7bcaf5eae88a6ba27b3c50578b3587e3
 ),
 
-target_and_user AS (
+vrf AS (                    -- first occurrence of the VRF helper contract
   SELECT
-    a.transaction_hash,
+    transaction_hash,
+    MIN(calldata_index)       AS vrf_index
+  FROM exploded
+  WHERE calldata_item = 0x051fea4450da9d6aee758bdeba88b2f665bcbf549d2c61421aa724e9ac0ced8f
+  GROUP BY transaction_hash
+),
+
+anchor_plus AS (            -- combine anchor + optional vrf index
+  SELECT
+    a.transaction_hash        AS tx_hash,
     a.block_date,
     a.fee,
     a.calldata,
-    target.calldata_item AS target_address,
-    user.calldata_item AS user_address
+    a.anchor_index,
+    v.vrf_index
   FROM anchor a
-  LEFT JOIN exploded target
-    ON target.transaction_hash = a.transaction_hash
-    AND target.calldata_index = a.anchor_index + 8
-  LEFT JOIN exploded user
-    ON user.transaction_hash = a.transaction_hash
-    AND user.calldata_index = a.anchor_index - 1
-  WHERE target.calldata_item IN (
-    {contract_addresses} 
-  )
+  LEFT JOIN vrf v
+    ON v.transaction_hash = a.transaction_hash
 ),
 
-prices AS (
+target_and_user AS (        -- pick correct offset with COALESCE
+  SELECT
+    ap.tx_hash                AS transaction_hash,
+    ap.block_date,
+    ap.fee,
+    ap.calldata,
+    tgt.calldata_item         AS target_address,
+    usr.calldata_item         AS user_address
+  FROM anchor_plus ap
+  /* target: vrf_index + 3  OR  anchor_index + 8  (fallback) */
+  LEFT JOIN exploded tgt
+    ON tgt.transaction_hash = ap.tx_hash
+   AND tgt.calldata_index =
+         COALESCE(ap.vrf_index + 3, ap.anchor_index + 8)
+
+  /* user: always anchor_index − 1 */
+  LEFT JOIN exploded usr
+    ON usr.transaction_hash = ap.tx_hash
+   AND usr.calldata_index = ap.anchor_index - 1
+
+  WHERE tgt.calldata_item IN ({contract_addresses})
+),
+
+prices AS (                 -- STRK daily USD price
   SELECT
     DATE_TRUNC('day', minute) AS time,
-    AVG(price) AS price
+    AVG(price)               AS price
   FROM prices.usd
-  WHERE
-    blockchain = 'ethereum'
-    AND contract_address = 0xca14007eff0db1f8135f4c25b34de49ab0d42766  -- STRK
+  WHERE blockchain = 'ethereum'
+    AND contract_address = 0xca14007eff0db1f8135f4c25b34de49ab0d42766
   GROUP BY 1
 ),
 
-daily_stats AS (
+daily_stats AS (            -- per-day metrics
   SELECT
-    DATE_TRUNC('day', t.block_date) AS day,
-    COUNT(DISTINCT t.transaction_hash) AS daily_transactions,
-    COUNT(DISTINCT t.user_address) AS daily_users,
-    SUM(t.fee) AS daily_fees_strk,
-    SUM(t.fee * p.price) AS daily_fees_usd
+    DATE_TRUNC('day', t.block_date)          AS day,
+    COUNT(DISTINCT t.transaction_hash)       AS daily_transactions,
+    COUNT(DISTINCT t.user_address)           AS daily_users,
+    SUM(t.fee)                               AS daily_fees_strk,
+    SUM(t.fee * p.price)                     AS daily_fees_usd
   FROM target_and_user t
   JOIN prices p
     ON DATE_TRUNC('day', t.block_date) = p.time
   GROUP BY 1
 ),
 
-overall_totals AS (
+overall_totals AS (         -- all-time metrics
   SELECT
-    COUNT(DISTINCT transaction_hash) AS overall_transactions,
-    COUNT(DISTINCT user_address) AS overall_unique_users,
-    SUM(fee) AS overall_fees_strk,
-    SUM(fee * p.price) AS overall_fees_usd
+    COUNT(DISTINCT transaction_hash)         AS overall_transactions,
+    COUNT(DISTINCT user_address)             AS overall_unique_users,
+    SUM(fee)                                 AS overall_fees_strk,
+    SUM(fee * p.price)                       AS overall_fees_usd
   FROM target_and_user t
   JOIN prices p
     ON DATE_TRUNC('day', t.block_date) = p.time
