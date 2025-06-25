@@ -36,6 +36,21 @@ pub struct DuneArgs {
     dune_params: bool,
 }
 
+// Helper function to format policy addresses
+fn format_policy_addresses(
+    policies: &[&list_policies::ListPoliciesPaymasterPoliciesEdgesNode],
+) -> Vec<String> {
+    policies
+        .iter()
+        .map(|p| {
+            let addr = p.contract_address.trim_start_matches("0x");
+            format!("    0x{:0>64}", addr) // Pad with zeros to 64 chars
+        })
+        .collect::<HashSet<_>>()
+        .into_iter()
+        .collect()
+}
+
 impl DuneArgs {
     pub async fn run(&self, name: String) -> Result<()> {
         // 1. Load Credentials
@@ -107,32 +122,12 @@ impl DuneArgs {
                     policies_list.iter().filter(|p| !p.active).collect();
 
                 // Format active contract addresses
-                let active_addresses: Vec<String> = active_policies
-                    .iter()
-                    .map(|p| {
-                        let addr = p.contract_address.trim_start_matches("0x");
-                        format!("    0x{:0>64}", addr) // Pad with zeros to 64 chars
-                    })
-                    .collect::<HashSet<_>>()
-                    .into_iter()
-                    .collect();
+                let active_addresses = format_policy_addresses(&active_policies);
 
                 // Format inactive contract addresses
-                let inactive_addresses: Vec<String> = inactive_policies
-                    .iter()
-                    .map(|p| {
-                        let addr = p.contract_address.trim_start_matches("0x");
-                        format!("    0x{:0>64}", addr) // Pad with zeros to 64 chars
-                    })
-                    .collect::<HashSet<_>>()
-                    .into_iter()
-                    .collect();
+                let inactive_addresses = format_policy_addresses(&inactive_policies);
 
-                // Combine all addresses for the query
-                let mut all_addresses = active_addresses.clone();
-                all_addresses.extend(inactive_addresses.clone());
-
-                if all_addresses.is_empty() {
+                if active_addresses.is_empty() && inactive_addresses.is_empty() {
                     println!("No policies found for paymaster '{}'.", name);
                     return Ok(());
                 }
