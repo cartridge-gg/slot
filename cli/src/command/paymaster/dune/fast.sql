@@ -11,11 +11,11 @@ WITH base_tx AS (
     -- decide which match takes priority
     CASE
       -- execute_from_outside_v3 only call
-      WHEN CARDINALITY(t.calldata) > 20 AND t.calldata[11] IN (
+      WHEN CARDINALITY(t.calldata) > 23 AND t.calldata[11] IN (
         {contract_addresses} 
       ) THEN t.calldata[2]
       -- account for VRF preceeding execute_from_outside_v3 call
-      WHEN CARDINALITY(t.calldata) > 20 AND t.calldata[20] IN (
+      WHEN CARDINALITY(t.calldata) > 23 AND t.calldata[23] IN (
         {contract_addresses} 
       ) THEN t.calldata[11]
       ELSE NULL
@@ -24,13 +24,13 @@ WITH base_tx AS (
   WHERE
     t.block_time >= TIMESTAMP '{start_time}'
     {end_time_constraint}
-    AND CARDINALITY(t.calldata) > 20
+    AND CARDINALITY(t.calldata) > 23
     AND (
       t.calldata[11] IN (
         {contract_addresses} 
       )
       OR
-      t.calldata[20] IN (
+      t.calldata[23] IN (
         {contract_addresses} 
       )
     )
