@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{io::Write, sync::Arc};
 
 use anyhow::Result;
 use axum::{
@@ -35,12 +35,96 @@ impl LoginArgs {
         let port = server.local_addr()?.port();
         let callback_uri = format!("http://localhost:{port}/callback");
 
-        let url = vars::get_cartridge_keychain_url();
+        let keychain_url = vars::get_cartridge_keychain_url();
+        let url = format!("{keychain_url}/slot?callback_uri={callback_uri}");
 
-        let url = format!("{url}/slot?callback_uri={callback_uri}");
+        println!("To authenticate, please visit the following URL in your browser:");
+        println!("\n{}\n", url);
 
-        browser::open(&url)?;
-        server.start().await?;
+        // Try to open the browser automatically
+        match browser::open(&url) {
+            Ok(_) => {
+                println!("Opening browser for authentication...");
+                println!("If the browser doesn't open or you're in a headless environment,");
+                println!("you can also paste the authorization code manually when prompted.");
+            }
+            Err(_) => {
+                println!("Could not open browser automatically.");
+                println!("Please visit the URL above manually.");
+            }
+        }
+
+        // Start server with timeout and manual code input fallback
+        self.run_with_fallback(server).await
+    }
+
+    async fn run_with_fallback(&self, server: LocalServer) -> Result<()> {
+        println!("\nWaiting for authentication...");
+        println!("Press Enter at any time to manually input an authorization code instead.");
+
+        // Run server and manual input concurrently
+        let server_task = async move { server.start().await };
+        let manual_input_task = async {
+            let mut input = String::new();
+            std::io::stdin().read_line(&mut input)?;
+            Ok::<(), anyhow::Error>(())
+        };
+
+        tokio::select! {
+            server_result = server_task => {
+                match server_result {
+                    Ok(()) => Ok(()),
+                    Err(e) => {
+                        println!("\nBrowser authentication failed: {}", e);
+                        println!("You can still manually enter your authorization code:");
+                        self.manual_code_input().await
+                    }
+                }
+            }
+            manual_result = manual_input_task => {
+                // User pressed Enter, switch to manual input
+                match manual_result {
+                    Ok(()) => {
+                        println!("\nSwitching to manual code input...");
+                        self.manual_code_input().await
+                    }
+                    Err(e) => Err(e)
+                }
+            }
+        }
+    }
+
+    async fn manual_code_input(&self) -> Result<()> {
+        println!("\nIf you have completed authentication in your browser, you should see");
+        println!("an authorization code. Please paste it below:");
+
+        print!("\nEnter authorization code (or press Enter to cancel): ");
+        std::io::stdout().flush()?;
+
+        let mut input = String::new();
+        std::io::stdin().read_line(&mut input)?;
+        let code = input.trim();
+
+        if code.is_empty() {
+            anyhow::bail!("Authentication cancelled");
+        }
+
+        // Exchange code for token
+        let mut api = Client::new();
+        let token = api.oauth2(code).await?;
+        api.set_token(token.clone());
+
+        // Fetch account information
+        let request_body = Me::build_query(Variables {});
+        let data: ResponseData = api.query(&request_body).await?;
+
+        let account = data.me.expect("missing payload");
+        let account = AccountInfo::from(account);
+
+        // Store credentials
+        Credentials::new(account, token).store()?;
+
+        println!("You are now logged in!\n");
 
         Ok(())
     }
