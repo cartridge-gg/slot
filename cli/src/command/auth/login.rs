@@ -32,26 +32,21 @@ pub struct LoginArgs;
 impl LoginArgs {
     pub async fn run(&self) -> Result<()> {
         let (auth_tx, auth_rx) = mpsc::channel::<AuthResult>(1);
-        let (shutdown_tx, shutdown_rx) = mpsc::channel::<()>(1);
 
-        let server = Self::callback_server(auth_tx.clone(), shutdown_tx.clone())?;
+        let server = Self::callback_server(auth_tx.clone())?;
         let port = server.local_addr()?.port();
         let callback_uri = format!("http://localhost:{port}/callback");
 
         let keychain_url = vars::get_cartridge_keychain_url();
         let url = format!("{keychain_url}/slot?callback_uri={callback_uri}");
 
-        println!("To authenticate, please visit the following URL in your browser:");
-        println!("\n\t{}\n", url);
-
         // Try to open the browser automatically
         let _ = browser::open(&url);
 
-        println!("Complete flow in the browser or enter authorization code: ");
+        println!("Complete flow in the browser or enter authorization code:\n");
 
         // Run both authentication methods concurrently
-        self.run_concurrent_auth(server, auth_tx, auth_rx, shutdown_tx, shutdown_rx)
-            .await
+        self.run_concurrent_auth(server, auth_tx, auth_rx).await
     }
 
     async fn run_concurrent_auth(
@@ -59,50 +54,30 @@ impl LoginArgs {
         server: LocalServer,
         auth_tx: mpsc::Sender<AuthResult>,
         mut auth_rx: mpsc::Receiver<AuthResult>,
-        shutdown_tx: mpsc::Sender<()>,
-        shutdown_rx: mpsc::Receiver<()>,
     ) -> Result<()> {
-        // Start the callback server
-        let server_task =
-            tokio::spawn(async move { server.with_shutdown_signal(shutdown_rx).start().await });
+        // Start the callback server (no shutdown signal needed since we'll exit)
+        let _server_task = tokio::spawn(async move { server.start().await });
 
-        // Create a channel to signal manual input to stop
-        let (cancel_tx, cancel_rx) = mpsc::channel::<()>(1);
-
-        // Start manual input task
-        let manual_input_task = tokio::spawn(Self::manual_input_loop(auth_tx, cancel_rx));
+        // Start manual input task (no cancellation needed since we'll exit)
+        let _manual_input_task = tokio::spawn(Self::manual_input_loop(auth_tx));
 
         // Wait for either authentication method to complete
         let result = auth_rx.recv().await;
 
-        // Send cancellation signal to manual input task
-        let _ = cancel_tx.send(()).await;
-
-        // Send shutdown signal to server
-        let _ = shutdown_tx.send(()).await;
-
-        // Wait a bit for tasks to clean up gracefully
-        tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
-
-        // Clean up tasks
-        server_task.abort();
-        manual_input_task.abort();
-
         match result {
             Some(AuthResult::Success(code)) => self.complete_authentication(&code).await,
             Some(AuthResult::Failure(err)) => {
-                Err(anyhow::anyhow!("Authentication failed: {}", err))
+                eprintln!("Authentication failed: {}", err);
+                std::process::exit(1);
             }
-            None => Err(anyhow::anyhow!(
-                "Authentication channel closed unexpectedly"
-            )),
+            None => {
+                eprintln!("Authentication channel closed unexpectedly");
+                std::process::exit(1);
+            }
         }
     }
 
-    async fn manual_input_loop(
-        auth_tx: mpsc::Sender<AuthResult>,
-        mut cancel_rx: mpsc::Receiver<()>,
-    ) {
+    async fn manual_input_loop(auth_tx: mpsc::Sender<AuthResult>) {
         let stdin = tokio::io::stdin();
         let mut reader = tokio::io::BufReader::new(stdin);
 
@@ -110,26 +85,17 @@ impl LoginArgs {
             let mut input = String::new();
             use tokio::io::AsyncBufReadExt;
 
-            tokio::select! {
-                // Listen for cancellation signal
-                _ = cancel_rx.recv() => {
-                    break;
-                }
-                // Read from stdin
-                result = reader.read_line(&mut input) => {
-                    match result {
-                        Ok(_) => {
-                            let code = input.trim();
-                            if !code.is_empty() {
-                                let _ = auth_tx.send(AuthResult::Success(code.to_string())).await;
-                                break;
-                            }
-                        }
-                        Err(e) => {
-                            let _ = auth_tx.send(AuthResult::Failure(e.to_string())).await;
-                            break;
-                        }
+            match reader.read_line(&mut input).await {
+                Ok(_) => {
+                    let code = input.trim();
+                    if !code.is_empty() {
+                        let _ = auth_tx.send(AuthResult::Success(code.to_string())).await;
+                        break;
                     }
+                }
+                Err(e) => {
+                    let _ = auth_tx.send(AuthResult::Failure(e.to_string())).await;
+                    break;
                 }
             }
         }
@@ -138,18 +104,34 @@ impl LoginArgs {
     async fn complete_authentication(&self, code: &str) -> Result<()> {
         // Exchange code for token
         let mut api = Client::new();
-        let token = api.oauth2(code).await?;
+        let token = match api.oauth2(code).await {
+            Ok(token) => token,
+            Err(e) => {
+                eprintln!("\nAuthentication failed: {}", e);
+                eprintln!("\nPlease ensure you've copied the complete code from the browser");
+                std::process::exit(1);
+            }
+        };
         api.set_token(token.clone());
 
         // Fetch account information
         let request_body = Me::build_query(Variables {});
-        let data: ResponseData = api.query(&request_body).await?;
+        let data: ResponseData = match api.query(&request_body).await {
+            Ok(data) => data,
+            Err(e) => {
+                eprintln!("\nFailed to fetch account information: {}", e);
+                std::process::exit(1);
+            }
+        };
 
         let account = data.me.expect("missing payload");
         let account = AccountInfo::from(account);
 
         // Store credentials
-        Credentials::new(account, token).store()?;
+        if let Err(e) = Credentials::new(account, token).store() {
+            eprintln!("\nFailed to store credentials: {}", e);
+            std::process::exit(1);
+        }
 
         println!("\nYou are now logged in!");
 
@@ -158,11 +140,8 @@ impl LoginArgs {
         std::process::exit(0);
     }
 
-    fn callback_server(
-        auth_tx: mpsc::Sender<AuthResult>,
-        shutdown_tx: mpsc::Sender<()>,
-    ) -> Result<LocalServer> {
-        let shared_state = Arc::new(AppState::new(auth_tx, shutdown_tx));
+    fn callback_server(auth_tx: mpsc::Sender<AuthResult>) -> Result<LocalServer> {
+        let shared_state = Arc::new(AppState::new(auth_tx));
 
         let router = Router::new()
             .route("/callback", get(handler))
@@ -185,24 +164,15 @@ struct CallbackPayload {
 #[derive(Clone)]
 struct AppState {
     auth_tx: Sender<AuthResult>,
-    shutdown_tx: Sender<()>,
 }
 
 impl AppState {
-    fn new(auth_tx: Sender<AuthResult>, shutdown_tx: Sender<()>) -> Self {
-        Self {
-            auth_tx,
-            shutdown_tx,
-        }
+    fn new(auth_tx: Sender<AuthResult>) -> Self {
+        Self { auth_tx }
     }
 
     async fn send_auth_result(&self, result: AuthResult) -> Result<()> {
         self.auth_tx.send(result).await?;
-        Ok(())
-    }
-
-    async fn shutdown(&self) -> Result<()> {
-        self.shutdown_tx.send(()).await?;
         Ok(())
     }
 }
@@ -233,9 +203,6 @@ async fn handler(
             // Send the authentication code through the channel
             state.send_auth_result(AuthResult::Success(code)).await?;
 
-            // Shutdown the server
-            state.shutdown().await?;
-
             format!("{}/success", vars::get_cartridge_keychain_url())
         }
         None => {
@@ -244,7 +211,6 @@ async fn handler(
             state
                 .send_auth_result(AuthResult::Failure("User denied consent".to_string()))
                 .await?;
-            state.shutdown().await?;
 
             format!("{}/failure", vars::get_cartridge_keychain_url())
         }
