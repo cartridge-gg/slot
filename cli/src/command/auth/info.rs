@@ -53,6 +53,16 @@ impl InfoArgs {
                 // round usd to 2 digits
                 format_usd((team.credits as f64 / 1e6) as i64)
             );
+            
+            if let Some(incubator_stage) = &team.incubator_stage {
+                println!("  Incubator Stage: {:?}", incubator_stage);
+            }
+            
+            println!(
+                "  Total Debits: {} ({})",
+                (team.total_debits / 1e6 as i64),
+                format_usd((team.total_debits as f64 / 1e6) as i64)
+            );
 
             println!("  Deployments:");
             let deployments = team.deployments.edges.unwrap();
