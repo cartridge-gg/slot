@@ -37,6 +37,18 @@ pub struct LogsArgs {
     #[arg(short, long = "follow", default_value = "false")]
     #[arg(help = "Stream service logs.")]
     pub follow: bool,
+
+    #[arg(long = "region")]
+    #[arg(help = "Filter logs by region (e.g., us-east4).")]
+    pub region: Option<String>,
+
+    #[arg(long = "replica")]
+    #[arg(help = "Filter logs by replica (e.g., torii-0).")]
+    pub replica: Option<String>,
+
+    #[arg(long = "container")]
+    #[arg(help = "Override the container name (e.g., for litestream logs).")]
+    pub container: Option<String>,
 }
 
 impl LogsArgs {
@@ -44,9 +56,24 @@ impl LogsArgs {
         let reader = LogReader::new(self.service.clone(), self.project.clone());
 
         if self.follow {
-            reader.stream(self.since.clone()).await?;
+            reader
+                .stream(
+                    self.since.clone(),
+                    self.region.clone(),
+                    self.replica.clone(),
+                    self.container.clone(),
+                )
+                .await?;
         } else {
-            let logs = reader.query(self.since.clone(), self.limit).await?;
+            let logs = reader
+                .query(
+                    self.since.clone(),
+                    self.limit,
+                    self.region.clone(),
+                    self.replica.clone(),
+                    self.container.clone(),
+                )
+                .await?;
             println!("{}", logs.content);
         }
 
@@ -75,6 +102,9 @@ impl LogReader {
         &self,
         since: Option<String>,
         limit: i64,
+        region: Option<String>,
+        replica: Option<String>,
+        container: Option<String>,
     ) -> Result<DeploymentLogsDeploymentLogs> {
         let service = match self.service {
             Service::Katana => DeploymentService::katana,
@@ -86,6 +116,9 @@ impl LogReader {
             service,
             since,
             limit: Some(limit),
+            region,
+            replica,
+            container,
         });
 
         let data: ResponseData = self.client.query(&request_body).await?;
@@ -95,7 +128,13 @@ impl LogReader {
         Ok(logs)
     }
 
-    pub async fn stream(&self, since: Option<String>) -> Result<()> {
+    pub async fn stream(
+        &self,
+        since: Option<String>,
+        region: Option<String>,
+        replica: Option<String>,
+        container: Option<String>,
+    ) -> Result<()> {
         let running = Arc::new(AtomicBool::new(true));
         let r = running.clone();
         ctrlc::set_handler(move || {
@@ -103,13 +142,23 @@ impl LogReader {
         })
         .expect("Error setting Ctrl-C handler");
 
-        let mut logs = self.query(since, 1).await?;
+        let mut logs = self
+            .query(since, 1, region.clone(), replica.clone(), container.clone())
+            .await?;
         let mut printed_logs = HashSet::new();
 
         let mut since = logs.until;
         while running.load(Ordering::SeqCst) {
             tokio::time::sleep(Duration::from_millis(1000)).await;
-            logs = self.query(Some(since.clone()), 25).await?;
+            logs = self
+                .query(
+                    Some(since.clone()),
+                    25,
+                    region.clone(),
+                    replica.clone(),
+                    container.clone(),
+                )
+                .await?;
 
             if !printed_logs.contains(&logs.content) {
                 println!("{}", logs.content);

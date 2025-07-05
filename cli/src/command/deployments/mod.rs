@@ -21,6 +21,9 @@ mod services;
 mod transfer;
 mod update;
 
+#[cfg(test)]
+mod tests;
+
 pub const CARTRIDGE_BASE_URL: &str = "https://api.cartridge.gg/x";
 
 #[derive(Subcommand, Debug)]
