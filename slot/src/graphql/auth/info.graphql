@@ -11,6 +11,8 @@ query Me {
           name
           credits
           deleted
+          incubatorStage
+          totalDebits
 
           membership {
             edges {
