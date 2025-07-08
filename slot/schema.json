@@ -14765,6 +14765,22 @@
             {
               "args": [],
               "deprecationReason": null,
+              "description": "Whether the invoice is finalized and ready for billing",
+              "isDeprecated": false,
+              "name": "finalized",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
               "name": "team",
@@ -16335,6 +16351,26 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "Time",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "finalized field predicates",
+              "name": "finalized",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "finalizedNEQ",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             },
