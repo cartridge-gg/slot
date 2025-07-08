@@ -26,8 +26,7 @@ impl InfoArgs {
         let info = res.me.clone().unwrap();
         println!("Username: {}", info.username);
         println!(
-            "Credits: {} ({})",
-            info.credits_plain,
+            "Balance: {}",
             // round usd to 2 digits
             format_usd(info.credits_plain)
         );
@@ -48,20 +47,37 @@ impl InfoArgs {
             println!();
             println!("  Name: {}", team.name);
             println!(
-                "  Credits: {} ({})",
-                (team.credits / 1e6 as i64),
+                "  Balance: {}",
                 // round usd to 2 digits
                 format_usd((team.credits as f64 / 1e6) as i64)
             );
 
-            if let Some(incubator_stage) = &team.incubator_stage {
+            let total_balance = if let Some(incubator_stage) = &team.incubator_stage {
                 println!("  Incubator Stage: {:?}", incubator_stage);
-            }
+
+                // Determine total balance based on incubator stage
+                // Match against the Debug representation of the enum
+                match format!("{:?}", incubator_stage).as_str() {
+                    "senpai" => 500000,  // $5k in cents
+                    "sensei" => 2500000, // $25k in cents
+                    _ => 0,
+                }
+            } else {
+                0
+            };
+
+            println!("  Total Balance: {}", format_usd(total_balance));
 
             println!(
-                "  Total Debits: {} ({})",
-                (team.total_debits / 1e6 as i64),
+                "  Total Spent: {}",
                 format_usd((team.total_debits as f64 / 1e6) as i64)
+            );
+
+            // Calculate remaining balance
+            let remaining_balance = total_balance - ((team.total_debits as f64 / 1e6) as i64);
+            println!(
+                "  Remaining Incubator Credits: {}",
+                format_usd(remaining_balance)
             );
 
             println!("  Deployments:");
