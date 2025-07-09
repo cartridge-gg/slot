@@ -1,0 +1,33 @@
+query TeamInvoices($team: String!, $first: Int, $after: Cursor, $orderBy: InvoiceOrder) {
+  team(name: $team) {
+    id
+    name
+    invoices(first: $first, after: $after, orderBy: $orderBy) {
+      edges {
+        node {
+          id
+          teamID
+          month
+          totalCredits
+          totalDebits
+          slotDebits
+          paymasterDebits
+          incubatorCredits
+          netAmount
+          incubatorStage
+          createdAt
+          updatedAt
+          finalized
+        }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+      totalCount
+    }
+  }
+}
