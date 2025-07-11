@@ -2,3 +2,5 @@
 torii.toml
 katana.toml
 .envrc
+
+.claude/settings.local.json

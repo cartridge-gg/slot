@@ -123,6 +123,9 @@ pub(crate) fn pretty_print_toml(str: &str) {
 pub(crate) fn warn_checks(config_path: &std::path::Path) -> Result<()> {
     if let Ok(file_content) = fs::read_to_string(config_path) {
         if let Ok(parsed) = toml::from_str::<Value>(&file_content) {
+            if parsed.get("db_dir").is_some() {
+                println!("⚠️  Warning: 'db_dir' option found in config file but is ignored. Slot is managing and persisting the database.");
+            }
             if let Some(indexing) = parsed.get("indexing") {
                 if indexing.get("blocks_chunk_size").is_some() {
                     println!("⚠️  Warning: 'blocks_chunk_size' option found in config file but is ignored and overridden in slot.");

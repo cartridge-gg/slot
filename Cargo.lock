@@ -8780,7 +8780,7 @@ dependencies = [
 
 [[package]]
 name = "slot"
-version = "0.47.0"
+version = "0.48.0"
 dependencies = [
  "account_sdk 0.1.0 (git+https://github.com/cartridge-gg/controller-rs?rev=660ead4)",
  "anyhow",
@@ -8813,7 +8813,7 @@ dependencies = [
 
 [[package]]
 name = "slot-cli"
-version = "0.47.0"
+version = "0.48.0"
 dependencies = [
  "anyhow",
  "axum 0.7.9",
