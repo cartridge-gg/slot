@@ -13,7 +13,7 @@ static EMAIL_REGEX: OnceLock<Regex> = OnceLock::new();
 /// If this function is called in a test environment, path to a temporary directory is returned instead.
 pub fn config_dir() -> PathBuf {
     let path = if cfg!(test) {
-        tempfile::tempdir().unwrap().keep()
+        tempfile::tempdir().unwrap().into_path()
     } else {
         dirs::config_local_dir().expect("unsupported OS")
     }
