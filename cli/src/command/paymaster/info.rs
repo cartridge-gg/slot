@@ -29,13 +29,6 @@ impl InfoArgs {
                 let strk_fees_formatted = paymaster.strk_fees as f64 / 1e6;
                 let credit_fees_formatted = paymaster.credit_fees as f64 / 1e6;
 
-                // Convert budget fee unit to string
-                let budget_unit = match paymaster.budget_fee_unit {
-                    PaymasterBudgetFeeUnit::CREDIT => "CREDIT",
-                    PaymasterBudgetFeeUnit::STRK => "STRK",
-                    _ => "UNKNOWN",
-                };
-
                 // Calculate usage percentage and create progress bar
                 let spent_amount = match paymaster.budget_fee_unit {
                     PaymasterBudgetFeeUnit::STRK => strk_fees_formatted,
@@ -86,10 +79,7 @@ impl InfoArgs {
                 };
 
                 if usd_equivalent > 0.0 {
-                    println!(
-                        "  • Total: {} {} (${:.2} USD)",
-                        budget_formatted as i64, budget_unit, usd_equivalent
-                    );
+                    println!("  • Total: ${:.2} USD", usd_equivalent);
                 } else {
                     println!("  • Total: NONE (Please Top Up)");
                 }
@@ -101,10 +91,7 @@ impl InfoArgs {
                     }
                     PaymasterBudgetFeeUnit::CREDIT => {
                         let spent_usd_equivalent = credit_fees_formatted * 0.01; // 100 credit = 1 USD
-                        println!(
-                            "  • Spent: {:.2} CREDIT (${:.2} USD)",
-                            credit_fees_formatted, spent_usd_equivalent
-                        );
+                        println!("  • Spent: ${:.2} USD", spent_usd_equivalent);
                     }
                     _ => {}
                 }
