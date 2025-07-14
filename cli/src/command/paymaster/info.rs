@@ -29,13 +29,6 @@ impl InfoArgs {
                 let strk_fees_formatted = paymaster.strk_fees as f64 / 1e6;
                 let credit_fees_formatted = paymaster.credit_fees as f64 / 1e6;
 
-                // Convert budget fee unit to string (for future use)
-                let _budget_unit = match paymaster.budget_fee_unit {
-                    PaymasterBudgetFeeUnit::CREDIT => "CREDIT",
-                    PaymasterBudgetFeeUnit::STRK => "STRK",
-                    _ => "UNKNOWN",
-                };
-
                 // Calculate usage percentage and create progress bar
                 let spent_amount = match paymaster.budget_fee_unit {
                     PaymasterBudgetFeeUnit::STRK => strk_fees_formatted,

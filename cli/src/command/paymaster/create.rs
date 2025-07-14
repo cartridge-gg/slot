@@ -14,7 +14,7 @@ pub struct CreateArgs {
     team: String,
     #[arg(long, help = "Initial budget for the paymaster.")]
     budget: u64,
-    #[arg(long, help = "Unit for the budget (CREDIT or STRK).")]
+    #[arg(long, help = "Unit for the budget (USD or STRK).")]
     unit: String,
 }
 
@@ -22,16 +22,16 @@ impl CreateArgs {
     pub async fn run(&self, name: String) -> Result<()> {
         let credentials = Credentials::load()?;
 
-        let unit = match self.unit.to_uppercase().as_str() {
-            "CREDIT" => FeeUnit::CREDIT,
-            "STRK" => FeeUnit::STRK,
+        let (unit, budget_for_api) = match self.unit.to_uppercase().as_str() {
+            "USD" => (FeeUnit::CREDIT, (self.budget as f64 * 100.0) as i64), // Convert USD to credits
+            "STRK" => (FeeUnit::STRK, self.budget as i64),
             _ => return Err(anyhow::anyhow!("Invalid unit: {}", self.unit)),
         };
 
         let variables = create_paymaster::Variables {
             name: name.clone(),
             team_name: self.team.clone(),
-            budget: self.budget as i64,
+            budget: budget_for_api,
             unit,
         };
         let request_body = CreatePaymaster::build_query(variables);
@@ -42,10 +42,11 @@ impl CreateArgs {
 
         let budget_formatted = data.create_paymaster.budget as f64 / 1e6;
 
-        // Calculate USD equivalent for CREDIT only
-        let usd_equivalent = match self.unit.to_uppercase().as_str() {
-            "CREDIT" => budget_formatted * 0.01, // 100 credit = 1 USD
-            _ => 0.0,
+        // Calculate display values based on original unit
+        let display_budget = match self.unit.to_uppercase().as_str() {
+            "USD" => format!("${:.2} USD", budget_formatted * 0.01), // Convert credits back to USD for display
+            "STRK" => format!("{} STRK", budget_formatted as i64),
+            _ => format!("{} {}", budget_formatted as i64, self.unit.to_uppercase()),
         };
 
         println!("\n✅ Paymaster Created Successfully");
@@ -56,15 +57,7 @@ impl CreateArgs {
         println!("  • Team: {}", self.team);
 
         println!("\n💰 Initial Budget:");
-        if usd_equivalent > 0.0 {
-            println!("  • Amount: ${:.2} USD", usd_equivalent);
-        } else {
-            println!(
-                "  • Amount: {} {}",
-                budget_formatted as i64,
-                self.unit.to_uppercase()
-            );
-        }
+        println!("  • Amount: {}", display_budget);
 
         Ok(())
     }
