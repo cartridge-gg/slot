@@ -57,12 +57,7 @@ impl CreateArgs {
 
         println!("\n💰 Initial Budget:");
         if usd_equivalent > 0.0 {
-            println!(
-                "  • Amount: {} {} (${:.2} USD)",
-                budget_formatted as i64,
-                self.unit.to_uppercase(),
-                usd_equivalent
-            );
+            println!("  • Amount: ${:.2} USD", usd_equivalent);
         } else {
             println!(
                 "  • Amount: {} {}",

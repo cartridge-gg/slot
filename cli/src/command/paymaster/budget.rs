@@ -86,12 +86,7 @@ impl BudgetCmd {
 
         println!("\n💰 New Budget:");
         if usd_equivalent > 0.0 {
-            println!(
-                "  • Amount: {} {} (${:.2} USD)",
-                new_budget_formatted as i64,
-                args.unit.to_uppercase(),
-                usd_equivalent
-            );
+            println!("  • Amount: ${:.2} USD", usd_equivalent);
         } else {
             println!(
                 "  • Amount: {} {}",
@@ -145,12 +140,7 @@ impl BudgetCmd {
 
         println!("\n💰 New Budget:");
         if usd_equivalent > 0.0 {
-            println!(
-                "  • Amount: {} {} (${:.2} USD)",
-                new_budget_formatted as i64,
-                args.unit.to_uppercase(),
-                usd_equivalent
-            );
+            println!("  • Amount: ${:.2} USD", usd_equivalent);
         } else {
             println!(
                 "  • Amount: {} {}",
