@@ -27,7 +27,7 @@ enum BudgetSubcommand {
 struct IncreaseBudgetArgs {
     #[arg(long, help = "Amount to decrease the budget.")]
     amount: u64,
-    #[arg(long, help = "Unit for the budget (CREDIT or STRK).")]
+    #[arg(long, help = "Unit for the budget (USD or STRK).")]
     unit: String,
 }
 
@@ -35,7 +35,7 @@ struct IncreaseBudgetArgs {
 struct DecreaseBudgetArgs {
     #[arg(long, help = "Amount to decrease the budget.")]
     amount: u64,
-    #[arg(long, help = "Unit for the budget (CREDIT or STRK).")]
+    #[arg(long, help = "Unit for the budget (USD or STRK).")]
     unit: String,
 }
 
@@ -50,15 +50,23 @@ impl BudgetCmd {
     async fn run_increase(args: &IncreaseBudgetArgs, name: String) -> Result<()> {
         let credentials = Credentials::load()?;
 
-        let unit = match args.unit.to_uppercase().as_str() {
-            "CREDIT" => IncreaseBudgetFeeUnit::CREDIT,
-            "STRK" => IncreaseBudgetFeeUnit::STRK,
-            _ => return Err(anyhow::anyhow!("Invalid unit: {}", args.unit)),
+        let (unit, amount_for_api) = match args.unit.to_uppercase().as_str() {
+            "USD" => (
+                IncreaseBudgetFeeUnit::CREDIT,
+                (args.amount as f64 * 100.0) as i64,
+            ), // Convert USD to credits
+            "STRK" => (IncreaseBudgetFeeUnit::STRK, args.amount as i64),
+            _ => {
+                return Err(anyhow::anyhow!(
+                    "Invalid unit: {}. Supported units: USD, STRK",
+                    args.unit
+                ))
+            }
         };
 
         let variables = increase_budget::Variables {
             paymaster_name: name.clone(),
-            amount: args.amount as i64,
+            amount: amount_for_api,
             unit,
         };
         let request_body = IncreaseBudget::build_query(variables);
@@ -69,10 +77,15 @@ impl BudgetCmd {
 
         let new_budget_formatted = data.increase_budget.budget as f64 / 1e6;
 
-        // Calculate USD equivalent for CREDIT only
-        let usd_equivalent = match args.unit.to_uppercase().as_str() {
-            "CREDIT" => new_budget_formatted * 0.01, // 100 credit = 1 USD
-            _ => 0.0,
+        // Calculate display values based on original unit
+        let display_budget = match args.unit.to_uppercase().as_str() {
+            "USD" => format!("${:.2} USD", new_budget_formatted * 0.01), // Convert credits back to USD for display
+            "STRK" => format!("{} STRK", new_budget_formatted as i64),
+            _ => format!(
+                "{} {}",
+                new_budget_formatted as i64,
+                args.unit.to_uppercase()
+            ),
         };
 
         println!("\n✅ Budget Increased Successfully");
@@ -85,15 +98,7 @@ impl BudgetCmd {
         println!("  • Amount: {} {}", args.amount, args.unit.to_uppercase());
 
         println!("\n💰 New Budget:");
-        if usd_equivalent > 0.0 {
-            println!("  • Amount: ${:.2} USD", usd_equivalent);
-        } else {
-            println!(
-                "  • Amount: {} {}",
-                new_budget_formatted as i64,
-                args.unit.to_uppercase()
-            );
-        }
+        println!("  • Amount: {}", display_budget);
 
         Ok(())
     }
@@ -102,16 +107,24 @@ impl BudgetCmd {
         // 1. Load Credentials
         let credentials = Credentials::load()?;
 
-        let unit = match args.unit.to_uppercase().as_str() {
-            "CREDIT" => DecreaseBudgetFeeUnit::CREDIT,
-            "STRK" => DecreaseBudgetFeeUnit::STRK,
-            _ => return Err(anyhow::anyhow!("Invalid unit: {}", args.unit)),
+        let (unit, amount_for_api) = match args.unit.to_uppercase().as_str() {
+            "USD" => (
+                DecreaseBudgetFeeUnit::CREDIT,
+                (args.amount as f64 * 100.0) as i64,
+            ), // Convert USD to credits
+            "STRK" => (DecreaseBudgetFeeUnit::STRK, args.amount as i64),
+            _ => {
+                return Err(anyhow::anyhow!(
+                    "Invalid unit: {}. Supported units: USD, STRK",
+                    args.unit
+                ))
+            }
         };
 
         // 2. Build Query Variables
         let variables = decrease_budget::Variables {
             paymaster_name: name.clone(),
-            amount: args.amount as i64,
+            amount: amount_for_api,
             unit,
         };
         let request_body = DecreaseBudget::build_query(variables);
@@ -123,10 +136,15 @@ impl BudgetCmd {
 
         let new_budget_formatted = data.decrease_budget.budget as f64 / 1e6;
 
-        // Calculate USD equivalent for CREDIT only
-        let usd_equivalent = match args.unit.to_uppercase().as_str() {
-            "CREDIT" => new_budget_formatted * 0.01, // 100 credit = 1 USD
-            _ => 0.0,
+        // Calculate display values based on original unit
+        let display_budget = match args.unit.to_uppercase().as_str() {
+            "USD" => format!("${:.2} USD", new_budget_formatted * 0.01), // Convert credits back to USD for display
+            "STRK" => format!("{} STRK", new_budget_formatted as i64),
+            _ => format!(
+                "{} {}",
+                new_budget_formatted as i64,
+                args.unit.to_uppercase()
+            ),
         };
 
         println!("\n✅ Budget Decreased Successfully");
@@ -139,15 +157,7 @@ impl BudgetCmd {
         println!("  • Amount: {} {}", args.amount, args.unit.to_uppercase());
 
         println!("\n💰 New Budget:");
-        if usd_equivalent > 0.0 {
-            println!("  • Amount: ${:.2} USD", usd_equivalent);
-        } else {
-            println!(
-                "  • Amount: {} {}",
-                new_budget_formatted as i64,
-                args.unit.to_uppercase()
-            );
-        }
+        println!("  • Amount: {}", display_budget);
 
         Ok(())
     }

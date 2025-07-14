@@ -25,7 +25,12 @@ impl CreateArgs {
         let (unit, budget_for_api) = match self.unit.to_uppercase().as_str() {
             "USD" => (FeeUnit::CREDIT, (self.budget as f64 * 100.0) as i64), // Convert USD to credits
             "STRK" => (FeeUnit::STRK, self.budget as i64),
-            _ => return Err(anyhow::anyhow!("Invalid unit: {}", self.unit)),
+            _ => {
+                return Err(anyhow::anyhow!(
+                    "Invalid unit: {}. Supported units: USD, STRK",
+                    self.unit
+                ))
+            }
         };
 
         let variables = create_paymaster::Variables {
