@@ -23,7 +23,7 @@ impl CreateArgs {
         let credentials = Credentials::load()?;
 
         let (unit, budget_for_api) = match self.unit.to_uppercase().as_str() {
-            "USD" => (FeeUnit::CREDIT, (self.budget as f64 * 100.0) as i64), // Convert USD to credits
+            "USD" => (FeeUnit::CREDIT, (self.budget * 100) as i64), // Convert USD to credits
             "STRK" => (FeeUnit::STRK, self.budget as i64),
             _ => {
                 return Err(anyhow::anyhow!(

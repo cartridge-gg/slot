@@ -25,7 +25,7 @@ enum BudgetSubcommand {
 
 #[derive(Debug, Args)]
 struct IncreaseBudgetArgs {
-    #[arg(long, help = "Amount to decrease the budget.")]
+    #[arg(long, help = "Amount to increase the budget.")]
     amount: u64,
     #[arg(long, help = "Unit for the budget (USD or STRK).")]
     unit: String,
@@ -51,10 +51,7 @@ impl BudgetCmd {
         let credentials = Credentials::load()?;
 
         let (unit, amount_for_api) = match args.unit.to_uppercase().as_str() {
-            "USD" => (
-                IncreaseBudgetFeeUnit::CREDIT,
-                (args.amount as f64 * 100.0) as i64,
-            ), // Convert USD to credits
+            "USD" => (IncreaseBudgetFeeUnit::CREDIT, (args.amount * 100) as i64), // Convert USD to credits
             "STRK" => (IncreaseBudgetFeeUnit::STRK, args.amount as i64),
             _ => {
                 return Err(anyhow::anyhow!(
@@ -108,10 +105,7 @@ impl BudgetCmd {
         let credentials = Credentials::load()?;
 
         let (unit, amount_for_api) = match args.unit.to_uppercase().as_str() {
-            "USD" => (
-                DecreaseBudgetFeeUnit::CREDIT,
-                (args.amount as f64 * 100.0) as i64,
-            ), // Convert USD to credits
+            "USD" => (DecreaseBudgetFeeUnit::CREDIT, (args.amount * 100) as i64), // Convert USD to credits
             "STRK" => (DecreaseBudgetFeeUnit::STRK, args.amount as i64),
             _ => {
                 return Err(anyhow::anyhow!(
