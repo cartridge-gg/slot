@@ -29,9 +29,9 @@ impl InfoArgs {
                 let strk_fees_formatted = paymaster.strk_fees as f64 / 1e6;
                 let credit_fees_formatted = paymaster.credit_fees as f64 / 1e6;
 
-                // Convert budget fee unit to string
+                // Convert budget fee unit to string - display CREDIT as USD
                 let budget_unit = match paymaster.budget_fee_unit {
-                    PaymasterBudgetFeeUnit::CREDIT => "CREDIT",
+                    PaymasterBudgetFeeUnit::CREDIT => "USD",
                     PaymasterBudgetFeeUnit::STRK => "STRK",
                     _ => "UNKNOWN",
                 };
@@ -80,15 +80,16 @@ impl InfoArgs {
                 );
 
                 println!("\n💰 Budget:");
-                let usd_equivalent = match paymaster.budget_fee_unit {
-                    PaymasterBudgetFeeUnit::CREDIT => budget_formatted * 0.01, // 100 credit = 1 USD
+                let budget_display = match paymaster.budget_fee_unit {
+                    PaymasterBudgetFeeUnit::CREDIT => budget_formatted * 0.01, // Convert credits to USD
+                    PaymasterBudgetFeeUnit::STRK => budget_formatted,
                     _ => 0.0,
                 };
 
-                if usd_equivalent > 0.0 {
+                if budget_display > 0.0 {
                     println!(
-                        "  • Total: {} {} (${:.2} USD)",
-                        budget_formatted as i64, budget_unit, usd_equivalent
+                        "  • Total: ${:.2} {}",
+                        budget_display, budget_unit
                     );
                 } else {
                     println!("  • Total: NONE (Please Top Up)");
@@ -100,11 +101,8 @@ impl InfoArgs {
                         println!("  • Spent: {:.2} STRK", strk_fees_formatted);
                     }
                     PaymasterBudgetFeeUnit::CREDIT => {
-                        let spent_usd_equivalent = credit_fees_formatted * 0.01; // 100 credit = 1 USD
-                        println!(
-                            "  • Spent: {:.2} CREDIT (${:.2} USD)",
-                            credit_fees_formatted, spent_usd_equivalent
-                        );
+                        let spent_usd = credit_fees_formatted * 0.01; // Convert credits to USD
+                        println!("  • Spent: ${:.2} USD", spent_usd);
                     }
                     _ => {}
                 }

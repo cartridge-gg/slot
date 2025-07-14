@@ -69,12 +69,6 @@ impl BudgetCmd {
 
         let new_budget_formatted = data.increase_budget.budget as f64 / 1e6;
 
-        // Calculate USD equivalent for CREDIT only
-        let usd_equivalent = match args.unit.to_uppercase().as_str() {
-            "CREDIT" => new_budget_formatted * 0.01, // 100 credit = 1 USD
-            _ => 0.0,
-        };
-
         println!("\n✅ Budget Increased Successfully");
         println!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
@@ -82,22 +76,29 @@ impl BudgetCmd {
 
         println!("\n📈 Operation:");
         println!("  • Action: Increased");
-        println!("  • Amount: {} {}", args.amount, args.unit.to_uppercase());
+        match args.unit.to_uppercase().as_str() {
+            "CREDIT" => {
+                let amount_usd = args.amount as f64 * 0.01;
+                println!("  • Amount: ${:.2} USD", amount_usd);
+            }
+            _ => {
+                println!("  • Amount: {} {}", args.amount, args.unit.to_uppercase());
+            }
+        }
 
         println!("\n💰 New Budget:");
-        if usd_equivalent > 0.0 {
-            println!(
-                "  • Amount: {} {} (${:.2} USD)",
-                new_budget_formatted as i64,
-                args.unit.to_uppercase(),
-                usd_equivalent
-            );
-        } else {
-            println!(
-                "  • Amount: {} {}",
-                new_budget_formatted as i64,
-                args.unit.to_uppercase()
-            );
+        match args.unit.to_uppercase().as_str() {
+            "CREDIT" => {
+                let budget_usd = new_budget_formatted * 0.01;
+                println!("  • Amount: ${:.2} USD", budget_usd);
+            }
+            _ => {
+                println!(
+                    "  • Amount: {} {}",
+                    new_budget_formatted as i64,
+                    args.unit.to_uppercase()
+                );
+            }
         }
 
         Ok(())
@@ -128,12 +129,6 @@ impl BudgetCmd {
 
         let new_budget_formatted = data.decrease_budget.budget as f64 / 1e6;
 
-        // Calculate USD equivalent for CREDIT only
-        let usd_equivalent = match args.unit.to_uppercase().as_str() {
-            "CREDIT" => new_budget_formatted * 0.01, // 100 credit = 1 USD
-            _ => 0.0,
-        };
-
         println!("\n✅ Budget Decreased Successfully");
         println!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
@@ -141,22 +136,29 @@ impl BudgetCmd {
 
         println!("\n📉 Operation:");
         println!("  • Action: Decreased");
-        println!("  • Amount: {} {}", args.amount, args.unit.to_uppercase());
+        match args.unit.to_uppercase().as_str() {
+            "CREDIT" => {
+                let amount_usd = args.amount as f64 * 0.01;
+                println!("  • Amount: ${:.2} USD", amount_usd);
+            }
+            _ => {
+                println!("  • Amount: {} {}", args.amount, args.unit.to_uppercase());
+            }
+        }
 
         println!("\n💰 New Budget:");
-        if usd_equivalent > 0.0 {
-            println!(
-                "  • Amount: {} {} (${:.2} USD)",
-                new_budget_formatted as i64,
-                args.unit.to_uppercase(),
-                usd_equivalent
-            );
-        } else {
-            println!(
-                "  • Amount: {} {}",
-                new_budget_formatted as i64,
-                args.unit.to_uppercase()
-            );
+        match args.unit.to_uppercase().as_str() {
+            "CREDIT" => {
+                let budget_usd = new_budget_formatted * 0.01;
+                println!("  • Amount: ${:.2} USD", budget_usd);
+            }
+            _ => {
+                println!(
+                    "  • Amount: {} {}",
+                    new_budget_formatted as i64,
+                    args.unit.to_uppercase()
+                );
+            }
         }
 
         Ok(())

@@ -60,15 +60,16 @@ impl ListArgs {
                 // Populate the table
                 for (team_node, pm_node) in paymasters_data {
                     paymasters_found = true;
-                    let budget = format!(
-                        "{} {}",
-                        pm_node.budget / BUDGET_DECIMALS,
-                        match pm_node.budget_fee_unit {
-                            PaymasterBudgetFeeUnit::CREDIT => "CREDIT",
-                            PaymasterBudgetFeeUnit::STRK => "STRK",
-                            _ => "UNKNOWN",
+                    let budget = match pm_node.budget_fee_unit {
+                        PaymasterBudgetFeeUnit::CREDIT => {
+                            let budget_usd = (pm_node.budget / BUDGET_DECIMALS) as f64 * 0.01;
+                            format!("${:.2} USD", budget_usd)
                         }
-                    );
+                        PaymasterBudgetFeeUnit::STRK => {
+                            format!("{} STRK", pm_node.budget / BUDGET_DECIMALS)
+                        }
+                        _ => format!("{} UNKNOWN", pm_node.budget / BUDGET_DECIMALS),
+                    };
                     table.add_row(vec![
                         Cell::new(pm_node.name.as_str()),
                         Cell::new(&team_node.name),
