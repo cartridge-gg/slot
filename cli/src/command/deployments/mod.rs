@@ -71,6 +71,7 @@ pub enum Tier {
     Pro,
     Epic,
     Legendary,
+    #[clap(skip)]
     Insane,
 }
 
