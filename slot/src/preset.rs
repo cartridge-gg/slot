@@ -91,10 +91,12 @@ pub fn extract_paymaster_policies(
     if let Some(chain_policies) = config.chains.get(chain_id) {
         for (contract_address, contract_policy) in &chain_policies.policies.contracts {
             for method in &contract_policy.methods {
-                policies.push(PaymasterPolicyInput {
-                    contract_address: contract_address.clone(),
-                    entry_point: method.entrypoint.clone(),
-                });
+                if method.is_paymastered {
+                    policies.push(PaymasterPolicyInput {
+                        contract_address: contract_address.clone(),
+                        entry_point: method.entrypoint.clone(),
+                    });
+                }
             }
         }
     }
