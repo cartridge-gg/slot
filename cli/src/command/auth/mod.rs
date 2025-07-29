@@ -1,4 +1,4 @@
-use self::{email::EmailArgs, info::InfoArgs, login::LoginArgs};
+use self::{email::EmailArgs, info::InfoArgs, login::LoginArgs, token::TokenArgs};
 use crate::command::auth::fund::FundArgs;
 use crate::command::auth::transfer::TransferArgs;
 use anyhow::Result;
@@ -9,6 +9,7 @@ mod fund;
 mod info;
 mod login;
 mod session;
+mod token;
 mod transfer;
 
 #[derive(Subcommand, Debug)]
@@ -28,6 +29,9 @@ pub enum Auth {
     #[command(about = "Transfer funds to a slot team.")]
     Transfer(TransferArgs),
 
+    #[command(about = "Display the current auth token.")]
+    Token(TokenArgs),
+
     // Mostly for testing purposes, will eventually turn it into a library call from `sozo`.
     #[command(hide = true)]
     CreateSession(session::CreateSession),
@@ -42,6 +46,7 @@ impl Auth {
             Auth::SetEmail(args) => args.run().await,
             Auth::Fund(args) => args.run().await,
             Auth::Transfer(args) => args.run().await,
+            Auth::Token(args) => args.run().await,
         }
     }
 }
