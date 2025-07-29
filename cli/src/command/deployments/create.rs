@@ -55,7 +55,7 @@ impl CreateArgs {
             (Tier::Basic, "3"),
             (Tier::Pro, "50"),
             (Tier::Epic, "100"),
-            (Tier::Legendary, "250"),
+            (Tier::Legendary, "200"),
             (Tier::Insane, "50"), // deprecated tier, kept for backwards compatibility
         ]
         .into_iter()
