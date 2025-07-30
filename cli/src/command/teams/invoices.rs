@@ -1,6 +1,7 @@
 use anyhow::Result;
 use chrono::prelude::*;
 use clap::Args;
+use comfy_table::{presets::UTF8_FULL, Cell, ContentArrangement, Table};
 use slot::api::Client;
 use slot::credential::Credentials;
 use slot::graphql::team::team_invoices::{InvoiceOrder, Variables};
@@ -41,52 +42,59 @@ impl InvoicesArgs {
 
         let current_month = Utc::now().format("%Y-%m").to_string();
 
-        println!("Invoices for team '{}':", team_name);
-        println!("=====================================");
-
         for edge in edges.into_iter().flatten() {
             if let Some(node) = edge.node {
                 let is_current_month = node.month == current_month;
-                let prefix = if is_current_month { ">>> " } else { "    " };
 
-                println!("{}Month: {}", prefix, node.month);
-                println!(
-                    "{}Total Credits: {}",
-                    prefix,
-                    format_credits(node.total_credits)
-                );
-                println!(
-                    "{}Total Debits: {}",
-                    prefix,
-                    format_credits(node.total_debits)
-                );
-                println!(
-                    "{}Slot Debits: {}",
-                    prefix,
-                    format_credits(node.slot_debits)
-                );
-                println!(
-                    "{}Paymaster Debits: {}",
-                    prefix,
-                    format_credits(node.paymaster_debits)
-                );
-                println!(
-                    "{}Incubator Credits: {}",
-                    prefix,
-                    format_credits(node.incubator_credits)
-                );
-                println!("{}Net Amount: {}", prefix, format_credits(node.net_amount));
-                println!(
-                    "{}Incubator Stage: {}",
-                    prefix,
-                    node.incubator_stage.unwrap_or_else(|| "None".to_string())
-                );
-                println!(
-                    "{}Finalized: {}",
-                    prefix,
-                    if node.finalized { "Yes" } else { "No" }
-                );
-                println!("{}---\n\n", prefix);
+                let mut table = Table::new();
+                table
+                    .load_preset(UTF8_FULL)
+                    .set_content_arrangement(ContentArrangement::Dynamic);
+
+                let title = if is_current_month {
+                    format!("Invoices for team `{}` (Current Month)", team_name)
+                } else {
+                    format!("Invoices for team `{}`", team_name)
+                };
+
+                table.set_header(vec![title, "".to_string()]);
+
+                table.add_row(vec![Cell::new("Month"), Cell::new(&node.month)]);
+                table.add_row(vec![
+                    Cell::new("Total Credits"),
+                    Cell::new(format_credits(node.total_credits)),
+                ]);
+                table.add_row(vec![
+                    Cell::new("Total Debits"),
+                    Cell::new(format_credits(node.total_debits)),
+                ]);
+                table.add_row(vec![
+                    Cell::new("Slot Debits"),
+                    Cell::new(format_credits(node.slot_debits)),
+                ]);
+                table.add_row(vec![
+                    Cell::new("Paymaster Debits"),
+                    Cell::new(format_credits(node.paymaster_debits)),
+                ]);
+                table.add_row(vec![
+                    Cell::new("Incubator Credits"),
+                    Cell::new(format_credits(node.incubator_credits)),
+                ]);
+                table.add_row(vec![
+                    Cell::new("Net Amount"),
+                    Cell::new(format_credits(node.net_amount)),
+                ]);
+                table.add_row(vec![
+                    Cell::new("Incubator Stage"),
+                    Cell::new(node.incubator_stage.unwrap_or_else(|| "None".to_string())),
+                ]);
+                table.add_row(vec![
+                    Cell::new("Finalized"),
+                    Cell::new(if node.finalized { "Yes" } else { "No" }),
+                ]);
+
+                println!("{table}");
+                println!();
             }
         }
 
@@ -95,6 +103,6 @@ impl InvoicesArgs {
 }
 
 fn format_credits(credits: i64) -> String {
-    let dollars = credits as f64 / 100.0;
+    let dollars = credits as f64 / 100.0 / 1e6;
     format!("${:.2}", dollars)
 }
