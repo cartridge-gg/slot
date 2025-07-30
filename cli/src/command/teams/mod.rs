@@ -1,12 +1,14 @@
 use self::members::{TeamAddArgs, TeamListArgs, TeamRemoveArgs};
 use crate::command::teams::create::CreateTeamArgs;
 use crate::command::teams::delete::DeleteTeamArgs;
+use crate::command::teams::invoices::InvoicesArgs;
 use crate::command::teams::update::UpdateTeamArgs;
 use anyhow::Result;
 use clap::{Args, Subcommand};
 
 mod create;
 mod delete;
+mod invoices;
 mod members;
 mod update;
 
@@ -38,6 +40,9 @@ pub enum TeamsCommands {
 
     #[command(about = "Remove a team member.")]
     Remove(TeamRemoveArgs),
+
+    #[command(about = "List team invoices.")]
+    Invoices(InvoicesArgs),
 }
 
 impl Teams {
@@ -49,6 +54,7 @@ impl Teams {
             TeamsCommands::Create(args) => args.run(self.name.clone()).await,
             TeamsCommands::Update(args) => args.run(self.name.clone()).await,
             TeamsCommands::Delete(args) => args.run(self.name.clone()).await,
+            TeamsCommands::Invoices(args) => args.run(self.name.clone()).await,
         }
     }
 }
