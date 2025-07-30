@@ -135,6 +135,9 @@ pub(crate) fn warn_checks(config_path: &std::path::Path) -> Result<()> {
                     println!("⚠️  Warning: 'events_chunk_size' option found in config file but is ignored and overridden in slot.");
                 }
             }
+            if parsed.get("metrics").is_some() {
+                println!("⚠️  Warning: 'metrics' section found in config file but is ignored and overridden in slot. Metrics are always collected and available at /metrics of your slot deployment URL.");
+            }
         }
     }
     Ok(())
