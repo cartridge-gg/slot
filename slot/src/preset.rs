@@ -117,7 +117,7 @@ pub struct PaymasterPolicyInput {
     #[serde(rename = "contractAddress")]
     pub contract_address: String,
 
-    #[serde(rename = "entryPoint")]
+    #[serde(rename = "entrypoint")]
     pub entry_point: String,
 
     pub predicate: Option<Predicate>,
