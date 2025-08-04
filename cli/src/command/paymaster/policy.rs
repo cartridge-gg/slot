@@ -2,7 +2,7 @@ use anyhow::{Context, Result};
 use clap::{Args, Subcommand};
 use slot::api::Client;
 use slot::credential::Credentials;
-use slot::graphql::paymaster::add_policies::PolicyInput as AddPolicyInput;
+use slot::graphql::paymaster::add_policies::{PolicyInput as AddPolicyInput, PolicyPredicateInput};
 use slot::graphql::paymaster::remove_policy::PolicyInput as RemovePolicyInput;
 use slot::graphql::paymaster::{add_policies, list_policies, remove_all_policies, remove_policy};
 use slot::graphql::paymaster::{AddPolicies, ListPolicies, RemoveAllPolicies, RemovePolicy};
@@ -89,6 +89,7 @@ impl PolicyCmd {
             policies: vec![AddPolicyInput {
                 contract_address: args.contract.clone(),
                 entry_point: args.entrypoint.clone(),
+                predicate: None,
             }],
         };
         let request_body = AddPolicies::build_query(variables);
@@ -123,6 +124,10 @@ impl PolicyCmd {
             .map(|p| AddPolicyInput {
                 contract_address: p.contract_address,
                 entry_point: p.entry_point,
+                predicate: p.predicate.map(|pred| PolicyPredicateInput {
+                    address: pred.address,
+                    entrypoint: pred.entrypoint,
+                }),
             })
             .collect();
 
@@ -163,6 +168,10 @@ impl PolicyCmd {
             .map(|p| AddPolicyInput {
                 contract_address: p.contract_address,
                 entry_point: p.entry_point,
+                predicate: p.predicate.map(|pred| PolicyPredicateInput {
+                    address: pred.address,
+                    entrypoint: pred.entrypoint,
+                }),
             })
             .collect();
 
@@ -201,6 +210,7 @@ impl PolicyCmd {
             policy: RemovePolicyInput {
                 contract_address: args.contract.clone(),
                 entry_point: args.entrypoint.clone(),
+                predicate: None,
             },
         };
         let request_body = RemovePolicy::build_query(variables);

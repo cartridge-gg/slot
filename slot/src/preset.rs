@@ -6,6 +6,12 @@ use std::collections::HashMap;
 const CONFIG_BASE_URL: &str = "https://static.cartridge.gg/presets";
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct Predicate {
+    pub address: String,
+    pub entrypoint: String,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Method {
     pub name: Option<String>,
     pub description: Option<String>,
@@ -14,6 +20,7 @@ pub struct Method {
     pub is_required: bool,
     #[serde(default, rename = "isPaymastered")]
     pub is_paymastered: bool,
+    pub predicate: Option<Predicate>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -95,6 +102,7 @@ pub fn extract_paymaster_policies(
                     policies.push(PaymasterPolicyInput {
                         contract_address: contract_address.clone(),
                         entry_point: method.entrypoint.clone(),
+                        predicate: method.predicate.clone(),
                     });
                 }
             }
@@ -111,4 +119,6 @@ pub struct PaymasterPolicyInput {
 
     #[serde(rename = "entrypoint")]
     pub entry_point: String,
+
+    pub predicate: Option<Predicate>,
 }
