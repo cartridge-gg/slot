@@ -61,27 +61,27 @@ impl InvoicesArgs {
 
                 table.add_row(vec![Cell::new("Month"), Cell::new(&node.month)]);
                 table.add_row(vec![
-                    Cell::new("Total Credits"),
+                    Cell::new("Total Credits (top up + reimbursement)"),
                     Cell::new(format_credits(node.total_credits)),
                 ]);
                 table.add_row(vec![
-                    Cell::new("Total Debits"),
-                    Cell::new(format_credits(node.total_debits)),
-                ]);
-                table.add_row(vec![
-                    Cell::new("Slot Debits"),
-                    Cell::new(format_credits(node.slot_debits)),
-                ]);
-                table.add_row(vec![
-                    Cell::new("Paymaster Debits"),
-                    Cell::new(format_credits(node.paymaster_debits)),
-                ]);
-                table.add_row(vec![
-                    Cell::new("Incubator Credits"),
+                    Cell::new(" -> Incubator Credits"),
                     Cell::new(format_credits(node.incubator_credits)),
                 ]);
                 table.add_row(vec![
-                    Cell::new("Net Amount"),
+                    Cell::new("Debits (slot + paymaster)"),
+                    Cell::new(format_credits(node.total_debits)),
+                ]);
+                table.add_row(vec![
+                    Cell::new(" -> Slot Debits"),
+                    Cell::new(format_credits(node.slot_debits)),
+                ]);
+                table.add_row(vec![
+                    Cell::new(" -> Paymaster Debits"),
+                    Cell::new(format_credits(node.paymaster_debits)),
+                ]);
+                table.add_row(vec![
+                    Cell::new("Net Amount Paid"),
                     Cell::new(format_credits(node.net_amount)),
                 ]);
                 table.add_row(vec![
