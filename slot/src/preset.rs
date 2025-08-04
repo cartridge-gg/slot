@@ -16,9 +16,9 @@ pub struct Method {
     pub name: Option<String>,
     pub description: Option<String>,
     pub entrypoint: String,
-    #[serde(default)]
+    #[serde(default, rename = "isRequired")]
     pub is_required: bool,
-    #[serde(default)]
+    #[serde(default, rename = "isPaymastered")]
     pub is_paymastered: bool,
     pub predicate: Option<Predicate>,
 }
