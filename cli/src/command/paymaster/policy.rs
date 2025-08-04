@@ -46,7 +46,7 @@ enum PolicySubcommand {
 struct AddJsonPolicyArgs {
     #[arg(
         long,
-        help = "Path to a JSON file containing an array of policies to add. Each policy should have 'contractAddress', 'entryPoint', and 'selector'."
+        help = "Path to a JSON file containing an array of policies to add. Each policy should have 'contractAddress', 'entrypoint', and 'selector'."
     )]
     file: PathBuf,
 }
