@@ -12,6 +12,19 @@ pub struct Predicate {
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
+#[serde(untagged)]
+pub enum PaymasterConfig {
+    Bool(bool),
+    Predicate(Predicate),
+}
+
+impl Default for PaymasterConfig {
+    fn default() -> Self {
+        PaymasterConfig::Bool(false)
+    }
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Method {
     pub name: Option<String>,
     pub description: Option<String>,
@@ -19,7 +32,7 @@ pub struct Method {
     #[serde(default, rename = "isRequired")]
     pub is_required: bool,
     #[serde(default, rename = "isPaymastered")]
-    pub is_paymastered: bool,
+    pub is_paymastered: PaymasterConfig,
     pub predicate: Option<Predicate>,
 }
 
@@ -98,12 +111,24 @@ pub fn extract_paymaster_policies(
     if let Some(chain_policies) = config.chains.get(chain_id) {
         for (contract_address, contract_policy) in &chain_policies.policies.contracts {
             for method in &contract_policy.methods {
-                if method.is_paymastered {
-                    policies.push(PaymasterPolicyInput {
-                        contract_address: contract_address.clone(),
-                        entry_point: method.entrypoint.clone(),
-                        predicate: method.predicate.clone(),
-                    });
+                match &method.is_paymastered {
+                    PaymasterConfig::Bool(true) => {
+                        policies.push(PaymasterPolicyInput {
+                            contract_address: contract_address.clone(),
+                            entry_point: method.entrypoint.clone(),
+                            predicate: method.predicate.clone(),
+                        });
+                    }
+                    PaymasterConfig::Predicate(predicate) => {
+                        policies.push(PaymasterPolicyInput {
+                            contract_address: contract_address.clone(),
+                            entry_point: method.entrypoint.clone(),
+                            predicate: Some(predicate.clone()),
+                        });
+                    }
+                    PaymasterConfig::Bool(false) => {
+                        // Skip this method - not paymastered
+                    }
                 }
             }
         }
