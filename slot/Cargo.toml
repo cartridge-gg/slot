@@ -26,9 +26,6 @@ starknet.workspace = true
 url.workspace = true
 tempfile = "3.10.1"
 hyper.workspace = true
-# https://github.com/cartridge-gg/controller-rs/pull/26
-account_sdk = { git = "https://github.com/kariy/controller-rs", branch = "feat/rpc0.9" }
-cainome-cairo-serde = { git = "https://github.com/kariy/cainome", branch = "snip12-rpc0.9" }
 base64 = "0.22.1"
 colored = "2.0.0"
 num-bigint = { version = "0.4.6", features = ["serde"] }
@@ -40,6 +37,10 @@ update-informer = { version = "1.1", default-features = false, features = [
 which = "5.0.0"
 dialoguer = "0.11.0"
 regex = "1.10"
+
+# https://github.com/cartridge-gg/controller-rs/pull/26
+account_sdk = { git = "https://github.com/kariy/controller-rs", branch = "feat/rpc0.9" }
+cainome-cairo-serde = { git = "https://github.com/kariy/cainome", branch = "feat/rpc0.9" }
 
 [dev-dependencies]
 assert_matches = "1.5.0"

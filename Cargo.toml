@@ -23,4 +23,4 @@ thiserror = "1.0.32"
 url = "2.2.2"
 num-bigint = "0.4.3"
 
-starknet = { git = "https://github.com/xJonathanLEI/starknet-rs", rev = "993a708551f87bcfbf7fdf33f796b01f7521a634" }
+starknet = "0.17.0-rc.2"
