@@ -50,6 +50,53 @@ dependencies = [
 ]
 
 [[package]]
+name = "account_sdk"
+version = "0.1.0"
+source = "git+https://github.com/cartridge-gg/controller-rs?rev=242e7bd#242e7bd5cc7835151c5bf6dd659c72048bb06467"
+dependencies = [
+ "alloy-primitives",
+ "alloy-signer 0.12.6",
+ "anyhow",
+ "async-trait",
+ "auto_impl",
+ "cainome 0.9.1",
+ "cainome-cairo-serde 0.3.0 (git+https://github.com/cartridge-gg/cainome?rev=7d60de1)",
+ "chrono",
+ "ecdsa",
+ "futures",
+ "graphql_client",
+ "hex",
+ "indexmap 2.8.0",
+ "js-sys",
+ "k256",
+ "lazy_static",
+ "nom",
+ "num-traits",
+ "once_cell",
+ "primitive-types",
+ "rand 0.8.5",
+ "reqwest 0.11.27",
+ "serde",
+ "serde-wasm-bindgen",
+ "serde_json",
+ "serde_with",
+ "starknet",
+ "starknet-crypto 0.7.4",
+ "starknet-types-core",
+ "thiserror 1.0.69",
+ "tokio",
+ "toml",
+ "tsify-next",
+ "u256-literal",
+ "url",
+ "urlencoding",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "wasm-bindgen-test",
+ "web-sys",
+]
+
+[[package]]
 name = "addr2line"
 version = "0.24.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5949,7 +5996,7 @@ name = "katana-slot-controller"
 version = "1.6.3"
 source = "git+https://github.com/dojoengine/katana?branch=rpc/v0.9#5325d11c05e0a9a71270cc2a0d3f5b1efce039e1"
 dependencies = [
- "account_sdk",
+ "account_sdk 0.1.0 (git+https://github.com/kariy/controller-rs?branch=feat/rpc0.9)",
  "katana-primitives",
 ]
 
@@ -9083,7 +9130,7 @@ dependencies = [
 name = "slot"
 version = "0.49.1"
 dependencies = [
- "account_sdk",
+ "account_sdk 0.1.0 (git+https://github.com/cartridge-gg/controller-rs?rev=242e7bd)",
  "anyhow",
  "assert_matches",
  "axum 0.7.9",

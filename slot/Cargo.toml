@@ -38,8 +38,7 @@ which = "5.0.0"
 dialoguer = "0.11.0"
 regex = "1.10"
 
-# https://github.com/cartridge-gg/controller-rs/pull/26
-account_sdk = { git = "https://github.com/kariy/controller-rs", branch = "feat/rpc0.9" }
+account_sdk = { git = "https://github.com/cartridge-gg/controller-rs", rev = "242e7bd" }
 cainome-cairo-serde = { git = "https://github.com/cartridge-gg/cainome", rev = "7d60de1" }
 
 [dev-dependencies]
