@@ -1,0 +1,29 @@
+# Mutation to create a new merkle drop
+mutation CreateMerkleDrop(
+  $key: String!,
+  $network: String!,
+  $description: String,
+  $contract: String!,
+  $entrypoint: String!,
+  $args: [String!],
+  $claims: [MerkleClaimInput!]!
+) {
+  createMerkleDrop(
+    key: $key,
+    network: $network,
+    description: $description,
+    contract: $contract,
+    entrypoint: $entrypoint,
+    args: $args,
+    claims: $claims
+  ) {
+    id
+    description
+    network
+    contract
+    entrypoint
+    args
+    merkleRoot
+    createdAt
+  }
+}

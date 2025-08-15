@@ -1,6 +1,7 @@
 use anyhow::{Context, Result};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use std::collections::HashMap;
 
 const CONFIG_BASE_URL: &str = "https://static.cartridge.gg/presets";
@@ -146,4 +147,106 @@ pub struct PaymasterPolicyInput {
     pub entry_point: String,
 
     pub predicate: Option<Predicate>,
+}
+
+// Merkle drop related structures
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct MerkleDropConfig {
+    pub description: Option<String>,
+    pub network: String,
+    pub contract: String,
+    pub entrypoint: String,
+    pub args: Option<Vec<String>>,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct PresetMerkleDrops {
+    pub merkledrops: HashMap<String, MerkleDropConfig>,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct PresetChainConfig {
+    pub policies: SessionPolicies,
+    #[serde(flatten)]
+    pub merkledrops: PresetMerkleDrops,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct PresetConfig {
+    pub chains: HashMap<String, PresetChainConfig>,
+}
+
+// HTTP utility functions for merkle drops
+pub async fn load_preset_config(preset_name: &str) -> Result<PresetConfig> {
+    let client = Client::new();
+    let url = format!("{}/{}/config.json", CONFIG_BASE_URL, preset_name);
+
+    let response = client
+        .get(&url)
+        .send()
+        .await
+        .context(format!("Failed to fetch preset config: {}", preset_name))?;
+
+    if response.status() == 404 {
+        return Err(anyhow::anyhow!(
+            "Preset '{}' not found. Check available presets at https://github.com/cartridge-gg/presets/tree/main/configs",
+            preset_name
+        ));
+    }
+
+    if !response.status().is_success() {
+        return Err(anyhow::anyhow!(
+            "Failed to fetch preset {}: HTTP Status {}",
+            preset_name,
+            response.status()
+        ));
+    }
+
+    let config = response.json::<PresetConfig>().await.context(format!(
+        "Failed to parse preset configuration: {}",
+        preset_name
+    ))?;
+
+    Ok(config)
+}
+
+pub async fn load_preset_merkle_data(preset_name: &str, key: &str) -> Result<Vec<Value>> {
+    let client = Client::new();
+    let url = format!(
+        "{}/{}/merkledrops/{}.json",
+        CONFIG_BASE_URL, preset_name, key
+    );
+
+    let response = client.get(&url).send().await.context(format!(
+        "Failed to fetch merkle data for key '{}' from preset '{}'",
+        key, preset_name
+    ))?;
+
+    if response.status() == 404 {
+        return Err(anyhow::anyhow!(
+            "Merkle drop data '{}' not found in preset '{}'. Check available merkle drops at https://github.com/cartridge-gg/presets/tree/main/configs/{}/merkledrops",
+            key,
+            preset_name,
+            preset_name
+        ));
+    }
+
+    if !response.status().is_success() {
+        return Err(anyhow::anyhow!(
+            "Failed to fetch merkle data {}: HTTP Status {}",
+            key,
+            response.status()
+        ));
+    }
+
+    let merkle_data: Value = response
+        .json()
+        .await
+        .context(format!("Failed to parse merkle data for key: {}", key))?;
+
+    let merkle_array = merkle_data
+        .as_array()
+        .ok_or_else(|| anyhow::anyhow!("Merkle data must be a JSON array"))?;
+
+    Ok(merkle_array.clone())
 }
