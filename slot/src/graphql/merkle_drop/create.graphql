@@ -1,0 +1,35 @@
+# Mutation to create a new merkle drop
+# This assumes the backend will implement createMerkleDrop mutation
+mutation CreateMerkleDrop(
+  $name: String!,
+  $teamName: String!,
+  $description: String!,
+  $network: String!,
+  $contract: String!,
+  $entrypoint: String!,
+  $args: [String!]!,
+  $merkleRoot: String!,
+  $data: String!
+) {
+  createMerkleDrop(
+    name: $name,
+    teamName: $teamName,
+    description: $description,
+    network: $network,
+    contract: $contract,
+    entrypoint: $entrypoint,
+    args: $args,
+    merkleRoot: $merkleRoot,
+    data: $data
+  ) {
+    id
+    name
+    description
+    network
+    contract
+    entrypoint
+    args
+    merkleRoot
+    createdAt
+  }
+}

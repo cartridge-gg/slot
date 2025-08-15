@@ -1,5 +1,6 @@
 pub mod auth;
 pub mod deployments;
+pub mod merkle_drops;
 pub mod paymaster;
 pub mod paymasters;
 pub mod teams;
@@ -10,6 +11,7 @@ use slot::version;
 
 use auth::Auth;
 use deployments::Deployments;
+use merkle_drops::MerkleDropsCmd;
 use paymaster::PaymasterCmd;
 use paymasters::PaymastersCmd;
 use teams::Teams;
@@ -29,6 +31,10 @@ pub enum Command {
     Teams(Teams),
 
     #[command(subcommand)]
+    #[command(about = "Manage merkle drops.", aliases = ["md"])]
+    MerkleDrops(MerkleDropsCmd),
+
+    #[command(subcommand)]
     #[command(about = "Manage paymasters.", aliases = ["ps"])]
     Paymasters(PaymastersCmd),
 
@@ -46,6 +52,7 @@ impl Command {
             Command::Auth(cmd) => cmd.run().await,
             Command::Deployments(cmd) => cmd.run().await,
             Command::Teams(cmd) => cmd.run().await,
+            Command::MerkleDrops(cmd) => cmd.run().await,
             Command::Paymasters(cmd) => cmd.run().await,
             Command::Paymaster(cmd) => cmd.run().await,
         }
