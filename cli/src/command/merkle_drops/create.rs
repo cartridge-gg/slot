@@ -1,5 +1,6 @@
 use anyhow::Result;
-use clap::Args;
+use clap::{Args, Subcommand};
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use slot::api::Client;
 use slot::credential::Credentials;
@@ -12,6 +13,24 @@ use std::path::PathBuf;
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Create merkle drop options")]
 pub struct CreateArgs {
+    #[command(subcommand)]
+    command: CreateSubcommand,
+}
+
+#[derive(Subcommand, Debug)]
+enum CreateSubcommand {
+    #[command(about = "Create merkle drop from individual parameters")]
+    Params(CreateFromParamsArgs),
+
+    #[command(about = "Create merkle drop from a JSON file")]
+    Json(CreateFromJsonArgs),
+
+    #[command(about = "Create merkle drop from a preset")]
+    Preset(CreateFromPresetArgs),
+}
+
+#[derive(Debug, Args)]
+struct CreateFromParamsArgs {
     #[arg(long, help = "Team name to associate the merkle drop with.")]
     team: String,
 
@@ -40,12 +59,61 @@ pub struct CreateArgs {
     data_file: PathBuf,
 }
 
+#[derive(Debug, Args)]
+struct CreateFromJsonArgs {
+    #[arg(
+        long,
+        help = "Path to a JSON file containing merkle drop configuration and data."
+    )]
+    file: PathBuf,
+
+    #[arg(long, help = "Team name to associate the merkle drop with.")]
+    team: String,
+}
+
+#[derive(Debug, Args)]
+struct CreateFromPresetArgs {
+    #[arg(
+        long,
+        help = "The name of the preset to use. https://github.com/cartridge-gg/presets/tree/main/configs"
+    )]
+    name: String,
+
+    #[arg(long, help = "The merkle drop key from the preset to create.")]
+    key: String,
+
+    #[arg(long, help = "Team name to associate the merkle drop with.")]
+    team: String,
+
+    #[arg(
+        long,
+        help = "Network (e.g., SN_MAIN, ETH) to use from preset.",
+        default_value = "SN_MAIN"
+    )]
+    network: String,
+}
+
+use slot::preset::{load_preset_config, load_preset_merkle_data, MerkleDropConfig};
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct MerkleDropJsonConfig {
+    pub key: String,
+    pub config: MerkleDropConfig,
+    pub data: Vec<[serde_json::Value; 2]>,
+}
+
 impl CreateArgs {
     pub async fn run(&self) -> Result<()> {
-        let credentials = Credentials::load()?;
+        match &self.command {
+            CreateSubcommand::Params(args) => Self::run_from_params(args).await,
+            CreateSubcommand::Json(args) => Self::run_from_json(args).await,
+            CreateSubcommand::Preset(args) => Self::run_from_preset(args).await,
+        }
+    }
 
+    async fn run_from_params(args: &CreateFromParamsArgs) -> Result<()> {
         // Read and validate merkle drop data file
-        let data_content = fs::read_to_string(&self.data_file)
+        let data_content = fs::read_to_string(&args.data_file)
             .map_err(|e| anyhow::anyhow!("Failed to read data file: {}", e))?;
 
         let merkle_data: Value = serde_json::from_str(&data_content)
@@ -56,7 +124,94 @@ impl CreateArgs {
             .as_array()
             .ok_or_else(|| anyhow::anyhow!("Data file must contain a JSON array"))?;
 
-        // Validate each entry in the merkle drop data
+        Self::validate_merkle_data(merkle_array)?;
+
+        // Parse args (optional)
+        let args_vec: Option<Vec<String>> = args
+            .args
+            .as_ref()
+            .map(|args| args.split(',').map(|s| s.trim().to_string()).collect());
+
+        // Convert JSON data to structured claims
+        let claims = Self::convert_to_claims(merkle_array)?;
+
+        // Create the merkle drop
+        let config = MerkleDropConfig {
+            description: args.description.clone(),
+            network: args.network.clone(),
+            contract: args.contract.clone(),
+            entrypoint: args.entrypoint.clone(),
+            args: args_vec,
+        };
+
+        Self::create_merkle_drop(&args.team, &args.key, &config, &claims).await
+    }
+
+    async fn run_from_json(args: &CreateFromJsonArgs) -> Result<()> {
+        // Read and parse the JSON configuration file
+        let file_content = fs::read_to_string(&args.file)
+            .map_err(|e| anyhow::anyhow!("Failed to read JSON file: {}", e))?;
+
+        let json_config: MerkleDropJsonConfig = serde_json::from_str(&file_content)
+            .map_err(|e| anyhow::anyhow!("Failed to parse JSON configuration: {}", e))?;
+
+        // Validate the merkle data
+        let merkle_array = json_config
+            .data
+            .iter()
+            .map(|entry| serde_json::Value::Array(vec![entry[0].clone(), entry[1].clone()]))
+            .collect::<Vec<_>>();
+
+        Self::validate_merkle_data(&merkle_array)?;
+
+        // Convert to claims
+        let claims = Self::convert_to_claims(&merkle_array)?;
+
+        // Create the merkle drop using the team from command args and config from JSON
+        Self::create_merkle_drop(&args.team, &json_config.key, &json_config.config, &claims).await
+    }
+
+    async fn run_from_preset(args: &CreateFromPresetArgs) -> Result<()> {
+        // Fetch the preset configuration
+        let preset_config = load_preset_config(&args.name).await?;
+
+        // Get the merkle drop configuration for the specified network
+        let chain_config = preset_config.chains.get(&args.network).ok_or_else(|| {
+            anyhow::anyhow!(
+                "Network '{}' not found in preset '{}'",
+                args.network,
+                args.name
+            )
+        })?;
+
+        let merkle_config = chain_config
+            .merkledrops
+            .merkledrops
+            .get(&args.key)
+            .ok_or_else(|| {
+                anyhow::anyhow!(
+                    "Merkle drop '{}' not found in preset '{}' for network '{}'",
+                    args.key,
+                    args.name,
+                    args.network
+                )
+            })?;
+
+        // Fetch the merkle drop data
+        let merkle_data = load_preset_merkle_data(&args.name, &args.key).await?;
+
+        // Validate the merkle data
+        Self::validate_merkle_data(&merkle_data)?;
+
+        // Convert to claims
+        let claims = Self::convert_to_claims(&merkle_data)?;
+
+        // Create the merkle drop
+        Self::create_merkle_drop(&args.team, &args.key, merkle_config, &claims).await
+    }
+
+    // Helper method to validate merkle drop data format
+    fn validate_merkle_data(merkle_array: &[Value]) -> Result<()> {
         for (index, entry) in merkle_array.iter().enumerate() {
             let entry_array = entry
                 .as_array()
@@ -79,14 +234,13 @@ impl CreateArgs {
                 anyhow::anyhow!("Entry {} second element must be an array", index)
             })?;
         }
+        Ok(())
+    }
 
-        // Parse args (optional)
-        let args_vec: Option<Vec<String>> = self
-            .args
-            .as_ref()
-            .map(|args| args.split(',').map(|s| s.trim().to_string()).collect());
-
-        // Convert JSON data to structured claims
+    // Helper method to convert JSON data to structured claims
+    fn convert_to_claims(
+        merkle_array: &[Value],
+    ) -> Result<Vec<create_merkle_drop::MerkleClaimInput>> {
         let claims: Vec<create_merkle_drop::MerkleClaimInput> = merkle_array
             .iter()
             .map(|entry| {
@@ -102,17 +256,34 @@ impl CreateArgs {
                 create_merkle_drop::MerkleClaimInput { address, token_ids }
             })
             .collect();
+        Ok(claims)
+    }
+
+    // Helper method to create merkle drop via GraphQL
+    async fn create_merkle_drop(
+        team: &str,
+        key: &str,
+        config: &MerkleDropConfig,
+        claims: &[create_merkle_drop::MerkleClaimInput],
+    ) -> Result<()> {
+        let credentials = Credentials::load()?;
 
         // Prepare GraphQL variables
         let variables = create_merkle_drop::Variables {
-            team_name: self.team.clone(),
-            key: self.key.clone(),
-            network: self.network.clone(),
-            description: self.description.clone(),
-            contract: self.contract.clone(),
-            entrypoint: self.entrypoint.clone(),
-            args: args_vec.clone(),
-            claims,
+            team_name: team.to_string(),
+            key: key.to_string(),
+            network: config.network.clone(),
+            description: config.description.clone(),
+            contract: config.contract.clone(),
+            entrypoint: config.entrypoint.clone(),
+            args: config.args.clone(),
+            claims: claims
+                .iter()
+                .map(|claim| create_merkle_drop::MerkleClaimInput {
+                    address: claim.address.clone(),
+                    token_ids: claim.token_ids.clone(),
+                })
+                .collect(),
         };
 
         let request_body = CreateMerkleDrop::build_query(variables);
@@ -128,8 +299,8 @@ impl CreateArgs {
 
                 println!("🏢 Details:");
                 println!("  • ID: {}", data.create_merkle_drop.id);
-                println!("  • Team: {}", self.team);
-                println!("  • Key: {}", self.key);
+                println!("  • Team: {}", team);
+                println!("  • Key: {}", key);
                 println!(
                     "  • Description: {}",
                     data.create_merkle_drop
@@ -146,7 +317,7 @@ impl CreateArgs {
 
                 println!("\n🌳 Merkle Details:");
                 println!("  • Root: {}", data.create_merkle_drop.merkle_root);
-                println!("  • Entries: {}", merkle_array.len());
+                println!("  • Entries: {}", claims.len());
                 println!("  • Created: {}", data.create_merkle_drop.created_at);
 
                 std::result::Result::Ok(())
@@ -164,24 +335,24 @@ impl CreateArgs {
                     println!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
                     println!("🏢 Details:");
-                    println!("  • Team: {}", self.team);
-                    println!("  • Key: {}", self.key);
+                    println!("  • Team: {}", team);
+                    println!("  • Key: {}", key);
                     println!(
                         "  • Description: {}",
-                        self.description.as_deref().unwrap_or("N/A")
+                        config.description.as_deref().unwrap_or("N/A")
                     );
 
                     println!("\n🔗 Contract Details:");
-                    println!("  • Network: {}", self.network);
-                    println!("  • Contract: {}", self.contract);
-                    println!("  • Entrypoint: {}", self.entrypoint);
+                    println!("  • Network: {}", config.network);
+                    println!("  • Contract: {}", config.contract);
+                    println!("  • Entrypoint: {}", config.entrypoint);
                     println!(
                         "  • Args: {:?}",
-                        args_vec.as_ref().unwrap_or(&vec!["None".to_string()])
+                        config.args.as_ref().unwrap_or(&vec!["None".to_string()])
                     );
 
                     println!("\n🌳 Merkle Details:");
-                    println!("  • Entries: {}", merkle_array.len());
+                    println!("  • Entries: {}", claims.len());
 
                     println!("\n📄 Data file validation: ✅ Passed");
                     println!("  • File format: Valid JSON array");
