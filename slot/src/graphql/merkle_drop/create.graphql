@@ -2,7 +2,7 @@
 mutation CreateMerkleDrop(
   $teamName: String!,
   $key: String!,
-  $name: String!,
+  $name: String,
   $network: String!,
   $description: String,
   $contract: String!,

@@ -13,7 +13,7 @@ use std::path::PathBuf;
 #[command(next_help_heading = "Create merkle drop options")]
 pub struct CreateArgs {
     #[arg(long, help = "Name of the merkle drop.")]
-    name: String,
+    name: Option<String>,
 
     #[arg(long, help = "Team name to associate the merkle drop with.")]
     team: String,
@@ -132,7 +132,10 @@ impl CreateArgs {
 
                 println!("🏢 Details:");
                 println!("  • ID: {}", data.create_merkle_drop.id);
-                println!("  • Name: {}", data.create_merkle_drop.name);
+                println!(
+                    "  • Name: {}",
+                    data.create_merkle_drop.name.as_deref().unwrap_or("N/A")
+                );
                 println!("  • Team: {}", self.team);
                 println!("  • Key: {}", self.key);
                 println!(
@@ -169,7 +172,7 @@ impl CreateArgs {
                     println!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
                     println!("🏢 Details:");
-                    println!("  • Name: {}", self.name);
+                    println!("  • Name: {}", self.name.as_deref().unwrap_or("N/A"));
                     println!("  • Team: {}", self.team);
                     println!("  • Key: {}", self.key);
                     println!(
