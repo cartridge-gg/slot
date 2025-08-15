@@ -31,8 +31,8 @@ enum CreateSubcommand {
 
 #[derive(Debug, Args)]
 struct CreateFromParamsArgs {
-    #[arg(long, help = "Unique key for the merkle drop.")]
-    key: String,
+    #[arg(long, help = "Unique name for the merkle drop.")]
+    name: String,
 
     #[arg(long, help = "Description of the merkle drop.")]
     description: Option<String>,
@@ -69,12 +69,12 @@ struct CreateFromJsonArgs {
 struct CreateFromPresetArgs {
     #[arg(
         long,
-        help = "The name of the preset to use. https://github.com/cartridge-gg/presets/tree/main/configs"
+        help = "The project/preset to use. https://github.com/cartridge-gg/presets/tree/main/configs"
     )]
-    name: String,
+    project: String,
 
-    #[arg(long, help = "The merkle drop key from the preset to create.")]
-    key: String,
+    #[arg(long, help = "The merkle drop name from the preset to create.")]
+    name: String,
 
     #[arg(
         long,
@@ -88,7 +88,7 @@ use slot::preset::{load_preset_config, load_preset_merkle_data, MerkleDropConfig
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct MerkleDropJsonConfig {
-    pub key: String,
+    pub name: String,
     pub config: MerkleDropConfig,
     pub data: Vec<[serde_json::Value; 2]>,
 }
@@ -135,7 +135,7 @@ impl CreateArgs {
             args: args_vec,
         };
 
-        Self::create_merkle_drop(&args.key, &config, &claims).await
+        Self::create_merkle_drop(&args.name, &config, &claims).await
     }
 
     async fn run_from_json(args: &CreateFromJsonArgs) -> Result<()> {
@@ -159,37 +159,37 @@ impl CreateArgs {
         let claims = Self::convert_to_claims(&merkle_array)?;
 
         // Create the merkle drop using the team from command args and config from JSON
-        Self::create_merkle_drop(&json_config.key, &json_config.config, &claims).await
+        Self::create_merkle_drop(&json_config.name, &json_config.config, &claims).await
     }
 
     async fn run_from_preset(args: &CreateFromPresetArgs) -> Result<()> {
         // Fetch the preset configuration
-        let preset_config = load_preset_config(&args.name).await?;
+        let preset_config = load_preset_config(&args.project).await?;
 
         // Get the merkle drop configuration for the specified network
         let chain_config = preset_config.chains.get(&args.network).ok_or_else(|| {
             anyhow::anyhow!(
                 "Network '{}' not found in preset '{}'",
                 args.network,
-                args.name
+                args.project
             )
         })?;
 
         let merkle_config = chain_config
             .merkledrops
             .merkledrops
-            .get(&args.key)
+            .get(&args.name)
             .ok_or_else(|| {
                 anyhow::anyhow!(
                     "Merkle drop '{}' not found in preset '{}' for network '{}'",
-                    args.key,
                     args.name,
+                    args.project,
                     args.network
                 )
             })?;
 
         // Fetch the merkle drop data
-        let merkle_data = load_preset_merkle_data(&args.name, &args.key).await?;
+        let merkle_data = load_preset_merkle_data(&args.project, &args.name).await?;
 
         // Validate the merkle data
         Self::validate_merkle_data(&merkle_data)?;
@@ -198,7 +198,7 @@ impl CreateArgs {
         let claims = Self::convert_to_claims(&merkle_data)?;
 
         // Create the merkle drop
-        Self::create_merkle_drop(&args.key, merkle_config, &claims).await
+        Self::create_merkle_drop(&args.name, merkle_config, &claims).await
     }
 
     // Helper method to validate merkle drop data format
@@ -288,7 +288,7 @@ impl CreateArgs {
 
                 println!("🏢 Details:");
                 println!("  • ID: {}", data.create_merkle_drop.id);
-                println!("  • Key: {}", key);
+                println!("  • Name: {}", key);
                 println!(
                     "  • Description: {}",
                     data.create_merkle_drop
@@ -323,7 +323,7 @@ impl CreateArgs {
                     println!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
                     println!("🏢 Details:");
-                    println!("  • Key: {}", key);
+                    println!("  • Name: {}", key);
                     println!(
                         "  • Description: {}",
                         config.description.as_deref().unwrap_or("N/A")

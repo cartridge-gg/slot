@@ -30,8 +30,7 @@ slot merkle-drops create params [OPTIONS]
 
 ##### Required Parameters
 
-- `--team <TEAM>` - Team name to associate the merkle drop with
-- `--key <KEY>` - Unique key for the merkle drop
+- `--name <NAME>` - Unique name for the merkle drop
 - `--network <NETWORK>` - Network (e.g., ETH, STARKNET)
 - `--contract <CONTRACT>` - Contract address
 - `--entrypoint <ENTRYPOINT>` - Entrypoint address
@@ -60,14 +59,13 @@ slot merkle-drops create json --file <CONFIG_FILE> --team <TEAM>
 Create a merkle drop using a community preset configuration.
 
 ```bash
-slot merkle-drops create preset --name <PRESET> --key <KEY> --team <TEAM> [--network <NETWORK>]
+slot merkle-drops create preset --project <PROJECT> --name <NAME> [--network <NETWORK>]
 ```
 
 ##### Required Parameters
 
-- `--name <PRESET>` - Preset name from [cartridge-gg/presets](https://github.com/cartridge-gg/presets/tree/main/configs)
-- `--key <KEY>` - Merkle drop key from the preset
-- `--team <TEAM>` - Team name to associate the merkle drop with
+- `--project <PROJECT>` - Project/preset name from [cartridge-gg/presets](https://github.com/cartridge-gg/presets/tree/main/configs)
+- `--name <NAME>` - Merkle drop name from the preset
 
 ##### Optional Parameters
 
@@ -104,7 +102,7 @@ For the `json` method, the configuration file must contain both the merkle drop 
 
 ```json
 {
-  "key": "my-drop-2024",
+  "name": "my-drop-2024",
   "config": {
     "description": "Community rewards for active users",
     "network": "SN_MAIN",
@@ -143,8 +141,7 @@ Available presets include:
 
 ```bash
 slot merkle-drops create params \
-  --team "dope-team" \
-  --key "dope-drop-2024-q1" \
+  --name "dope-drop-2024-q1" \
   --description "Dope owners can claim their rewards" \
   --network "ETH" \
   --contract "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
@@ -157,8 +154,7 @@ slot merkle-drops create params \
 
 ```bash
 slot md c params \
-  --team "community-dao" \
-  --key "rewards-2024" \
+  --name "rewards-2024" \
   --network "STARKNET" \
   --contract "0x123..." \
   --entrypoint "0x456..." \
@@ -169,8 +165,7 @@ slot md c params \
 
 ```bash
 slot merkle-drops create params \
-  --team "test-team" \
-  --key "simple-001" \
+  --name "simple-001" \
   --network "ETH" \
   --contract "0x123..." \
   --entrypoint "0x456..." \
@@ -211,9 +206,8 @@ Where `complete-drop-config.json` contains:
 
 ```bash
 slot merkle-drops create preset \
-  --name "dope-wars" \
-  --key "dope" \
-  --team "my-team" \
+  --project "dope-wars" \
+  --name "dope" \
   --network "SN_MAIN"
 ```
 
@@ -221,18 +215,16 @@ slot merkle-drops create preset \
 
 ```bash
 slot merkle-drops create preset \
-  --name "my-community-preset" \
-  --key "season-1-rewards" \
-  --team "community-dao"
+  --project "my-community-preset" \
+  --name "season-1-rewards"
 ```
 
 #### Preset with Different Network
 
 ```bash
 slot merkle-drops create preset \
-  --name "dope-wars" \
-  --key "dope" \
-  --team "my-team" \
+  --project "dope-wars" \
+  --name "dope" \
   --network "ETH"
 ```
 
@@ -245,7 +237,7 @@ Upon successful creation, the command displays:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🏢 Details:
   • ID: merkle_drop_12345
-  • Key: dope-drop-2024-q1
+  • Name: dope-drop-2024-q1
   • Description: Dope owners can claim their rewards
 
 🔗 Contract Details:
@@ -282,7 +274,7 @@ Entry 0 must have exactly 2 elements: [address, token_ids]
 ### Missing Required Parameters
 ```bash
 error: the following required arguments were not provided:
-  --key <KEY>
+  --name <NAME>
   --network <NETWORK>
 ```
 
@@ -316,7 +308,7 @@ To find available community presets:
 1. Browse the [presets repository](https://github.com/cartridge-gg/presets/tree/main/configs)
 2. Each folder represents a preset (e.g., `dope-wars`)
 3. Check `config.json` for available merkle drops under the `merkledrops` section
-4. Use the merkle drop key from the configuration
+4. Use the merkle drop name from the configuration
 
 ### Preset Structure Example
 
@@ -325,12 +317,12 @@ Preset `dope-wars` contains:
 configs/dope-wars/
 ├── config.json                 # Main preset configuration
 └── merkledrops/
-    └── dope.json              # Merkle drop data for key "dope"
+    └── dope.json              # Merkle drop data for name "dope"
 ```
 
 ## Best Practices
 
-1. **Unique Keys**: Always use unique keys for each merkle drop to avoid conflicts
+1. **Unique Names**: Always use unique names for each merkle drop to avoid conflicts
 2. **Method Selection**: 
    - Use `params` for one-off drops with custom configuration
    - Use `json` for complex drops with version control needs
