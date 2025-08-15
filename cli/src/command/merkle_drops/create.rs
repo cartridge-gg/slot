@@ -83,9 +83,6 @@ impl CreateArgs {
             })?;
         }
 
-        // Calculate merkle root (simplified - in reality this would be more complex)
-        let merkle_root = format!("0x{:064x}", merkle_array.len()); // Placeholder implementation
-
         // Parse args (optional)
         let args_vec: Option<Vec<String>> = self
             .args
@@ -119,7 +116,6 @@ impl CreateArgs {
             contract: self.contract.clone(),
             entrypoint: self.entrypoint.clone(),
             args: args_vec.clone(),
-            merkle_root: merkle_root.clone(),
             claims,
         };
 
@@ -191,7 +187,6 @@ impl CreateArgs {
                     );
 
                     println!("\n🌳 Merkle Details:");
-                    println!("  • Root: {}", merkle_root);
                     println!("  • Entries: {}", merkle_array.len());
 
                     println!("\n📄 Data file validation: ✅ Passed");

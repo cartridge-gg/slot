@@ -8,7 +8,6 @@ mutation CreateMerkleDrop(
   $contract: String!,
   $entrypoint: String!,
   $args: [String!],
-  $merkleRoot: String!,
   $claims: [MerkleClaimInput!]!
 ) {
   createMerkleDrop(
@@ -20,7 +19,6 @@ mutation CreateMerkleDrop(
     contract: $contract,
     entrypoint: $entrypoint,
     args: $args,
-    merkleRoot: $merkleRoot,
     claims: $claims
   ) {
     id

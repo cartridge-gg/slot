@@ -20986,20 +20986,6 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "merkleRoot",
-                  "type": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String",
-                      "ofType": null
-                    }
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "description": null,
                   "name": "claims",
                   "type": {
                     "kind": "NON_NULL",

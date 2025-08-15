@@ -6,6 +6,8 @@ The Slot CLI provides commands to create and manage merkle drops for token distr
 
 Merkle drops are an efficient way to distribute tokens to a large number of recipients while minimizing gas costs. The system uses a merkle tree to prove eligibility for claiming tokens without storing all recipient data on-chain.
 
+The merkle root is automatically calculated server-side from the provided claims data, ensuring consistency and eliminating the need for manual merkle tree generation.
+
 ## Commands
 
 ### Create Merkle Drop
@@ -120,7 +122,7 @@ Upon successful creation, the command displays:
   • Args: ["TOKEN_ID", "MERKLE_PROOF"]
 
 🌳 Merkle Details:
-  • Root: 0x8f7c9e2b1a5d4e8f3c6b9a2d7e1f4c8b5e9a3d7c1f8e4b2a6d9c3f7e1a5b8d2c6f
+  • Root: 0x8f7c9e2b1a5d4e8f3c6b9a2d7e1f4c8b5e9a3d7c1f8e4b2a6d9c3f7e1a5b8d2c6f (auto-generated)
   • Entries: 3
   • Created: 2024-08-15T10:30:00Z
 ```
