@@ -31,9 +31,6 @@ enum CreateSubcommand {
 
 #[derive(Debug, Args)]
 struct CreateFromParamsArgs {
-    #[arg(long, help = "Team name to associate the merkle drop with.")]
-    team: String,
-
     #[arg(long, help = "Unique key for the merkle drop.")]
     key: String,
 
@@ -66,9 +63,6 @@ struct CreateFromJsonArgs {
         help = "Path to a JSON file containing merkle drop configuration and data."
     )]
     file: PathBuf,
-
-    #[arg(long, help = "Team name to associate the merkle drop with.")]
-    team: String,
 }
 
 #[derive(Debug, Args)]
@@ -81,9 +75,6 @@ struct CreateFromPresetArgs {
 
     #[arg(long, help = "The merkle drop key from the preset to create.")]
     key: String,
-
-    #[arg(long, help = "Team name to associate the merkle drop with.")]
-    team: String,
 
     #[arg(
         long,
@@ -144,7 +135,7 @@ impl CreateArgs {
             args: args_vec,
         };
 
-        Self::create_merkle_drop(&args.team, &args.key, &config, &claims).await
+        Self::create_merkle_drop(&args.key, &config, &claims).await
     }
 
     async fn run_from_json(args: &CreateFromJsonArgs) -> Result<()> {
@@ -168,7 +159,7 @@ impl CreateArgs {
         let claims = Self::convert_to_claims(&merkle_array)?;
 
         // Create the merkle drop using the team from command args and config from JSON
-        Self::create_merkle_drop(&args.team, &json_config.key, &json_config.config, &claims).await
+        Self::create_merkle_drop(&json_config.key, &json_config.config, &claims).await
     }
 
     async fn run_from_preset(args: &CreateFromPresetArgs) -> Result<()> {
@@ -207,7 +198,7 @@ impl CreateArgs {
         let claims = Self::convert_to_claims(&merkle_data)?;
 
         // Create the merkle drop
-        Self::create_merkle_drop(&args.team, &args.key, merkle_config, &claims).await
+        Self::create_merkle_drop(&args.key, merkle_config, &claims).await
     }
 
     // Helper method to validate merkle drop data format
@@ -261,7 +252,6 @@ impl CreateArgs {
 
     // Helper method to create merkle drop via GraphQL
     async fn create_merkle_drop(
-        team: &str,
         key: &str,
         config: &MerkleDropConfig,
         claims: &[create_merkle_drop::MerkleClaimInput],
@@ -270,7 +260,6 @@ impl CreateArgs {
 
         // Prepare GraphQL variables
         let variables = create_merkle_drop::Variables {
-            team_name: team.to_string(),
             key: key.to_string(),
             network: config.network.clone(),
             description: config.description.clone(),
@@ -299,7 +288,6 @@ impl CreateArgs {
 
                 println!("🏢 Details:");
                 println!("  • ID: {}", data.create_merkle_drop.id);
-                println!("  • Team: {}", team);
                 println!("  • Key: {}", key);
                 println!(
                     "  • Description: {}",
@@ -335,7 +323,6 @@ impl CreateArgs {
                     println!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
                     println!("🏢 Details:");
-                    println!("  • Team: {}", team);
                     println!("  • Key: {}", key);
                     println!(
                         "  • Description: {}",

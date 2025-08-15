@@ -245,7 +245,6 @@ Upon successful creation, the command displays:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🏢 Details:
   • ID: merkle_drop_12345
-  • Team: dope-team
   • Key: dope-drop-2024-q1
   • Description: Dope owners can claim their rewards
 
@@ -283,8 +282,8 @@ Entry 0 must have exactly 2 elements: [address, token_ids]
 ### Missing Required Parameters
 ```bash
 error: the following required arguments were not provided:
-  --team <TEAM>
   --key <KEY>
+  --network <NETWORK>
 ```
 
 ### Preset Not Found
@@ -344,6 +343,5 @@ configs/dope-wars/
 ## Related Commands
 
 - `slot auth login` - Authenticate with Slot API
-- `slot teams` - Manage team/project settings
 
 For more information, see the [Slot CLI documentation](https://docs.cartridge.gg/slot).
