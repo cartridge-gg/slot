@@ -15,11 +15,14 @@ pub struct CreateArgs {
     #[arg(long, help = "Name of the merkle drop.")]
     name: String,
 
-    #[arg(long, help = "Team name to associate the merkle drop with.")]
-    team: String,
+    #[arg(long, help = "Project to associate the merkle drop with.")]
+    project: String,
+
+    #[arg(long, help = "Unique key for the merkle drop.")]
+    key: String,
 
     #[arg(long, help = "Description of the merkle drop.")]
-    description: String,
+    description: Option<String>,
 
     #[arg(long, help = "Network (e.g., ETH, STARKNET).")]
     network: String,
@@ -30,8 +33,11 @@ pub struct CreateArgs {
     #[arg(long, help = "Entrypoint address.")]
     entrypoint: String,
 
-    #[arg(long, help = "Arguments for the contract call (comma-separated).")]
-    args: String,
+    #[arg(
+        long,
+        help = "Arguments for the contract call (comma-separated, optional)."
+    )]
+    args: Option<String>,
 
     #[arg(long, help = "Path to JSON file containing merkle drop data.")]
     data_file: PathBuf,
@@ -80,20 +86,41 @@ impl CreateArgs {
         // Calculate merkle root (simplified - in reality this would be more complex)
         let merkle_root = format!("0x{:064x}", merkle_array.len()); // Placeholder implementation
 
-        // Parse args
-        let args_vec: Vec<String> = self.args.split(',').map(|s| s.trim().to_string()).collect();
+        // Parse args (optional)
+        let args_vec: Option<Vec<String>> = self
+            .args
+            .as_ref()
+            .map(|args| args.split(',').map(|s| s.trim().to_string()).collect());
+
+        // Convert JSON data to structured claims
+        let claims: Vec<create_merkle_drop::MerkleClaimInput> = merkle_array
+            .iter()
+            .map(|entry| {
+                let entry_array = entry.as_array().unwrap(); // Already validated
+                let address = entry_array[0].as_str().unwrap().to_string(); // Already validated
+                let token_ids: Vec<i64> = entry_array[1]
+                    .as_array()
+                    .unwrap() // Already validated
+                    .iter()
+                    .map(|id| id.as_i64().unwrap_or(0))
+                    .collect();
+
+                create_merkle_drop::MerkleClaimInput { address, token_ids }
+            })
+            .collect();
 
         // Prepare GraphQL variables
         let variables = create_merkle_drop::Variables {
+            project: self.project.clone(),
+            key: self.key.clone(),
             name: self.name.clone(),
-            team_name: self.team.clone(),
-            description: self.description.clone(),
             network: self.network.clone(),
+            description: self.description.clone(),
             contract: self.contract.clone(),
             entrypoint: self.entrypoint.clone(),
             args: args_vec.clone(),
             merkle_root: merkle_root.clone(),
-            data: data_content,
+            claims,
         };
 
         let request_body = CreateMerkleDrop::build_query(variables);
@@ -110,7 +137,8 @@ impl CreateArgs {
                 println!("🏢 Details:");
                 println!("  • ID: {}", data.create_merkle_drop.id);
                 println!("  • Name: {}", data.create_merkle_drop.name);
-                println!("  • Team: {}", self.team);
+                println!("  • Project: {}", self.project);
+                println!("  • Key: {}", self.key);
                 println!(
                     "  • Description: {}",
                     data.create_merkle_drop
@@ -146,14 +174,21 @@ impl CreateArgs {
 
                     println!("🏢 Details:");
                     println!("  • Name: {}", self.name);
-                    println!("  • Team: {}", self.team);
-                    println!("  • Description: {}", self.description);
+                    println!("  • Project: {}", self.project);
+                    println!("  • Key: {}", self.key);
+                    println!(
+                        "  • Description: {}",
+                        self.description.as_deref().unwrap_or("N/A")
+                    );
 
                     println!("\n🔗 Contract Details:");
                     println!("  • Network: {}", self.network);
                     println!("  • Contract: {}", self.contract);
                     println!("  • Entrypoint: {}", self.entrypoint);
-                    println!("  • Args: {:?}", args_vec);
+                    println!(
+                        "  • Args: {:?}",
+                        args_vec.as_ref().unwrap_or(&vec!["None".to_string()])
+                    );
 
                     println!("\n🌳 Merkle Details:");
                     println!("  • Root: {}", merkle_root);

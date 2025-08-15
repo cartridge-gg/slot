@@ -20874,7 +20874,7 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "teamName",
+                  "name": "project",
                   "type": {
                     "kind": "NON_NULL",
                     "name": null,
@@ -30559,7 +30559,7 @@
                 {
                   "defaultValue": null,
                   "description": null,
-                  "name": "teamName",
+                  "name": "project",
                   "type": {
                     "kind": "NON_NULL",
                     "name": null,
