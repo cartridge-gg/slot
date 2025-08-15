@@ -1,6 +1,6 @@
 # Mutation to create a new merkle drop
 mutation CreateMerkleDrop(
-  $project: String!,
+  $teamName: String!,
   $key: String!,
   $name: String!,
   $network: String!,
@@ -11,7 +11,7 @@ mutation CreateMerkleDrop(
   $claims: [MerkleClaimInput!]!
 ) {
   createMerkleDrop(
-    project: $project,
+    teamName: $teamName,
     key: $key,
     name: $name,
     network: $network,

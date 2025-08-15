@@ -23,7 +23,7 @@ slot merkle-drops create [OPTIONS]
 #### Required Parameters
 
 - `--name <NAME>` - Name of the merkle drop
-- `--project <PROJECT>` - Project to associate the merkle drop with
+- `--team <TEAM>` - Team name to associate the merkle drop with
 - `--key <KEY>` - Unique key for the merkle drop
 - `--network <NETWORK>` - Network (e.g., ETH, STARKNET)
 - `--contract <CONTRACT>` - Contract address
@@ -48,7 +48,7 @@ The data file must be a JSON array where each entry contains:
     [1, 5352, 5533, 7443]
   ],
   [
-    "0x1234567890123456789012345678901234567890", 
+    "0x1234567890123456789012345678901234567890",
     [100, 200, 300]
   ],
   [
@@ -65,7 +65,7 @@ The data file must be a JSON array where each entry contains:
 ```bash
 slot merkle-drops create \
   --name "Dope NFT Drop" \
-  --project "dope-project" \
+  --team "dope-team" \
   --key "dope-drop-2024-q1" \
   --description "Dope owners can claim their rewards" \
   --network "ETH" \
@@ -80,7 +80,7 @@ slot merkle-drops create \
 ```bash
 slot md c \
   --name "Community Rewards" \
-  --project "community-dao" \
+  --team "community-dao" \
   --key "rewards-2024" \
   --network "STARKNET" \
   --contract "0x123..." \
@@ -93,7 +93,7 @@ slot md c \
 ```bash
 slot merkle-drops create \
   --name "Simple Drop" \
-  --project "test-project" \
+  --team "test-team" \
   --key "simple-001" \
   --network "ETH" \
   --contract "0x123..." \
@@ -111,7 +111,7 @@ Upon successful creation, the command displays:
 🏢 Details:
   • ID: merkle_drop_12345
   • Name: Dope NFT Drop
-  • Project: dope-project
+  • Team: dope-team
   • Key: dope-drop-2024-q1
   • Description: Dope owners can claim their rewards
 
@@ -149,7 +149,7 @@ Entry 0 must have exactly 2 elements: [address, token_ids]
 ### Missing Required Parameters
 ```bash
 error: the following required arguments were not provided:
-  --project <PROJECT>
+  --team <TEAM>
   --key <KEY>
 ```
 

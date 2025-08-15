@@ -15,8 +15,8 @@ pub struct CreateArgs {
     #[arg(long, help = "Name of the merkle drop.")]
     name: String,
 
-    #[arg(long, help = "Project to associate the merkle drop with.")]
-    project: String,
+    #[arg(long, help = "Team name to associate the merkle drop with.")]
+    team: String,
 
     #[arg(long, help = "Unique key for the merkle drop.")]
     key: String,
@@ -108,7 +108,7 @@ impl CreateArgs {
 
         // Prepare GraphQL variables
         let variables = create_merkle_drop::Variables {
-            project: self.project.clone(),
+            team_name: self.team.clone(),
             key: self.key.clone(),
             name: self.name.clone(),
             network: self.network.clone(),
@@ -133,7 +133,7 @@ impl CreateArgs {
                 println!("🏢 Details:");
                 println!("  • ID: {}", data.create_merkle_drop.id);
                 println!("  • Name: {}", data.create_merkle_drop.name);
-                println!("  • Project: {}", self.project);
+                println!("  • Team: {}", self.team);
                 println!("  • Key: {}", self.key);
                 println!(
                     "  • Description: {}",
@@ -170,7 +170,7 @@ impl CreateArgs {
 
                     println!("🏢 Details:");
                     println!("  • Name: {}", self.name);
-                    println!("  • Project: {}", self.project);
+                    println!("  • Team: {}", self.team);
                     println!("  • Key: {}", self.key);
                     println!(
                         "  • Description: {}",
