@@ -8,7 +8,6 @@ rust-version.workspace = true
 [dependencies]
 anyhow.workspace = true
 axum.workspace = true
-cainome-cairo-serde = "0.2.0"
 dirs = "5"
 graphql_client.workspace = true
 reqwest = { version = "0.12", default-features = false, features = [
@@ -27,8 +26,6 @@ starknet.workspace = true
 url.workspace = true
 tempfile = "3.10.1"
 hyper.workspace = true
-# https://github.com/cartridge-gg/controller/pull/1549
-account_sdk = { git = "https://github.com/cartridge-gg/controller", rev = "05fe96f4" }
 base64 = "0.22.1"
 colored = "2.0.0"
 num-bigint = { version = "0.4.6", features = ["serde"] }
@@ -40,6 +37,9 @@ update-informer = { version = "1.1", default-features = false, features = [
 which = "5.0.0"
 dialoguer = "0.11.0"
 regex = "1.10"
+
+account_sdk = { git = "https://github.com/cartridge-gg/controller-rs", rev = "242e7bd" }
+cainome-cairo-serde = { git = "https://github.com/cartridge-gg/cainome", rev = "7d60de1" }
 
 [dev-dependencies]
 assert_matches = "1.5.0"

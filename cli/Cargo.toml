@@ -16,13 +16,11 @@ dialoguer = "0.11.0"
 env_logger = "0.11.3"
 log = "0.4"
 graphql_client.workspace = true
-torii-cli = { git = "https://github.com/dojoengine/dojo", branch = "torii-sqlite-types", default-features = false }
+torii-cli = { git = "https://github.com/dojoengine/torii", branch = "feat/rpc0.9", default-features = false }
 
-# Revision that includes the `config` field being public.
-# Should be bumped once a new version is released with this commit:
-# <https://github.com/dojoengine/katana/commit/d9514a9996c51bd8083da9b7fd1029a41480cfdd>
-katana-primitives = { git = "https://github.com/dojoengine/katana", rev = "d615ff05" }
-katana-cli = { git = "https://github.com/dojoengine/katana", rev = "d615ff05", default-features = false, features = [
+# Should be bumped once this PR is merged: <https://github.com/dojoengine/katana/pull/210>
+katana-primitives = { git = "https://github.com/dojoengine/katana", branch = "rpc/v0.9" }
+katana-cli = { git = "https://github.com/dojoengine/katana", branch = "rpc/v0.9", default-features = false, features = [
 	"cartridge",
 ] }
 
