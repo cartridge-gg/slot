@@ -4,11 +4,55 @@ The Slot CLI provides commands to create and manage merkle drops for token distr
 
 ## Overview
 
-Merkle drops are an efficient way to distribute tokens to a large number of recipients while minimizing gas costs. The system uses a merkle tree to prove eligibility for claiming tokens without storing all recipient data on-chain.
+Merkle drops are an efficient way to distribute tokens to a large number of recipients while minimizing gas costs. The system uses a merkle tree to prove eligibility for claiming tokens without storing all recipient data onchain.
 
 The merkle root is automatically calculated server-side from the provided claims data, ensuring consistency and eliminating the need for manual merkle tree generation.
 
 ## Commands
+
+### Build Merkle Tree
+
+Build a merkle tree by querying token holders from an on-chain NFT contract via RPC.
+
+**Aliases:** `slot md b`
+
+```bash
+slot merkle-drops build [OPTIONS]
+```
+
+#### Required Parameters
+
+- `--contract <CONTRACT>` - NFT contract address to query
+- `--rpc-url <RPC_URL>` - Network RPC URL (e.g., https://ethereum-rpc.publicnode.com)
+
+#### Optional Parameters
+
+- `--block-height <BLOCK_HEIGHT>` - Block height to query at (defaults to latest)
+- `--from-id <FROM_ID>` - Starting token ID (default: 1)
+- `--to-id <TO_ID>` - Ending token ID (default: 10000)
+- `--output <OUTPUT>` - Output file path (default: merkle_drop.json)
+- `--delay-ms <DELAY_MS>` - Delay between RPC calls in milliseconds (default: 10)
+
+#### Example
+
+```bash
+# Query Dope Loot holders at a specific block
+slot merkle-drops build \
+  --contract "0x8707276DF042E89669d69A177d3DA7dC78bd8723" \
+  --rpc-url "https://ethereum-rpc.publicnode.com" \
+  --block-height 22728943 \
+  --from-id 1 \
+  --to-id 8000 \
+  --output dope_loot_snapshot.json
+```
+
+The command will:
+1. Query each token ID to find its owner
+2. Build a map of owner addresses to token IDs
+3. Generate a merkle tree using Poseidon hash (root is displayed in console)
+4. Output the claims data in the format: [[address, [token_ids]], ...]
+
+The output file can be directly used with `slot merkle-drops create params --data-file <output>`
 
 ### Create Merkle Drop
 
