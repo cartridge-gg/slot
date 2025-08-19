@@ -7,6 +7,7 @@ pub mod browser;
 pub mod credential;
 pub(crate) mod error;
 pub mod graphql;
+pub mod merkle;
 pub mod preset;
 pub mod read;
 pub mod server;
