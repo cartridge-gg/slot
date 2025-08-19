@@ -4,6 +4,9 @@ use starknet::core::crypto::compute_hash_on_elements;
 use starknet::core::types::Felt;
 use std::collections::HashMap;
 
+/// Type alias for merkle tree result: (root, proofs)
+pub type MerkleTreeResult = (Vec<u8>, HashMap<String, Vec<String>>);
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MerkleClaimData {
     pub address: String,
@@ -42,9 +45,7 @@ fn compute_leaf_hash(address: &str, token_ids: &[i64]) -> Result<Felt> {
 }
 
 /// Build a merkle tree from claim data and return the root and proofs
-pub fn build_merkle_tree(
-    claims: &[MerkleClaimData],
-) -> Result<(Vec<u8>, HashMap<String, Vec<String>>)> {
+pub fn build_merkle_tree(claims: &[MerkleClaimData]) -> Result<MerkleTreeResult> {
     if claims.is_empty() {
         return Err(anyhow::anyhow!("Cannot build merkle tree with no claims"));
     }
@@ -79,12 +80,16 @@ pub fn build_merkle_tree(
 
         for i in (0..current_level.len()).step_by(2) {
             if i + 1 < current_level.len() {
-                // Hash pair of nodes using Poseidon
-                let hash = compute_hash_on_elements(&[current_level[i], current_level[i + 1]]);
+                // Sort the pair before hashing (matching strk-merkle-tree implementation)
+                let mut pair = [current_level[i], current_level[i + 1]];
+                pair.sort();
+                let hash = compute_hash_on_elements(&pair);
                 next_level.push(hash);
             } else {
-                // Odd number of nodes, hash with 0x0 (matching starknet.js implementation)
-                let hash = compute_hash_on_elements(&[current_level[i], Felt::ZERO]);
+                // Odd number of nodes, hash with 0x0 (sorted if necessary)
+                let mut pair = [current_level[i], Felt::ZERO];
+                pair.sort();
+                let hash = compute_hash_on_elements(&pair);
                 next_level.push(hash);
             }
         }
