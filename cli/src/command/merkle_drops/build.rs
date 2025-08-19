@@ -48,7 +48,10 @@ pub struct BuildArgs {
     #[arg(long, help = "Entrypoint address for claiming")]
     entrypoint: String,
 
-    #[arg(long, help = "Block height to query at (optional, defaults to latest)")]
+    #[arg(
+        long,
+        help = "Block height to query at (required for deterministic snapshots)"
+    )]
     block_height: u64,
 
     #[arg(long, help = "Starting token ID (inclusive)", default_value = "1")]
