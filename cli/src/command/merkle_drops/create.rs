@@ -59,8 +59,8 @@ struct CreateFromParamsArgs {
 #[derive(Debug, Args)]
 struct CreateFromJsonArgs {
     #[arg(
-        long,
-        help = "Path to a JSON file containing merkle drop configuration and data."
+        long = "json-file",
+        help = "Path to a JSON file containing merkle drop configuration and data (e.g., output from 'slot merkle-drops build')."
     )]
     file: PathBuf,
 }
@@ -91,6 +91,18 @@ pub struct MerkleDropJsonConfig {
     pub name: String,
     pub config: MerkleDropConfig,
     pub data: Vec<[serde_json::Value; 2]>,
+}
+
+// Structure for JSON output from 'slot merkle-drops build' command
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct MerkleDropBuildOutput {
+    pub name: String,
+    pub network: String,
+    pub description: String,
+    pub claim_contract: String,
+    pub entrypoint: String,
+    pub merkle_root: String,
+    pub snapshot: Vec<Vec<serde_json::Value>>,
 }
 
 impl CreateArgs {
@@ -139,27 +151,69 @@ impl CreateArgs {
     }
 
     async fn run_from_json(args: &CreateFromJsonArgs) -> Result<()> {
-        // Read and parse the JSON configuration file
+        // Read the JSON file
         let file_content = fs::read_to_string(&args.file)
             .map_err(|e| anyhow::anyhow!("Failed to read JSON file: {}", e))?;
 
-        let json_config: MerkleDropJsonConfig = serde_json::from_str(&file_content)
-            .map_err(|e| anyhow::anyhow!("Failed to parse JSON configuration: {}", e))?;
+        // Try to parse as build output format first (from 'slot merkle-drops build')
+        if let Ok(build_output) = serde_json::from_str::<MerkleDropBuildOutput>(&file_content) {
+            // This is output from 'slot merkle-drops build' command
+            println!("Processing merkle drop from build output...");
 
-        // Validate the merkle data
-        let merkle_array = json_config
-            .data
-            .iter()
-            .map(|entry| serde_json::Value::Array(vec![entry[0].clone(), entry[1].clone()]))
-            .collect::<Vec<_>>();
+            // Convert snapshot to the expected format
+            let merkle_array: Vec<Value> = build_output
+                .snapshot
+                .iter()
+                .map(|entry| {
+                    if entry.len() == 2 {
+                        serde_json::Value::Array(vec![entry[0].clone(), entry[1].clone()])
+                    } else {
+                        serde_json::Value::Array(entry.clone())
+                    }
+                })
+                .collect();
 
-        Self::validate_merkle_data(&merkle_array)?;
+            // Validate the merkle data
+            Self::validate_merkle_data(&merkle_array)?;
 
-        // Convert to claims
-        let claims = Self::convert_to_claims(&merkle_array)?;
+            // Convert to claims
+            let claims = Self::convert_to_claims(&merkle_array)?;
 
-        // Create the merkle drop using the team from command args and config from JSON
-        Self::create_merkle_drop(&json_config.name, &json_config.config, &claims).await
+            // Create MerkleDropConfig from build output
+            let config = MerkleDropConfig {
+                description: Some(build_output.description),
+                network: build_output.network,
+                contract: build_output.claim_contract,
+                entrypoint: build_output.entrypoint,
+                args: None, // Build output doesn't include args
+            };
+
+            // Create the merkle drop
+            Self::create_merkle_drop(&build_output.name, &config, &claims).await
+        } else if let Ok(json_config) = serde_json::from_str::<MerkleDropJsonConfig>(&file_content)
+        {
+            // This is the old format with explicit config structure
+            println!("Processing merkle drop from configuration file...");
+
+            // Validate the merkle data
+            let merkle_array = json_config
+                .data
+                .iter()
+                .map(|entry| serde_json::Value::Array(vec![entry[0].clone(), entry[1].clone()]))
+                .collect::<Vec<_>>();
+
+            Self::validate_merkle_data(&merkle_array)?;
+
+            // Convert to claims
+            let claims = Self::convert_to_claims(&merkle_array)?;
+
+            // Create the merkle drop using the config from JSON
+            Self::create_merkle_drop(&json_config.name, &json_config.config, &claims).await
+        } else {
+            Err(anyhow::anyhow!(
+                "Failed to parse JSON file. Expected either output from 'slot merkle-drops build' or a configuration file with 'name', 'config', and 'data' fields."
+            ))
+        }
     }
 
     async fn run_from_preset(args: &CreateFromPresetArgs) -> Result<()> {
