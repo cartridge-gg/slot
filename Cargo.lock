@@ -8883,6 +8883,7 @@ dependencies = [
  "dialoguer",
  "env_logger",
  "ethers",
+ "futures",
  "graphql_client",
  "hex",
  "hyper 1.6.0",

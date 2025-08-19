@@ -32,6 +32,7 @@ slot merkle-drops build [OPTIONS]
 - `--to-id <TO_ID>` - Ending token ID (default: 10000)
 - `--output <OUTPUT>` - Output file path (default: merkle_drop.json)
 - `--delay-ms <DELAY_MS>` - Delay between RPC calls in milliseconds (default: 10)
+- `--concurrency <CONCURRENCY>` - Number of concurrent RPC requests (default: 10)
 
 #### Example
 
@@ -43,11 +44,12 @@ slot merkle-drops build \
   --block-height 22728943 \
   --from-id 1 \
   --to-id 8000 \
+  --concurrency 20 \
   --output dope_loot_snapshot.json
 ```
 
 The command will:
-1. Query each token ID to find its owner
+1. Query token IDs in parallel to find their owners (with configurable concurrency)
 2. Build a map of owner addresses to token IDs
 3. Generate a merkle tree using Poseidon hash (root is displayed in console)
 4. Output the claims data in the format: [[address, [token_ids]], ...]

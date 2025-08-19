@@ -5,10 +5,12 @@ use slot::merkle::{build_merkle_tree, MerkleClaimData};
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
+use tokio::sync::Mutex;
 
 use ethers::prelude::*;
 use ethers::providers::{Http, Provider};
 use ethers::types::{Address, U256};
+use futures::stream::{self, StreamExt};
 
 // Standard ERC721 ABI for ownerOf function
 abigen!(
@@ -52,6 +54,9 @@ pub struct BuildArgs {
         default_value = "10"
     )]
     delay_ms: u64,
+
+    #[arg(long, help = "Number of concurrent RPC requests", default_value = "10")]
+    concurrency: usize,
 }
 
 impl BuildArgs {
@@ -62,6 +67,7 @@ impl BuildArgs {
         );
         println!("📡 RPC URL: {}", self.rpc_url);
         println!("📊 Token range: {} to {}", self.from_id, self.to_id);
+        println!("⚡ Concurrency: {} parallel requests", self.concurrency);
 
         if let Some(block) = self.block_height {
             println!("📦 Block height: {}", block);
@@ -103,7 +109,7 @@ impl BuildArgs {
 
         println!("✅ Merkle root: 0x{}", hex::encode(&root));
 
-        // Prepare output data in the format expected by the create command
+        // Prepare output data in the simple format expected by the create command
         let claims: Vec<Vec<serde_json::Value>> = merkle_data
             .iter()
             .map(|claim| vec![json!(claim.address), json!(claim.token_ids)])
@@ -134,65 +140,89 @@ impl BuildArgs {
         from_id: u64,
         to_id: u64,
     ) -> Result<HashMap<String, Vec<i64>>> {
-        let mut owners_by_address: HashMap<String, Vec<i64>> = HashMap::new();
+        let owners_by_address = Arc::new(Mutex::new(HashMap::<String, Vec<i64>>::new()));
         let total_tokens = to_id - from_id + 1;
+        let processed = Arc::new(Mutex::new(0u64));
 
         println!("📦 Querying {} tokens...", total_tokens);
 
-        for token_id in from_id..=to_id {
-            // Progress indicator every 100 tokens
-            if token_id % 100 == 0 || token_id == from_id {
-                println!(
-                    "  Progress: {}/{} ({:.1}%)",
-                    token_id - from_id + 1,
-                    total_tokens,
-                    ((token_id - from_id + 1) as f64 / total_tokens as f64) * 100.0
-                );
-            }
+        // Create a stream of token IDs
+        let token_ids: Vec<u64> = (from_id..=to_id).collect();
 
-            // Set up the call with optional block height
-            let mut call = contract.owner_of(U256::from(token_id));
-            if let Some(block) = self.block_height {
-                call = call.block(block);
-            }
+        // Process token IDs in parallel with controlled concurrency
+        let contract = Arc::new(contract);
+        let block_height = self.block_height;
+        let delay_ms = self.delay_ms;
 
-            // Try to get the owner
-            match call.call().await {
-                Ok(owner) => {
-                    let owner_str = format!("{:?}", owner);
-                    owners_by_address
-                        .entry(owner_str)
-                        .or_insert_with(Vec::new)
-                        .push(token_id as i64);
-                }
-                Err(e) => {
-                    // Token might not exist or be burned
-                    // This is expected for some token IDs
-                    if self.is_token_not_found_error(&e) {
-                        // Skip non-existent tokens silently
-                        continue;
-                    } else {
-                        // Log other errors but continue
-                        eprintln!("Warning: Error querying token {}: {}", token_id, e);
+        stream::iter(token_ids)
+            .map(|token_id| {
+                let contract = contract.clone();
+                let owners_by_address = owners_by_address.clone();
+                let processed = processed.clone();
+
+                async move {
+                    // Add delay between calls to avoid rate limiting
+                    if delay_ms > 0 {
+                        tokio::time::sleep(tokio::time::Duration::from_millis(delay_ms)).await;
+                    }
+
+                    // Set up the call with optional block height
+                    let mut call = contract.owner_of(U256::from(token_id));
+                    if let Some(block) = block_height {
+                        call = call.block(block);
+                    }
+
+                    // Try to get the owner
+                    match call.call().await {
+                        Ok(owner) => {
+                            let owner_str = format!("{:?}", owner);
+                            let mut owners = owners_by_address.lock().await;
+                            owners
+                                .entry(owner_str)
+                                .or_insert_with(Vec::new)
+                                .push(token_id as i64);
+                        }
+                        Err(e) => {
+                            // Token might not exist or be burned
+                            // This is expected for some token IDs
+                            if !Self::is_token_not_found_error_static(&e) {
+                                // Log other errors but continue
+                                eprintln!("Warning: Error querying token {}: {}", token_id, e);
+                            }
+                        }
+                    }
+
+                    // Update progress
+                    let mut count = processed.lock().await;
+                    *count += 1;
+
+                    // Progress indicator every 100 tokens or at milestones
+                    if *count % 100 == 0 || *count == 1 || *count == total_tokens {
+                        println!(
+                            "  Progress: {}/{} ({:.1}%)",
+                            *count,
+                            total_tokens,
+                            (*count as f64 / total_tokens as f64) * 100.0
+                        );
                     }
                 }
-            }
+            })
+            .buffer_unordered(self.concurrency)
+            .collect::<Vec<_>>()
+            .await;
 
-            // Add delay between calls to avoid rate limiting
-            if self.delay_ms > 0 {
-                tokio::time::sleep(tokio::time::Duration::from_millis(self.delay_ms)).await;
-            }
-        }
-
-        // Sort token IDs for each owner
-        for tokens in owners_by_address.values_mut() {
+        // Get the final results and sort token IDs for each owner
+        let mut owners = owners_by_address.lock().await;
+        for tokens in owners.values_mut() {
             tokens.sort();
         }
 
-        Ok(owners_by_address)
+        // Return the owned HashMap
+        let result = std::mem::take(&mut *owners);
+        Ok(result)
     }
 
-    fn is_token_not_found_error(&self, error: &ContractError<Provider<Http>>) -> bool {
+    fn is_token_not_found_error_static(error: &ContractError<Provider<Http>>) -> bool {
         // Check if error indicates token doesn't exist
         // Common ERC721 revert messages for non-existent tokens
         let error_str = error.to_string().to_lowercase();
