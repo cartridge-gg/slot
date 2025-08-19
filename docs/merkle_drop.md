@@ -22,14 +22,19 @@ slot merkle-drops build [OPTIONS]
 
 #### Required Parameters
 
-- `--contract <CONTRACT>` - NFT contract address to query
+- `--name <NAME>` - Name for the merkle drop
+- `--contract-address <CONTRACT_ADDRESS>` - NFT contract address to query
 - `--rpc-url <RPC_URL>` - Network RPC URL (e.g., https://ethereum-rpc.publicnode.com)
 
 #### Optional Parameters
 
+- `--network <NETWORK>` - Network name (e.g., ETH, BASE) (default: ETH)
+- `--description <DESCRIPTION>` - Description of the merkle drop
+- `--claim-contract <CLAIM_CONTRACT>` - Claim contract address for the merkle drop
+- `--entrypoint <ENTRYPOINT>` - Entrypoint address for claiming
 - `--block-height <BLOCK_HEIGHT>` - Block height to query at (defaults to latest)
 - `--from-id <FROM_ID>` - Starting token ID (default: 1)
-- `--to-id <TO_ID>` - Ending token ID (default: 10000)
+- `--to-id <TO_ID>` - Ending token ID (default: 8000)
 - `--output <OUTPUT>` - Output file path (default: merkle_drop.json)
 - `--delay-ms <DELAY_MS>` - Delay between RPC calls in milliseconds (default: 10)
 - `--concurrency <CONCURRENCY>` - Number of concurrent RPC requests (default: 10)
@@ -39,8 +44,13 @@ slot merkle-drops build [OPTIONS]
 ```bash
 # Query Dope Loot holders at a specific block
 slot merkle-drops build \
-  --contract "0x8707276DF042E89669d69A177d3DA7dC78bd8723" \
+  --name "Dope" \
+  --contract-address "0x8707276DF042E89669d69A177d3DA7dC78bd8723" \
   --rpc-url "https://ethereum-rpc.publicnode.com" \
+  --network "ETH" \
+  --description "Dope owners can claim their rewards" \
+  --claim-contract "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
+  --entrypoint "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
   --block-height 22728943 \
   --from-id 1 \
   --to-id 8000 \
@@ -52,9 +62,22 @@ The command will:
 1. Query token IDs in parallel to find their owners (with configurable concurrency)
 2. Build a map of owner addresses to token IDs
 3. Generate a merkle tree using Poseidon hash (root is displayed in console)
-4. Output the claims data in the format: [[address, [token_ids]], ...]
+4. Output a JSON file with metadata and snapshot data:
+   ```json
+   {
+     "name": "Dope",
+     "network": "ETH",
+     "description": "Dope owners can claim their rewards",
+     "claim_contract": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
+     "entrypoint": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
+     "snapshot": [
+       ["0xAddress1", [1, 2, 3]],
+       ["0xAddress2", [4, 5, 6]]
+     ]
+   }
+   ```
 
-The output file can be directly used with `slot merkle-drops create params --data-file <output>`
+The output file can be directly used with `slot merkle-drops create json --file <output>`
 
 ### Create Merkle Drop
 

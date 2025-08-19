@@ -23,6 +23,9 @@ abigen!(
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Build merkle drop options")]
 pub struct BuildArgs {
+    #[arg(long, help = "Name for the merkle drop")]
+    name: String,
+
     #[arg(long, help = "Contract address to query for token holders")]
     contract_address: String,
 
@@ -31,6 +34,18 @@ pub struct BuildArgs {
         help = "Network RPC URL (e.g., https://ethereum-rpc.publicnode.com)"
     )]
     rpc_url: String,
+
+    #[arg(long, help = "Network name (e.g., ETH, BASE)", default_value = "ETH")]
+    network: String,
+
+    #[arg(long, help = "Description of the merkle drop")]
+    description: Option<String>,
+
+    #[arg(long, help = "Claim contract address for the merkle drop")]
+    claim_contract: Option<String>,
+
+    #[arg(long, help = "Entrypoint address for claiming")]
+    entrypoint: Option<String>,
 
     #[arg(long, help = "Block height to query at (optional, defaults to latest)")]
     block_height: Option<u64>,
@@ -62,15 +77,15 @@ pub struct BuildArgs {
 impl BuildArgs {
     pub async fn run(&self) -> Result<()> {
         println!(
-            "🔍 Building merkle tree for contract: {}",
+            "Building merkle tree for contract: {}",
             self.contract_address
         );
-        println!("📡 RPC URL: {}", self.rpc_url);
-        println!("📊 Token range: {} to {}", self.from_id, self.to_id);
-        println!("⚡ Concurrency: {} parallel requests", self.concurrency);
+        println!("RPC URL: {}", self.rpc_url);
+        println!("Token range: {} to {}", self.from_id, self.to_id);
+        println!("Concurrency: {} parallel requests", self.concurrency);
 
         if let Some(block) = self.block_height {
-            println!("📦 Block height: {}", block);
+            println!("Block height: {}", block);
         }
 
         // Create provider
@@ -92,7 +107,7 @@ impl BuildArgs {
             return Err(anyhow::anyhow!("No token holders found for contract"));
         }
 
-        println!("✅ Found {} unique holders", holders.len());
+        println!("Found {} unique holders", holders.len());
 
         // Convert to merkle claim data format
         let merkle_data: Vec<MerkleClaimData> = holders
@@ -104,30 +119,40 @@ impl BuildArgs {
             .collect();
 
         // Build merkle tree
-        println!("🌳 Building merkle tree...");
+        println!("Building merkle tree...");
         let (root, _proofs) = build_merkle_tree(&merkle_data)?;
 
-        println!("✅ Merkle root: 0x{}", hex::encode(&root));
+        println!("Merkle root: 0x{}", hex::encode(&root));
 
-        // Prepare output data in the simple format expected by the create command
-        let claims: Vec<Vec<serde_json::Value>> = merkle_data
+        // Prepare snapshot data
+        let snapshot: Vec<Vec<serde_json::Value>> = merkle_data
             .iter()
             .map(|claim| vec![json!(claim.address), json!(claim.token_ids)])
             .collect();
 
-        // Write to output file - just the claims array
-        let output_str = serde_json::to_string_pretty(&claims)?;
+        // Build the complete output with metadata
+        let output_data = json!({
+            "name": self.name,
+            "network": self.network,
+            "description": self.description,
+            "claim_contract": self.claim_contract,
+            "entrypoint": self.entrypoint,
+            "snapshot": snapshot
+        });
+
+        // Write to output file
+        let output_str = serde_json::to_string_pretty(&output_data)?;
         std::fs::write(&self.output, output_str)?;
 
-        println!("✅ Merkle drop data written to: {}", self.output.display());
-        println!("\n📋 Summary:");
-        println!("  • Total unique holders: {}", merkle_data.len());
-        println!("  • Merkle root: 0x{}", hex::encode(&root));
-        println!("  • Output file: {}", self.output.display());
-        println!("\n📋 Next steps:");
+        println!("Merkle drop data written to: {}", self.output.display());
+        println!("\nSummary:");
+        println!("  Total unique holders: {}", merkle_data.len());
+        println!("  Merkle root: 0x{}", hex::encode(&root));
+        println!("  Output file: {}", self.output.display());
+        println!("\nNext steps:");
         println!("1. Review the generated snapshot data");
         println!(
-            "2. Use 'slot merkle-drops create params --data-file {}' to create the merkle drop",
+            "2. Use 'slot merkle-drops create json --file {}' to create the merkle drop",
             self.output.display()
         );
 
@@ -144,7 +169,7 @@ impl BuildArgs {
         let total_tokens = to_id - from_id + 1;
         let processed = Arc::new(Mutex::new(0u64));
 
-        println!("📦 Querying {} tokens...", total_tokens);
+        println!("Querying {} tokens...", total_tokens);
 
         // Create a stream of token IDs
         let token_ids: Vec<u64> = (from_id..=to_id).collect();
