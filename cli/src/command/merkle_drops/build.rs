@@ -49,7 +49,7 @@ pub struct BuildArgs {
     entrypoint: String,
 
     #[arg(long, help = "Block height to query at (optional, defaults to latest)")]
-    block_height: Option<u64>,
+    block_height: u64,
 
     #[arg(long, help = "Starting token ID (inclusive)", default_value = "1")]
     from_id: u64,
@@ -84,10 +84,7 @@ impl BuildArgs {
         println!("RPC URL: {}", self.rpc_url);
         println!("Token range: {} to {}", self.from_id, self.to_id);
         println!("Concurrency: {} parallel requests", self.concurrency);
-
-        if let Some(block) = self.block_height {
-            println!("Block height: {}", block);
-        }
+        println!("Block height: {}", self.block_height);
 
         // Create provider
         let provider = Provider::<Http>::try_from(&self.rpc_url)?;
@@ -196,7 +193,6 @@ impl BuildArgs {
 
         // Process token IDs in parallel with controlled concurrency
         let contract = Arc::new(contract);
-        let block_height = self.block_height;
         let delay_ms = self.delay_ms;
 
         stream::iter(token_ids)
@@ -212,10 +208,9 @@ impl BuildArgs {
                     }
 
                     // Set up the call with optional block height
-                    let mut call = contract.owner_of(U256::from(token_id));
-                    if let Some(block) = block_height {
-                        call = call.block(block);
-                    }
+                    let call = contract
+                        .owner_of(U256::from(token_id))
+                        .block(self.block_height);
 
                     // Try to get the owner
                     match call.call().await {
