@@ -2,6 +2,7 @@ use anyhow::Result;
 use clap::Args;
 use serde_json::json;
 use slot::merkle::{build_merkle_tree, MerkleClaimData};
+use starknet::core::types::Felt;
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -112,9 +113,10 @@ impl BuildArgs {
         // Convert to merkle claim data format
         let merkle_data: Vec<MerkleClaimData> = holders
             .into_iter()
-            .map(|(address, token_ids)| MerkleClaimData {
-                address,
-                token_ids: token_ids.clone(),
+            .map(|(address, token_ids)| {
+                // Convert token_ids to Felt array
+                let data: Vec<Felt> = token_ids.iter().map(|id| Felt::from(*id as u64)).collect();
+                MerkleClaimData { address, data }
             })
             .collect();
 
@@ -127,7 +129,24 @@ impl BuildArgs {
         // Prepare snapshot data
         let snapshot: Vec<Vec<serde_json::Value>> = merkle_data
             .iter()
-            .map(|claim| vec![json!(claim.address), json!(claim.token_ids)])
+            .map(|claim| {
+                // Convert Felt data back to numeric values for JSON output
+                let token_ids: Vec<i64> = claim
+                    .data
+                    .iter()
+                    .map(|f| {
+                        // Convert Felt to u64 then to i64
+                        // This assumes token IDs fit in i64 range
+                        let bytes = f.to_bytes_be();
+                        let mut value = 0u64;
+                        for (i, &byte) in bytes.iter().rev().enumerate().take(8) {
+                            value |= (byte as u64) << (i * 8);
+                        }
+                        value as i64
+                    })
+                    .collect();
+                vec![json!(claim.address), json!(token_ids)]
+            })
             .collect();
 
         // Build the complete output with metadata
@@ -137,6 +156,7 @@ impl BuildArgs {
             "description": self.description,
             "claim_contract": self.claim_contract,
             "entrypoint": self.entrypoint,
+            "merkle_root": format!("0x{}", hex::encode(&root)),
             "snapshot": snapshot
         });
 

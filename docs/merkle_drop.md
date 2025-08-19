@@ -70,6 +70,7 @@ The command will:
      "description": "Dope owners can claim their rewards",
      "claim_contract": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
      "entrypoint": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
+     "merkle_root": "0x8f7c9e2b1a5d4e8f3c6b9a2d7e1f4c8b5e9a3d7c1f8e4b2a6d9c3f7e1a5b8d2c6f",
      "snapshot": [
        ["0xAddress1", [1, 2, 3]],
        ["0xAddress2", [4, 5, 6]]
