@@ -39,13 +39,13 @@ pub struct BuildArgs {
     network: String,
 
     #[arg(long, help = "Description of the merkle drop")]
-    description: Option<String>,
+    description: String,
 
     #[arg(long, help = "Claim contract address for the merkle drop")]
-    claim_contract: Option<String>,
+    claim_contract: String,
 
     #[arg(long, help = "Entrypoint address for claiming")]
-    entrypoint: Option<String>,
+    entrypoint: String,
 
     #[arg(long, help = "Block height to query at (optional, defaults to latest)")]
     block_height: Option<u64>,

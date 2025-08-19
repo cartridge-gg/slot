@@ -25,13 +25,13 @@ slot merkle-drops build [OPTIONS]
 - `--name <NAME>` - Name for the merkle drop
 - `--contract-address <CONTRACT_ADDRESS>` - NFT contract address to query
 - `--rpc-url <RPC_URL>` - Network RPC URL (e.g., https://ethereum-rpc.publicnode.com)
+- `--description <DESCRIPTION>` - Description of the merkle drop
+- `--claim-contract <CLAIM_CONTRACT>` - Claim contract address for the merkle drop
+- `--entrypoint <ENTRYPOINT>` - Entrypoint address for claiming
 
 #### Optional Parameters
 
 - `--network <NETWORK>` - Network name (e.g., ETH, BASE) (default: ETH)
-- `--description <DESCRIPTION>` - Description of the merkle drop
-- `--claim-contract <CLAIM_CONTRACT>` - Claim contract address for the merkle drop
-- `--entrypoint <ENTRYPOINT>` - Entrypoint address for claiming
 - `--block-height <BLOCK_HEIGHT>` - Block height to query at (defaults to latest)
 - `--from-id <FROM_ID>` - Starting token ID (default: 1)
 - `--to-id <TO_ID>` - Ending token ID (default: 8000)
