@@ -83,8 +83,9 @@ pub fn build_merkle_tree(
                 let hash = compute_hash_on_elements(&[current_level[i], current_level[i + 1]]);
                 next_level.push(hash);
             } else {
-                // Odd number of nodes, promote the last one
-                next_level.push(current_level[i]);
+                // Odd number of nodes, hash with 0x0 (matching starknet.js implementation)
+                let hash = compute_hash_on_elements(&[current_level[i], Felt::ZERO]);
+                next_level.push(hash);
             }
         }
 
@@ -102,21 +103,18 @@ pub fn build_merkle_tree(
         // Traverse tree levels from bottom to top (excluding root level)
         for level in &tree_levels[..tree_levels.len() - 1] {
             // Find sibling
-            let sibling_idx = if current_idx % 2 == 0 {
-                // Even index, sibling is on the right
+            if current_idx % 2 == 0 {
+                // Even index, sibling is on the right (or 0x0 if no sibling)
                 if current_idx + 1 < level.len() {
-                    current_idx + 1
+                    proof.push(format!("0x{:064x}", level[current_idx + 1]));
                 } else {
-                    // No sibling (odd number of nodes)
-                    current_idx /= 2;
-                    continue;
+                    // No sibling, use 0x0 (matching starknet.js implementation)
+                    proof.push(format!("0x{:064x}", Felt::ZERO));
                 }
             } else {
                 // Odd index, sibling is on the left
-                current_idx - 1
-            };
-
-            proof.push(format!("0x{:064x}", level[sibling_idx]));
+                proof.push(format!("0x{:064x}", level[current_idx - 1]));
+            }
             current_idx /= 2;
         }
 
