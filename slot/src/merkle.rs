@@ -1,6 +1,6 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
-use starknet::core::crypto::{compute_hash_on_elements, pedersen_hash};
+use starknet::core::crypto::compute_hash_on_elements;
 use starknet::core::types::Felt;
 use std::collections::HashMap;
 
@@ -79,8 +79,8 @@ pub fn build_merkle_tree(
 
         for i in (0..current_level.len()).step_by(2) {
             if i + 1 < current_level.len() {
-                // Hash pair of nodes
-                let hash = pedersen_hash(&current_level[i], &current_level[i + 1]);
+                // Hash pair of nodes using Poseidon
+                let hash = compute_hash_on_elements(&[current_level[i], current_level[i + 1]]);
                 next_level.push(hash);
             } else {
                 // Odd number of nodes, promote the last one
