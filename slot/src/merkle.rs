@@ -1,6 +1,6 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
-use starknet::core::crypto::compute_hash_on_elements;
+use starknet::core::crypto::{compute_hash_on_elements, starknet_keccak};
 use starknet::core::types::Felt;
 use std::collections::HashMap;
 
@@ -42,6 +42,43 @@ fn compute_leaf_hash(address: &str, data: &[Felt]) -> Result<Felt> {
     Ok(compute_hash_on_elements(&elements))
 }
 
+/// Compute the leaf hash for merkle drop using exact JS implementation parameters
+/// This matches the cartridge-gg/merkle_drop JS implementation
+fn compute_leaf_hash_js_compatible(
+    address: &str,
+    claim_contract_address: &str,
+    entrypoint: &str,
+    data: &[Felt],
+) -> Result<Felt> {
+    // Parse address to Felt (Ethereum addresses need special handling)
+    let address_felt = if address.starts_with("0x") && address.len() == 42 {
+        // Ethereum address - keep as-is, it's already in hex format
+        Felt::from_hex(address)
+            .map_err(|e| anyhow::anyhow!("Failed to parse ETH address {}: {}", address, e))?
+    } else {
+        // Starknet address
+        Felt::from_hex(address)
+            .or_else(|_| Felt::from_dec_str(address))
+            .map_err(|e| anyhow::anyhow!("Failed to parse address {}: {}", address, e))?
+    };
+
+    // Parse claim contract address
+    let claim_contract_felt = Felt::from_hex(claim_contract_address)
+        .map_err(|e| anyhow::anyhow!("Failed to parse claim contract address: {}", e))?;
+
+    // Parse entrypoint selector
+    let entrypoint_felt = Felt::from_hex(entrypoint)
+        .map_err(|e| anyhow::anyhow!("Failed to parse entrypoint: {}", e))?;
+
+    // Build elements array exactly matching JS: [address, claim_contract_address, entrypoint, data.length, ...data]
+    let mut elements = vec![address_felt, claim_contract_felt, entrypoint_felt];
+    elements.push(Felt::from(data.len() as u64));
+    elements.extend_from_slice(data);
+
+    // Compute Poseidon hash on elements
+    Ok(compute_hash_on_elements(&elements))
+}
+
 /// Compute leaf hash using OpenZeppelin's double-hash pattern
 /// Used for compatibility with OpenZeppelin Cairo contracts
 #[allow(dead_code)]
@@ -60,6 +97,38 @@ fn compute_leaf_hash_openzeppelin(address: &str, amount: Felt) -> Result<Felt> {
 
 /// Build a merkle tree from claim data and return the root and proofs
 pub fn build_merkle_tree(claims: &[MerkleClaimData]) -> Result<MerkleTreeResult> {
+    build_merkle_tree_internal(claims, true)
+}
+
+/// Build a merkle tree from claim data without sorting leaves (JS-compatible)
+/// This matches the behavior of @ericnordelo/strk-merkle-tree with sortLeaves:false
+pub fn build_merkle_tree_js_compatible(
+    claims: &[MerkleClaimData],
+    claim_contract_address: &str,
+    entrypoint: &str,
+) -> Result<MerkleTreeResult> {
+    if claims.is_empty() {
+        return Err(anyhow::anyhow!("Cannot build merkle tree with no claims"));
+    }
+
+    // Compute leaf hashes using JS-compatible method
+    let mut leaf_hashes: Vec<(String, Felt)> = Vec::new();
+    for claim in claims {
+        let hash = compute_leaf_hash_js_compatible(
+            &claim.address,
+            claim_contract_address,
+            entrypoint,
+            &claim.data,
+        )?;
+        leaf_hashes.push((claim.address.clone(), hash));
+    }
+
+    // Don't sort leaves (matching JS sortLeaves:false)
+    build_merkle_tree_from_hashes(&leaf_hashes)
+}
+
+/// Internal function to build merkle tree with optional leaf sorting
+fn build_merkle_tree_internal(claims: &[MerkleClaimData], sort_leaves: bool) -> Result<MerkleTreeResult> {
     if claims.is_empty() {
         return Err(anyhow::anyhow!("Cannot build merkle tree with no claims"));
     }
@@ -71,9 +140,16 @@ pub fn build_merkle_tree(claims: &[MerkleClaimData]) -> Result<MerkleTreeResult>
         leaf_hashes.push((claim.address.clone(), hash));
     }
 
-    // Sort leaf hashes for consistent tree construction
-    leaf_hashes.sort_by(|a, b| a.1.cmp(&b.1));
+    if sort_leaves {
+        // Sort leaf hashes for consistent tree construction
+        leaf_hashes.sort_by(|a, b| a.1.cmp(&b.1));
+    }
 
+    build_merkle_tree_from_hashes(&leaf_hashes)
+}
+
+/// Build merkle tree from pre-computed leaf hashes
+fn build_merkle_tree_from_hashes(leaf_hashes: &[(String, Felt)]) -> Result<MerkleTreeResult> {
     // Build the merkle tree
     let mut proofs: HashMap<String, Vec<String>> = HashMap::new();
 
@@ -141,6 +217,11 @@ pub fn build_merkle_tree(claims: &[MerkleClaimData]) -> Result<MerkleTreeResult>
     }
 
     Ok((root.to_bytes_be().to_vec(), proofs))
+}
+
+/// Compute entrypoint selector from function name (for JS compatibility)
+pub fn compute_entrypoint_selector(entrypoint_name: &str) -> String {
+    format!("0x{:064x}", starknet_keccak(entrypoint_name.as_bytes()))
 }
 
 #[cfg(test)]
@@ -337,5 +418,80 @@ mod tests {
         let empty_claims: Vec<MerkleClaimData> = vec![];
         let result = build_merkle_tree(&empty_claims);
         assert!(result.is_err(), "Empty tree should return error");
+    }
+
+    #[test]
+    fn test_dope_js_compatibility() {
+        // Test data from dope.js
+        let claims = vec![
+            MerkleClaimData {
+                address: "0xfcf82721182afe347961aeb44f289c3ab6144ddc".to_string(),
+                data: vec![Felt::from(233u64)],
+            },
+            MerkleClaimData {
+                address: "0x2700ab07bb42ff12bc7db66e82e4b356db36b705".to_string(),
+                data: vec![Felt::from(830u64)],
+            },
+            MerkleClaimData {
+                address: "0x877706091905776209fe977fb9fef53483ec2f18".to_string(),
+                data: vec![Felt::from(747u64)],
+            },
+            MerkleClaimData {
+                address: "0x4884ABe82470adf54f4e19Fa39712384c05112be".to_string(),
+                data: vec![
+                    Felt::from(297u64),
+                    Felt::from(483u64),
+                    Felt::from(678u64),
+                    Felt::from(707u64),
+                    Felt::from(865u64),
+                ],
+            },
+        ];
+
+        // JS implementation parameters
+        let claim_contract_address = "0x2803f7953e7403d204906467e2458ca4b206723607acae26c9c729a926e491f";
+        let entrypoint_name = "claim_from_forwarder";
+        let entrypoint_selector = compute_entrypoint_selector(entrypoint_name);
+
+        // Expected values from JavaScript implementation
+        let expected_root = "0x0712cdfebe79b81021a6b3e9253ee2387b8dcebea3eeac10c1ba8f63554fd1d4";
+        let expected_leaf_hash = "0x064276e16eb8981e2ae8814594e7b4581f810aa5dd2fbe452f61a72831743223";
+
+        // Verify first leaf hash
+        let first_hash = compute_leaf_hash_js_compatible(
+            &claims[0].address,
+            claim_contract_address,
+            &entrypoint_selector,
+            &claims[0].data,
+        ).unwrap();
+        
+        let leaf_hash_hex = format!("0x{:064x}", first_hash);
+        println!("First leaf hash: {}", leaf_hash_hex);
+        println!("Expected:        {}", expected_leaf_hash);
+        
+        assert_eq!(
+            leaf_hash_hex.to_lowercase(),
+            expected_leaf_hash.to_lowercase(),
+            "First leaf hash should match JavaScript implementation"
+        );
+
+        // Build merkle tree using JS-compatible method
+        let (root, _proofs) = build_merkle_tree_js_compatible(
+            &claims,
+            claim_contract_address,
+            &entrypoint_selector,
+        ).unwrap();
+        
+        let root_hex = format!("0x{}", hex::encode(&root));
+
+        println!("\nComputed root: {}", root_hex);
+        println!("Expected root: {}", expected_root);
+
+        // Check if root matches
+        assert_eq!(
+            root_hex.to_lowercase(),
+            expected_root.to_lowercase(),
+            "Merkle root should match JavaScript implementation"
+        );
     }
 }
