@@ -156,7 +156,6 @@ pub struct MerkleDropConfig {
     pub network: String,
     pub contract: String,
     pub entrypoint: String,
-    pub args: Option<Vec<String>>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]

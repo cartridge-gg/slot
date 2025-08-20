@@ -7,6 +7,7 @@ use slot::credential::Credentials;
 use slot::graphql::merkle_drop::create_merkle_drop;
 use slot::graphql::merkle_drop::CreateMerkleDrop;
 use slot::graphql::GraphQLQuery;
+use starknet::core::types::Felt;
 use std::fs;
 use std::path::PathBuf;
 
@@ -45,12 +46,6 @@ struct CreateFromParamsArgs {
 
     #[arg(long, help = "Entrypoint address.")]
     entrypoint: String,
-
-    #[arg(
-        long,
-        help = "Arguments for the contract call (comma-separated, optional)."
-    )]
-    args: Option<String>,
 
     #[arg(long, help = "Path to JSON file containing merkle drop data.")]
     data_file: PathBuf,
@@ -129,12 +124,6 @@ impl CreateArgs {
 
         Self::validate_merkle_data(merkle_array)?;
 
-        // Parse args (optional)
-        let args_vec: Option<Vec<String>> = args
-            .args
-            .as_ref()
-            .map(|args| args.split(',').map(|s| s.trim().to_string()).collect());
-
         // Convert JSON data to structured claims
         let claims = Self::convert_to_claims(merkle_array)?;
 
@@ -144,7 +133,6 @@ impl CreateArgs {
             network: args.network.clone(),
             contract: args.contract.clone(),
             entrypoint: args.entrypoint.clone(),
-            args: args_vec,
         };
 
         Self::create_merkle_drop(&args.name, &config, &claims).await
@@ -185,7 +173,6 @@ impl CreateArgs {
                 network: build_output.network,
                 contract: build_output.claim_contract,
                 entrypoint: build_output.entrypoint,
-                args: None, // Build output doesn't include args
             };
 
             // Create the merkle drop
@@ -264,7 +251,7 @@ impl CreateArgs {
 
             if entry_array.len() != 2 {
                 return Err(anyhow::anyhow!(
-                    "Entry {} must have exactly 2 elements: [address, token_ids]",
+                    "Entry {} must have exactly 2 elements: [address, [data]]",
                     index
                 ));
             }
@@ -290,15 +277,21 @@ impl CreateArgs {
             .iter()
             .map(|entry| {
                 let entry_array = entry.as_array().unwrap(); // Already validated
-                let address = entry_array[0].as_str().unwrap().to_string(); // Already validated
-                let token_ids: Vec<i64> = entry_array[1]
+                let address_str = entry_array[0].as_str().unwrap(); // Already validated
+                let address = Felt::from_hex(address_str)
+                    .unwrap_or_else(|_| Felt::from_dec_str(address_str).unwrap());
+                let data: Vec<Felt> = entry_array[1]
                     .as_array()
                     .unwrap() // Already validated
                     .iter()
-                    .map(|id| id.as_i64().unwrap_or(0))
+                    .map(|id| {
+                        let id_str = id.as_str().unwrap();
+                        Felt::from_hex(id_str)
+                            .unwrap_or_else(|_| Felt::from_dec_str(id_str).unwrap())
+                    })
                     .collect();
 
-                create_merkle_drop::MerkleClaimInput { address, token_ids }
+                create_merkle_drop::MerkleClaimInput { address, data }
             })
             .collect();
         Ok(claims)
@@ -317,14 +310,14 @@ impl CreateArgs {
             key: key.to_string(),
             network: config.network.clone(),
             description: config.description.clone(),
-            contract: config.contract.clone(),
+            contract: Felt::from_hex(&config.contract)
+                .unwrap_or_else(|_| Felt::from_dec_str(&config.contract).unwrap()),
             entrypoint: config.entrypoint.clone(),
-            args: config.args.clone(),
             claims: claims
                 .iter()
                 .map(|claim| create_merkle_drop::MerkleClaimInput {
-                    address: claim.address.clone(),
-                    token_ids: claim.token_ids.clone(),
+                    address: claim.address,
+                    data: claim.data.clone(),
                 })
                 .collect(),
         };
@@ -355,7 +348,6 @@ impl CreateArgs {
                 println!("  • Network: {}", data.create_merkle_drop.network);
                 println!("  • Contract: {}", data.create_merkle_drop.contract);
                 println!("  • Entrypoint: {}", data.create_merkle_drop.entrypoint);
-                println!("  • Args: {:?}", data.create_merkle_drop.args);
 
                 println!("\n🌳 Merkle Details:");
                 println!("  • Root: {}", data.create_merkle_drop.merkle_root);
@@ -387,17 +379,13 @@ impl CreateArgs {
                     println!("  • Network: {}", config.network);
                     println!("  • Contract: {}", config.contract);
                     println!("  • Entrypoint: {}", config.entrypoint);
-                    println!(
-                        "  • Args: {:?}",
-                        config.args.as_ref().unwrap_or(&vec!["None".to_string()])
-                    );
 
                     println!("\n🌳 Merkle Details:");
                     println!("  • Entries: {}", claims.len());
 
                     println!("\n📄 Data file validation: ✅ Passed");
                     println!("  • File format: Valid JSON array");
-                    println!("  • Entry format: All entries have [address, token_ids] structure");
+                    println!("  • Entry format: All entries have [address, [data]] structure");
 
                     std::result::Result::Ok(())
                 } else {

@@ -1,4 +1,5 @@
 use graphql_client::GraphQLQuery;
+use starknet::core::types::Felt;
 
 // Import Time type from another module (following pattern from other modules)
 pub use crate::graphql::paymaster::Time;
