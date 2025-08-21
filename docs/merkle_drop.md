@@ -12,7 +12,7 @@ The merkle root is automatically calculated server-side from the provided claims
 
 ### Build Merkle Tree
 
-Build a merkle tree by querying token holders from an on-chain NFT contract via RPC.
+Build a merkle tree by querying token holders from on-chain NFT contract(s) via RPC. Supports both single-contract and multi-contract modes, with optional precalculated multi-token rewards.
 
 **Aliases:** `slot md b`
 
@@ -23,28 +23,73 @@ slot merkle-drops build [OPTIONS]
 #### Required Parameters
 
 - `--name <NAME>` - Name for the merkle drop
-- `--contract-address <CONTRACT_ADDRESS>` - NFT contract address to query
 - `--rpc-url <RPC_URL>` - Network RPC URL (e.g., https://ethereum-rpc.publicnode.com)
 - `--description <DESCRIPTION>` - Description of the merkle drop
 - `--claim-contract <CLAIM_CONTRACT>` - Claim contract address for the merkle drop
 - `--entrypoint <ENTRYPOINT>` - Entrypoint address for claiming
+- `--block-height <BLOCK_HEIGHT>` - Block height to query at (required for deterministic snapshots)
+
+#### Contract Selection (Choose One)
+
+**Single Contract Mode:**
+- `--contract-address <CONTRACT_ADDRESS>` - Single NFT contract address to query
+- `--from-id <FROM_ID>` - Starting token ID (default: 1)
+- `--to-id <TO_ID>` - Ending token ID (default: 8000)
+
+**Multi-Contract Mode:**
+- `--contracts-config <FILE>` - JSON file with contract configurations
+
+#### Reward Calculation (Optional)
+
+**On-Chain Mode (Default):**
+- Uses token ownership as-is from blockchain
+
+**Precalculated Rewards Mode:**
+- `--use-precalculated` - Enable precalculated multi-token rewards
+- `--rewards-config <FILE>` - JSON file with reward amounts per contract
 
 #### Optional Parameters
 
 - `--network <NETWORK>` - Network name (e.g., ETH, BASE) (default: ETH)
-- `--block-height <BLOCK_HEIGHT>` - Block height to query at (defaults to latest)
-- `--from-id <FROM_ID>` - Starting token ID (default: 1)
-- `--to-id <TO_ID>` - Ending token ID (default: 8000)
 - `--output <OUTPUT>` - Output file path (default: merkle_drop.json)
 - `--delay-ms <DELAY_MS>` - Delay between RPC calls in milliseconds (default: 10)
 - `--concurrency <CONCURRENCY>` - Number of concurrent RPC requests (default: 10)
 
-#### Example
+#### Configuration Files
 
+**Multi-Contract Configuration** (`contracts_config.json`):
+```json
+[
+  {
+    "address": "0x8707276DF042E89669d69A177d3DA7dC78bd8723",
+    "from_id": 1,
+    "to_id": 8000
+  },
+  {
+    "address": "0xabcdef1234567890abcdef1234567890abcdef12",
+    "from_id": 1,
+    "to_id": 5000
+  }
+]
+```
+
+**Multi-Token Rewards Configuration** (`rewards_config.json`):
+```json
+{
+  "contracts": {
+    "0x8707276DF042E89669d69A177d3DA7dC78bd8723": [100, 25],
+    "0xabcdef1234567890abcdef1234567890abcdef12": [50, 10]
+  }
+}
+```
+*Each array represents rewards per NFT: [Token A amount, Token B amount, ...]*
+
+#### Examples
+
+**Single Contract Mode (Traditional):**
 ```bash
-# Query Dope Loot holders at a specific block
 slot merkle-drops build \
-  --name "Dope" \
+  --name "Dope Collection" \
   --contract-address "0x8707276DF042E89669d69A177d3DA7dC78bd8723" \
   --rpc-url "https://ethereum-rpc.publicnode.com" \
   --network "ETH" \
@@ -58,27 +103,164 @@ slot merkle-drops build \
   --output dope_loot_snapshot.json
 ```
 
-The command will:
-1. Query token IDs in parallel to find their owners (with configurable concurrency)
-2. Build a map of owner addresses to token IDs
-3. Generate a merkle tree using Poseidon hash (root is displayed in console)
-4. Output a JSON file with metadata and snapshot data:
-   ```json
-   {
-     "name": "Dope",
-     "network": "ETH",
-     "description": "Dope owners can claim their rewards",
-     "claim_contract": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
-     "entrypoint": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
-     "merkle_root": "0x8f7c9e2b1a5d4e8f3c6b9a2d7e1f4c8b5e9a3d7c1f8e4b2a6d9c3f7e1a5b8d2c6f",
-     "snapshot": [
-       ["0xAddress1", [1, 2, 3]],
-       ["0xAddress2", [4, 5, 6]]
-     ]
-   }
-   ```
+**Multi-Contract On-Chain Mode:**
+```bash
+slot merkle-drops build \
+  --name "Multi Collection Drop" \
+  --contracts-config contracts_config.json \
+  --rpc-url "https://ethereum-rpc.publicnode.com" \
+  --network "ETH" \
+  --description "Multiple collection holders get rewards" \
+  --claim-contract "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
+  --entrypoint "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
+  --block-height 22728943 \
+  --output multi_collection_snapshot.json
+```
 
-The output file can be directly used with `slot merkle-drops create json --file <output>`
+**Multi-Contract + Multi-Token Rewards:**
+```bash
+slot merkle-drops build \
+  --name "Dual Token Rewards" \
+  --contracts-config contracts_config.json \
+  --use-precalculated \
+  --rewards-config rewards_config.json \
+  --rpc-url "https://ethereum-rpc.publicnode.com" \
+  --network "ETH" \
+  --description "Token A and Token B rewards based on NFT holdings" \
+  --claim-contract "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
+  --entrypoint "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
+  --block-height 22728943 \
+  --output dual_token_rewards.json
+```
+
+#### Build Process & Reward Calculation
+
+The build command supports two distinct approaches for determining token distributions:
+
+**On-Chain Calculation Mode (Default):**
+- **Use Case**: When smart contracts will calculate rewards based on NFT ownership
+- **Process**: 
+  1. Query token IDs in parallel across all configured contracts
+  2. Build a map of owner addresses to token IDs they hold
+  3. Generate merkle tree with NFT ownership data
+  4. Smart contract calculates final reward amounts during claiming
+- **Output**: Snapshot contains the actual NFT token IDs owned by each address
+- **Example**: `["0xAddress1", [1, 2, 3]]` means address owns NFT tokens 1, 2, and 3
+
+**Precalculated Rewards Mode:**
+- **Use Case**: When you want to determine exact reward amounts off-chain instead of on-chain
+- **Why Use This**: 
+  - Avoid complex on-chain calculation logic and gas costs
+  - Implement sophisticated reward formulas (e.g., rarity-based rewards, time-based multipliers)
+  - Support multi-token distributions with different rates per collection
+- **Process**:
+  1. Query NFT holders from all configured contracts
+  2. Calculate exact reward amounts per holder based on:
+     - Number of NFTs owned in each contract
+     - Reward rate configuration per contract per token type
+  3. Generate merkle tree with final calculated reward amounts
+  4. Smart contract simply distributes the precalculated amounts
+- **Output**: Snapshot contains calculated token amounts, not NFT IDs
+- **Example**: `["0xAddress1", [400, 95]]` means address receives 400 Token A + 95 Token B
+
+**Key Difference:**
+- **On-Chain Mode**: NFT ownership → Smart contract calculates rewards → Distribution
+- **Precalculated Mode**: NFT ownership → Build tool calculates rewards → Smart contract distributes predetermined amounts
+
+#### Practical Example
+
+**Scenario**: You want to reward holders of two NFT collections with different token amounts:
+- Premium Collection (0xAAA): 100 Token A + 25 Token B per NFT
+- Standard Collection (0xBBB): 50 Token A + 10 Token B per NFT
+
+**On-Chain Approach:**
+```bash
+# Build with NFT ownership data
+slot merkle-drops build \
+  --contracts-config contracts.json \
+  --name "NFT Rewards" \
+  # ... other params
+
+# Output: ["0xHolder1", [1, 2, 5, 101, 102]]  (NFT IDs from both collections)
+# Smart contract must:
+# - Determine which NFTs are from which collection  
+# - Apply different reward rates per collection
+# - Calculate: 3 premium NFTs × [100,25] + 2 standard NFTs × [50,10] = [400,95]
+```
+
+**Precalculated Approach:**
+```bash
+# Build with precalculated rewards
+slot merkle-drops build \
+  --contracts-config contracts.json \
+  --use-precalculated \
+  --rewards-config rewards.json \
+  --name "NFT Rewards" \
+  # ... other params
+
+# Output: ["0xHolder1", [400, 95]]  (Final calculated amounts)
+# Smart contract simply distributes 400 Token A + 95 Token B
+```
+
+**Benefits of On-Chain Calculation Mode:**
+- ✅ **Full Transparency**: Reward calculation logic is public and verifiable on-chain
+- ✅ **Trustless**: No need to trust off-chain calculations - anyone can verify the math
+- ✅ **Immutable Logic**: Reward formulas are permanently encoded in smart contracts
+- ✅ **Real-time Verification**: Community can audit and verify distribution fairness
+- ✅ **Decentralized**: No reliance on external tools or processes for reward calculation
+
+**Benefits of Precalculated Mode:**
+- ✅ **Simpler Smart Contracts**: No complex calculation logic needed on-chain
+- ✅ **Lower Gas Costs**: No on-chain computation during claims, just token transfers
+- ✅ **Complex Formulas**: Support sophisticated reward logic (rarity, time-based bonuses, etc.)
+- ✅ **Multi-Token Support**: Easy distribution of multiple token types simultaneously
+- ✅ **Performance**: Handle complex calculations without gas limit concerns
+- ✅ **Flexibility**: Implement reward logic that would be too expensive on-chain
+
+**Trade-offs:**
+- **On-Chain**: Higher gas costs but maximum trustlessness and transparency
+- **Precalculated**: Lower gas costs but requires trust in the build tool's calculations
+
+#### Output Formats
+
+**Single Token Output:**
+```json
+{
+  "name": "Dope Collection",
+  "network": "ETH",
+  "description": "Dope owners can claim their rewards",
+  "claim_contract": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
+  "entrypoint": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
+  "merkle_root": "0x8f7c9e2b1a5d4e8f3c6b9a2d7e1f4c8b5e9a3d7c1f8e4b2a6d9c3f7e1a5b8d2c6f",
+  "snapshot": [
+    ["0xAddress1", [1, 2, 3]],        // Token IDs owned
+    ["0xAddress2", [4, 5, 6]]
+  ]
+}
+```
+
+**Multi-Token Rewards Output:**
+```json
+{
+  "name": "Dual Token Rewards",
+  "network": "ETH", 
+  "description": "Token A and Token B rewards based on NFT holdings",
+  "claim_contract": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
+  "entrypoint": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
+  "merkle_root": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+  "snapshot": [
+    ["0xAddress1", [400, 95]],        // 400 Token A + 95 Token B
+    ["0xAddress2", [300, 75]]         // 300 Token A + 75 Token B
+  ]
+}
+```
+
+**Multi-Contract Aggregation:**
+When using multiple contracts, token holdings are automatically aggregated per address across all contracts before reward calculation.
+
+#### Compatibility
+
+The output file can be directly used with `slot merkle-drops create json --file <output>` - the create command automatically handles both single-token and multi-token formats.
 
 ### Create Merkle Drop
 
@@ -146,22 +328,35 @@ slot merkle-drops create preset --project <PROJECT> --name <NAME> [--network <NE
 ### Parameters Method - Data File Format
 
 For the `params` method, the data file must be a JSON array where each entry contains:
-1. Recipient address (string)
-2. Token IDs or amounts (array of integers)
+1. Recipient address (string) 
+2. Token amounts or IDs (array of integers)
 
+**Note:** Supports both single-token and multi-token formats from build command output.
+
+**Single Token Data:**
 ```json
 [
   [
     "0xD6E9625d91dc1F2823EF60Eb902266f7dd9D75Df",
-    [1, 5352, 5533, 7443]
+    [1, 5352, 5533, 7443]  // Token IDs owned
+  ],
+  [
+    "0x1234567890123456789012345678901234567890", 
+    [42]  // Single token amount
+  ]
+]
+```
+
+**Multi-Token Rewards Data:**
+```json
+[
+  [
+    "0xD6E9625d91dc1F2823EF60Eb902266f7dd9D75Df",
+    [400, 95]  // 400 Token A + 95 Token B
   ],
   [
     "0x1234567890123456789012345678901234567890",
-    [100, 200, 300]
-  ],
-  [
-    "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-    [42]
+    [300, 75, 15]  // Token A + Token B + Token C amounts
   ]
 ]
 ```
@@ -183,11 +378,11 @@ For the `json` method, the configuration file must contain both the merkle drop 
   "data": [
     [
       "0xD6E9625d91dc1F2823EF60Eb902266f7dd9D75Df",
-      [1, 5352, 5533, 7443]
+      [400, 95]  // Multi-token rewards: Token A + Token B amounts
     ],
     [
-      "0x1234567890123456789012345678901234567890",
-      [100, 200, 300]
+      "0x1234567890123456789012345678901234567890", 
+      [300, 75]  // Different reward amounts per holder
     ]
   ]
 }
@@ -264,8 +459,8 @@ Where `complete-drop-config.json` contains:
     "args": ["RECIPIENT", "AMOUNT", "PROOF"]
   },
   "data": [
-    ["0x1234...", [100, 200]],
-    ["0x5678...", [50, 75]]
+    ["0x1234...", [400, 95]],   // Multi-token: 400 Token A + 95 Token B
+    ["0x5678...", [300, 75]]    // 300 Token A + 75 Token B
   ]
 }
 ```
@@ -330,7 +525,8 @@ The command performs comprehensive validation:
 - ✅ **Array Structure**: Validates top-level array format
 - ✅ **Entry Format**: Each entry must have exactly 2 elements
 - ✅ **Address Format**: First element must be a string (address)
-- ✅ **Token IDs**: Second element must be an array of integers
+- ✅ **Token Data**: Second element must be an array of integers (supports both token IDs and multi-token amounts)
+- ✅ **Multi-Token Support**: Handles both numeric and string array elements from build command output
 
 ## Error Handling
 
@@ -401,6 +597,10 @@ configs/dope-wars/
 4. **Backup Data**: Keep backups of your merkle drop data files
 5. **Test First**: Test with small datasets before large-scale deployments
 6. **Preset Updates**: When using presets, check for updates in the community repository
+7. **Multi-Contract Strategy**: Use multi-contract mode for ecosystem-wide drops across multiple collections
+8. **Multi-Token Planning**: Design reward tokenomics carefully when using multi-token rewards
+9. **Block Height**: Always specify block height for reproducible snapshots across multiple builds
+10. **Reward Validation**: Verify reward calculations match expected tokenomics before deployment
 
 ## Related Commands
 
