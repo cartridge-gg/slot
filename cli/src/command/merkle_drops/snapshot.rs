@@ -40,6 +40,12 @@ pub struct SnapshotArgs {
     #[arg(long, help = "Description of the snapshot")]
     description: String,
 
+    #[arg(long, help = "Claim contract address for the merkle drop")]
+    claim_contract: String,
+
+    #[arg(long, help = "Entrypoint address for claiming")]
+    entrypoint: String,
+
     #[arg(
         long,
         help = "Block height to query at (required for deterministic snapshots)"
@@ -121,6 +127,8 @@ impl SnapshotArgs {
             "name": self.name,
             "network": self.network,
             "description": self.description,
+            "claim_contract": self.claim_contract,
+            "entrypoint": self.entrypoint,
             "contract_address": self.contract_address,
             "block_height": self.block_height,
             "snapshot": snapshot

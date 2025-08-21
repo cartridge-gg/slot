@@ -26,6 +26,8 @@ slot merkle-drops snapshot [OPTIONS]
 - `--contract-address <CONTRACT_ADDRESS>` - NFT contract address to query
 - `--rpc-url <RPC_URL>` - Network RPC URL (e.g., https://ethereum-rpc.publicnode.com)
 - `--description <DESCRIPTION>` - Description of the snapshot
+- `--claim-contract <CLAIM_CONTRACT>` - Claim contract address for the merkle drop
+- `--entrypoint <ENTRYPOINT>` - Entrypoint address for claiming
 - `--block-height <BLOCK_HEIGHT>` - Block height to query at (required for deterministic snapshots)
 
 #### Optional Parameters
@@ -47,6 +49,8 @@ slot merkle-drops snapshot \
   --rpc-url "https://ethereum-rpc.publicnode.com" \
   --network "ETH" \
   --description "Dope owners snapshot" \
+  --claim-contract "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
+  --entrypoint "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
   --block-height 22728943 \
   --from-id 1 \
   --to-id 8000 \
@@ -63,6 +67,8 @@ The command will:
      "name": "Dope",
      "network": "ETH",
      "description": "Dope owners snapshot",
+     "claim_contract": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
+     "entrypoint": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
      "contract_address": "0x8707276DF042E89669d69A177d3DA7dC78bd8723",
      "block_height": 22728943,
      "snapshot": [
