@@ -10,32 +10,30 @@ The merkle root is automatically calculated server-side from the provided claims
 
 ## Commands
 
-### Build Merkle Tree
+### Generate Snapshot
 
-Build a merkle tree by querying token holders from an on-chain NFT contract via RPC.
+Generate a snapshot of token holders from an on-chain NFT contract via RPC.
 
-**Aliases:** `slot md b`
+**Aliases:** `slot md s`
 
 ```bash
-slot merkle-drops build [OPTIONS]
+slot merkle-drops snapshot [OPTIONS]
 ```
 
 #### Required Parameters
 
-- `--name <NAME>` - Name for the merkle drop
+- `--name <NAME>` - Name for the snapshot
 - `--contract-address <CONTRACT_ADDRESS>` - NFT contract address to query
 - `--rpc-url <RPC_URL>` - Network RPC URL (e.g., https://ethereum-rpc.publicnode.com)
-- `--description <DESCRIPTION>` - Description of the merkle drop
-- `--claim-contract <CLAIM_CONTRACT>` - Claim contract address for the merkle drop
-- `--entrypoint <ENTRYPOINT>` - Entrypoint address for claiming
+- `--description <DESCRIPTION>` - Description of the snapshot
+- `--block-height <BLOCK_HEIGHT>` - Block height to query at (required for deterministic snapshots)
 
 #### Optional Parameters
 
 - `--network <NETWORK>` - Network name (e.g., ETH, BASE) (default: ETH)
-- `--block-height <BLOCK_HEIGHT>` - Block height to query at (defaults to latest)
 - `--from-id <FROM_ID>` - Starting token ID (default: 1)
 - `--to-id <TO_ID>` - Ending token ID (default: 8000)
-- `--output <OUTPUT>` - Output file path (default: merkle_drop.json)
+- `--output <OUTPUT>` - Output file path (default: snapshot.json)
 - `--delay-ms <DELAY_MS>` - Delay between RPC calls in milliseconds (default: 10)
 - `--concurrency <CONCURRENCY>` - Number of concurrent RPC requests (default: 10)
 
@@ -43,14 +41,12 @@ slot merkle-drops build [OPTIONS]
 
 ```bash
 # Query Dope Loot holders at a specific block
-slot merkle-drops build \
+slot merkle-drops snapshot \
   --name "Dope" \
   --contract-address "0x8707276DF042E89669d69A177d3DA7dC78bd8723" \
   --rpc-url "https://ethereum-rpc.publicnode.com" \
   --network "ETH" \
-  --description "Dope owners can claim their rewards" \
-  --claim-contract "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
-  --entrypoint "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
+  --description "Dope owners snapshot" \
   --block-height 22728943 \
   --from-id 1 \
   --to-id 8000 \
@@ -61,16 +57,14 @@ slot merkle-drops build \
 The command will:
 1. Query token IDs in parallel to find their owners (with configurable concurrency)
 2. Build a map of owner addresses to token IDs
-3. Generate a merkle tree using Poseidon hash (root is displayed in console)
-4. Output a JSON file with metadata and snapshot data:
+3. Output a JSON file with metadata and snapshot data:
    ```json
    {
      "name": "Dope",
      "network": "ETH",
-     "description": "Dope owners can claim their rewards",
-     "claim_contract": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
-     "entrypoint": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
-     "merkle_root": "0x8f7c9e2b1a5d4e8f3c6b9a2d7e1f4c8b5e9a3d7c1f8e4b2a6d9c3f7e1a5b8d2c6f",
+     "description": "Dope owners snapshot",
+     "contract_address": "0x8707276DF042E89669d69A177d3DA7dC78bd8723",
+     "block_height": 22728943,
      "snapshot": [
        ["0xAddress1", [1, 2, 3]],
        ["0xAddress2", [4, 5, 6]]
@@ -78,7 +72,7 @@ The command will:
    }
    ```
 
-The output file can be directly used with `slot merkle-drops create json --file <output>`
+The output file can be used with `slot merkle-drops create --json-file <output>` to create a merkle drop
 
 ### Create Merkle Drop
 
