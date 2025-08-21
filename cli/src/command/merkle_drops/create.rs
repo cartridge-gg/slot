@@ -285,9 +285,30 @@ impl CreateArgs {
                     .unwrap() // Already validated
                     .iter()
                     .map(|id| {
-                        let id_str = id.as_str().unwrap();
-                        Felt::from_hex(id_str)
-                            .unwrap_or_else(|_| Felt::from_dec_str(id_str).unwrap())
+                        // Handle both numeric and string values from build output
+                        match id {
+                            Value::Number(num) => {
+                                // Handle numeric values (from new multi-token build output)
+                                if let Some(int_val) = num.as_u64() {
+                                    Felt::from(int_val)
+                                } else if let Some(int_val) = num.as_i64() {
+                                    Felt::from(int_val as u64)
+                                } else {
+                                    // Fallback for floats or other numeric types
+                                    let num_str = num.to_string();
+                                    Felt::from_dec_str(&num_str)
+                                        .unwrap_or_else(|_| panic!("Invalid numeric value: {}", num_str))
+                                }
+                            }
+                            Value::String(s) => {
+                                // Handle string values (backward compatibility)
+                                Felt::from_hex(s)
+                                    .unwrap_or_else(|_| Felt::from_dec_str(s).unwrap())
+                            }
+                            _ => {
+                                panic!("Data array elements must be numbers or strings, got: {:?}", id)
+                            }
+                        }
                     })
                     .collect();
 
