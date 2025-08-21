@@ -55,7 +55,7 @@ struct CreateFromParamsArgs {
 struct CreateFromJsonArgs {
     #[arg(
         long = "json-file",
-        help = "Path to a JSON file containing merkle drop configuration and data (e.g., output from 'slot merkle-drops build')."
+        help = "Path to a JSON file containing merkle drop configuration and data (e.g., output from 'slot merkle-drops process' or legacy 'slot merkle-drops build')."
     )]
     file: PathBuf,
 }
@@ -88,7 +88,7 @@ pub struct MerkleDropJsonConfig {
     pub data: Vec<[serde_json::Value; 2]>,
 }
 
-// Structure for JSON output from 'slot merkle-drops build' command
+// Structure for JSON output from 'slot merkle-drops build' command (legacy)
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct MerkleDropBuildOutput {
     pub name: String,
@@ -96,7 +96,18 @@ pub struct MerkleDropBuildOutput {
     pub description: String,
     pub claim_contract: String,
     pub entrypoint: String,
-    pub merkle_root: String,
+    pub merkle_root: Option<String>, // Optional for backward compatibility
+    pub snapshot: Vec<Vec<serde_json::Value>>,
+}
+
+// Structure for JSON output from 'slot merkle-drops process' command (new)
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct ProcessedDataInput {
+    pub name: String,
+    pub network: String,
+    pub description: String,
+    pub claim_contract: String,
+    pub entrypoint: String,
     pub snapshot: Vec<Vec<serde_json::Value>>,
 }
 
@@ -143,10 +154,43 @@ impl CreateArgs {
         let file_content = fs::read_to_string(&args.file)
             .map_err(|e| anyhow::anyhow!("Failed to read JSON file: {}", e))?;
 
-        // Try to parse as build output format first (from 'slot merkle-drops build')
-        if let Ok(build_output) = serde_json::from_str::<MerkleDropBuildOutput>(&file_content) {
-            // This is output from 'slot merkle-drops build' command
-            println!("Processing merkle drop from build output...");
+        // Try to parse as processed data format first (from 'slot merkle-drops process')
+        if let Ok(processed_data) = serde_json::from_str::<ProcessedDataInput>(&file_content) {
+            // This is output from 'slot merkle-drops process' command (new format)
+            println!("Processing merkle drop from processed data...");
+
+            // Convert snapshot to the expected format
+            let merkle_array: Vec<Value> = processed_data
+                .snapshot
+                .iter()
+                .map(|entry| {
+                    if entry.len() == 2 {
+                        serde_json::Value::Array(vec![entry[0].clone(), entry[1].clone()])
+                    } else {
+                        serde_json::Value::Array(entry.clone())
+                    }
+                })
+                .collect();
+
+            // Validate the merkle data
+            Self::validate_merkle_data(&merkle_array)?;
+
+            // Convert to claims
+            let claims = Self::convert_to_claims(&merkle_array)?;
+
+            // Create MerkleDropConfig from processed data
+            let config = MerkleDropConfig {
+                description: Some(processed_data.description),
+                network: processed_data.network,
+                contract: processed_data.claim_contract,
+                entrypoint: processed_data.entrypoint,
+            };
+
+            // Create the merkle drop (API will generate merkle root)
+            Self::create_merkle_drop(&processed_data.name, &config, &claims).await
+        } else if let Ok(build_output) = serde_json::from_str::<MerkleDropBuildOutput>(&file_content) {
+            // This is output from 'slot merkle-drops build' command (legacy format)
+            println!("Processing merkle drop from build output (legacy)...");
 
             // Convert snapshot to the expected format
             let merkle_array: Vec<Value> = build_output
@@ -175,7 +219,7 @@ impl CreateArgs {
                 entrypoint: build_output.entrypoint,
             };
 
-            // Create the merkle drop
+            // Create the merkle drop (API will generate merkle root)
             Self::create_merkle_drop(&build_output.name, &config, &claims).await
         } else if let Ok(json_config) = serde_json::from_str::<MerkleDropJsonConfig>(&file_content)
         {
@@ -198,7 +242,7 @@ impl CreateArgs {
             Self::create_merkle_drop(&json_config.name, &json_config.config, &claims).await
         } else {
             Err(anyhow::anyhow!(
-                "Failed to parse JSON file. Expected either output from 'slot merkle-drops build' or a configuration file with 'name', 'config', and 'data' fields."
+                "Failed to parse JSON file. Expected output from 'slot merkle-drops process', 'slot merkle-drops build', or a configuration file with 'name', 'config', and 'data' fields."
             ))
         }
     }
@@ -285,30 +329,9 @@ impl CreateArgs {
                     .unwrap() // Already validated
                     .iter()
                     .map(|id| {
-                        // Handle both numeric and string values from build output
-                        match id {
-                            Value::Number(num) => {
-                                // Handle numeric values (from new multi-token build output)
-                                if let Some(int_val) = num.as_u64() {
-                                    Felt::from(int_val)
-                                } else if let Some(int_val) = num.as_i64() {
-                                    Felt::from(int_val as u64)
-                                } else {
-                                    // Fallback for floats or other numeric types
-                                    let num_str = num.to_string();
-                                    Felt::from_dec_str(&num_str)
-                                        .unwrap_or_else(|_| panic!("Invalid numeric value: {}", num_str))
-                                }
-                            }
-                            Value::String(s) => {
-                                // Handle string values (backward compatibility)
-                                Felt::from_hex(s)
-                                    .unwrap_or_else(|_| Felt::from_dec_str(s).unwrap())
-                            }
-                            _ => {
-                                panic!("Data array elements must be numbers or strings, got: {:?}", id)
-                            }
-                        }
+                        let id_str = id.as_str().unwrap();
+                        Felt::from_hex(id_str)
+                            .unwrap_or_else(|_| Felt::from_dec_str(id_str).unwrap())
                     })
                     .collect();
 

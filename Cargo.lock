@@ -8886,7 +8886,6 @@ dependencies = [
  "ethers",
  "futures",
  "graphql_client",
- "hex",
  "hyper 1.6.0",
  "katana-cli",
  "katana-primitives",

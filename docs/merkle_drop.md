@@ -1,84 +1,120 @@
 # Merkle Drop Commands
 
-The Slot CLI provides commands to create and manage merkle drops for token distribution campaigns.
+The Slot CLI provides commands to create and manage merkle drops for token distribution campaigns using a modular workflow.
 
 ## Overview
 
 Merkle drops are an efficient way to distribute tokens to a large number of recipients while minimizing gas costs. The system uses a merkle tree to prove eligibility for claiming tokens without storing all recipient data onchain.
 
-The merkle root is automatically calculated server-side from the provided claims data, ensuring consistency and eliminating the need for manual merkle tree generation.
+The Slot CLI uses a three-step modular approach:
+1. **Snapshot** - Collect NFT holder data from individual contracts
+2. **Process** - Calculate rewards across multiple snapshots  
+3. **Create** - Deploy via API (server handles merkle tree generation)
 
 ## Commands
 
-### Build Merkle Tree
+### 1. Create Snapshot
 
-Build a merkle tree by querying token holders from on-chain NFT contract(s) via RPC. Supports both single-contract and multi-contract modes, with optional precalculated multi-token rewards.
+Create a snapshot of token holders from a single ERC721 contract at a specific block height.
 
-**Aliases:** `slot md b`
+**Aliases:** `slot md s`
 
 ```bash
-slot merkle-drops build [OPTIONS]
+slot merkle-drops snapshot [OPTIONS]
+```
+
+#### Required Parameters
+
+- `--contract-address <CONTRACT_ADDRESS>` - ERC721 contract address to query
+- `--rpc-url <RPC_URL>` - Network RPC URL (e.g., https://ethereum-rpc.publicnode.com)
+- `--block-height <BLOCK_HEIGHT>` - Block height for deterministic snapshots
+
+#### Optional Parameters
+
+- `--network <NETWORK>` - Network name (e.g., ETH, BASE) (default: ETH)
+- `--from-id <FROM_ID>` - Starting token ID (default: 1)
+- `--to-id <TO_ID>` - Ending token ID (default: 8000)
+- `--output <OUTPUT>` - Output file path (default: snapshot.json)
+- `--delay-ms <DELAY_MS>` - Delay between RPC calls in milliseconds (default: 10)
+- `--concurrency <CONCURRENCY>` - Number of concurrent RPC requests (default: 10)
+
+#### Examples
+
+**Basic Snapshot:**
+```bash
+slot merkle-drops snapshot \
+  --contract-address "0x8707276DF042E89669d69A177d3DA7dC78bd8723" \
+  --rpc-url "https://ethereum-rpc.publicnode.com" \
+  --network "ETH" \
+  --block-height 18500000 \
+  --from-id 1 \
+  --to-id 8000 \
+  --output "dope_eth_snapshot.json"
+```
+
+**Multiple Contract Snapshots:**
+```bash
+# Create separate snapshots for each contract
+slot merkle-drops snapshot \
+  --contract-address "0x8707276DF042E89669d69A177d3DA7dC78bd8723" \
+  --rpc-url "https://ethereum-rpc.publicnode.com" \
+  --network "ETH" \
+  --block-height 18500000 \
+  --output "dope_snapshot.json"
+
+slot merkle-drops snapshot \
+  --contract-address "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D" \
+  --rpc-url "https://ethereum-rpc.publicnode.com" \
+  --network "ETH" \
+  --block-height 18500000 \
+  --output "apes_snapshot.json"
+```
+
+#### Output Format
+
+```json
+{
+  "contract_address": "0x8707276DF042E89669d69A177d3DA7dC78bd8723",
+  "network": "ETH",
+  "block_height": 18500000,
+  "snapshot": {
+    "0xAddress1": [1, 5, 23],
+    "0xAddress2": [42, 100, 150]
+  }
+}
+```
+
+### 2. Process Rewards
+
+Calculate multi-token rewards from multiple snapshot files using a rewards configuration.
+
+**Aliases:** `slot md p`
+
+```bash
+slot merkle-drops process [OPTIONS]
 ```
 
 #### Required Parameters
 
 - `--name <NAME>` - Name for the merkle drop
-- `--rpc-url <RPC_URL>` - Network RPC URL (e.g., https://ethereum-rpc.publicnode.com)
 - `--description <DESCRIPTION>` - Description of the merkle drop
-- `--claim-contract <CLAIM_CONTRACT>` - Claim contract address for the merkle drop
+- `--claim-contract <CLAIM_CONTRACT>` - Claim contract address for token distribution
 - `--entrypoint <ENTRYPOINT>` - Entrypoint address for claiming
-- `--block-height <BLOCK_HEIGHT>` - Block height to query at (required for deterministic snapshots)
-
-#### Contract Selection (Choose One)
-
-**Single Contract Mode:**
-- `--contract-address <CONTRACT_ADDRESS>` - Single NFT contract address to query
-- `--from-id <FROM_ID>` - Starting token ID (default: 1)
-- `--to-id <TO_ID>` - Ending token ID (default: 8000)
-
-**Multi-Contract Mode:**
-- `--contracts-config <FILE>` - JSON file with contract configurations
-
-#### Reward Calculation (Optional)
-
-**On-Chain Mode (Default):**
-- Uses token ownership as-is from blockchain
-
-**Precalculated Rewards Mode:**
-- `--use-precalculated` - Enable precalculated multi-token rewards
-- `--rewards-config <FILE>` - JSON file with reward amounts per contract
+- `--snapshots <SNAPSHOTS>` - Comma-separated list of snapshot files to process
+- `--rewards-config <REWARDS_CONFIG>` - JSON file with reward amounts per contract
 
 #### Optional Parameters
 
-- `--network <NETWORK>` - Network name (e.g., ETH, BASE) (default: ETH)
-- `--output <OUTPUT>` - Output file path (default: merkle_drop.json)
-- `--delay-ms <DELAY_MS>` - Delay between RPC calls in milliseconds (default: 10)
-- `--concurrency <CONCURRENCY>` - Number of concurrent RPC requests (default: 10)
+- `--output <OUTPUT>` - Output file path (default: processed_rewards.json)
 
 #### Configuration Files
 
-**Multi-Contract Configuration** (`contracts_config.json`):
-```json
-[
-  {
-    "address": "0x8707276DF042E89669d69A177d3DA7dC78bd8723",
-    "from_id": 1,
-    "to_id": 8000
-  },
-  {
-    "address": "0xabcdef1234567890abcdef1234567890abcdef12",
-    "from_id": 1,
-    "to_id": 5000
-  }
-]
-```
-
-**Multi-Token Rewards Configuration** (`rewards_config.json`):
+**Rewards Configuration** (`rewards_config.json`):
 ```json
 {
   "contracts": {
-    "0x8707276DF042E89669d69A177d3DA7dC78bd8723": [100, 25],
-    "0xabcdef1234567890abcdef1234567890abcdef12": [50, 10]
+    "0x8707276DF042E89669d69A177d3DA7dC78bd8723": [1000, 500],
+    "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D": [750, 250]
   }
 }
 ```
@@ -86,195 +122,88 @@ slot merkle-drops build [OPTIONS]
 
 #### Examples
 
-**Single Contract Mode (Traditional):**
+**Dual Token Rewards:**
 ```bash
-slot merkle-drops build \
-  --name "Dope Collection" \
-  --contract-address "0x8707276DF042E89669d69A177d3DA7dC78bd8723" \
-  --rpc-url "https://ethereum-rpc.publicnode.com" \
-  --network "ETH" \
-  --description "Dope owners can claim their rewards" \
+slot merkle-drops process \
+  --name "Dual Token Campaign" \
+  --description "Token A and Token B rewards for NFT ecosystem" \
+  --snapshots "dope_snapshot.json,apes_snapshot.json" \
+  --rewards-config "rewards_config.json" \
   --claim-contract "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
-  --entrypoint "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
-  --block-height 22728943 \
-  --from-id 1 \
-  --to-id 8000 \
-  --concurrency 20 \
-  --output dope_loot_snapshot.json
+  --entrypoint "claim_dual_rewards" \
+  --output "dual_token_rewards.json"
 ```
 
-**Multi-Contract On-Chain Mode:**
+**Single Token Rewards:**
 ```bash
-slot merkle-drops build \
-  --name "Multi Collection Drop" \
-  --contracts-config contracts_config.json \
-  --rpc-url "https://ethereum-rpc.publicnode.com" \
-  --network "ETH" \
-  --description "Multiple collection holders get rewards" \
+slot merkle-drops process \
+  --name "Community Rewards" \
+  --description "Single token rewards for holders" \
+  --snapshots "dope_snapshot.json" \
+  --rewards-config "single_token_rewards.json" \
   --claim-contract "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
-  --entrypoint "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
-  --block-height 22728943 \
-  --output multi_collection_snapshot.json
+  --entrypoint "claim_rewards" \
+  --output "community_rewards.json"
 ```
 
-**Multi-Contract + Multi-Token Rewards:**
-```bash
-slot merkle-drops build \
-  --name "Dual Token Rewards" \
-  --contracts-config contracts_config.json \
-  --use-precalculated \
-  --rewards-config rewards_config.json \
-  --rpc-url "https://ethereum-rpc.publicnode.com" \
-  --network "ETH" \
-  --description "Token A and Token B rewards based on NFT holdings" \
-  --claim-contract "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
-  --entrypoint "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
-  --block-height 22728943 \
-  --output dual_token_rewards.json
-```
+#### Process Logic
 
-#### Build Process & Reward Calculation
+**Reward Calculation:**
+1. Load all snapshot files and validate network consistency
+2. Load rewards configuration and validate token count consistency
+3. For each holder across all snapshots:
+   - Count NFTs held in each contract
+   - Multiply by per-contract reward rates for each token type
+   - Sum rewards across all contracts
 
-The build command supports two distinct approaches for determining token distributions:
+**Example Calculation:**
+- Holder owns 3 NFTs from Contract A (1000 Token A + 500 Token B per NFT)
+- Holder owns 2 NFTs from Contract B (750 Token A + 250 Token B per NFT)
+- **Total**: 3×[1000,500] + 2×[750,250] = **[4500, 2000]**
 
-**On-Chain Calculation Mode (Default):**
-- **Use Case**: When smart contracts will calculate rewards based on NFT ownership
-- **Process**: 
-  1. Query token IDs in parallel across all configured contracts
-  2. Build a map of owner addresses to token IDs they hold
-  3. Generate merkle tree with NFT ownership data
-  4. Smart contract calculates final reward amounts during claiming
-- **Output**: Snapshot contains the actual NFT token IDs owned by each address
-- **Example**: `["0xAddress1", [1, 2, 3]]` means address owns NFT tokens 1, 2, and 3
+#### Output Format
 
-**Precalculated Rewards Mode:**
-- **Use Case**: When you want to determine exact reward amounts off-chain instead of on-chain
-- **Why Use This**: 
-  - Avoid complex on-chain calculation logic and gas costs
-  - Implement sophisticated reward formulas (e.g., rarity-based rewards, time-based multipliers)
-  - Support multi-token distributions with different rates per collection
-- **Process**:
-  1. Query NFT holders from all configured contracts
-  2. Calculate exact reward amounts per holder based on:
-     - Number of NFTs owned in each contract
-     - Reward rate configuration per contract per token type
-  3. Generate merkle tree with final calculated reward amounts
-  4. Smart contract simply distributes the precalculated amounts
-- **Output**: Snapshot contains calculated token amounts, not NFT IDs
-- **Example**: `["0xAddress1", [400, 95]]` means address receives 400 Token A + 95 Token B
-
-**Key Difference:**
-- **On-Chain Mode**: NFT ownership → Smart contract calculates rewards → Distribution
-- **Precalculated Mode**: NFT ownership → Build tool calculates rewards → Smart contract distributes predetermined amounts
-
-#### Practical Example
-
-**Scenario**: You want to reward holders of two NFT collections with different token amounts:
-- Premium Collection (0xAAA): 100 Token A + 25 Token B per NFT
-- Standard Collection (0xBBB): 50 Token A + 10 Token B per NFT
-
-**On-Chain Approach:**
-```bash
-# Build with NFT ownership data
-slot merkle-drops build \
-  --contracts-config contracts.json \
-  --name "NFT Rewards" \
-  # ... other params
-
-# Output: ["0xHolder1", [1, 2, 5, 101, 102]]  (NFT IDs from both collections)
-# Smart contract must:
-# - Determine which NFTs are from which collection  
-# - Apply different reward rates per collection
-# - Calculate: 3 premium NFTs × [100,25] + 2 standard NFTs × [50,10] = [400,95]
-```
-
-**Precalculated Approach:**
-```bash
-# Build with precalculated rewards
-slot merkle-drops build \
-  --contracts-config contracts.json \
-  --use-precalculated \
-  --rewards-config rewards.json \
-  --name "NFT Rewards" \
-  # ... other params
-
-# Output: ["0xHolder1", [400, 95]]  (Final calculated amounts)
-# Smart contract simply distributes 400 Token A + 95 Token B
-```
-
-**Benefits of On-Chain Calculation Mode:**
-- ✅ **Full Transparency**: Reward calculation logic is public and verifiable on-chain
-- ✅ **Trustless**: No need to trust off-chain calculations - anyone can verify the math
-- ✅ **Immutable Logic**: Reward formulas are permanently encoded in smart contracts
-- ✅ **Real-time Verification**: Community can audit and verify distribution fairness
-- ✅ **Decentralized**: No reliance on external tools or processes for reward calculation
-
-**Benefits of Precalculated Mode:**
-- ✅ **Simpler Smart Contracts**: No complex calculation logic needed on-chain
-- ✅ **Lower Gas Costs**: No on-chain computation during claims, just token transfers
-- ✅ **Complex Formulas**: Support sophisticated reward logic (rarity, time-based bonuses, etc.)
-- ✅ **Multi-Token Support**: Easy distribution of multiple token types simultaneously
-- ✅ **Performance**: Handle complex calculations without gas limit concerns
-- ✅ **Flexibility**: Implement reward logic that would be too expensive on-chain
-
-**Trade-offs:**
-- **On-Chain**: Higher gas costs but maximum trustlessness and transparency
-- **Precalculated**: Lower gas costs but requires trust in the build tool's calculations
-
-#### Output Formats
-
-**Single Token Output:**
 ```json
 {
-  "name": "Dope Collection",
+  "name": "Dual Token Campaign",
   "network": "ETH",
-  "description": "Dope owners can claim their rewards",
+  "description": "Token A and Token B rewards for NFT ecosystem",
   "claim_contract": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
-  "entrypoint": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
-  "merkle_root": "0x8f7c9e2b1a5d4e8f3c6b9a2d7e1f4c8b5e9a3d7c1f8e4b2a6d9c3f7e1a5b8d2c6f",
+  "entrypoint": "claim_dual_rewards",
   "snapshot": [
-    ["0xAddress1", [1, 2, 3]],        // Token IDs owned
-    ["0xAddress2", [4, 5, 6]]
+    ["0xAddress1", [4500, 2000]],
+    ["0xAddress2", [3250, 1500]]
   ]
 }
 ```
 
-**Multi-Token Rewards Output:**
-```json
-{
-  "name": "Dual Token Rewards",
-  "network": "ETH", 
-  "description": "Token A and Token B rewards based on NFT holdings",
-  "claim_contract": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
-  "entrypoint": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
-  "merkle_root": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-  "snapshot": [
-    ["0xAddress1", [400, 95]],        // 400 Token A + 95 Token B
-    ["0xAddress2", [300, 75]]         // 300 Token A + 75 Token B
-  ]
-}
-```
+### 3. Create Merkle Drop
 
-**Multi-Contract Aggregation:**
-When using multiple contracts, token holdings are automatically aggregated per address across all contracts before reward calculation.
-
-#### Compatibility
-
-The output file can be directly used with `slot merkle-drops create json --file <output>` - the create command automatically handles both single-token and multi-token formats.
-
-### Create Merkle Drop
-
-Create a new merkle drop with specified recipients and token allocations. The CLI supports three different creation methods:
-
-1. **From Parameters** - Specify all configuration parameters individually
-2. **From JSON** - Load configuration and data from a JSON file
-3. **From Preset** - Use a predefined preset from the community presets repository
+Create a new merkle drop by submitting processed data to the Slot API. The server handles all merkle tree generation and proof creation.
 
 **Aliases:** `slot md c`
 
-#### Method 1: From Parameters
+#### Method 1: From Processed Data (Recommended)
 
-Create a merkle drop by specifying all parameters individually.
+Create a merkle drop from processed reward data.
+
+```bash
+slot merkle-drops create json --file <PROCESSED_FILE>
+```
+
+##### Required Parameters
+
+- `--file <PROCESSED_FILE>` - Path to JSON file from `slot merkle-drops process`
+
+##### Example
+
+```bash
+slot merkle-drops create json --file "dual_token_rewards.json"
+```
+
+#### Method 2: From Parameters
+
+Create a merkle drop by specifying parameters individually with a separate data file.
 
 ```bash
 slot merkle-drops create params [OPTIONS]
@@ -284,31 +213,17 @@ slot merkle-drops create params [OPTIONS]
 
 - `--name <NAME>` - Unique name for the merkle drop
 - `--network <NETWORK>` - Network (e.g., ETH, STARKNET)
-- `--contract <CONTRACT>` - Contract address
+- `--contract <CONTRACT>` - Claim contract address
 - `--entrypoint <ENTRYPOINT>` - Entrypoint address
-- `--data-file <DATA_FILE>` - Path to JSON file containing merkle drop data
+- `--data-file <DATA_FILE>` - Path to JSON file containing reward data
 
 ##### Optional Parameters
 
 - `--description <DESCRIPTION>` - Description of the merkle drop
-- `--args <ARGS>` - Arguments for the contract call (comma-separated)
-
-#### Method 2: From JSON
-
-Create a merkle drop from a complete JSON configuration file.
-
-```bash
-slot merkle-drops create json --file <CONFIG_FILE> --team <TEAM>
-```
-
-##### Required Parameters
-
-- `--file <CONFIG_FILE>` - Path to JSON configuration file
-- `--team <TEAM>` - Team name to associate the merkle drop with
 
 #### Method 3: From Preset
 
-Create a merkle drop using a community preset configuration.
+Create a merkle drop using community preset configurations.
 
 ```bash
 slot merkle-drops create preset --project <PROJECT> --name <NAME> [--network <NETWORK>]
@@ -323,69 +238,84 @@ slot merkle-drops create preset --project <PROJECT> --name <NAME> [--network <NE
 
 - `--network <NETWORK>` - Network to use from preset (default: SN_MAIN)
 
+## Complete Workflow Examples
+
+### Single Contract Campaign
+
+```bash
+# 1. Create snapshot
+slot merkle-drops snapshot \
+  --contract-address "0x8707276DF042E89669d69A177d3DA7dC78bd8723" \
+  --rpc-url "https://ethereum-rpc.publicnode.com" \
+  --network "ETH" \
+  --block-height 18500000 \
+  --output "dope_snapshot.json"
+
+# 2. Process with single token rewards  
+slot merkle-drops process \
+  --name "Dope Rewards" \
+  --description "Rewards for Dope NFT holders" \
+  --snapshots "dope_snapshot.json" \
+  --rewards-config "single_rewards.json" \
+  --claim-contract "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
+  --entrypoint "claim_dope" \
+  --output "dope_rewards.json"
+
+# 3. Create merkle drop
+slot merkle-drops create json --file "dope_rewards.json"
+```
+
+### Multi-Contract + Multi-Token Campaign
+
+```bash
+# 1. Create snapshots for each contract
+slot merkle-drops snapshot \
+  --contract-address "0x8707276DF042E89669d69A177d3DA7dC78bd8723" \
+  --rpc-url "https://ethereum-rpc.publicnode.com" \
+  --network "ETH" \
+  --block-height 18500000 \
+  --output "dope_snapshot.json"
+
+slot merkle-drops snapshot \
+  --contract-address "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D" \
+  --rpc-url "https://ethereum-rpc.publicnode.com" \
+  --network "ETH" \
+  --block-height 18500000 \
+  --output "apes_snapshot.json"
+
+# 2. Process with multi-token rewards
+slot merkle-drops process \
+  --name "Ecosystem Rewards" \
+  --description "Token A and Token B rewards for NFT ecosystem" \
+  --snapshots "dope_snapshot.json,apes_snapshot.json" \
+  --rewards-config "dual_token_rewards.json" \
+  --claim-contract "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
+  --entrypoint "claim_ecosystem" \
+  --output "ecosystem_rewards.json"
+
+# 3. Create merkle drop
+slot merkle-drops create json --file "ecosystem_rewards.json"
+```
+
 ## Data File Formats
 
 ### Parameters Method - Data File Format
 
 For the `params` method, the data file must be a JSON array where each entry contains:
-1. Recipient address (string) 
-2. Token amounts or IDs (array of integers)
+1. Recipient address (string)
+2. Token amounts (array of integers)
 
-**Note:** Supports both single-token and multi-token formats from build command output.
-
-**Single Token Data:**
 ```json
 [
   [
     "0xD6E9625d91dc1F2823EF60Eb902266f7dd9D75Df",
-    [1, 5352, 5533, 7443]  // Token IDs owned
-  ],
-  [
-    "0x1234567890123456789012345678901234567890", 
-    [42]  // Single token amount
-  ]
-]
-```
-
-**Multi-Token Rewards Data:**
-```json
-[
-  [
-    "0xD6E9625d91dc1F2823EF60Eb902266f7dd9D75Df",
-    [400, 95]  // 400 Token A + 95 Token B
+    [400, 95]
   ],
   [
     "0x1234567890123456789012345678901234567890",
-    [300, 75, 15]  // Token A + Token B + Token C amounts
+    [300, 75, 15]
   ]
 ]
-```
-
-### JSON Method - Configuration File Format
-
-For the `json` method, the configuration file must contain both the merkle drop configuration and the recipient data:
-
-```json
-{
-  "name": "my-drop-2024",
-  "config": {
-    "description": "Community rewards for active users",
-    "network": "SN_MAIN",
-    "contract": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
-    "entrypoint": "distribute",
-    "args": ["TOKEN_ID", "MERKLE_PROOF"]
-  },
-  "data": [
-    [
-      "0xD6E9625d91dc1F2823EF60Eb902266f7dd9D75Df",
-      [400, 95]  // Multi-token rewards: Token A + Token B amounts
-    ],
-    [
-      "0x1234567890123456789012345678901234567890", 
-      [300, 75]  // Different reward amounts per holder
-    ]
-  ]
-}
 ```
 
 ### Preset Method - Community Presets
@@ -398,100 +328,23 @@ Available presets include:
 - `dope-wars` - Dope Wars NFT drops
 - And more community-maintained presets
 
-## Examples
+## Benefits of Modular Approach
 
-### Method 1: From Parameters
+### Snapshot Benefits
+- ✅ **Caching**: Reuse expensive RPC queries across multiple campaigns
+- ✅ **Auditability**: Clear record of exact NFT ownership at specific block heights
+- ✅ **Efficiency**: Generate once, use multiple times with different reward configurations
 
-#### Basic Merkle Drop Creation
+### Process Benefits  
+- ✅ **Flexibility**: Mix and match snapshots from different contracts and networks
+- ✅ **Multi-Token Support**: Handle complex tokenomics with multiple reward tokens
+- ✅ **Transparency**: Clear visibility into total token distribution amounts
+- ✅ **Validation**: Comprehensive error checking before deployment
 
-```bash
-slot merkle-drops create params \
-  --name "dope-drop-2024-q1" \
-  --description "Dope owners can claim their rewards" \
-  --network "ETH" \
-  --contract "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
-  --entrypoint "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589" \
-  --args "TOKEN_ID,MERKLE_PROOF" \
-  --data-file ./recipients.json
-```
-
-#### Using Aliases
-
-```bash
-slot md c params \
-  --name "rewards-2024" \
-  --network "STARKNET" \
-  --contract "0x123..." \
-  --entrypoint "0x456..." \
-  --data-file ./community_rewards.json
-```
-
-#### Minimal Example (No Optional Args)
-
-```bash
-slot merkle-drops create params \
-  --name "simple-001" \
-  --network "ETH" \
-  --contract "0x123..." \
-  --entrypoint "0x456..." \
-  --data-file ./simple_drop.json
-```
-
-### Method 2: From JSON Configuration
-
-#### Complete Configuration in JSON
-
-```bash
-slot merkle-drops create json \
-  --file ./complete-drop-config.json \
-  --team "my-team"
-```
-
-Where `complete-drop-config.json` contains:
-```json
-{
-  "key": "community-rewards-q4",
-  "config": {
-    "description": "Q4 community rewards distribution",
-    "network": "SN_MAIN",
-    "contract": "0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589",
-    "entrypoint": "claim_rewards",
-    "args": ["RECIPIENT", "AMOUNT", "PROOF"]
-  },
-  "data": [
-    ["0x1234...", [400, 95]],   // Multi-token: 400 Token A + 95 Token B
-    ["0x5678...", [300, 75]]    // 300 Token A + 75 Token B
-  ]
-}
-```
-
-### Method 3: From Community Presets
-
-#### Using Dope Wars Preset
-
-```bash
-slot merkle-drops create preset \
-  --project "dope-wars" \
-  --name "dope" \
-  --network "SN_MAIN"
-```
-
-#### Using Custom Preset
-
-```bash
-slot merkle-drops create preset \
-  --project "my-community-preset" \
-  --name "season-1-rewards"
-```
-
-#### Preset with Different Network
-
-```bash
-slot merkle-drops create preset \
-  --project "dope-wars" \
-  --name "dope" \
-  --network "ETH"
-```
+### Create Benefits
+- ✅ **Server-Side Optimization**: API handles merkle tree generation and proof creation
+- ✅ **Simplified Deployment**: No local cryptographic computation required
+- ✅ **Reduced Complexity**: Focus on data submission rather than merkle tree management
 
 ## Output
 
@@ -502,60 +355,49 @@ Upon successful creation, the command displays:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🏢 Details:
   • ID: merkle_drop_12345
-  • Name: dope-drop-2024-q1
-  • Description: Dope owners can claim their rewards
+  • Name: Ecosystem Rewards
+  • Description: Token A and Token B rewards for NFT ecosystem
 
 🔗 Contract Details:
   • Network: ETH
   • Contract: 0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589
-  • Entrypoint: 0x1dCD8763c01961C2BbB5ed58C6E51F55b1378589
-  • Args: ["TOKEN_ID", "MERKLE_PROOF"]
+  • Entrypoint: claim_ecosystem
 
 🌳 Merkle Details:
   • Root: 0x8f7c9e2b1a5d4e8f3c6b9a2d7e1f4c8b5e9a3d7c1f8e4b2a6d9c3f7e1a5b8d2c6f (auto-generated)
-  • Entries: 3
-  • Created: 2024-08-15T10:30:00Z
+  • Entries: 150
+  • Created: 2024-08-21T10:30:00Z
 ```
 
 ## Data Validation
 
-The command performs comprehensive validation:
+The commands perform comprehensive validation:
 
-- ✅ **JSON Format**: Ensures data file is valid JSON
-- ✅ **Array Structure**: Validates top-level array format
-- ✅ **Entry Format**: Each entry must have exactly 2 elements
-- ✅ **Address Format**: First element must be a string (address)
-- ✅ **Token Data**: Second element must be an array of integers (supports both token IDs and multi-token amounts)
-- ✅ **Multi-Token Support**: Handles both numeric and string array elements from build command output
+- ✅ **Network Consistency**: All snapshots must be from the same network
+- ✅ **Token Count Consistency**: All contracts must have the same number of reward tokens
+- ✅ **JSON Format**: Ensures all data files are valid JSON
+- ✅ **Address Format**: Validates recipient addresses
+- ✅ **Reward Data**: Validates reward amounts and token arrays
 
 ## Error Handling
 
 Common error scenarios:
 
-### Invalid Data Format
+### Snapshot Errors
 ```bash
-Entry 0 must have exactly 2 elements: [address, token_ids]
+Error querying token 1234: contract call reverted
+Warning: Error querying token 5678: timeout
 ```
 
-### Missing Required Parameters
+### Process Errors  
 ```bash
-error: the following required arguments were not provided:
-  --name <NAME>
-  --network <NETWORK>
+Network mismatch: snapshot for contract 0xAAA is on network 'ETH', expected 'BASE'
+All contracts must have the same number of reward tokens. Contract 0xBBB has 3 tokens, expected 2
 ```
 
-### Preset Not Found
+### Create Errors
 ```bash
-Preset 'invalid-preset' not found. Check available presets at https://github.com/cartridge-gg/presets/tree/main/configs
-```
-
-### Invalid JSON Configuration
-```bash
-Failed to parse JSON configuration: missing field `key`
-```
-
-### API Errors
-```bash
+Failed to parse JSON file. Expected output from 'slot merkle-drops process'
 API error: 422 Unprocessable Entity
 ```
 
@@ -567,40 +409,52 @@ Merkle drop operations require authentication. Ensure you're logged in:
 slot auth login
 ```
 
-## Discovering Available Presets
-
-To find available community presets:
-
-1. Browse the [presets repository](https://github.com/cartridge-gg/presets/tree/main/configs)
-2. Each folder represents a preset (e.g., `dope-wars`)
-3. Check `config.json` for available merkle drops under the `merkledrops` section
-4. Use the merkle drop name from the configuration
-
-### Preset Structure Example
-
-Preset `dope-wars` contains:
-```
-configs/dope-wars/
-├── config.json                 # Main preset configuration
-└── merkledrops/
-    └── dope.json              # Merkle drop data for name "dope"
-```
-
 ## Best Practices
 
-1. **Unique Names**: Always use unique names for each merkle drop to avoid conflicts
-2. **Method Selection**: 
-   - Use `params` for one-off drops with custom configuration
-   - Use `json` for complex drops with version control needs
-   - Use `preset` for community-standard drops
-3. **Data Validation**: Validate recipient data before creation to avoid errors
-4. **Backup Data**: Keep backups of your merkle drop data files
-5. **Test First**: Test with small datasets before large-scale deployments
-6. **Preset Updates**: When using presets, check for updates in the community repository
-7. **Multi-Contract Strategy**: Use multi-contract mode for ecosystem-wide drops across multiple collections
-8. **Multi-Token Planning**: Design reward tokenomics carefully when using multi-token rewards
-9. **Block Height**: Always specify block height for reproducible snapshots across multiple builds
-10. **Reward Validation**: Verify reward calculations match expected tokenomics before deployment
+1. **Snapshot Strategy**: 
+   - Use consistent block heights across related snapshots
+   - Name snapshot files clearly (e.g., `dope_eth_18500000.json`)
+   - Store snapshots for reuse across multiple campaigns
+
+2. **Process Planning**:
+   - Design reward tokenomics carefully before processing
+   - Validate total distribution amounts match available token supply
+   - Test with small datasets before large-scale processing
+
+3. **Multi-Token Design**:
+   - Ensure all contracts use the same number of reward tokens
+   - Consider token economic implications of different reward rates
+   - Plan for appropriate reward token liquidity
+
+4. **Network Consistency**:
+   - Use the same network and block height for related snapshots
+   - Verify RPC endpoint reliability for large token ranges
+   - Consider rate limiting and concurrency settings
+
+5. **Data Management**:
+   - Keep backups of snapshot and processed data files
+   - Version control reward configurations
+   - Document reward calculation rationale
+
+## Use Cases
+
+### Ecosystem-Wide Campaigns
+Create rewards for holders across multiple NFT collections:
+- Take snapshots of all ecosystem contracts
+- Define tiered rewards based on collection rarity/value
+- Process combined rewards for unified campaign
+
+### Tiered Tokenomics
+Implement sophisticated reward structures:
+- Premium collections: Higher reward rates
+- Standard collections: Base reward rates  
+- Multi-token distributions: Different tokens for different purposes
+
+### Cached Data Reuse
+Leverage snapshot caching for efficiency:
+- Generate snapshots once for expensive RPC operations
+- Reuse snapshots across multiple reward campaigns
+- Test different reward configurations without re-querying blockchain
 
 ## Related Commands
 
