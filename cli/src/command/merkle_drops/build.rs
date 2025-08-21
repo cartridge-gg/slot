@@ -111,7 +111,7 @@ impl BuildArgs {
         println!("Found {} unique holders", holders.len());
 
         // Convert to merkle claim data format
-        let merkle_data: Vec<MerkleClaimData> = holders
+        let mut merkle_data: Vec<MerkleClaimData> = holders
             .into_iter()
             .map(|(address, token_ids)| {
                 // Convert token_ids to Felt array
@@ -119,6 +119,12 @@ impl BuildArgs {
                 MerkleClaimData { address, data }
             })
             .collect();
+
+        merkle_data.sort_by(|a, b| {
+            let a = Felt::from_hex(&a.address).unwrap_or_default();
+            let b = Felt::from_hex(&b.address).unwrap_or_default();
+            a.cmp(&b)
+        });
 
         // Build merkle tree
         println!("Building merkle tree...");
