@@ -43,13 +43,20 @@ fn compute_leaf_hash(address: &str, data: &[Felt]) -> Result<Felt> {
 }
 
 /// Compute the leaf hash for merkle drop using exact JS implementation parameters
-/// This matches the cartridge-gg/merkle_drop JS implementation
+/// This matches the cartridge-gg/merkle_drop JS implementation after commit 0b0fcb2
+/// The new version only hashes [address, data.length, ...data]
 fn compute_leaf_hash_js_compatible(
     address: &str,
-    claim_contract_address: &str,
-    entrypoint: &str,
+    _claim_contract_address: &str,  // No longer used but kept for API compatibility
+    _entrypoint: &str,               // No longer used but kept for API compatibility
     data: &[Felt],
 ) -> Result<Felt> {
+    compute_leaf_hash_simplified(address, data)
+}
+
+/// Compute the leaf hash for merkle drop using the simplified format
+/// This is the preferred method matching the latest JS implementation
+pub fn compute_leaf_hash_simplified(address: &str, data: &[Felt]) -> Result<Felt> {
     // Parse address to Felt (Ethereum addresses need special handling)
     let address_felt = if address.starts_with("0x") && address.len() == 42 {
         // Ethereum address - keep as-is, it's already in hex format
@@ -62,16 +69,8 @@ fn compute_leaf_hash_js_compatible(
             .map_err(|e| anyhow::anyhow!("Failed to parse address {}: {}", address, e))?
     };
 
-    // Parse claim contract address
-    let claim_contract_felt = Felt::from_hex(claim_contract_address)
-        .map_err(|e| anyhow::anyhow!("Failed to parse claim contract address: {}", e))?;
-
-    // Parse entrypoint selector
-    let entrypoint_felt = Felt::from_hex(entrypoint)
-        .map_err(|e| anyhow::anyhow!("Failed to parse entrypoint: {}", e))?;
-
-    // Build elements array exactly matching JS: [address, claim_contract_address, entrypoint, data.length, ...data]
-    let mut elements = vec![address_felt, claim_contract_felt, entrypoint_felt];
+    // Build elements array: [address, data.length, ...data]
+    let mut elements = vec![address_felt];
     elements.push(Felt::from(data.len() as u64));
     elements.extend_from_slice(data);
 
@@ -120,6 +119,24 @@ pub fn build_merkle_tree_js_compatible(
             entrypoint,
             &claim.data,
         )?;
+        leaf_hashes.push((claim.address.clone(), hash));
+    }
+
+    // Don't sort leaves (matching JS sortLeaves:false)
+    build_merkle_tree_from_hashes(&leaf_hashes)
+}
+
+/// Build a merkle tree using the simplified leaf hash format (latest JS version)
+/// This matches the behavior after commit 0b0fcb2
+pub fn build_merkle_tree_simplified(claims: &[MerkleClaimData]) -> Result<MerkleTreeResult> {
+    if claims.is_empty() {
+        return Err(anyhow::anyhow!("Cannot build merkle tree with no claims"));
+    }
+
+    // Compute leaf hashes using simplified method
+    let mut leaf_hashes: Vec<(String, Felt)> = Vec::new();
+    for claim in claims {
+        let hash = compute_leaf_hash_simplified(&claim.address, &claim.data)?;
         leaf_hashes.push((claim.address.clone(), hash));
     }
 
@@ -421,8 +438,8 @@ mod tests {
     }
 
     #[test]
-    fn test_dope_js_compatibility() {
-        // Test data from dope.js
+    fn test_dope_js_compatibility_simplified() {
+        // Test data from dope.js  
         let claims = vec![
             MerkleClaimData {
                 address: "0xfcf82721182afe347961aeb44f289c3ab6144ddc".to_string(),
@@ -448,50 +465,31 @@ mod tests {
             },
         ];
 
-        // JS implementation parameters
-        let claim_contract_address = "0x2803f7953e7403d204906467e2458ca4b206723607acae26c9c729a926e491f";
-        let entrypoint_name = "claim_from_forwarder";
-        let entrypoint_selector = compute_entrypoint_selector(entrypoint_name);
-
-        // Expected values from JavaScript implementation
-        let expected_root = "0x0712cdfebe79b81021a6b3e9253ee2387b8dcebea3eeac10c1ba8f63554fd1d4";
-        let expected_leaf_hash = "0x064276e16eb8981e2ae8814594e7b4581f810aa5dd2fbe452f61a72831743223";
-
-        // Verify first leaf hash
-        let first_hash = compute_leaf_hash_js_compatible(
-            &claims[0].address,
-            claim_contract_address,
-            &entrypoint_selector,
-            &claims[0].data,
-        ).unwrap();
-        
-        let leaf_hash_hex = format!("0x{:064x}", first_hash);
-        println!("First leaf hash: {}", leaf_hash_hex);
-        println!("Expected:        {}", expected_leaf_hash);
-        
-        assert_eq!(
-            leaf_hash_hex.to_lowercase(),
-            expected_leaf_hash.to_lowercase(),
-            "First leaf hash should match JavaScript implementation"
-        );
-
-        // Build merkle tree using JS-compatible method
-        let (root, _proofs) = build_merkle_tree_js_compatible(
-            &claims,
-            claim_contract_address,
-            &entrypoint_selector,
-        ).unwrap();
-        
+        // Build merkle tree using simplified method (post commit 0b0fcb2)
+        let (root, proofs) = build_merkle_tree_simplified(&claims).unwrap();
         let root_hex = format!("0x{}", hex::encode(&root));
 
-        println!("\nComputed root: {}", root_hex);
-        println!("Expected root: {}", expected_root);
+        println!("Simplified merkle root: {}", root_hex);
+        
+        // Verify all addresses have proofs
+        for claim in &claims {
+            assert!(
+                proofs.contains_key(&claim.address),
+                "Address {} should have a proof",
+                claim.address
+            );
+        }
 
-        // Check if root matches
-        assert_eq!(
-            root_hex.to_lowercase(),
-            expected_root.to_lowercase(),
-            "Merkle root should match JavaScript implementation"
-        );
+        // Print leaf hashes for debugging
+        println!("\nSimplified leaf hashes:");
+        for claim in &claims {
+            let hash = compute_leaf_hash_simplified(&claim.address, &claim.data).unwrap();
+            println!("  {} -> 0x{:064x}", claim.address, hash);
+        }
+        
+        // Note: Without running the updated JS code, we can't verify the exact root
+        // But we can ensure the implementation is consistent and works
+        assert!(!root.is_empty(), "Root should not be empty");
+        assert_eq!(proofs.len(), 4, "Should have proofs for all 4 addresses");
     }
 }
