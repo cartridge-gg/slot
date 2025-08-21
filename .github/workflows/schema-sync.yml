@@ -1,0 +1,57 @@
+name: Daily Schema Sync
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # Run daily at 2 AM UTC
+  workflow_dispatch: # Allow manual triggering
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync-schema:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install GraphQL CLI
+        run: cargo install graphql_client_cli
+
+      - name: Run schema pull
+        run: sh scripts/pull_schema.sh prod
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update GraphQL schema from production"
+          title: "🔄 Daily Schema Sync"
+          body: |
+            ## Summary
+
+            Automated daily sync of GraphQL schema from production environment.
+
+            This PR was automatically created by the daily schema sync workflow.
+
+            ## Changes
+
+            - Updated `slot/src/graphql/schema.graphql` from production API
+            - Generated Rust code will be updated on merge if schema changed
+
+            ## Next Steps
+
+            - Review schema changes for breaking changes
+            - Ensure generated code still compiles
+            - Merge if changes look good
+          branch: chore/daily-schema-sync
+          branch-suffix: timestamp
+          delete-branch: true
+          assignees: ${{ github.actor }}
