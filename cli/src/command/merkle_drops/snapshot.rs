@@ -1,8 +1,6 @@
 use anyhow::Result;
 use clap::Args;
 use serde_json::json;
-use slot::merkle::{build_merkle_tree, MerkleClaimData};
-use starknet::core::types::Felt;
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -22,9 +20,9 @@ abigen!(
 );
 
 #[derive(Debug, Args)]
-#[command(next_help_heading = "Build merkle drop options")]
-pub struct BuildArgs {
-    #[arg(long, help = "Name for the merkle drop")]
+#[command(next_help_heading = "Snapshot options")]
+pub struct SnapshotArgs {
+    #[arg(long, help = "Name for the snapshot")]
     name: String,
 
     #[arg(long, help = "Contract address to query for token holders")]
@@ -39,7 +37,7 @@ pub struct BuildArgs {
     #[arg(long, help = "Network name (e.g., ETH, BASE)", default_value = "ETH")]
     network: String,
 
-    #[arg(long, help = "Description of the merkle drop")]
+    #[arg(long, help = "Description of the snapshot")]
     description: String,
 
     #[arg(long, help = "Claim contract address for the merkle drop")]
@@ -62,8 +60,8 @@ pub struct BuildArgs {
 
     #[arg(
         long,
-        help = "Output file path for the merkle drop JSON data",
-        default_value = "merkle_drop.json"
+        help = "Output file path for the snapshot JSON data",
+        default_value = "snapshot.json"
     )]
     output: PathBuf,
 
@@ -78,10 +76,10 @@ pub struct BuildArgs {
     concurrency: usize,
 }
 
-impl BuildArgs {
+impl SnapshotArgs {
     pub async fn run(&self) -> Result<()> {
         println!(
-            "Building merkle tree for contract: {}",
+            "Generating snapshot for contract: {}",
             self.contract_address
         );
         println!("RPC URL: {}", self.rpc_url);
@@ -110,48 +108,17 @@ impl BuildArgs {
 
         println!("Found {} unique holders", holders.len());
 
-        // Convert to merkle claim data format
-        let mut merkle_data: Vec<MerkleClaimData> = holders
-            .into_iter()
-            .map(|(address, token_ids)| {
-                // Convert token_ids to Felt array
-                let data: Vec<Felt> = token_ids.iter().map(|id| Felt::from(*id as u64)).collect();
-                MerkleClaimData { address, data }
-            })
-            .collect();
-
-        merkle_data.sort_by(|a, b| {
-            let a = Felt::from_hex(&a.address).unwrap_or_default();
-            let b = Felt::from_hex(&b.address).unwrap_or_default();
-            a.cmp(&b)
-        });
-
-        // Build merkle tree
-        println!("Building merkle tree...");
-        let (root, _proofs) = build_merkle_tree(&merkle_data)?;
-
-        println!("Merkle root: 0x{}", hex::encode(&root));
+        // Convert holders to sorted list
+        let mut sorted_holders: Vec<(String, Vec<i64>)> = holders.into_iter().collect();
+        sorted_holders.sort_by(|a, b| a.0.cmp(&b.0));
 
         // Prepare snapshot data
-        let snapshot: Vec<Vec<serde_json::Value>> = merkle_data
+        let snapshot: Vec<Vec<serde_json::Value>> = sorted_holders
             .iter()
-            .map(|claim| {
-                // Convert Felt data back to numeric values for JSON output
-                let token_ids: Vec<i64> = claim
-                    .data
-                    .iter()
-                    .map(|f| {
-                        // Convert Felt to u64 then to i64
-                        // This assumes token IDs fit in i64 range
-                        let bytes = f.to_bytes_be();
-                        let mut value = 0u64;
-                        for (i, &byte) in bytes.iter().rev().enumerate().take(8) {
-                            value |= (byte as u64) << (i * 8);
-                        }
-                        value as i64
-                    })
-                    .collect();
-                vec![json!(claim.address), json!(token_ids)]
+            .map(|(address, token_ids)| {
+                let mut sorted_ids = token_ids.clone();
+                sorted_ids.sort();
+                vec![json!(address), json!(sorted_ids)]
             })
             .collect();
 
@@ -162,7 +129,8 @@ impl BuildArgs {
             "description": self.description,
             "claim_contract": self.claim_contract,
             "entrypoint": self.entrypoint,
-            "merkle_root": format!("0x{}", hex::encode(&root)),
+            "contract_address": self.contract_address,
+            "block_height": self.block_height,
             "snapshot": snapshot
         });
 
@@ -170,15 +138,14 @@ impl BuildArgs {
         let output_str = serde_json::to_string_pretty(&output_data)?;
         std::fs::write(&self.output, output_str)?;
 
-        println!("Merkle drop data written to: {}", self.output.display());
+        println!("Snapshot data written to: {}", self.output.display());
         println!("\nSummary:");
-        println!("  Total unique holders: {}", merkle_data.len());
-        println!("  Merkle root: 0x{}", hex::encode(&root));
+        println!("  Total unique holders: {}", sorted_holders.len());
         println!("  Output file: {}", self.output.display());
         println!("\nNext steps:");
         println!("1. Review the generated snapshot data");
         println!(
-            "2. Use 'slot merkle-drops create json --file {}' to create the merkle drop",
+            "2. Use 'slot merkle-drops create --json-file {}' to create a merkle drop from this snapshot",
             self.output.display()
         );
 
