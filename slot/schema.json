@@ -5,6 +5,16 @@
         {
           "args": [
             {
+              "defaultValue": "true",
+              "description": null,
+              "name": "if",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
               "defaultValue": null,
               "description": null,
               "name": "label",
@@ -13,18 +23,8 @@
                 "name": "String",
                 "ofType": null
               }
-            },
-						{
-							"defaultValue": "true",
-							"description": null,
-							"name": "if",
-							"type": {
-								"kind": "SCALAR",
-								"name": "Boolean",
-								"ofType": null
-							}
-						}
-					],
+            }
+          ],
           "description": "The @defer directive may be specified on a fragment spread to imply de-prioritization, that causes the fragment to be omitted in the initial response, and delivered as a subsequent response afterward. A query with @defer directive will cause the request to potentially return multiple responses, where non-deferred data is delivered in the initial response and data deferred delivered in a subsequent response. @include and @skip take precedence over @defer.",
           "locations": [
             "FRAGMENT_SPREAD",
