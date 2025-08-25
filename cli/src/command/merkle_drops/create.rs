@@ -117,16 +117,10 @@ impl CreateArgs {
         let merkle_data: Value = serde_json::from_str(&data_content)
             .map_err(|e| anyhow::anyhow!("Failed to parse JSON data file: {}", e))?;
 
-        // Get the merkle array from the snapshot field
-        let merkle_array = merkle_data
-            .as_object()
-            .and_then(|obj| obj.get("snapshot"))
-            .and_then(|v| v.as_array())
-            .ok_or_else(|| {
-                anyhow::anyhow!(
-                    "Data file must be a JSON object containing a 'snapshot' array field"
-                )
-            })?;
+        // Validate that data is a direct array
+        let merkle_array = merkle_data.as_array().ok_or_else(|| {
+            anyhow::anyhow!("Data file must be a JSON array of [address, [data]] entries")
+        })?;
 
         Self::validate_merkle_data(merkle_array)?;
 
@@ -149,64 +143,60 @@ impl CreateArgs {
         let file_content = fs::read_to_string(&args.file)
             .map_err(|e| anyhow::anyhow!("Failed to read JSON file: {}", e))?;
 
-        // Try to parse as build output format first (from 'slot merkle-drops build')
-        if let Ok(build_output) = serde_json::from_str::<MerkleDropBuildOutput>(&file_content) {
-            // This is output from 'slot merkle-drops build' command
-            println!("Processing merkle drop from build output...");
+        let json_data: Value = serde_json::from_str(&file_content)
+            .map_err(|e| anyhow::anyhow!("Failed to parse JSON file: {}", e))?;
 
-            // Convert snapshot to the expected format
-            let merkle_array: Vec<Value> = build_output
-                .snapshot
-                .iter()
-                .map(|entry| {
-                    if entry.len() == 2 {
-                        serde_json::Value::Array(vec![entry[0].clone(), entry[1].clone()])
-                    } else {
-                        serde_json::Value::Array(entry.clone())
-                    }
-                })
-                .collect();
+        // Get the root object
+        let root = json_data
+            .as_object()
+            .ok_or_else(|| anyhow::anyhow!("JSON file must contain a root object"))?;
 
-            // Validate the merkle data
-            Self::validate_merkle_data(&merkle_array)?;
+        // Extract required fields
+        let name = root
+            .get("name")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'name' field"))?;
 
-            // Convert to claims
-            let claims = Self::convert_to_claims(&merkle_array)?;
+        let network = root
+            .get("network")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'network' field"))?;
 
-            // Create MerkleDropConfig from build output
-            let config = MerkleDropConfig {
-                description: Some(build_output.description),
-                network: build_output.network,
-                contract: build_output.claim_contract,
-                entrypoint: build_output.entrypoint,
-            };
+        let contract = root
+            .get("claim_contract")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'claim_contract' field"))?;
 
-            // Create the merkle drop
-            Self::create_merkle_drop(&build_output.name, &config, &claims).await
-        } else if let Ok(json_config) = serde_json::from_str::<MerkleDropJsonConfig>(&file_content)
-        {
-            // This is the old format with explicit config structure
-            println!("Processing merkle drop from configuration file...");
+        let entrypoint = root
+            .get("entrypoint")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'entrypoint' field"))?;
 
-            // Validate the merkle data
-            let merkle_array = json_config
-                .data
-                .iter()
-                .map(|entry| serde_json::Value::Array(vec![entry[0].clone(), entry[1].clone()]))
-                .collect::<Vec<_>>();
+        let description = root
+            .get("description")
+            .and_then(|v| v.as_str())
+            .map(String::from);
 
-            Self::validate_merkle_data(&merkle_array)?;
+        // Get the merkle array from the snapshot field
+        let merkle_array = root
+            .get("snapshot")
+            .and_then(|v| v.as_array())
+            .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'snapshot' array field"))?;
 
-            // Convert to claims
-            let claims = Self::convert_to_claims(&merkle_array)?;
+        Self::validate_merkle_data(merkle_array)?;
 
-            // Create the merkle drop using the config from JSON
-            Self::create_merkle_drop(&json_config.name, &json_config.config, &claims).await
-        } else {
-            Err(anyhow::anyhow!(
-                "Failed to parse JSON file. Expected either output from 'slot merkle-drops build' or a configuration file with 'name', 'config', and 'data' fields."
-            ))
-        }
+        // Convert JSON data to structured claims
+        let claims = Self::convert_to_claims(merkle_array)?;
+
+        // Create the merkle drop
+        let config = MerkleDropConfig {
+            description,
+            network: network.to_string(),
+            contract: contract.to_string(),
+            entrypoint: entrypoint.to_string(),
+        };
+
+        Self::create_merkle_drop(name, &config, &claims).await
     }
 
     async fn run_from_preset(args: &CreateFromPresetArgs) -> Result<()> {
@@ -279,30 +269,45 @@ impl CreateArgs {
     fn convert_to_claims(
         merkle_array: &[Value],
     ) -> Result<Vec<create_merkle_drop::MerkleClaimInput>> {
-        let claims: Vec<create_merkle_drop::MerkleClaimInput> = merkle_array
+        merkle_array
             .iter()
             .map(|entry| {
-                let entry_array = entry.as_array().unwrap(); // Already validated
-                let address_str = entry_array[0].as_str().unwrap(); // Already validated
+                let entry_array = entry
+                    .as_array()
+                    .ok_or_else(|| anyhow::anyhow!("Each entry must be an array"))?;
+
+                let address_str = entry_array[0]
+                    .as_str()
+                    .ok_or_else(|| anyhow::anyhow!("Address must be a string"))?;
                 let address = Felt::from_hex(address_str)
                     .unwrap_or_else(|_| Felt::from_dec_str(address_str).unwrap());
-                let data: Vec<Felt> = entry_array[1]
+
+                let data_array = entry_array[1]
                     .as_array()
-                    .unwrap() // Already validated
+                    .ok_or_else(|| anyhow::anyhow!("Data must be an array"))?;
+
+                let data: Result<Vec<Felt>> = data_array
                     .iter()
                     .map(|id| {
-                        let id_num = id
-                            .as_u64()
-                            .ok_or_else(|| anyhow::anyhow!("Data array must contain only numbers"))
-                            .unwrap();
-                        Felt::from(id_num)
+                        let id_str = match id {
+                            Value::String(s) => s.clone(),
+                            Value::Number(n) => n.to_string(),
+                            _ => return Err(anyhow::anyhow!("ID must be a string or number")),
+                        };
+
+                        // Try hex first, then decimal
+                        Felt::from_hex(&id_str)
+                            .or_else(|_| Felt::from_dec_str(&id_str))
+                            .map_err(|_| anyhow::anyhow!("Failed to parse token ID: {}", id_str))
                     })
                     .collect();
 
-                create_merkle_drop::MerkleClaimInput { address, data }
+                Ok(create_merkle_drop::MerkleClaimInput {
+                    address,
+                    data: data?,
+                })
             })
-            .collect();
-        Ok(claims)
+            .collect()
     }
 
     // Helper method to create merkle drop via GraphQL
