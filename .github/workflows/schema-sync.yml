@@ -36,7 +36,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: update GraphQL schema from production"
-          title: "🔄 Daily Schema Sync"
+          title: "chore(graphql): sync schema"
           body: |
             ## Summary
 
