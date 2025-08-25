@@ -118,7 +118,12 @@ impl SnapshotArgs {
             .map(|(address, token_ids)| {
                 let mut sorted_ids = token_ids.clone();
                 sorted_ids.sort();
-                vec![json!(address), json!(sorted_ids)]
+                // Convert token IDs to hex strings and create JSON strings (not numbers)
+                let hex_ids: Vec<serde_json::Value> = sorted_ids
+                    .iter()
+                    .map(|id| serde_json::Value::String(format!("0x{:x}", id)))
+                    .collect();
+                vec![json!(address), serde_json::Value::Array(hex_ids)]
             })
             .collect();
 
