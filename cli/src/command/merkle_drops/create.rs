@@ -117,10 +117,16 @@ impl CreateArgs {
         let merkle_data: Value = serde_json::from_str(&data_content)
             .map_err(|e| anyhow::anyhow!("Failed to parse JSON data file: {}", e))?;
 
-        // Validate that data is an array
+        // Get the merkle array from the snapshot field
         let merkle_array = merkle_data
-            .as_array()
-            .ok_or_else(|| anyhow::anyhow!("Data file must contain a JSON array"))?;
+            .as_object()
+            .and_then(|obj| obj.get("snapshot"))
+            .and_then(|v| v.as_array())
+            .ok_or_else(|| {
+                anyhow::anyhow!(
+                    "Data file must be a JSON object containing a 'snapshot' array field"
+                )
+            })?;
 
         Self::validate_merkle_data(merkle_array)?;
 
@@ -273,28 +279,39 @@ impl CreateArgs {
     fn convert_to_claims(
         merkle_array: &[Value],
     ) -> Result<Vec<create_merkle_drop::MerkleClaimInput>> {
-        let claims: Vec<create_merkle_drop::MerkleClaimInput> = merkle_array
+        merkle_array
             .iter()
             .map(|entry| {
-                let entry_array = entry.as_array().unwrap(); // Already validated
-                let address_str = entry_array[0].as_str().unwrap(); // Already validated
+                let entry_array = entry
+                    .as_array()
+                    .ok_or_else(|| anyhow::anyhow!("Each entry must be an array"))?;
+                
+                let address_str = entry_array[0]
+                    .as_str()
+                    .ok_or_else(|| anyhow::anyhow!("Address must be a string"))?;
                 let address = Felt::from_hex(address_str)
                     .unwrap_or_else(|_| Felt::from_dec_str(address_str).unwrap());
-                let data: Vec<Felt> = entry_array[1]
+
+                let data_array = entry_array[1]
                     .as_array()
-                    .unwrap() // Already validated
+                    .ok_or_else(|| anyhow::anyhow!("Data must be an array"))?;
+
+                let data: Result<Vec<Felt>> = data_array
                     .iter()
                     .map(|id| {
-                        let id_str = id.as_str().unwrap();
-                        Felt::from_hex(id_str)
-                            .unwrap_or_else(|_| Felt::from_dec_str(id_str).unwrap())
+                        // Convert number to string to handle large values
+                        let id_str = id.to_string();
+                        Felt::from_dec_str(&id_str)
+                            .map_err(|_| anyhow::anyhow!("Failed to parse number: {}", id_str))
                     })
                     .collect();
 
-                create_merkle_drop::MerkleClaimInput { address, data }
+                Ok(create_merkle_drop::MerkleClaimInput {
+                    address,
+                    data: data?,
+                })
             })
-            .collect();
-        Ok(claims)
+            .collect()
     }
 
     // Helper method to create merkle drop via GraphQL
