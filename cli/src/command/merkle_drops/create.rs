@@ -117,10 +117,16 @@ impl CreateArgs {
         let merkle_data: Value = serde_json::from_str(&data_content)
             .map_err(|e| anyhow::anyhow!("Failed to parse JSON data file: {}", e))?;
 
-        // Validate that data is an array
+        // Get the merkle array from the snapshot field
         let merkle_array = merkle_data
-            .as_array()
-            .ok_or_else(|| anyhow::anyhow!("Data file must contain a JSON array"))?;
+            .as_object()
+            .and_then(|obj| obj.get("snapshot"))
+            .and_then(|v| v.as_array())
+            .ok_or_else(|| {
+                anyhow::anyhow!(
+                    "Data file must be a JSON object containing a 'snapshot' array field"
+                )
+            })?;
 
         Self::validate_merkle_data(merkle_array)?;
 
@@ -285,9 +291,11 @@ impl CreateArgs {
                     .unwrap() // Already validated
                     .iter()
                     .map(|id| {
-                        let id_str = id.as_str().unwrap();
-                        Felt::from_hex(id_str)
-                            .unwrap_or_else(|_| Felt::from_dec_str(id_str).unwrap())
+                        let id_num = id
+                            .as_u64()
+                            .ok_or_else(|| anyhow::anyhow!("Data array must contain only numbers"))
+                            .unwrap();
+                        Felt::from(id_num)
                     })
                     .collect();
 
