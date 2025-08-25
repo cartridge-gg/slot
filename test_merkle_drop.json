@@ -1,6 +1,6 @@
 {
   "name": "test-merkle-drop",
-  "network": "ETH",
+  "network": "ETHEREUM",
   "description": "Test merkle drop from build output",
   "claim_contract": "0x1234567890abcdef1234567890abcdef12345678",
   "entrypoint": "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",

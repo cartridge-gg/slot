@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use slot::api::Client;
 use slot::credential::Credentials;
-use slot::graphql::merkle_drop::create_merkle_drop;
+use slot::graphql::merkle_drop::create_merkle_drop::{self, MerkleDropNetwork};
 use slot::graphql::merkle_drop::CreateMerkleDrop;
 use slot::graphql::GraphQLQuery;
 use starknet::core::types::Felt;
@@ -38,7 +38,10 @@ struct CreateFromParamsArgs {
     #[arg(long, help = "Description of the merkle drop.")]
     description: Option<String>,
 
-    #[arg(long, help = "Network (e.g., ETH, STARKNET).")]
+    #[arg(
+        long,
+        help = "Network (ETHEREUM, STARKNET, ARBITRUM, OPTIMISM, POLYGON, BASE)."
+    )]
     network: String,
 
     #[arg(long, help = "Contract address.")]
@@ -157,10 +160,11 @@ impl CreateArgs {
             .and_then(|v| v.as_str())
             .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'name' field"))?;
 
-        let network = root
+        let network_str = root
             .get("network")
             .and_then(|v| v.as_str())
-            .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'network' field"))?;
+            .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'network' field"))?
+            .to_uppercase();
 
         let contract = root
             .get("claim_contract")
@@ -191,7 +195,7 @@ impl CreateArgs {
         // Create the merkle drop
         let config = MerkleDropConfig {
             description,
-            network: network.to_string(),
+            network: network_str,
             contract: contract.to_string(),
             entrypoint: entrypoint.to_string(),
         };
@@ -318,10 +322,21 @@ impl CreateArgs {
     ) -> Result<()> {
         let credentials = Credentials::load()?;
 
+        // Convert network string to enum
+        let network = match config.network.to_uppercase().as_str() {
+            "ETHEREUM" => MerkleDropNetwork::ETHEREUM,
+            "STARKNET" => MerkleDropNetwork::STARKNET,
+            "ARBITRUM" => MerkleDropNetwork::ARBITRUM,
+            "OPTIMISM" => MerkleDropNetwork::OPTIMISM,
+            "POLYGON" => MerkleDropNetwork::POLYGON,
+            "BASE" => MerkleDropNetwork::BASE,
+            _ => return Err(anyhow::anyhow!("Invalid network: {}", config.network)),
+        };
+
         // Prepare GraphQL variables
         let variables = create_merkle_drop::Variables {
             key: key.to_string(),
-            network: config.network.clone(),
+            network,
             description: config.description.clone(),
             contract: Felt::from_hex(&config.contract)
                 .unwrap_or_else(|_| Felt::from_dec_str(&config.contract).unwrap()),
@@ -358,7 +373,7 @@ impl CreateArgs {
                 );
 
                 println!("\n🔗 Contract Details:");
-                println!("  • Network: {}", data.create_merkle_drop.network);
+                println!("  • Network: {:?}", data.create_merkle_drop.network);
                 println!("  • Contract: {}", data.create_merkle_drop.contract);
                 println!("  • Entrypoint: {}", data.create_merkle_drop.entrypoint);
 

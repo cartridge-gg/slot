@@ -1,7 +1,7 @@
 # Mutation to create a new merkle drop
 mutation CreateMerkleDrop(
   $key: String!,
-  $network: String!,
+  $network: MerkleDropNetwork!,
   $description: String,
   $contract: Felt!,
   $entrypoint: String!,
