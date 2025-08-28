@@ -52,5 +52,4 @@ jobs:
             - Ensure generated code still compiles
             - Merge if changes look good
           branch: chore/daily-schema-sync
-          branch-suffix: timestamp
           delete-branch: true
