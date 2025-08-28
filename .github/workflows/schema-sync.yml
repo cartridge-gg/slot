@@ -5,10 +5,6 @@ on:
     - cron: '0 2 * * *' # Run daily at 2 AM UTC
   workflow_dispatch: # Allow manual triggering
 
-permissions:
-  contents: write
-  pull-requests: write
-
 jobs:
   sync-schema:
     runs-on: ubuntu-latest
@@ -16,8 +12,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
@@ -31,7 +25,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_TOKEN }}
           commit-message: "chore: update GraphQL schema from production"
           title: "chore(graphql): sync schema"
           body: |
