@@ -8875,6 +8875,7 @@ dependencies = [
  "slot-session",
  "slot-utils",
  "starknet 0.14.0",
+ "starknet-types-core",
  "strum_macros 0.25.3",
  "thiserror 1.0.69",
  "tokio",
