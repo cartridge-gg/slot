@@ -8935,6 +8935,8 @@ dependencies = [
  "slot-core",
  "slot-utils",
  "starknet 0.14.0",
+ "starknet-core 0.13.0",
+ "starknet-signers 0.11.0",
  "starknet-types-core",
  "thiserror 1.0.69",
  "tokio",

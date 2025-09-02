@@ -14,11 +14,9 @@ use hyper::StatusCode;
 use serde::{Deserialize, Serialize};
 use slot_core::credentials::Credentials;
 use slot_utils::{self as utils, browser, server::LocalServer, vars};
-use starknet::core::utils::get_selector_from_name;
-use starknet::core::utils::NonAsciiNameError;
-use starknet::providers::jsonrpc::HttpTransport;
-use starknet::providers::{JsonRpcClient, Provider};
-use starknet::signers::SigningKey;
+use starknet_core::utils::get_selector_from_name;
+use starknet_core::utils::NonAsciiNameError;
+use starknet_signers::SigningKey;
 use starknet_types_core::felt::Felt;
 use tokio::sync::mpsc::{self, Receiver, Sender};
 use tower_http::cors::CorsLayer;
@@ -432,8 +430,35 @@ fn get_user_relative_file_path(username: &str, chain_id: Felt) -> PathBuf {
 }
 
 async fn get_network_chain_id(url: Url) -> anyhow::Result<Felt> {
-    let provider = JsonRpcClient::new(HttpTransport::new(url));
-    Ok(provider.chain_id().await?)
+    #[derive(Serialize)]
+    struct JsonRpcRequest {
+        jsonrpc: &'static str,
+        method: &'static str,
+        params: Vec<()>,
+        id: u64,
+    }
+
+    #[derive(Deserialize)]
+    struct JsonRpcResponse {
+        result: String,
+    }
+
+    let request = JsonRpcRequest {
+        jsonrpc: "2.0",
+        method: "starknet_chainId",
+        params: vec![],
+        id: 1,
+    };
+
+    let response = reqwest::Client::new()
+        .post(url)
+        .json(&request)
+        .send()
+        .await?
+        .json::<JsonRpcResponse>()
+        .await?;
+
+    Ok(Felt::from_hex(&response.result)?)
 }
 
 impl TryFrom<PolicyMethod> for Policy {
@@ -468,6 +493,7 @@ mod tests {
     use slot_core::credentials::{AccessToken, Credentials};
     use starknet::macros::felt;
     use starknet::signers::SigningKey;
+    use starknet_core::chain_id::SEPOLIA;
     use starknet_types_core::felt::Felt;
     use std::ffi::OsStr;
     use std::path::{Component, Path};
@@ -490,6 +516,13 @@ mod tests {
         let _ = Credentials::store_at(&config_dir, &cred).unwrap();
 
         username
+    }
+
+    #[tokio::test]
+    async fn test_get_network_id() {
+        let url = Url::parse("https://api.cartridge.gg/x/starknet/sepolia").unwrap();
+        let id = get_network_chain_id(url).await.unwrap();
+        assert_eq!(id, SEPOLIA);
     }
 
     #[test]
