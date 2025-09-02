@@ -118,8 +118,8 @@ impl SnapshotArgs {
         // Parse network type
         let network_type = self.network.clone();
 
-        // Query token holders based on network type
-        let holders = match network_type {
+        // Query token holders and chain ID based on network type
+        let (holders, chain_id) = match network_type {
             NetworkType::Ethereum
             | NetworkType::Arbitrum
             | NetworkType::Optimism
@@ -131,15 +131,23 @@ impl SnapshotArgs {
                     .parse::<EthAddress>()
                     .map_err(|e| anyhow::anyhow!("Invalid EVM address: {}", e))?;
                 let contract = ERC721::new(address, provider.clone());
-                self.query_token_holders_evm(contract, self.from_id, self.to_id)
-                    .await?
+                let chain_id = provider.get_chainid().await?;
+
+                let holders = self
+                    .query_token_holders_evm(contract, self.from_id, self.to_id)
+                    .await?;
+                (holders, format!("0x{:x}", chain_id))
             }
             NetworkType::Starknet => {
                 let provider =
                     JsonRpcClient::new(HttpTransport::new(url::Url::parse(&self.rpc_url)?));
                 let address = Felt::from_hex(self.contract_address.as_str())?;
-                self.query_token_holders_starknet(provider, address, self.from_id, self.to_id)
-                    .await?
+                let chain_id = provider.chain_id().await?;
+
+                let holders = self
+                    .query_token_holders_starknet(provider, address, self.from_id, self.to_id)
+                    .await?;
+                (holders, format!("0x{:x}", chain_id))
             }
         };
 
@@ -148,6 +156,7 @@ impl SnapshotArgs {
         }
 
         println!("Found {} unique holders", holders.len());
+        println!("Chain ID: {}", chain_id);
 
         // Convert holders to sorted list
         let mut sorted_holders: Vec<(String, Vec<i64>)> = holders.into_iter().collect();
@@ -172,6 +181,7 @@ impl SnapshotArgs {
         let output_data = json!({
             "name": self.name,
             "network": self.network.to_string(),
+            "chain_id": chain_id,
             "description": self.description,
             "claim_contract": self.claim_contract,
             "entrypoint": self.entrypoint,
