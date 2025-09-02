@@ -315,11 +315,60 @@ impl SnapshotArgs {
         // Starknet block ID
         let block_id = BlockId::Number(self.block_height);
 
+        // Detect correct entrypoint selector (owner_of vs ownerOf) once
+        let selector_snake = get_selector_from_name("owner_of").unwrap();
+        let selector_camel = get_selector_from_name("ownerOf").unwrap();
+        let probe_calldata: Vec<Felt> = vec![from_id.into(), 0.into()];
+        let selected_selector = match provider
+            .call(
+                FunctionCall {
+                    contract_address,
+                    entry_point_selector: selector_snake,
+                    calldata: probe_calldata.clone(),
+                },
+                block_id,
+            )
+            .await
+        {
+            Ok(_) => selector_snake,
+            Err(e) => {
+                if Self::is_sn_entrypoint_not_found_error(&e) {
+                    match provider
+                        .call(
+                            FunctionCall {
+                                contract_address,
+                                entry_point_selector: selector_camel,
+                                calldata: probe_calldata.clone(),
+                            },
+                            block_id,
+                        )
+                        .await
+                    {
+                        Ok(_) => selector_camel,
+                        Err(e2) => {
+                            if Self::is_sn_entrypoint_not_found_error(&e2) {
+                                return Err(anyhow::anyhow!(
+                                    "Neither owner_of nor ownerOf entrypoint found for contract"
+                                ));
+                            } else {
+                                // Entry exists; treat as valid selector despite revert
+                                selector_camel
+                            }
+                        }
+                    }
+                } else {
+                    // Entry exists; treat as valid selector despite revert
+                    selector_snake
+                }
+            }
+        };
+
         stream::iter(token_ids)
             .map(|token_id| {
                 let provider = provider.clone();
                 let owners_by_address = owners_by_address.clone();
                 let processed = processed.clone();
+                let selector = selected_selector;
 
                 async move {
                     // Add delay between calls to avoid rate limiting
@@ -327,8 +376,7 @@ impl SnapshotArgs {
                         tokio::time::sleep(tokio::time::Duration::from_millis(delay_ms)).await;
                     }
 
-                    // Create the call parameters for ownerOf
-                    let selector = get_selector_from_name("owner_of").unwrap();
+                    // Create the call parameters for ownerOf/owner_of
                     let calldata: Vec<Felt> = vec![token_id.into(), 0.into()];
 
                     // Make the call
@@ -412,5 +460,14 @@ impl SnapshotArgs {
             || error_str.contains("invalid token id")
             || error_str.contains("token does not exist")
             || error_str.contains("nonexistent token")
+    }
+
+    fn is_sn_entrypoint_not_found_error(error: &starknet::providers::ProviderError) -> bool {
+        let s = format!("{:?}", error).to_lowercase();
+        (s.contains("entry point") || s.contains("entrypoint"))
+            && (s.contains("not found")
+                || s.contains("missing")
+                || s.contains("not declared")
+                || s.contains("unknown"))
     }
 }
