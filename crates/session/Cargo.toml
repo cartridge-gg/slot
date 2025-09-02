@@ -1,0 +1,30 @@
+[package]
+name = "slot-session"
+version.workspace = true
+license-file.workspace = true
+repository.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+slot-core.workspace = true
+slot-utils.workspace = true
+
+# https://github.com/cartridge-gg/controller/pull/1549
+account_sdk = { git = "https://github.com/cartridge-gg/controller", rev = "05fe96f4" }
+hyper.workspace = true
+cainome-cairo-serde.workspace = true
+axum.workspace = true
+serde.workspace = true
+starknet.workspace = true
+starknet-types-core.workspace = true
+tracing.workspace = true
+url.workspace = true
+tokio.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+tower-http = { workspace = true, features = ["cors", "trace"] }
+reqwest.workspace = true
+thiserror.workspace = true
+urlencoding = "2"
+base64.workspace = true

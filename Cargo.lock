@@ -5450,9 +5450,9 @@ dependencies = [
 
 [[package]]
 name = "jiff"
-version = "0.2.10"
+version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5a064218214dc6a10fbae5ec5fa888d80c45d611aba169222fc272072bf7aef6"
+checksum = "be1f93b8b1eb69c77f24bbb0afdf66f54b632ee39af40ca21c4365a1d7347e49"
 dependencies = [
  "jiff-static",
  "log",
@@ -5463,9 +5463,9 @@ dependencies = [
 
 [[package]]
 name = "jiff-static"
-version = "0.2.10"
+version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "199b7932d97e325aff3a7030e141eafe7f2c6268e1d1b24859b753a627f45254"
+checksum = "03343451ff899767262ec32146f6d559dd759fdadf42ff0e227c7c48f72594b4"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -8840,33 +8840,12 @@ dependencies = [
 name = "slot"
 version = "0.49.1"
 dependencies = [
- "account_sdk 0.1.0 (git+https://github.com/cartridge-gg/controller?rev=05fe96f4)",
- "anyhow",
- "assert_matches",
- "axum",
- "base64 0.22.1",
- "cainome-cairo-serde 0.2.0",
- "colored 2.2.0",
- "dialoguer",
- "dirs 5.0.1",
- "graphql_client",
- "hyper 1.6.0",
+ "clap",
+ "env_logger",
  "num-bigint",
- "regex",
- "reqwest 0.12.12",
- "serde",
- "serde_json",
- "starknet 0.14.0",
- "tempfile",
- "thiserror 1.0.69",
+ "slot-cli",
  "tokio",
- "tower-http",
- "tracing",
  "update-informer",
- "url",
- "urlencoding",
- "webbrowser",
- "which 5.0.0",
 ]
 
 [[package]]
@@ -8881,7 +8860,6 @@ dependencies = [
  "comfy-table",
  "ctrlc",
  "dialoguer",
- "env_logger",
  "ethers",
  "futures",
  "graphql_client",
@@ -8892,15 +8870,95 @@ dependencies = [
  "num-bigint",
  "serde",
  "serde_json",
- "slot",
+ "slot-core",
+ "slot-graphql",
+ "slot-session",
+ "slot-utils",
  "starknet 0.14.0",
  "strum_macros 0.25.3",
  "thiserror 1.0.69",
  "tokio",
  "toml",
  "torii-cli",
- "update-informer",
  "url",
+]
+
+[[package]]
+name = "slot-core"
+version = "0.49.1"
+dependencies = [
+ "anyhow",
+ "assert_matches",
+ "colored 2.2.0",
+ "dialoguer",
+ "dirs 5.0.1",
+ "num-bigint",
+ "reqwest 0.12.12",
+ "serde",
+ "serde_json",
+ "slot-utils",
+ "starknet-types-core",
+ "thiserror 1.0.69",
+ "update-informer",
+ "which 5.0.0",
+]
+
+[[package]]
+name = "slot-graphql"
+version = "0.49.1"
+dependencies = [
+ "anyhow",
+ "graphql_client",
+ "reqwest 0.12.12",
+ "serde",
+ "serde_json",
+ "slot-core",
+ "slot-utils",
+ "starknet-types-core",
+ "thiserror 1.0.69",
+ "url",
+]
+
+[[package]]
+name = "slot-session"
+version = "0.49.1"
+dependencies = [
+ "account_sdk 0.1.0 (git+https://github.com/cartridge-gg/controller?rev=05fe96f4)",
+ "anyhow",
+ "axum",
+ "base64 0.22.1",
+ "cainome-cairo-serde 0.2.0",
+ "hyper 1.6.0",
+ "reqwest 0.12.12",
+ "serde",
+ "serde_json",
+ "slot-core",
+ "slot-utils",
+ "starknet 0.14.0",
+ "starknet-types-core",
+ "thiserror 1.0.69",
+ "tokio",
+ "tower-http",
+ "tracing",
+ "url",
+ "urlencoding",
+]
+
+[[package]]
+name = "slot-utils"
+version = "0.49.1"
+dependencies = [
+ "anyhow",
+ "axum",
+ "base64 0.22.1",
+ "dirs 5.0.1",
+ "regex",
+ "reqwest 0.12.12",
+ "tempfile",
+ "tokio",
+ "tower-http",
+ "tracing",
+ "webbrowser",
 ]
 
 [[package]]

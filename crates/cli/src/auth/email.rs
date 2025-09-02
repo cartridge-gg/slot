@@ -1,0 +1,28 @@
+use anyhow::Result;
+use clap::Args;
+use slot_core::credentials::Credentials;
+use slot_graphql::api::Client;
+use slot_graphql::auth::{update_me::*, UpdateMe};
+use slot_graphql::GraphQLQuery;
+
+#[derive(Debug, Args)]
+#[command(next_help_heading = "Set email options")]
+pub struct EmailArgs {
+    #[arg(help = "The email address of the user.")]
+    pub email: String,
+}
+
+impl EmailArgs {
+    pub async fn run(&self) -> Result<()> {
+        let credentials = Credentials::load()?;
+        let client = Client::new_with_token(credentials.access_token);
+
+        let request_body = UpdateMe::build_query(Variables {
+            email: Some(self.email.clone()),
+        });
+        let res: ResponseData = client.query(&request_body).await?;
+        print!("{:?}", res);
+
+        Ok(())
+    }
+}
