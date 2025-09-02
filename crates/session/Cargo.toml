@@ -16,7 +16,6 @@ hyper.workspace = true
 cainome-cairo-serde.workspace = true
 axum.workspace = true
 serde.workspace = true
-starknet.workspace = true
 starknet-core = "0.13.0"
 starknet-signers = "0.11.0"
 starknet-types-core.workspace = true
@@ -30,3 +29,6 @@ reqwest.workspace = true
 thiserror.workspace = true
 urlencoding = "2"
 base64.workspace = true
+
+[dev-dependencies]
+starknet.workspace = true
