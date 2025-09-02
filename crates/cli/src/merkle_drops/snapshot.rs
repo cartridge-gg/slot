@@ -1,5 +1,6 @@
 use anyhow::Result;
 use clap::Args;
+use katana_primitives::Felt;
 use serde_json::json;
 use starknet_types_core::felt::Felt;
 use std::collections::HashMap;
