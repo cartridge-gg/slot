@@ -23,9 +23,7 @@ use tower_http::cors::CorsLayer;
 use tracing::info;
 use url::Url;
 
-// // Taken from: https://github.com/cartridge-gg/controller/blob/1d7352fce437ccd0b992ca5420aeb3719427e348/packages/account-wasm/src/lib.rs#L92-L95
-// const GUARDIAN: Felt = short_string!("CARTRIDGE_GUARDIAN");
-// pub const SESSION_GUARDIAN_SIGNING_KEY: SigningKey = SigningKey::from_secret_scalar(GUARDIAN);
+pub use account_sdk;
 
 const SESSION_CREATION_PATH: &str = "/session";
 const SESSION_FILE_BASE_NAME: &str = "session.json";
@@ -491,9 +489,9 @@ mod tests {
     use slot_core::account::AccountInfo;
     use slot_core::credentials::CredentialsError as CredentialError;
     use slot_core::credentials::{AccessToken, Credentials};
+    use starknet::core::chain_id::SEPOLIA;
     use starknet::macros::felt;
     use starknet::signers::SigningKey;
-    use starknet_core::chain_id::SEPOLIA;
     use starknet_types_core::felt::Felt;
     use std::ffi::OsStr;
     use std::path::{Component, Path};

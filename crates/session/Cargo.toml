@@ -11,13 +11,12 @@ slot-core.workspace = true
 slot-utils.workspace = true
 
 # https://github.com/cartridge-gg/controller/pull/1549
-account_sdk = { git = "https://github.com/cartridge-gg/controller", rev = "05fe96f4" }
+account_sdk = { git = "https://github.com/cartridge-gg/controller-rs", tag = "v0.3.2" }
 hyper.workspace = true
 cainome-cairo-serde.workspace = true
 axum.workspace = true
 serde.workspace = true
-starknet-core = "0.13.0"
-starknet-signers = "0.11.0"
+starknet-signers.workspace = true
 starknet-types-core.workspace = true
 tracing.workspace = true
 url.workspace = true

@@ -24,8 +24,8 @@ slot-utils = { path = "crates/utils" }
 slot-core = { path = "crates/core" }
 
 clap = { version = "4.2", features = ["derive"] }
-starknet = "0.14.0"
-starknet-types-core = "0.1"
+starknet = "0.17.0"
+starknet-types-core = "0.2"
 base64 = "0.22.1"
 reqwest = { version = "0.12", default-features = false, features = [
 	"rustls-tls",
@@ -36,7 +36,8 @@ update-informer = { version = "1.1", default-features = false, features = [
 	"github",
 	"rustls-tls",
 ] }
-cainome-cairo-serde = "0.2.0"
+cainome-cairo-serde = { git = "https://github.com/cartridge-gg/cainome", rev = "7d60de1" }
+starknet-signers = "0.14.0"
 tower-http = "0.5"
 anyhow = "1.0.75"
 axum = "0.7"
