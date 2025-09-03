@@ -1,0 +1,26 @@
+[package]
+name = "slot-core"
+version.workspace = true
+edition.workspace = true
+license-file.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+slot-utils.workspace = true
+
+starknet-types-core.workspace = true
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+dirs.workspace = true
+reqwest.workspace = true
+colored = "2.0.0"
+num-bigint = { version = "0.4.6", features = ["serde"] }
+update-informer.workspace = true
+which = "5.0.0"
+dialoguer = "0.11.0"
+
+
+[dev-dependencies]
+assert_matches = "1.5.0"
