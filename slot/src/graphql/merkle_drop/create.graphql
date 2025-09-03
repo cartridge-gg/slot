@@ -5,6 +5,7 @@ mutation CreateMerkleDrop(
   $description: String,
   $contract: Felt!,
   $entrypoint: String!,
+  $salt: String!,
   $claims: [MerkleClaimInput!]!
 ) {
   createMerkleDrop(
@@ -13,6 +14,7 @@ mutation CreateMerkleDrop(
     description: $description,
     contract: $contract,
     entrypoint: $entrypoint,
+    salt: $salt,
     claims: $claims
   ) {
     id

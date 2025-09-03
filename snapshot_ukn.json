@@ -1,0 +1,50 @@
+{
+  "block_height": 22728943,
+  "claim_contract": "0x416385dbc141ca69fee4c7115166383a47338d2959044209497e03c6c10cdd9",
+  "entrypoint": "claim_from_forwarder",
+  "contract_address": "0xD560e04Ac70382e387BE3208741465D4FD8F36B8",
+  "description": "unknown-art",
+  "name": "ukn-art",
+  "network": "ETHEREUM",
+  "snapshot": [
+    [
+      "0x1dd2cf68cd3372b91aa360f1601b9c6ca0a4982d",
+      [
+        "0x1c",
+        "0x1d",
+        "0x1e",
+        "0x29",
+        "0x2b",
+        "0x2c",
+        "0x2d",
+        "0x2e",
+        "0x2f"
+      ]
+    ],
+    [
+      "0x9454038aac40c01be04a8d9ffcce81c8ad507534",
+      [
+        "0x3",
+        "0x14",
+        "0x15",
+        "0x16"
+      ]
+    ],
+    [
+      "0xb0d264f5ed28af635911ed74dd4a1c0732766bef",
+      [
+        "0x1a",
+        "0x1b",
+        "0x24",
+        "0x26"
+      ]
+    ],
+    [
+      "0xffdfd690b733400e8659480e97839ad218f0b2bc",
+      [
+        "0x25",
+        "0x2a"
+      ]
+    ]
+  ]
+}
