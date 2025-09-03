@@ -4,7 +4,10 @@ use std::{fs, path::PathBuf, sync::OnceLock};
 
 pub mod browser;
 pub mod server;
+mod starknet;
 pub mod vars;
+
+pub use starknet::*;
 
 /// The default directory name where the Slot-generated files (e.g credentials/session keys) are stored.
 const SLOT_DIR: &str = "slot";
