@@ -36,7 +36,7 @@ update-informer = { version = "1.1", default-features = false, features = [
 	"github",
 	"rustls-tls",
 ] }
-cainome-cairo-serde = { git = "https://github.com/cartridge-gg/cainome", rev = "7d60de1" }
+cainome-cairo-serde = "0.4.0"
 starknet-signers = "0.14.0"
 tower-http = "0.5"
 anyhow = "1.0.75"

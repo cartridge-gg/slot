@@ -10,8 +10,8 @@ rust-version.workspace = true
 slot-core.workspace = true
 slot-utils.workspace = true
 
-# https://github.com/cartridge-gg/controller/pull/1549
-account_sdk = { git = "https://github.com/cartridge-gg/controller-rs", tag = "v0.3.2" }
+# https://github.com/cartridge-gg/controller-rs/pull/45
+account_sdk = { git = "https://github.com/cartridge-gg/controller-rs", rev = "e77caaa0e9af473364beaeaff4e8ff467feb7ca8" }
 hyper.workspace = true
 cainome-cairo-serde.workspace = true
 axum.workspace = true
