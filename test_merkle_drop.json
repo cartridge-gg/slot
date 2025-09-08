@@ -5,9 +5,10 @@
   "claim_contract": "0x1234567890abcdef1234567890abcdef12345678",
   "entrypoint": "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
   "merkle_root": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+  "salt": "0x02acee8c430f62333cf0e0e7a94b2347b5513b4c25f699461dd8d7b23c072478",
   "snapshot": [
     ["0x1111111111111111111111111111111111111111", [1, 2, 3]],
     ["0x2222222222222222222222222222222222222222", [4, 5, 6]],
-    ["0x3333333333333333333333333333333333333333", [7, 8, 9]]
+    ["0x3333333333333333333333333333333333333333", [7, 8, 50]]
   ]
 }
