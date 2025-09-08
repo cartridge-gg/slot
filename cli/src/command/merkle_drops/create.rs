@@ -295,14 +295,27 @@ impl CreateArgs {
                     .map(|id| {
                         let id_str = match id {
                             Value::String(s) => s.clone(),
-                            Value::Number(n) => n.to_string(),
-                            _ => return Err(anyhow::anyhow!("ID must be a string or number")),
+                            Value::Number(n) => {
+                                // Convert number to hex string format
+                                if let Some(n_u128) = n.as_u128() {
+                                    format!("0x{:x}", n_u128)
+                                } else {
+                                    return Err(anyhow::anyhow!(
+                                        "Claim data number must be less than 128 bits"
+                                    ));
+                                }
+                            }
+                            _ => {
+                                return Err(anyhow::anyhow!(
+                                    "Claim data must be a string or number"
+                                ))
+                            }
                         };
 
                         // Try hex first, then decimal
                         Felt::from_hex(&id_str)
                             .or_else(|_| Felt::from_dec_str(&id_str))
-                            .map_err(|_| anyhow::anyhow!("Failed to parse token ID: {}", id_str))
+                            .map_err(|_| anyhow::anyhow!("Failed to parse claim data: {}", id_str))
                     })
                     .collect();
 
