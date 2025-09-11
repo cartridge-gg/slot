@@ -1,0 +1,9 @@
+# Mutation to create RPC CORS domain
+# Operation name `CreateRpcCorsDomain` must match the struct name in Rust
+mutation CreateRpcCorsDomain($teamName: String!, $domain: String!, $rateLimitPerMinute: Int) {
+  createRpcCorsDomain(teamName: $teamName, domain: $domain, rateLimitPerMinute: $rateLimitPerMinute) {
+    id
+    domain
+    createdAt
+  }
+}
