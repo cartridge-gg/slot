@@ -3,6 +3,7 @@ pub mod deployments;
 pub mod merkle_drops;
 pub mod paymaster;
 pub mod paymasters;
+pub mod rpc;
 pub mod teams;
 
 use anyhow::Result;
@@ -14,6 +15,7 @@ use deployments::Deployments;
 use merkle_drops::MerkleDropsCmd;
 use paymaster::PaymasterCmd;
 use paymasters::PaymastersCmd;
+use rpc::RpcCmd;
 use teams::Teams;
 
 #[allow(clippy::large_enum_variant)]
@@ -40,6 +42,10 @@ pub enum Command {
 
     #[command(about = "Operate on a specific paymaster.", aliases = ["p"])]
     Paymaster(PaymasterCmd),
+
+    #[command(subcommand)]
+    #[command(about = "Manage RPC tokens and configurations.", aliases = ["r"])]
+    Rpc(RpcCmd),
 }
 
 impl Command {
@@ -55,6 +61,7 @@ impl Command {
             Command::MerkleDrops(cmd) => cmd.run().await,
             Command::Paymasters(cmd) => cmd.run().await,
             Command::Paymaster(cmd) => cmd.run().await,
+            Command::Rpc(cmd) => cmd.run().await,
         }
     }
 }
