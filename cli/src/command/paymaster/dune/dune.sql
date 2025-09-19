@@ -1,9 +1,10 @@
--- Fast but limited query that only matches:
--- 1. Direct execute_from_outside_v3 calls
--- 2. execute_from_outside_v3 calls sandwiched in a single VRF call
--- Does NOT catch nested VRF calls or other complex patterns
--- Trade-off: Much faster execution, suitable for long time periods
-WITH base_tx AS (
+WITH contract_set AS (
+  SELECT ARRAY[
+    {contract_addresses}
+  ] AS addrs
+),
+
+base_tx AS (
   SELECT
     t.block_date,
     t.transaction_hash,
@@ -11,23 +12,22 @@ WITH base_tx AS (
     -- decide which match takes priority
     CASE
       -- execute_from_outside_v3 only call
-      WHEN CARDINALITY(t.calldata) > 23 AND t.calldata[11] IN (
-        {contract_addresses} 
-      ) THEN t.calldata[2]
-      -- account for VRF preceeding execute_from_outside_v3 call
-      WHEN CARDINALITY(t.calldata) > 23 AND t.calldata[23] IN (
-        {contract_addresses} 
-      ) THEN t.calldata[11]
+      WHEN CARDINALITY(t.calldata) > 23
+        AND contains(cs.addrs, t.calldata[11]) THEN t.calldata[2]
+      -- account for VRF preceding execute_from_outside_v3 call
+      WHEN CARDINALITY(t.calldata) > 23
+        AND contains(cs.addrs, t.calldata[23]) THEN t.calldata[11]
       ELSE NULL
     END AS matched_user
   FROM starknet.transactions t
+  CROSS JOIN contract_set cs
   WHERE
     t.block_time >= TIMESTAMP '{start_time}'
     {end_time_constraint}
     AND CARDINALITY(t.calldata) > 23
     AND (
-      t.calldata[11] IN ({contract_addresses})
-      OR t.calldata[23] IN ({contract_addresses})
+      contains(cs.addrs, t.calldata[11])
+      OR contains(cs.addrs, t.calldata[23])
     )
 ),
 
@@ -200,10 +200,10 @@ SELECT
   ob.overall_fees_strk,
   ob.overall_fees_usd
 FROM daily_stats d
-LEFT JOIN wau_by_day   w7 ON w7.day   = d.day
-LEFT JOIN mau_by_day   m30 ON m30.day  = d.day
-LEFT JOIN weekly_stats w  ON w.week   = DATE_TRUNC('week',  d.day)
-LEFT JOIN monthly_stats m ON m.month  = DATE_TRUNC('month', d.day)
+LEFT JOIN wau_by_day   w7 ON w7.day  = d.day
+LEFT JOIN mau_by_day   m30 ON m30.day = d.day
+LEFT JOIN weekly_stats w  ON w.week  = DATE_TRUNC('week',  d.day)
+LEFT JOIN monthly_stats m ON m.month = DATE_TRUNC('month', d.day)
 CROSS JOIN overall_from_base  ob
 CROSS JOIN overall_from_daily ofd
 ORDER BY d.day;
