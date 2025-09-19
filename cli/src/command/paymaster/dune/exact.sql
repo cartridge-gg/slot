@@ -83,36 +83,162 @@ prices AS (                 -- STRK daily USD price
   GROUP BY 1
 ),
 
+-- --- New helpers for WAU/MAU & new/returning breakdowns ---
+
+first_seen AS (             -- first time each wallet appears (aligned to day/week/month)
+  SELECT
+    t.user_address,
+    MIN(t.block_date)                             AS first_ts,
+    DATE_TRUNC('day',   MIN(t.block_date))        AS first_day,
+    DATE_TRUNC('week',  MIN(t.block_date))        AS first_week,
+    DATE_TRUNC('month', MIN(t.block_date))        AS first_month
+  FROM target_and_user t
+  WHERE t.user_address IS NOT NULL
+  GROUP BY 1
+),
+
+daily_user_presence AS (    -- distinct user/day pairs to power rolling windows
+  SELECT DISTINCT
+    DATE_TRUNC('day', t.block_date) AS day,
+    t.user_address
+  FROM target_and_user t
+  WHERE t.user_address IS NOT NULL
+),
+
+days AS (                   -- activity days (switch to a generated calendar for dense dates)
+  SELECT DISTINCT DATE_TRUNC('day', block_date) AS day
+  FROM target_and_user
+),
+
+wau_by_day AS (             -- rolling 7-day (inclusive) unique users
+  SELECT
+    d.day,
+    COUNT(DISTINCT dup.user_address) AS wau
+  FROM days d
+  LEFT JOIN daily_user_presence dup
+    ON dup.day BETWEEN d.day - INTERVAL '6' DAY AND d.day
+  GROUP BY 1
+),
+
+mau_by_day AS (             -- rolling 30-day (inclusive) unique users
+  SELECT
+    d.day,
+    COUNT(DISTINCT dup.user_address) AS mau
+  FROM days d
+  LEFT JOIN daily_user_presence dup
+    ON dup.day BETWEEN d.day - INTERVAL '29' DAY AND d.day
+  GROUP BY 1
+),
+
+-- --- Aggregates ---
+
 daily_stats AS (            -- per-day metrics
   SELECT
     DATE_TRUNC('day', t.block_date)          AS day,
     COUNT(DISTINCT t.transaction_hash)       AS daily_transactions,
     COUNT(DISTINCT t.user_address)           AS daily_users,
+    COUNT(DISTINCT CASE
+      WHEN fs.first_day = DATE_TRUNC('day', t.block_date) THEN t.user_address
+    END)                                     AS daily_new_users,
     SUM(t.fee)                               AS daily_fees_strk,
     SUM(t.fee * p.price)                     AS daily_fees_usd
   FROM target_and_user t
   JOIN prices p
     ON DATE_TRUNC('day', t.block_date) = p.time
+  LEFT JOIN first_seen fs
+    ON fs.user_address = t.user_address
   GROUP BY 1
 ),
 
-overall_totals AS (         -- all-time metrics
+weekly_stats AS (           -- weekly aggregates (ISO week)
   SELECT
-    COUNT(DISTINCT transaction_hash)         AS overall_transactions,
-    COUNT(DISTINCT user_address)             AS overall_unique_users,
-    SUM(fee)                                 AS overall_fees_strk,
-    SUM(fee * p.price)                       AS overall_fees_usd
+    DATE_TRUNC('week', t.block_date)         AS week,
+    COUNT(DISTINCT t.transaction_hash)       AS weekly_transactions,
+    COUNT(DISTINCT t.user_address)           AS weekly_users,
+    COUNT(DISTINCT CASE
+      WHEN fs.first_week = DATE_TRUNC('week', t.block_date) THEN t.user_address
+    END)                                     AS weekly_new_users,
+    SUM(t.fee)                               AS weekly_fees_strk,
+    SUM(t.fee * p.price)                     AS weekly_fees_usd
   FROM target_and_user t
   JOIN prices p
     ON DATE_TRUNC('day', t.block_date) = p.time
+  LEFT JOIN first_seen fs
+    ON fs.user_address = t.user_address
+  GROUP BY 1
+),
+
+monthly_stats AS (          -- monthly aggregates
+  SELECT
+    DATE_TRUNC('month', t.block_date)        AS month,
+    COUNT(DISTINCT t.transaction_hash)       AS monthly_transactions,
+    COUNT(DISTINCT t.user_address)           AS monthly_users,
+    COUNT(DISTINCT CASE
+      WHEN fs.first_month = DATE_TRUNC('month', t.block_date) THEN t.user_address
+    END)                                     AS monthly_new_users,
+    SUM(t.fee)                               AS monthly_fees_strk,
+    SUM(t.fee * p.price)                     AS monthly_fees_usd
+  FROM target_and_user t
+  JOIN prices p
+    ON DATE_TRUNC('day', t.block_date) = p.time
+  LEFT JOIN first_seen fs
+    ON fs.user_address = t.user_address
+  GROUP BY 1
+),
+
+overall_from_base AS (      -- overall totals from base (no nested scalar subqueries)
+  SELECT
+    COUNT(DISTINCT t.transaction_hash)       AS overall_transactions,
+    COUNT(DISTINCT t.user_address)           AS overall_unique_users,
+    SUM(t.fee)                               AS overall_fees_strk,
+    SUM(t.fee * p.price)                     AS overall_fees_usd
+  FROM target_and_user t
+  JOIN prices p
+    ON DATE_TRUNC('day', t.block_date) = p.time
+),
+
+overall_from_daily AS (     -- overall ratio using daily aggregates
+  SELECT
+    SUM(daily_transactions) AS sum_daily_tx,
+    SUM(daily_users)        AS sum_daily_users
+  FROM daily_stats
 )
 
 SELECT
-  d.*,
-  o.overall_transactions,
-  o.overall_unique_users,
-  o.overall_fees_strk,
-  o.overall_fees_usd
+  d.day,
+  d.daily_transactions,
+  d.daily_users,
+  d.daily_new_users,
+  GREATEST(COALESCE(d.daily_users, 0) - COALESCE(d.daily_new_users, 0), 0) AS daily_returning_users,
+  (d.daily_transactions / NULLIF(d.daily_users, 0)) AS daily_tx_per_user,
+  w7.wau,
+  m30.mau,
+  d.daily_fees_strk,
+  d.daily_fees_usd,
+  w.week,
+  w.weekly_transactions,
+  w.weekly_users,
+  w.weekly_new_users,
+  GREATEST(COALESCE(w.weekly_users, 0) - COALESCE(w.weekly_new_users, 0), 0) AS weekly_returning_users,
+  w.weekly_fees_strk,
+  w.weekly_fees_usd,
+  m.month,
+  m.monthly_transactions,
+  m.monthly_users,
+  m.monthly_new_users,
+  GREATEST(COALESCE(m.monthly_users, 0) - COALESCE(m.monthly_new_users, 0), 0) AS monthly_returning_users,
+  m.monthly_fees_strk,
+  m.monthly_fees_usd,
+  ob.overall_transactions,
+  ob.overall_unique_users,
+  (ofd.sum_daily_tx / NULLIF(ofd.sum_daily_users, 0)) AS overall_tx_per_daily_user,
+  ob.overall_fees_strk,
+  ob.overall_fees_usd
 FROM daily_stats d
-CROSS JOIN overall_totals o
+LEFT JOIN wau_by_day   w7  ON w7.day   = d.day
+LEFT JOIN mau_by_day   m30 ON m30.day  = d.day
+LEFT JOIN weekly_stats w   ON w.week   = DATE_TRUNC('week',  d.day)
+LEFT JOIN monthly_stats m  ON m.month  = DATE_TRUNC('month', d.day)
+CROSS JOIN overall_from_base  ob
+CROSS JOIN overall_from_daily ofd
 ORDER BY d.day;

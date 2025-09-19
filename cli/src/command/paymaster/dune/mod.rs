@@ -1,5 +1,5 @@
 use super::utils;
-use anyhow::{anyhow, Context, Result};
+use anyhow::{anyhow, Result};
 use chrono::{DateTime, Utc};
 use clap::Args;
 use slot::api::Client;
@@ -10,9 +10,11 @@ use slot::graphql::paymaster::ListPolicies;
 use slot::graphql::paymaster::PaymasterInfo;
 use slot::graphql::GraphQLQuery;
 use std::collections::HashSet;
-use std::fs;
-use std::path::Path;
 use std::time::{SystemTime, UNIX_EPOCH};
+
+// Embed SQL templates at compile time
+const FAST_SQL_TEMPLATE: &str = include_str!("fast.sql");
+const EXACT_SQL_TEMPLATE: &str = include_str!("exact.sql");
 
 #[derive(Debug, Args)]
 pub struct DuneArgs {
@@ -135,13 +137,12 @@ impl DuneArgs {
                     return Ok(());
                 }
 
-                // Load the appropriate template
-                let template_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-                    .join("src/command/paymaster/dune")
-                    .join(if self.exact { "exact.sql" } else { "fast.sql" });
-
-                let template = fs::read_to_string(template_path)
-                    .context("Failed to read SQL template file")?;
+                // Use embedded template instead of reading from file system
+                let template = if self.exact {
+                    EXACT_SQL_TEMPLATE
+                } else {
+                    FAST_SQL_TEMPLATE
+                };
 
                 // Create formatted address list with comments
                 let mut formatted_addresses = Vec::new();
