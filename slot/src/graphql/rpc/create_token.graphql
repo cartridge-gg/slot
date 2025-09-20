@@ -1,0 +1,13 @@
+# Mutation to create a new RPC API key
+# Operation name `CreateRpcApiKey` must match the struct name in Rust
+mutation CreateRpcApiKey($teamName: String!, $name: String!) {
+  createRpcApiKey(teamName: $teamName, name: $name) {
+    apiKey {
+      id
+      name
+      keyPrefix
+      createdAt
+    }
+    secretKey
+  }
+}
