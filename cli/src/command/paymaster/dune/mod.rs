@@ -12,18 +12,17 @@ use slot::graphql::GraphQLQuery;
 use std::collections::HashSet;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-// Embed SQL templates at compile time
-const FAST_SQL_TEMPLATE: &str = include_str!("fast.sql");
-const EXACT_SQL_TEMPLATE: &str = include_str!("exact.sql");
+// Embed SQL template at compile time
+const SQL_TEMPLATE: &str = include_str!("dune.sql");
+
+const EXCLUDED_POLICIES: &[&str] = &[
+    "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d", // STRK Token
+    "0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7", // ETH Token
+    "0x124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49", // LORDS Token
+];
 
 #[derive(Debug, Args)]
 pub struct DuneArgs {
-    #[arg(long, help = "Use fast query (default)", default_value = "true")]
-    fast: bool,
-
-    #[arg(long, help = "Use exact query (slower but more precise)")]
-    exact: bool,
-
     #[arg(
         long,
         help = "Time period to look back (e.g., 1hr, 2min, 24hr, 1day, 1week). If not specified, uses paymaster creation time."
@@ -38,15 +37,33 @@ pub struct DuneArgs {
     dune_params: bool,
 }
 
-// Helper function to format policy addresses
+// Helper function to normalize address for comparison
+fn normalize_address(addr: &str) -> String {
+    let trimmed = addr.trim_start_matches("0x");
+    format!("0x{:0>64}", trimmed.to_lowercase())
+}
+
+// Helper function to format policy addresses, excluding base policies
 fn format_policy_addresses(
     policies: &[&list_policies::ListPoliciesPaymasterPoliciesEdgesNode],
 ) -> Vec<String> {
+    // Create a set of normalized base policies to exclude
+    let excluded_policies_set: HashSet<String> = EXCLUDED_POLICIES
+        .iter()
+        .map(|addr| normalize_address(addr))
+        .collect();
+
     let mut addresses: Vec<String> = policies
         .iter()
-        .map(|p| {
-            let addr = p.contract_address.trim_start_matches("0x");
-            format!("    0x{:0>64}", addr) // Pad with zeros to 64 chars
+        .filter_map(|p| {
+            let normalized_addr = normalize_address(&p.contract_address);
+
+            // Skip if this address is in the base policies to exclude
+            if excluded_policies_set.contains(&normalized_addr) {
+                None
+            } else {
+                Some(format!("    {}", normalized_addr))
+            }
         })
         .collect::<HashSet<_>>()
         .into_iter()
@@ -138,11 +155,7 @@ impl DuneArgs {
                 }
 
                 // Use embedded template instead of reading from file system
-                let template = if self.exact {
-                    EXACT_SQL_TEMPLATE
-                } else {
-                    FAST_SQL_TEMPLATE
-                };
+                let template = SQL_TEMPLATE;
 
                 // Create formatted address list with comments
                 let mut formatted_addresses = Vec::new();
