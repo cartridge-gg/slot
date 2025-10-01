@@ -64,7 +64,10 @@ impl Client {
 
         if !res.status().is_success() {
             let status = res.status();
-            let body = res.text().await.unwrap_or_else(|_| "Unable to read body".to_string());
+            let body = res
+                .text()
+                .await
+                .unwrap_or_else(|_| "Unable to read body".to_string());
             return Err(anyhow::anyhow!("API error: {} - {}", status, body).into());
         }
 

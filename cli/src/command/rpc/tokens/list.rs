@@ -46,6 +46,7 @@ impl ListArgs {
                     .load_preset(UTF8_FULL)
                     .set_content_arrangement(ContentArrangement::Dynamic)
                     .set_header(vec![
+                        Cell::new("ID"),
                         Cell::new("Name"),
                         Cell::new("Key Prefix"),
                         Cell::new("Active"),
@@ -55,6 +56,7 @@ impl ListArgs {
 
                 for token in tokens {
                     table.add_row(vec![
+                        Cell::new(&token.id),
                         Cell::new(&token.name),
                         Cell::new(&token.key_prefix),
                         Cell::new(if token.active { "✓" } else { "✗" }),

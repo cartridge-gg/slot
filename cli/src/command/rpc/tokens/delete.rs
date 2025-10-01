@@ -11,9 +11,6 @@ use slot::graphql::GraphQLQuery;
 pub struct DeleteArgs {
     #[arg(help = "ID of the RPC token to delete.")]
     id: String,
-
-    #[arg(long, help = "Team name that owns the token.")]
-    team: String,
 }
 
 impl DeleteArgs {
@@ -32,10 +29,7 @@ impl DeleteArgs {
         if data.delete_rpc_api_key {
             println!("\n✅ RPC API Key Deleted Successfully");
             println!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-            println!(
-                "🗑️  API Key ID {} has been removed from team '{}'",
-                self.id, self.team
-            );
+            println!("🗑️  API Key ID {} has been removed", self.id);
         } else {
             println!("❌ Failed to delete RPC API key");
         }

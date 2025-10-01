@@ -11,9 +11,6 @@ use slot::graphql::GraphQLQuery;
 pub struct RemoveArgs {
     #[arg(help = "ID of the whitelist origin to remove.")]
     id: String,
-
-    #[arg(long, help = "Team name that owns the whitelist entry.")]
-    team: String,
 }
 
 impl RemoveArgs {
@@ -32,10 +29,7 @@ impl RemoveArgs {
         if data.delete_rpc_cors_domain {
             println!("\n✅ Origin Removed from CORS Whitelist Successfully");
             println!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-            println!(
-                "🗑️  CORS domain ID {} has been removed from team '{}'",
-                self.id, self.team
-            );
+            println!("🗑️  CORS domain ID {} has been removed", self.id);
         } else {
             println!("❌ Failed to remove origin from CORS whitelist");
         }

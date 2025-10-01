@@ -46,12 +46,14 @@ impl ListArgs {
                     .load_preset(UTF8_FULL)
                     .set_content_arrangement(ContentArrangement::Dynamic)
                     .set_header(vec![
+                        Cell::new("ID"),
                         Cell::new("Domain"),
                         Cell::new("Created At"),
                     ]);
 
                 for domain in domains {
                     table.add_row(vec![
+                        Cell::new(&domain.id),
                         Cell::new(&domain.domain),
                         Cell::new(&domain.created_at),
                     ]);
