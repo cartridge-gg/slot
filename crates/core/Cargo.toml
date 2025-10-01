@@ -3,7 +3,6 @@ name = "slot-core"
 version.workspace = true
 edition.workspace = true
 license-file.workspace = true
-rust-version.workspace = true
 
 [dependencies]
 slot-utils.workspace = true

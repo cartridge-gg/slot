@@ -4,14 +4,13 @@ version.workspace = true
 license-file.workspace = true
 repository.workspace = true
 edition.workspace = true
-rust-version.workspace = true
 
 [dependencies]
 slot-core.workspace = true
 slot-utils.workspace = true
 
 # https://github.com/cartridge-gg/controller-rs/pull/45
-account_sdk = { git = "https://github.com/cartridge-gg/controller-rs", rev = "e77caaa0e9af473364beaeaff4e8ff467feb7ca8" }
+account_sdk = { git = "https://github.com/cartridge-gg/controller-rs", rev = "68aa627f402af2f18e09a53b62cb8a4bc39bb5c8" }
 hyper.workspace = true
 cainome-cairo-serde.workspace = true
 axum.workspace = true
