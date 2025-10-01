@@ -1,8 +1,8 @@
 use num_bigint::BigInt as NumBigInt;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 
-#[derive(Debug, Deserialize, Clone, PartialEq, Eq)]
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
 pub struct BigInt(NumBigInt);
 
 impl FromStr for BigInt {

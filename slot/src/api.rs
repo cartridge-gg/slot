@@ -63,10 +63,14 @@ impl Client {
         }
 
         if !res.status().is_success() {
-            return Err(anyhow::anyhow!("API error: {}", res.status()).into());
+            let status = res.status();
+            let body = res.text().await.unwrap_or_else(|_| "Unable to read body".to_string());
+            return Err(anyhow::anyhow!("API error: {} - {}", status, body).into());
         }
 
-        let res: Response<R> = res.json().await?;
+        let text = res.text().await?;
+        let res: Response<R> = serde_json::from_str(&text)
+            .map_err(|e| anyhow::anyhow!("Failed to parse response: {} - Body: {}", e, text))?;
 
         if let Some(errors) = res.errors {
             Err(Error::Api(GraphQLErrors(errors)))

@@ -1,12 +1,11 @@
-use anyhow::{Ok, Result};
+use anyhow::Result;
 use clap::Args;
-// use comfy_table::{presets::UTF8_FULL, Cell, ContentArrangement, Table};
-// TODO: Uncomment when RPC GraphQL module is available
-// use slot::api::Client;
-// use slot::credential::Credentials;
-// use slot::graphql::rpc::list_rpc_tokens;
-// use slot::graphql::rpc::ListRpcTokens;
-// use slot::graphql::GraphQLQuery;
+use comfy_table::{presets::UTF8_FULL, Cell, ContentArrangement, Table};
+use slot::api::Client;
+use slot::credential::Credentials;
+use slot::graphql::rpc::list_rpc_api_keys::{ResponseData, Variables};
+use slot::graphql::rpc::ListRpcApiKeys;
+use slot::graphql::GraphQLQuery;
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "List RPC tokens options")]
@@ -17,11 +16,57 @@ pub struct ListArgs {
 
 impl ListArgs {
     pub async fn run(&self) -> Result<()> {
-        println!("\n🚧 RPC API Key Listing");
-        println!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        println!("📝 Command configured for team: {}", self.team);
-        println!("\n⚠️  List functionality is temporarily disabled due to complex GraphQL connection types.");
-        println!("🔍 Use the Cartridge dashboard to view existing API keys for now.");
+        let request_body = ListRpcApiKeys::build_query(Variables {
+            team_name: self.team.clone(),
+            first: Some(100),
+            after: None,
+            where_: None,
+        });
+
+        let user = Credentials::load()?;
+        let client = Client::new_with_token(user.access_token);
+
+        let data: ResponseData = client.query(&request_body).await?;
+
+        if let Some(connection) = data.rpc_api_keys {
+            if let Some(edges) = connection.edges {
+                let tokens: Vec<_> = edges
+                    .iter()
+                    .filter_map(|edge| edge.as_ref())
+                    .filter_map(|edge| edge.node.as_ref())
+                    .collect();
+
+                if tokens.is_empty() {
+                    println!("\nNo RPC API keys found for team '{}'", self.team);
+                    return Ok(());
+                }
+
+                let mut table = Table::new();
+                table
+                    .load_preset(UTF8_FULL)
+                    .set_content_arrangement(ContentArrangement::Dynamic)
+                    .set_header(vec![
+                        Cell::new("Name"),
+                        Cell::new("Key Prefix"),
+                        Cell::new("Active"),
+                        Cell::new("Created At"),
+                        Cell::new("Last Used"),
+                    ]);
+
+                for token in tokens {
+                    table.add_row(vec![
+                        Cell::new(&token.name),
+                        Cell::new(&token.key_prefix),
+                        Cell::new(if token.active { "✓" } else { "✗" }),
+                        Cell::new(&token.created_at),
+                        Cell::new(token.last_used_at.as_ref().map_or("-", |s| s.as_str())),
+                    ]);
+                }
+
+                println!("\nRPC API Keys for team '{}':", self.team);
+                println!("{table}");
+            }
+        }
 
         Ok(())
     }

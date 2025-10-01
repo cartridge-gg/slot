@@ -1,7 +1,7 @@
 # Query to list RPC CORS domains
 # Operation name `ListRpcCorsDomains` must match the struct name in Rust
-query ListRpcCorsDomains($first: Int, $after: String, $where: RPCCorsDomainWhereInput) {
-  rpcCorsDomains(first: $first, after: $after, where: $where) {
+query ListRpcCorsDomains($teamName: String!, $first: Int, $after: Cursor, $where: RPCCorsDomainWhereInput) {
+  rpcCorsDomains(teamName: $teamName, first: $first, after: $after, where: $where) {
     edges {
       node {
         id

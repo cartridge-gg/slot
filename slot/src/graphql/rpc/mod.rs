@@ -2,6 +2,8 @@ use graphql_client::GraphQLQuery;
 
 pub type Time = String;
 pub type Cursor = String;
+pub type BigInt = crate::bigint::BigInt;
+pub type Long = u64;
 
 // Mutation for creating an RPC API key
 #[derive(GraphQLQuery)]
@@ -23,15 +25,15 @@ pub struct CreateRpcApiKey;
 )]
 pub struct DeleteRpcApiKey;
 
-// Query for listing RPC API keys - commented out for now due to complex schema types
-// #[derive(GraphQLQuery)]
-// #[graphql(
-//     schema_path = "schema.json",
-//     query_path = "src/graphql/rpc/list_tokens.graphql",
-//     response_derives = "Debug, Serialize, Clone",
-//     variables_derives = "Debug"
-// )]
-// pub struct ListRpcApiKeys;
+// Query for listing RPC API keys
+#[derive(GraphQLQuery)]
+#[graphql(
+    schema_path = "schema.json",
+    query_path = "src/graphql/rpc/list_tokens.graphql",
+    response_derives = "Debug, Serialize, Clone",
+    variables_derives = "Debug"
+)]
+pub struct ListRpcApiKeys;
 
 // Mutation for creating RPC CORS domain
 #[derive(GraphQLQuery)]
@@ -53,12 +55,12 @@ pub struct CreateRpcCorsDomain;
 )]
 pub struct DeleteRpcCorsDomain;
 
-// Query for listing RPC CORS domains - commented out for now due to complex schema types
-// #[derive(GraphQLQuery)]
-// #[graphql(
-//     schema_path = "schema.json",
-//     query_path = "src/graphql/rpc/list_whitelist_origins.graphql",
-//     response_derives = "Debug, Serialize, Clone",
-//     variables_derives = "Debug"
-// )]
-// pub struct ListRpcCorsDomains;
+// Query for listing RPC CORS domains
+#[derive(GraphQLQuery)]
+#[graphql(
+    schema_path = "schema.json",
+    query_path = "src/graphql/rpc/list_whitelist_origins.graphql",
+    response_derives = "Debug, Serialize, Clone",
+    variables_derives = "Debug"
+)]
+pub struct ListRpcCorsDomains;
