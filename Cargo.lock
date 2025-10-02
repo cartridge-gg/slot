@@ -9979,7 +9979,7 @@ dependencies = [
 
 [[package]]
 name = "slot"
-version = "0.49.1"
+version = "0.49.2"
 dependencies = [
  "clap",
  "env_logger",
@@ -9991,7 +9991,7 @@ dependencies = [
 
 [[package]]
 name = "slot-cli"
-version = "0.49.1"
+version = "0.49.2"
 dependencies = [
  "anyhow",
  "axum 0.7.9",

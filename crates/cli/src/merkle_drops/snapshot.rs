@@ -161,6 +161,11 @@ impl SnapshotArgs {
         // Convert holders to sorted list
         let mut sorted_holders: Vec<(String, Vec<i64>)> = holders.into_iter().collect();
         sorted_holders.sort_by(|a, b| a.0.cmp(&b.0));
+        // Compute total supply (count of tokens discovered)
+        let total_supply: usize = sorted_holders
+            .iter()
+            .map(|(_, token_ids)| token_ids.len())
+            .sum();
 
         // Prepare snapshot data
         let snapshot: Vec<Vec<serde_json::Value>> = sorted_holders
@@ -197,6 +202,7 @@ impl SnapshotArgs {
         println!("Snapshot data written to: {}", self.output.display());
         println!("\nSummary:");
         println!("  Total unique holders: {}", sorted_holders.len());
+        println!("  Total supply: {}", total_supply);
         println!("  Output file: {}", self.output.display());
         println!("\nNext steps:");
         println!("1. Review the generated snapshot data");
