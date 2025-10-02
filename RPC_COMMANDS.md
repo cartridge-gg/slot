@@ -17,7 +17,7 @@ slot rpc tokens create <KEY_NAME> --team <TEAM_NAME>
 # Delete an RPC API key
 slot rpc tokens delete <KEY_ID> --team <TEAM_NAME>
 
-# List all RPC API keys for a team (temporarily disabled)
+# List all RPC API keys for a team
 slot rpc tokens list --team <TEAM_NAME>
 ```
 
@@ -29,16 +29,16 @@ slot rpc whitelist add <DOMAIN> --team <TEAM_NAME>
 # Remove a domain from the CORS whitelist
 slot rpc whitelist remove <ENTRY_ID> --team <TEAM_NAME>
 
-# List all whitelisted domains for a team (temporarily disabled)
+# List all whitelisted domains for a team
 slot rpc whitelist list --team <TEAM_NAME>
 ```
 
 ## Implementation Status
 
 ✅ **Complete**: CLI command structure and argument parsing
-✅ **Complete**: Command registration and help system  
+✅ **Complete**: Command registration and help system
 ✅ **Complete**: GraphQL integration for create/delete operations
-⚠️ **Limited**: List operations temporarily disabled due to complex GraphQL connection types
+✅ **Complete**: List operations with pagination support and table formatting
 
 ## Files Created/Modified
 
@@ -120,22 +120,48 @@ $ slot rpc whitelist add "*.mycompany.com" --team test-team
 $ slot rpc tokens delete cmffs3a9p0004mmozw61h39tt --team test-team
 ✅ RPC API Key Deleted Successfully
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🗑️  API Key ID cmffs3a9p0004mmozw61h39tt has been removed from team 'test-team'
+🗑️  API Key ID cmffs3a9p0004mmozw61h39tt has been removed
 
 $ slot rpc whitelist remove cmffs3fbu0005mmoz1ajehcoq --team test-team
 ✅ Origin Removed from CORS Whitelist Successfully
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🗑️  CORS domain ID cmffs3fbu0005mmoz1ajehcoq has been removed from team 'test-team'
+🗑️  CORS domain ID cmffs3fbu0005mmoz1ajehcoq has been removed
+```
+
+### 5. List Resources
+```bash
+$ slot rpc tokens list --team test-team
+
+RPC API Keys for team 'test-team':
+╔═══════════════════════════════╤═════════════╤═════════════╤════════╤═══════════════════════════════╤═════════════╗
+║ ID                            │ Name        │ Key Prefix  │ Active │ Created At                    │ Last Used   ║
+╠═══════════════════════════════╪═════════════╪═════════════╪════════╪═══════════════════════════════╪═════════════╣
+║ cmffs3a9p0004mmozw61h39tt     │ my-app-key  │ sk_5e132    │ ✓      │ 2025-09-11T20:05:20.317316Z   │ -           ║
+╚═══════════════════════════════╧═════════════╧═════════════╧════════╧═══════════════════════════════╧═════════════╝
+
+$ slot rpc whitelist list --team test-team
+
+CORS Domains for team 'test-team':
+╔═══════════════════════════════╤═════════════════════╤═══════════════════════════════╗
+║ ID                            │ Domain              │ Created At                    ║
+╠═══════════════════════════════╪═════════════════════╪═══════════════════════════════╣
+║ cmffs3fbu0005mmoz1ajehcoq     │ https://myapp.com   │ 2025-09-11T20:05:26.874251Z   ║
+║ cmffs4j0a0008mmozn01vm2bt     │ *.mycompany.com     │ 2025-09-11T20:06:18.298939Z   ║
+╚═══════════════════════════════╧═════════════════════╧═══════════════════════════════╝
 ```
 
 ## Future Enhancements
 
-### Re-enable List Commands
-To restore list functionality, the GraphQL connection types need to be properly handled:
+### Advanced List Features
+The list commands currently support basic pagination (first 100 items). Future enhancements could include:
 
-1. **Add proper type imports** for `BigInt`, `Long`, and complex connection types
-2. **Implement pagination** for large result sets  
-3. **Add filtering options** by team, active status, etc.
+1. **Cursor-based pagination** for large result sets (using the `after` parameter)
+2. **Advanced filtering** using `where` clauses:
+   - Filter tokens by active status
+   - Filter by creation date ranges
+   - Search by name or key prefix
+3. **Sorting options** for different columns
+4. **Export formats** (JSON, CSV) for integration with other tools
 
 The schema supports these operations via:
 - `rpcApiKeys(first: Int, after: String, where: RPCApiKeyWhereInput)`
