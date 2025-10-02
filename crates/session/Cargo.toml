@@ -9,8 +9,7 @@ edition.workspace = true
 slot-core.workspace = true
 slot-utils.workspace = true
 
-# https://github.com/cartridge-gg/controller-rs/pull/45
-account_sdk = { git = "https://github.com/cartridge-gg/controller-rs", rev = "68aa627f402af2f18e09a53b62cb8a4bc39bb5c8" }
+account_sdk = { git = "https://github.com/cartridge-gg/controller-rs", tag = "v0.3.10" }
 hyper.workspace = true
 cainome-cairo-serde.workspace = true
 axum.workspace = true

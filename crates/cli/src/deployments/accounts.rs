@@ -2,9 +2,9 @@
 
 use anyhow::Result;
 use clap::Args;
+use katana_genesis::allocation::{DevAllocationsGenerator, GenesisAccountAlloc};
+use katana_genesis::Genesis;
 use katana_primitives::contract::ContractAddress;
-use katana_primitives::genesis::allocation::{DevAllocationsGenerator, GenesisAccountAlloc};
-use katana_primitives::genesis::Genesis;
 use slot_graphql::deployments::{katana_accounts::*, KatanaAccounts};
 use slot_graphql::GraphQLQuery;
 

@@ -15,7 +15,7 @@ dependencies = [
 [[package]]
 name = "account_sdk"
 version = "0.1.0"
-source = "git+https://github.com/cartridge-gg/controller-rs?rev=68aa627f402af2f18e09a53b62cb8a4bc39bb5c8#68aa627f402af2f18e09a53b62cb8a4bc39bb5c8"
+source = "git+https://github.com/cartridge-gg/controller-rs?tag=v0.3.10#e3431a4fc1c1eb00638f744483b29ab623c4a890"
 dependencies = [
  "alloy-primitives 0.8.22",
  "alloy-signer 0.12.6",
@@ -770,7 +770,7 @@ checksum = "dcfed56ad506cb2c684a14971b8861fdc3baaaae314b9e5f9bb532cbe3ba7a4f"
 [[package]]
 name = "apollo_compile_to_native_types"
 version = "0.16.0-rc.0"
-source = "git+https://github.com/dojoengine/sequencer?branch=blockifier%2Fv0.16.0-rc.0#3a9485d771fb5c66a959e3733141aeb2a44dd9ee"
+source = "git+https://github.com/dojoengine/sequencer?branch=blockifier%2Fv0.16.0-rc.0#d2baeb7289ce99d18468ddc635748fa76cf0827c"
 dependencies = [
  "apollo_config",
  "serde",
@@ -780,7 +780,7 @@ dependencies = [
 [[package]]
 name = "apollo_config"
 version = "0.16.0-rc.0"
-source = "git+https://github.com/dojoengine/sequencer?branch=blockifier%2Fv0.16.0-rc.0#3a9485d771fb5c66a959e3733141aeb2a44dd9ee"
+source = "git+https://github.com/dojoengine/sequencer?branch=blockifier%2Fv0.16.0-rc.0#d2baeb7289ce99d18468ddc635748fa76cf0827c"
 dependencies = [
  "apollo_infra_utils",
  "clap",
@@ -798,7 +798,7 @@ dependencies = [
 [[package]]
 name = "apollo_infra_utils"
 version = "0.16.0-rc.0"
-source = "git+https://github.com/dojoengine/sequencer?branch=blockifier%2Fv0.16.0-rc.0#3a9485d771fb5c66a959e3733141aeb2a44dd9ee"
+source = "git+https://github.com/dojoengine/sequencer?branch=blockifier%2Fv0.16.0-rc.0#d2baeb7289ce99d18468ddc635748fa76cf0827c"
 dependencies = [
  "apollo_proc_macros",
  "assert-json-diff",
@@ -816,7 +816,7 @@ dependencies = [
 [[package]]
 name = "apollo_metrics"
 version = "0.16.0-rc.0"
-source = "git+https://github.com/dojoengine/sequencer?branch=blockifier%2Fv0.16.0-rc.0#3a9485d771fb5c66a959e3733141aeb2a44dd9ee"
+source = "git+https://github.com/dojoengine/sequencer?branch=blockifier%2Fv0.16.0-rc.0#d2baeb7289ce99d18468ddc635748fa76cf0827c"
 dependencies = [
  "indexmap 2.8.0",
  "metrics 0.24.1",
@@ -828,7 +828,7 @@ dependencies = [
 [[package]]
 name = "apollo_proc_macros"
 version = "0.16.0-rc.0"
-source = "git+https://github.com/dojoengine/sequencer?branch=blockifier%2Fv0.16.0-rc.0#3a9485d771fb5c66a959e3733141aeb2a44dd9ee"
+source = "git+https://github.com/dojoengine/sequencer?branch=blockifier%2Fv0.16.0-rc.0#d2baeb7289ce99d18468ddc635748fa76cf0827c"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -1862,7 +1862,7 @@ dependencies = [
 [[package]]
 name = "blockifier"
 version = "0.16.0-rc.0"
-source = "git+https://github.com/dojoengine/sequencer?branch=blockifier%2Fv0.16.0-rc.0#3a9485d771fb5c66a959e3733141aeb2a44dd9ee"
+source = "git+https://github.com/dojoengine/sequencer?branch=blockifier%2Fv0.16.0-rc.0#d2baeb7289ce99d18468ddc635748fa76cf0827c"
 dependencies = [
  "anyhow",
  "apollo_compile_to_native_types",
@@ -1910,7 +1910,7 @@ dependencies = [
 [[package]]
 name = "blockifier_test_utils"
 version = "0.16.0-rc.0"
-source = "git+https://github.com/dojoengine/sequencer?branch=blockifier%2Fv0.16.0-rc.0#3a9485d771fb5c66a959e3733141aeb2a44dd9ee"
+source = "git+https://github.com/dojoengine/sequencer?branch=blockifier%2Fv0.16.0-rc.0#d2baeb7289ce99d18468ddc635748fa76cf0827c"
 dependencies = [
  "apollo_infra_utils",
  "cairo-lang-starknet-classes",
@@ -2825,7 +2825,7 @@ dependencies = [
 [[package]]
 name = "cartridge"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "anyhow",
  "ark-ec 0.4.2",
@@ -6115,7 +6115,7 @@ dependencies = [
 [[package]]
 name = "katana-chain-spec"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "alloy-primitives 1.4.0",
  "anyhow",
@@ -6136,7 +6136,7 @@ dependencies = [
 [[package]]
 name = "katana-cli"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "alloy-primitives 1.4.0",
  "anyhow",
@@ -6165,7 +6165,7 @@ dependencies = [
 [[package]]
 name = "katana-contracts"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "katana-contracts-macro",
  "katana-primitives",
@@ -6177,7 +6177,7 @@ dependencies = [
 [[package]]
 name = "katana-contracts-macro"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "cairo-lang-starknet-classes",
  "katana-primitives",
@@ -6192,7 +6192,7 @@ dependencies = [
 [[package]]
 name = "katana-core"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "anyhow",
  "derive_more 0.99.19",
@@ -6225,7 +6225,7 @@ dependencies = [
 [[package]]
 name = "katana-db"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "anyhow",
  "katana-metrics",
@@ -6249,7 +6249,7 @@ dependencies = [
 [[package]]
 name = "katana-executor"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "blockifier",
  "cairo-vm",
@@ -6267,7 +6267,7 @@ dependencies = [
 [[package]]
 name = "katana-feeder-gateway"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "katana-primitives",
  "katana-rpc-types",
@@ -6283,7 +6283,7 @@ dependencies = [
 [[package]]
 name = "katana-fork"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "anyhow",
  "futures",
@@ -6302,7 +6302,7 @@ dependencies = [
 [[package]]
 name = "katana-gas-price-oracle"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "alloy-provider",
  "alloy-rpc-types-eth",
@@ -6324,7 +6324,7 @@ dependencies = [
 [[package]]
 name = "katana-genesis"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "anyhow",
  "base64 0.21.7",
@@ -6343,7 +6343,7 @@ dependencies = [
 [[package]]
 name = "katana-messaging"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "alloy-contract",
  "alloy-network",
@@ -6372,7 +6372,7 @@ dependencies = [
 [[package]]
 name = "katana-metrics"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "hyper 0.14.32",
  "jemalloc-ctl",
@@ -6390,7 +6390,7 @@ dependencies = [
 [[package]]
 name = "katana-node"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "anyhow",
  "futures",
@@ -6427,7 +6427,7 @@ dependencies = [
 [[package]]
 name = "katana-pipeline"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "futures",
  "katana-primitives",
@@ -6441,7 +6441,7 @@ dependencies = [
 [[package]]
 name = "katana-pool"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "futures",
  "katana-executor",
@@ -6456,7 +6456,7 @@ dependencies = [
 [[package]]
 name = "katana-pool-api"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "futures",
  "katana-primitives",
@@ -6468,7 +6468,7 @@ dependencies = [
 [[package]]
 name = "katana-primitives"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "alloy-primitives 1.4.0",
  "anyhow",
@@ -6497,7 +6497,7 @@ dependencies = [
 [[package]]
 name = "katana-provider"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "alloy-primitives 1.4.0",
  "anyhow",
@@ -6524,7 +6524,7 @@ dependencies = [
 [[package]]
 name = "katana-provider-api"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "auto_impl",
  "katana-db",
@@ -6538,7 +6538,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "anyhow",
  "cainome",
@@ -6573,7 +6573,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc-api"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "anyhow",
  "jsonrpsee",
@@ -6589,7 +6589,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc-client"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "jsonrpsee",
  "katana-primitives",
@@ -6601,7 +6601,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc-types"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "cainome",
  "cainome-cairo-serde",
@@ -6624,7 +6624,7 @@ dependencies = [
 [[package]]
 name = "katana-rpc-types-builder"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "anyhow",
  "katana-primitives",
@@ -6635,7 +6635,7 @@ dependencies = [
 [[package]]
 name = "katana-slot-controller"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "cartridge",
  "katana-genesis",
@@ -6645,7 +6645,7 @@ dependencies = [
 [[package]]
 name = "katana-stage"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -6670,7 +6670,7 @@ dependencies = [
 [[package]]
 name = "katana-tasks"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "futures",
  "rayon",
@@ -6683,7 +6683,7 @@ dependencies = [
 [[package]]
 name = "katana-tracing"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "anyhow",
  "bytes",
@@ -6710,7 +6710,7 @@ dependencies = [
 [[package]]
 name = "katana-trie"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "anyhow",
  "bitvec",
@@ -6726,7 +6726,7 @@ dependencies = [
 [[package]]
 name = "katana-utils"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "anyhow",
  "arbitrary",
@@ -6753,7 +6753,7 @@ dependencies = [
 [[package]]
 name = "katana-utils-macro"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -6852,13 +6852,11 @@ dependencies = [
 
 [[package]]
 name = "lambdaworks-crypto"
-version = "0.12.0"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fce8f59622ed408c318c9b5eca17f1a1154159e3738b5c4d5a22a0dd3700c906"
+checksum = "bbc2a4da0d9e52ccfe6306801a112e81a8fc0c76aa3e4449fefeda7fef72bb34"
 dependencies = [
  "lambdaworks-math",
- "rand 0.8.5",
- "rand_chacha 0.3.1",
  "serde",
  "sha2",
  "sha3",
@@ -6866,12 +6864,10 @@ dependencies = [
 
 [[package]]
 name = "lambdaworks-math"
-version = "0.12.0"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "405d65a26831650ba348a503a2881ed7a0483ef3ec17f66e0fc8e2f9c97fc7ca"
+checksum = "d1bd2632acbd9957afc5aeec07ad39f078ae38656654043bf16e046fa2730e23"
 dependencies = [
- "getrandom 0.2.15",
- "rand 0.8.5",
  "serde",
  "serde_json",
 ]
@@ -6959,9 +6955,9 @@ checksum = "d26c52dbd32dccf2d10cac7725f8eae5296885fb5703b261f7d0a0739ec807ab"
 
 [[package]]
 name = "linux-raw-sys"
-version = "0.9.2"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6db9c683daf087dc577b7506e9695b3d556a9f3849903fa28186283afd6809e9"
+checksum = "df1d3c3b53da64cf5760482273a98e575c651a67eec7f77df96b5b642de8f039"
 
 [[package]]
 name = "litemap"
@@ -9244,14 +9240,14 @@ dependencies = [
 
 [[package]]
 name = "rustix"
-version = "1.0.2"
+version = "1.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f7178faa4b75a30e269c71e61c353ce2748cf3d76f0c44c393f4e60abf49b825"
+checksum = "cd15f8a2c5551a84d56efdc1cd049089e409ac19a3072d5037a17fd70719ff3e"
 dependencies = [
  "bitflags 2.9.0",
  "errno",
  "libc",
- "linux-raw-sys 0.9.2",
+ "linux-raw-sys 0.11.0",
  "windows-sys 0.59.0",
 ]
 
@@ -9694,7 +9690,7 @@ dependencies = [
 [[package]]
 name = "serde-utils"
 version = "1.7.0-alpha.4"
-source = "git+https://github.com/dojoengine/katana?rev=b141f852fbadd35d7ccc759335be8ad709c647a1#b141f852fbadd35d7ccc759335be8ad709c647a1"
+source = "git+https://github.com/dojoengine/katana?rev=09e5b34c5f410ace3d6d554e1809b2f645af063f#09e5b34c5f410ace3d6d554e1809b2f645af063f"
 dependencies = [
  "base64 0.21.7",
  "serde",
@@ -10010,6 +10006,7 @@ dependencies = [
  "graphql_client",
  "hyper 1.6.0",
  "katana-cli",
+ "katana-genesis",
  "katana-primitives",
  "log",
  "num-bigint",
@@ -10238,9 +10235,9 @@ dependencies = [
 
 [[package]]
 name = "sqlx"
-version = "0.8.3"
+version = "0.8.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4410e73b3c0d8442c5f99b425d7a435b5ee0ae4167b3196771dd3f7a01be745f"
+checksum = "1fefb893899429669dcdd979aff487bd78f4064e5e7907e4269081e0ef7d97dc"
 dependencies = [
  "sqlx-core",
  "sqlx-macros",
@@ -10251,12 +10248,13 @@ dependencies = [
 
 [[package]]
 name = "sqlx-core"
-version = "0.8.3"
+version = "0.8.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6a007b6936676aa9ab40207cde35daab0a04b823be8ae004368c0793b96a61e0"
+checksum = "ee6798b1838b6a0f69c007c133b8df5866302197e404e8b6ee8ed3e3a5e68dc6"
 dependencies = [
  "async-io 1.13.0",
  "async-std",
+ "base64 0.22.1",
  "bytes",
  "chrono",
  "crc",
@@ -10288,9 +10286,9 @@ dependencies = [
 
 [[package]]
 name = "sqlx-macros"
-version = "0.8.3"
+version = "0.8.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3112e2ad78643fef903618d78cf0aec1cb3134b019730edb039b69eaf531f310"
+checksum = "a2d452988ccaacfbf5e0bdbc348fb91d7c8af5bee192173ac3636b5fb6e6715d"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -10301,9 +10299,9 @@ dependencies = [
 
 [[package]]
 name = "sqlx-macros-core"
-version = "0.8.3"
+version = "0.8.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4e9f90acc5ab146a99bf5061a7eb4976b573f560bc898ef3bf8435448dd5e7ad"
+checksum = "19a9c1841124ac5a61741f96e1d9e2ec77424bf323962dd894bdb93f37d5219b"
 dependencies = [
  "async-std",
  "dotenvy",
@@ -10321,16 +10319,15 @@ dependencies = [
  "sqlx-postgres",
  "sqlx-sqlite",
  "syn 2.0.100",
- "tempfile",
  "tokio",
  "url",
 ]
 
 [[package]]
 name = "sqlx-mysql"
-version = "0.8.3"
+version = "0.8.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4560278f0e00ce64938540546f59f590d60beee33fffbd3b9cd47851e5fff233"
+checksum = "aa003f0038df784eb8fecbbac13affe3da23b45194bd57dba231c8f48199c526"
 dependencies = [
  "atoi",
  "base64 0.22.1",
@@ -10372,9 +10369,9 @@ dependencies = [
 
 [[package]]
 name = "sqlx-postgres"
-version = "0.8.3"
+version = "0.8.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c5b98a57f363ed6764d5b3a12bfedf62f07aa16e1856a7ddc2a0bb190a959613"
+checksum = "db58fcd5a53cf07c184b154801ff91347e4c30d17a3562a635ff028ad5deda46"
 dependencies = [
  "atoi",
  "base64 0.22.1",
@@ -10411,9 +10408,9 @@ dependencies = [
 
 [[package]]
 name = "sqlx-sqlite"
-version = "0.8.3"
+version = "0.8.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f85ca71d3a5b24e64e1d08dd8fe36c6c95c339a896cc33068148906784620540"
+checksum = "c2d12fe70b2c1b4401038055f90f151b78208de1f9f89a7dbfd41587a10c3eea"
 dependencies = [
  "atoi",
  "chrono",
@@ -10430,6 +10427,7 @@ dependencies = [
  "serde",
  "serde_urlencoded",
  "sqlx-core",
+ "thiserror 2.0.12",
  "tracing",
  "url",
  "uuid 1.15.1",
@@ -10665,9 +10663,9 @@ dependencies = [
 
 [[package]]
 name = "starknet-types-core"
-version = "0.2.2"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "92eb6db1a763c350ffa50ed65ea3a92de9888239357cfbcb633e29a4da77f122"
+checksum = "5fa3d91e38f091dbc543d33589eb7716bed2a8eb1c20879e484561977832b60a"
 dependencies = [
  "arbitrary",
  "blake2",
@@ -10679,7 +10677,6 @@ dependencies = [
  "num-integer",
  "num-traits",
  "parity-scale-codec",
- "rand 0.9.2",
  "serde",
  "zeroize",
 ]
@@ -10687,7 +10684,7 @@ dependencies = [
 [[package]]
 name = "starknet_api"
 version = "0.16.0-rc.0"
-source = "git+https://github.com/dojoengine/sequencer?branch=blockifier%2Fv0.16.0-rc.0#3a9485d771fb5c66a959e3733141aeb2a44dd9ee"
+source = "git+https://github.com/dojoengine/sequencer?branch=blockifier%2Fv0.16.0-rc.0#d2baeb7289ce99d18468ddc635748fa76cf0827c"
 dependencies = [
  "apollo_infra_utils",
  "base64 0.13.1",
@@ -10955,15 +10952,14 @@ checksum = "55937e1799185b12863d447f42597ed69d9928686b8d88a1df17376a097d8369"
 
 [[package]]
 name = "tempfile"
-version = "3.18.0"
+version = "3.20.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2c317e0a526ee6120d8dabad239c8dadca62b24b6f168914bbbc8e2fb1f0e567"
+checksum = "e8a64e3985349f2441a1a9ef0b853f869006c3855f2cda6862a94d26ebb9d6a1"
 dependencies = [
- "cfg-if",
  "fastrand 2.3.0",
  "getrandom 0.3.1",
  "once_cell",
- "rustix 1.0.2",
+ "rustix 1.1.2",
  "windows-sys 0.59.0",
 ]
 

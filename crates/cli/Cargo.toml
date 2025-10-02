@@ -26,13 +26,11 @@ futures = "0.3"
 log = "0.4"
 graphql_client.workspace = true
 torii-cli = { git = "https://github.com/dojoengine/torii", tag = "v1.7.3", default-features = false }
-#torii-cli = { path = "/Users/glihm/cgg/torii/crates/cli", default-features = false }
 
-# Revision that includes the `config` field being public.
-# Should be bumped once a new version is released with this commit:
-# <https://github.com/dojoengine/katana/pull/295/commits>
-katana-primitives = { git = "https://github.com/dojoengine/katana", rev = "b141f852fbadd35d7ccc759335be8ad709c647a1" }
-katana-cli = { git = "https://github.com/dojoengine/katana", rev = "b141f852fbadd35d7ccc759335be8ad709c647a1", default-features = false, features = [
+# <https://github.com/dojoengine/katana/tree/blockifier%400.16.0-rc.0>
+katana-primitives = { git = "https://github.com/dojoengine/katana", rev = "09e5b34c5f410ace3d6d554e1809b2f645af063f" }
+katana-genesis = { git = "https://github.com/dojoengine/katana", rev = "09e5b34c5f410ace3d6d554e1809b2f645af063f" }
+katana-cli = { git = "https://github.com/dojoengine/katana", rev = "09e5b34c5f410ace3d6d554e1809b2f645af063f", default-features = false, features = [
 	"cartridge",
 ] }
 

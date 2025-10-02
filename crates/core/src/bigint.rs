@@ -11,7 +11,7 @@ impl FromStr for BigInt {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         NumBigInt::from_str(s)
             .map(BigInt)
-            .map_err(|_| format!("Failed to parse BigInt from string: {}", s))
+            .map_err(|_| format!("Failed to parse BigInt from string: {s}"))
     }
 }
 
@@ -29,6 +29,6 @@ mod tests {
     fn test_bigint_from_str() {
         let input = "123";
         let result = BigInt::from_str(input);
-        assert!(result.is_ok(), "BigInt::from_str failed on '{}'", input);
+        assert!(result.is_ok(), "BigInt::from_str failed on '{input}'");
     }
 }

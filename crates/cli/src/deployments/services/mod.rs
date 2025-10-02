@@ -12,7 +12,7 @@ mod torii;
 #[serde(untagged)]
 pub enum CreateServiceCommands {
     #[command(about = "Katana deployment.")]
-    Katana(KatanaCreateArgs),
+    Katana(Box<KatanaCreateArgs>),
     #[command(about = "Torii deployment.")]
     Torii(Box<ToriiCreateArgs>),
 }
@@ -21,7 +21,7 @@ pub enum CreateServiceCommands {
 #[serde(untagged)]
 pub enum UpdateServiceCommands {
     #[command(about = "Katana deployment.")]
-    Katana(KatanaUpdateArgs),
+    Katana(Box<KatanaUpdateArgs>),
     #[command(about = "Torii deployment.")]
     Torii(Box<ToriiUpdateArgs>),
 }
@@ -30,7 +30,7 @@ pub enum UpdateServiceCommands {
 #[serde(untagged)]
 pub enum KatanaAccountCommands {
     #[command(about = "Katana deployment.")]
-    Katana(KatanaAccountArgs),
+    Katana(Box<KatanaAccountArgs>),
 }
 
 #[derive(Clone, Debug, ValueEnum, serde::Serialize)]
