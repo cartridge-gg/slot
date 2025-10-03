@@ -540,7 +540,8 @@ mod tests {
     #[test]
     fn get_session_unauthenticated() {
         let chain = Felt::ONE;
-        let err = get(chain).unwrap_err();
+        // Use `get_at` to avoid `get` using the local config.
+        let err = get_at(utils::test_utils::config_dir_tmp(), chain).unwrap_err();
         let SessionError::Credentials(CredentialError::Unauthorized) = err else {
             panic!("expected Unauthorized error, got {err:?}");
         };
@@ -548,7 +549,7 @@ mod tests {
 
     #[test]
     fn get_non_existant_session_authenticated() {
-        let config_dir = utils::config_dir();
+        let config_dir = utils::test_utils::config_dir_tmp();
         authenticate(&config_dir);
 
         let chain = felt!("0x999");
@@ -558,7 +559,7 @@ mod tests {
 
     #[test]
     fn get_existant_session_authenticated() {
-        let config_dir = utils::config_dir();
+        let config_dir = utils::test_utils::config_dir_tmp();
         let username = authenticate(&config_dir);
 
         let chain = felt!("0x999");
@@ -582,7 +583,7 @@ mod tests {
 
     #[test]
     fn store_session_unauthenticated() {
-        let config_dir = utils::config_dir();
+        let config_dir = utils::test_utils::config_dir_tmp();
 
         let chain = felt!("0x999");
         let signer_key = SigningKey::from_random();
