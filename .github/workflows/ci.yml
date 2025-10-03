@@ -13,6 +13,8 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/dojoengine/dojo-dev:v1.7.1
     steps:
       - uses: actions/checkout@v3
       - uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -30,6 +32,8 @@ jobs:
 
   clippy:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/dojoengine/dojo-dev:v1.7.1
     steps:
       - uses: actions/checkout@v3
       - uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -74,4 +78,8 @@ jobs:
       - uses: software-mansion/setup-scarb@v1
         with:
           scarb-version: "2.8.2"
+      # Required to build Torii.
+      - uses: arduino/setup-protoc@v2
+        with:
+          repo-token: ${{ secrets.github_token }}
       - run: cargo check --target x86_64-pc-windows-msvc --workspace
