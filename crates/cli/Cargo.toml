@@ -1,0 +1,51 @@
+[package]
+name = "slot-cli"
+version = "0.49.2"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+slot-core.workspace = true
+slot-utils.workspace = true
+slot-session.workspace = true
+slot-graphql.workspace = true
+
+anyhow.workspace = true
+axum.workspace = true
+chrono = { version = "0.4", features = ["serde"] }
+clap.workspace = true
+colored = "2.0.0"
+ctrlc = "3.4.1"
+dialoguer = "0.11.0"
+ethers = { version = "2.0", default-features = false, features = [
+	"abigen",
+	"rustls",
+] }
+futures = "0.3"
+log = "0.4"
+graphql_client.workspace = true
+torii-cli = { git = "https://github.com/dojoengine/torii", tag = "v1.7.3", default-features = false }
+
+# <https://github.com/dojoengine/katana/tree/blockifier%400.16.0-rc.0>
+katana-primitives = { git = "https://github.com/dojoengine/katana", rev = "09e5b34c5f410ace3d6d554e1809b2f645af063f" }
+katana-genesis = { git = "https://github.com/dojoengine/katana", rev = "09e5b34c5f410ace3d6d554e1809b2f645af063f" }
+katana-cli = { git = "https://github.com/dojoengine/katana", rev = "09e5b34c5f410ace3d6d554e1809b2f645af063f", default-features = false, features = [
+	"cartridge",
+] }
+
+comfy-table = "7.1"
+hyper.workspace = true
+num-bigint = { version = "0.4", features = ["serde"] }
+tokio.workspace = true
+thiserror.workspace = true
+serde.workspace = true
+serde_json = "1.0"
+starknet.workspace = true
+starknet-types-core.workspace = true
+toml = "0.8"
+url.workspace = true
+strum_macros = "0.25.3"
+
+[features]
+default = []

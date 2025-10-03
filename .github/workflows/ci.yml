@@ -8,16 +8,22 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  RUST_VERSION: 1.85.0
+  RUST_VERSION: 1.87.0
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/dojoengine/dojo-dev:v1.7.1
     steps:
       - uses: actions/checkout@v3
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: ${{ env.RUST_VERSION }}
+      # Required to build Katana contracts.
+      - uses: software-mansion/setup-scarb@v1
+        with:
+          scarb-version: "2.8.2"
       # Required to build Katana at the moment.
       - uses: oven-sh/setup-bun@v1
         with:
@@ -26,12 +32,18 @@ jobs:
 
   clippy:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/dojoengine/dojo-dev:v1.7.1
     steps:
       - uses: actions/checkout@v3
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: ${{ env.RUST_VERSION }}
           components: clippy
+      # Required to build Katana contracts.
+      - uses: software-mansion/setup-scarb@v1
+        with:
+          scarb-version: "2.8.2"
       # Required to build Katana at the moment.
       - uses: oven-sh/setup-bun@v1
         with:
@@ -62,4 +74,12 @@ jobs:
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
+      # Required to build Katana contracts.
+      - uses: software-mansion/setup-scarb@v1
+        with:
+          scarb-version: "2.8.2"
+      # Required to build Torii.
+      - uses: arduino/setup-protoc@v2
+        with:
+          repo-token: ${{ secrets.github_token }}
       - run: cargo check --target x86_64-pc-windows-msvc --workspace
