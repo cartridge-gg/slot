@@ -18,9 +18,10 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: ${{ env.RUST_VERSION }}
+      # Required to build Katana contracts.
       - uses: software-mansion/setup-scarb@v1
         with:
-          scarb-version: "2.12.2"
+          scarb-version: "2.8.2"
       # Required to build Katana at the moment.
       - uses: oven-sh/setup-bun@v1
         with:
@@ -35,9 +36,10 @@ jobs:
         with:
           toolchain: ${{ env.RUST_VERSION }}
           components: clippy
+      # Required to build Katana contracts.
       - uses: software-mansion/setup-scarb@v1
         with:
-          scarb-version: "2.12.2"
+          scarb-version: "2.8.2"
       # Required to build Katana at the moment.
       - uses: oven-sh/setup-bun@v1
         with:
@@ -68,4 +70,8 @@ jobs:
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
+      # Required to build Katana contracts.
+      - uses: software-mansion/setup-scarb@v1
+        with:
+          scarb-version: "2.8.2"
       - run: cargo check --target x86_64-pc-windows-msvc --workspace
