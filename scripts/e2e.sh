@@ -2,6 +2,9 @@
 
 set -eux
 
+# Command to run the slot binary
+SLOT_CMD="cargo run --bin slot"
+
 # Creates a simple Torii config file.
 create_torii_config() {
     local config_path=$1
@@ -91,16 +94,16 @@ test_katana() {
     local project=$1
     local config_path=$2
 
-    cargo run -- d create "$project" katana
+    $SLOT_CMD -- d create "$project" katana
 
     sleep 10
 
     if ! check_katana "$project"; then
-        cargo run -- d delete "$project" katana -f || true
+        $SLOT_CMD -- d delete "$project" katana -f || true
         return 1
     fi
 
-    cargo run -- d update --tier epic "$project" katana
+    $SLOT_CMD -- d update --tier epic "$project" katana
     # This delay is a bit higher, but it seems like Katana takes a bit longer to
     # start up in higher tiers.
     # Also, the update tier command returns directly, when it may need to wait for
@@ -108,22 +111,22 @@ test_katana() {
     sleep 60
 
     if ! check_katana "$project"; then
-        cargo run -- d delete "$project" katana -f || true
+        $SLOT_CMD -- d delete "$project" katana -f || true
         return 1
     fi
 
     create_katana_config "$config_path"
-    cargo run -- d update "$project" katana --config "$config_path"
+    $SLOT_CMD -- d update "$project" katana --config "$config_path"
     # Faster update, since it's only a restart with the new config
     # And the slot request is waiting the pod to be ready to return.
     sleep 20
 
     if ! check_katana "$project"; then
-        cargo run -- d delete "$project" katana -f || true
+        $SLOT_CMD -- d delete "$project" katana -f || true
         return 1
     fi
 
-    cargo run -- d delete "$project" katana -f
+    $SLOT_CMD -- d delete "$project" katana -f
     return 0
 }
 
@@ -133,16 +136,16 @@ test_torii() {
     local config_path=$2
 
     create_torii_config "$config_path"
-    cargo run -- d create "$project" torii --config "$config_path"
+    $SLOT_CMD -- d create "$project" torii --config "$config_path"
 
     sleep 15
 
     if ! check_torii "$project"; then
-        cargo run -- d delete "$project" torii -f || true
+        $SLOT_CMD -- d delete "$project" torii -f || true
         return 1
     fi
 
-    cargo run -- d update --tier epic "$project" torii
+    $SLOT_CMD -- d update --tier epic "$project" torii
     # This delay is a bit higher, but it seems like Torii takes a bit longer to
     # start up in higher tiers.
     # Also, the update tier command returns directly, when it may need to wait for
@@ -150,22 +153,22 @@ test_torii() {
     sleep 60
 
     if ! check_torii "$project"; then
-        cargo run -- d delete "$project" torii -f || true
+        $SLOT_CMD -- d delete "$project" torii -f || true
         return 1
     fi
 
     create_torii_config "$config_path"
-    cargo run -- d update "$project" torii --config "$config_path"
+    $SLOT_CMD -- d update "$project" torii --config "$config_path"
     # Faster update, since it's only a restart with the new config.
     # And the slot request is waiting the pod to be ready to return.
     sleep 20
 
     if ! check_torii "$project"; then
-        cargo run -- d delete "$project" torii -f || true
+        $SLOT_CMD -- d delete "$project" torii -f || true
         return 1
     fi
 
-    cargo run -- d delete "$project" torii -f
+    $SLOT_CMD -- d delete "$project" torii -f
     return 0
 }
 
