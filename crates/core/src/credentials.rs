@@ -159,7 +159,7 @@ mod tests {
             "token_type": "mytokentype"
         });
 
-        let dir = slot_utils::config_dir();
+        let dir = slot_utils::test_utils::config_dir_tmp();
         let path = dir.join(CREDENTIALS_FILE);
         fs::create_dir_all(&dir).expect("failed to create intermediary dirs");
         fs::write(path, serde_json::to_vec(&malformed_cred).unwrap()).unwrap();
@@ -170,14 +170,14 @@ mod tests {
 
     #[test]
     fn loading_non_existent_credentials() {
-        let dir = slot_utils::config_dir();
+        let dir = slot_utils::test_utils::config_dir_tmp();
         let err = Credentials::load_at(dir).unwrap_err();
         assert!(err.to_string().contains("No credentials found"))
     }
 
     #[test]
     fn credentials_rt() {
-        let config_dir = slot_utils::config_dir();
+        let config_dir = slot_utils::test_utils::config_dir_tmp();
 
         let access_token = AccessToken {
             token: "mytoken".to_string(),

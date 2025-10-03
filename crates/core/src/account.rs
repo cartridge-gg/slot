@@ -20,5 +20,6 @@ pub struct Controller {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct WebAuthnCredential {
     pub id: String,
+    #[serde(rename = "publicKey")]
     pub public_key: String,
 }
