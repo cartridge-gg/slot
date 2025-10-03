@@ -13,6 +13,8 @@ env:
 jobs:
   e2e:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/dojoengine/dojo-dev:v1.7.1
     steps:
       - uses: actions/checkout@v3
       - uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -23,6 +25,10 @@ jobs:
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
+      # Required to build Katana.
+      - uses: software-mansion/setup-scarb@v1
+        with:
+          scarb-version: "2.8.2"
       - run: sh ./scripts/e2e.sh
         env:
           SLOT_AUTH: ${{ secrets.SLOT_AUTH }}
