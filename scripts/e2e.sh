@@ -3,7 +3,7 @@
 set -eux
 
 # Command to run the slot binary
-SLOT_CMD="cargo run --bin slot"
+SLOT_CMD="cargo run --bin slot -r"
 
 # Creates a simple Torii config file.
 create_torii_config() {
