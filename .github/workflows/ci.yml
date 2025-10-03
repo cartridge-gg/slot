@@ -18,6 +18,9 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: ${{ env.RUST_VERSION }}
+      - uses: software-mansion/setup-scarb@v1
+        with:
+          scarb-version: "2.12.2"
       # Required to build Katana at the moment.
       - uses: oven-sh/setup-bun@v1
         with:
@@ -32,6 +35,9 @@ jobs:
         with:
           toolchain: ${{ env.RUST_VERSION }}
           components: clippy
+      - uses: software-mansion/setup-scarb@v1
+        with:
+          scarb-version: "2.12.2"
       # Required to build Katana at the moment.
       - uses: oven-sh/setup-bun@v1
         with:
