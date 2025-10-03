@@ -1,0 +1,16 @@
+# Query to list RPC API keys
+# Operation name `ListRpcApiKeys` must match the struct name in Rust
+query ListRpcApiKeys($teamName: String!, $first: Int, $after: Cursor, $where: RPCApiKeyWhereInput) {
+  rpcApiKeys(teamName: $teamName, first: $first, after: $after, where: $where) {
+    edges {
+      node {
+        id
+        name
+        keyPrefix
+        active
+        createdAt
+        lastUsedAt
+      }
+    }
+  }
+}

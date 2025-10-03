@@ -1,0 +1,5 @@
+# Mutation to delete RPC CORS domain
+# Operation name `DeleteRpcCorsDomain` must match the struct name in Rust
+mutation DeleteRpcCorsDomain($id: ID!) {
+  deleteRpcCorsDomain(id: $id)
+}
