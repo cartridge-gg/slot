@@ -11,12 +11,7 @@ base_tx AS (
     t.actual_fee_amount / 1e18 AS fee,
     -- decide which match takes priority
     CASE
-      -- execute_from_outside_v3 only call
-      WHEN CARDINALITY(t.calldata) > 23
-        AND contains(cs.addrs, t.calldata[11]) THEN t.calldata[2]
-      -- account for VRF preceding execute_from_outside_v3 call
-      WHEN CARDINALITY(t.calldata) > 23
-        AND contains(cs.addrs, t.calldata[23]) THEN t.calldata[11]
+{matched_user_cases}
       ELSE NULL
     END AS matched_user
   FROM starknet.transactions t
@@ -24,11 +19,7 @@ base_tx AS (
   WHERE
     t.block_time >= TIMESTAMP '{start_time}'
     {end_time_constraint}
-    AND CARDINALITY(t.calldata) > 23
-    AND (
-      contains(cs.addrs, t.calldata[11])
-      OR contains(cs.addrs, t.calldata[23])
-    )
+{transaction_filter}
 ),
 
 prices AS (

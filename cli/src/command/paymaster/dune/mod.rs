@@ -35,6 +35,13 @@ pub struct DuneArgs {
         default_value = "false"
     )]
     dune_params: bool,
+
+    #[arg(
+        long,
+        help = "Include only paymaster-sponsored transactions",
+        default_value_t = true
+    )]
+    paymaster_only: bool,
 }
 
 // Helper function to normalize address for comparison
@@ -190,6 +197,38 @@ impl DuneArgs {
                 let mut sql_query = template
                     .replace("{contract_addresses}", &formatted_addresses.join("\n"))
                     .replace("{start_time}", &start_time);
+
+                // Build CASE arms for matched users based on mode
+                let mut matched_user_cases = vec![
+                    "      -- execute_from_outside_v3 only call".to_string(),
+                    "      WHEN CARDINALITY(t.calldata) > 23".to_string(),
+                    "        AND contains(cs.addrs, t.calldata[11]) THEN t.calldata[2]".to_string(),
+                    "      -- account for VRF preceding execute_from_outside_v3 call".to_string(),
+                    "      WHEN CARDINALITY(t.calldata) > 23".to_string(),
+                    "        AND contains(cs.addrs, t.calldata[23]) THEN t.calldata[11]"
+                        .to_string(),
+                ];
+
+                if !self.paymaster_only {
+                    matched_user_cases
+                        .push("      -- direct transactions against the contract".to_string());
+                    matched_user_cases.push(
+                        "      WHEN contains(cs.addrs, t.contract_address) THEN t.sender_address"
+                            .to_string(),
+                    );
+                }
+
+                let transaction_filter = if self.paymaster_only {
+                    "    AND CARDINALITY(t.calldata) > 23\n    AND (\n      contains(cs.addrs, t.calldata[11])\n      OR contains(cs.addrs, t.calldata[23])\n    )\n"
+                        .to_string()
+                } else {
+                    "    AND (\n      (CARDINALITY(t.calldata) > 23 AND (\n        contains(cs.addrs, t.calldata[11])\n        OR contains(cs.addrs, t.calldata[23])\n      ))\n      OR contains(cs.addrs, t.contract_address)\n    )\n"
+                        .to_string()
+                };
+
+                sql_query = sql_query
+                    .replace("{matched_user_cases}", &matched_user_cases.join("\n"))
+                    .replace("{transaction_filter}", &transaction_filter);
 
                 // Only add end_time constraint if using dune params
                 if self.dune_params {
