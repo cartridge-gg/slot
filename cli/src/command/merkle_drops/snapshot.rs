@@ -187,7 +187,7 @@ impl SnapshotArgs {
             .flat_map(|(address, token_ids)| {
                 let mut sorted_ids = token_ids.clone();
                 sorted_ids.sort();
-                
+
                 match self.data_per_claim {
                     Some(data_per_claim) => {
                         // Split data into chunks of data_per_claim
@@ -199,11 +199,11 @@ impl SnapshotArgs {
                                     .iter()
                                     .map(|id| serde_json::Value::String(format!("0x{:x}", id)))
                                     .collect();
-                                
+
                                 vec![
                                     json!(address),
                                     json!(claim_index),
-                                    serde_json::Value::Array(hex_ids)
+                                    serde_json::Value::Array(hex_ids),
                                 ]
                             })
                             .collect::<Vec<_>>()
@@ -214,11 +214,11 @@ impl SnapshotArgs {
                             .iter()
                             .map(|id| serde_json::Value::String(format!("0x{:x}", id)))
                             .collect();
-                        
+
                         vec![vec![
                             json!(address),
                             json!(0),
-                            serde_json::Value::Array(hex_ids)
+                            serde_json::Value::Array(hex_ids),
                         ]]
                     }
                 }
@@ -237,7 +237,7 @@ impl SnapshotArgs {
             "block_height": self.block_height,
             "snapshot": snapshot
         });
-        
+
         // Add data_per_claim to metadata if specified
         if let Some(data_per_claim) = self.data_per_claim {
             output_data["data_per_claim"] = json!(data_per_claim);
@@ -252,14 +252,14 @@ impl SnapshotArgs {
         println!("  Total unique holders: {}", sorted_holders.len());
         println!("  Total supply: {}", total_supply);
         println!("  Total claims: {}", snapshot.len());
-        
+
         // Show claim splitting information if data_per_claim was specified
         if let Some(data_per_claim) = self.data_per_claim {
             let multi_claim_holders: Vec<_> = sorted_holders
                 .iter()
                 .filter(|(_, tokens)| tokens.len() > data_per_claim)
                 .collect();
-            
+
             println!("  Data per claim: {}", data_per_claim);
             if !multi_claim_holders.is_empty() {
                 println!(
@@ -271,7 +271,7 @@ impl SnapshotArgs {
         } else {
             println!("  Claims: All data per address in index 0 (no splitting)");
         }
-        
+
         println!("  Output file: {}", self.output.display());
         println!("\nNext steps:");
         println!("1. Review the generated snapshot data");

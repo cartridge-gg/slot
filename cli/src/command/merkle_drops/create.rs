@@ -273,13 +273,16 @@ impl CreateArgs {
 
             // Second element should be a number (batch index)
             entry_array[1].as_u64().ok_or_else(|| {
-                anyhow::anyhow!("Entry {} second element must be a number (batch index)", index)
+                anyhow::anyhow!(
+                    "Entry {} second element must be a number (batch index)",
+                    index
+                )
             })?;
 
             // Third element should be an array (token IDs or other data)
-            entry_array[2].as_array().ok_or_else(|| {
-                anyhow::anyhow!("Entry {} third element must be an array", index)
-            })?;
+            entry_array[2]
+                .as_array()
+                .ok_or_else(|| anyhow::anyhow!("Entry {} third element must be an array", index))?;
         }
         Ok(())
     }
