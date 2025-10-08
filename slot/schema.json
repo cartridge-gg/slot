@@ -29609,6 +29609,55 @@
                 {
                   "defaultValue": null,
                   "description": null,
+                  "name": "query",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  }
+                },
+                {
+                  "defaultValue": "5",
+                  "description": null,
+                  "name": "limit",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "searchAccounts",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "OBJECT",
+                      "name": "Account",
+                      "ofType": null
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
                   "name": "username",
                   "type": {
                     "kind": "NON_NULL",
@@ -31865,73 +31914,6 @@
                   "ofType": null
                 }
               }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": null,
-                  "description": "Returns the elements in the list that come after the specified cursor.",
-                  "name": "after",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Cursor",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "description": "Returns the first _n_ elements from the list.",
-                  "name": "first",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "description": "Returns the elements in the list that come before the specified cursor.",
-                  "name": "before",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Cursor",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "description": "Returns the last _n_ elements from the list.",
-                  "name": "last",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "description": "Filtering options for RPCLogs returned from the connection.",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "RPCLogWhereInput",
-                    "ofType": null
-                  }
-                }
-              ],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "rpcLogs",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "RPCLogConnection",
-                  "ofType": null
-                }
-              }
             }
           ],
           "inputFields": [],
@@ -33085,34 +33067,6 @@
                   }
                 }
               }
-            },
-            {
-              "defaultValue": null,
-              "description": "rpc_logs edge predicates",
-              "name": "hasRPCLogs",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "hasRPCLogsWith",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "RPCLogWhereInput",
-                    "ofType": null
-                  }
-                }
-              }
             }
           ],
           "interfaces": [],
@@ -33232,73 +33186,6 @@
                 "ofType": {
                   "kind": "OBJECT",
                   "name": "Team",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": null,
-                  "description": "Returns the elements in the list that come after the specified cursor.",
-                  "name": "after",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Cursor",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "description": "Returns the first _n_ elements from the list.",
-                  "name": "first",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "description": "Returns the elements in the list that come before the specified cursor.",
-                  "name": "before",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Cursor",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "description": "Returns the last _n_ elements from the list.",
-                  "name": "last",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "description": "Filtering options for RPCLogs returned from the connection.",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "RPCLogWhereInput",
-                    "ofType": null
-                  }
-                }
-              ],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "rpcLogs",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "RPCLogConnection",
                   "ofType": null
                 }
               }
@@ -34153,34 +34040,6 @@
                   }
                 }
               }
-            },
-            {
-              "defaultValue": null,
-              "description": "rpc_logs edge predicates",
-              "name": "hasRPCLogs",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "hasRPCLogsWith",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "RPCLogWhereInput",
-                    "ofType": null
-                  }
-                }
-              }
             }
           ],
           "interfaces": [],
@@ -34215,13 +34074,9 @@
               "isDeprecated": false,
               "name": "teamID",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
               }
             },
             {
@@ -34232,7 +34087,7 @@
               "name": "apiKeyID",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -34244,7 +34099,7 @@
               "name": "corsDomainID",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -34383,23 +34238,7 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "Whether this request has been processed for billing",
-              "isDeprecated": false,
-              "name": "billed",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": "Cost in credits (0.01 USD per credit)",
+              "description": "Cost in micro-dollars (0.000001 USD per unit). Converted to team credits during billing.",
               "isDeprecated": false,
               "name": "costCredits",
               "type": {
@@ -34431,52 +34270,12 @@
             {
               "args": [],
               "deprecationReason": null,
-              "description": "When billing was processed",
+              "description": "When billing was processed. NULL indicates not yet processed.",
               "isDeprecated": false,
-              "name": "billedAt",
+              "name": "processedAt",
               "type": {
                 "kind": "SCALAR",
                 "name": "Time",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "team",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "Team",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "apiKey",
-              "type": {
-                "kind": "OBJECT",
-                "name": "RPCApiKey",
-                "ofType": null
-              }
-            },
-            {
-              "args": [],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "corsDomain",
-              "type": {
-                "kind": "OBJECT",
-                "name": "RPCCorsDomain",
                 "ofType": null
               }
             }
@@ -34787,7 +34586,7 @@
               "name": "teamID",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -34797,7 +34596,7 @@
               "name": "teamIDNEQ",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -34813,7 +34612,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "ID",
+                    "name": "String",
                     "ofType": null
                   }
                 }
@@ -34831,7 +34630,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "ID",
+                    "name": "String",
                     "ofType": null
                   }
                 }
@@ -34843,7 +34642,7 @@
               "name": "teamIDGT",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -34853,7 +34652,7 @@
               "name": "teamIDGTE",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -34863,7 +34662,7 @@
               "name": "teamIDLT",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -34873,7 +34672,7 @@
               "name": "teamIDLTE",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -34883,7 +34682,7 @@
               "name": "teamIDContains",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -34893,7 +34692,7 @@
               "name": "teamIDHasPrefix",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -34903,7 +34702,27 @@
               "name": "teamIDHasSuffix",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "teamIDIsNil",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "teamIDNotNil",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             },
@@ -34913,7 +34732,7 @@
               "name": "teamIDEqualFold",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -34923,7 +34742,7 @@
               "name": "teamIDContainsFold",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -34933,7 +34752,7 @@
               "name": "apiKeyID",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -34943,7 +34762,7 @@
               "name": "apiKeyIDNEQ",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -34959,7 +34778,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "ID",
+                    "name": "String",
                     "ofType": null
                   }
                 }
@@ -34977,7 +34796,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "ID",
+                    "name": "String",
                     "ofType": null
                   }
                 }
@@ -34989,7 +34808,7 @@
               "name": "apiKeyIDGT",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -34999,7 +34818,7 @@
               "name": "apiKeyIDGTE",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -35009,7 +34828,7 @@
               "name": "apiKeyIDLT",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -35019,7 +34838,7 @@
               "name": "apiKeyIDLTE",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -35029,7 +34848,7 @@
               "name": "apiKeyIDContains",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -35039,7 +34858,7 @@
               "name": "apiKeyIDHasPrefix",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -35049,7 +34868,7 @@
               "name": "apiKeyIDHasSuffix",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -35079,7 +34898,7 @@
               "name": "apiKeyIDEqualFold",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -35089,7 +34908,7 @@
               "name": "apiKeyIDContainsFold",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -35099,7 +34918,7 @@
               "name": "corsDomainID",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -35109,7 +34928,7 @@
               "name": "corsDomainIDNEQ",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -35125,7 +34944,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "ID",
+                    "name": "String",
                     "ofType": null
                   }
                 }
@@ -35143,7 +34962,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "ID",
+                    "name": "String",
                     "ofType": null
                   }
                 }
@@ -35155,7 +34974,7 @@
               "name": "corsDomainIDGT",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -35165,7 +34984,7 @@
               "name": "corsDomainIDGTE",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -35175,7 +34994,7 @@
               "name": "corsDomainIDLT",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -35185,7 +35004,7 @@
               "name": "corsDomainIDLTE",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -35195,7 +35014,7 @@
               "name": "corsDomainIDContains",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -35205,7 +35024,7 @@
               "name": "corsDomainIDHasPrefix",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -35215,7 +35034,7 @@
               "name": "corsDomainIDHasSuffix",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -35245,7 +35064,7 @@
               "name": "corsDomainIDEqualFold",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -35255,7 +35074,7 @@
               "name": "corsDomainIDContainsFold",
               "type": {
                 "kind": "SCALAR",
-                "name": "ID",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -36269,26 +36088,6 @@
             },
             {
               "defaultValue": null,
-              "description": "billed field predicates",
-              "name": "billed",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "billedNEQ",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
               "description": "cost_credits field predicates",
               "name": "costCredits",
               "type": {
@@ -36481,8 +36280,8 @@
             },
             {
               "defaultValue": null,
-              "description": "billed_at field predicates",
-              "name": "billedAt",
+              "description": "processed_at field predicates",
+              "name": "processedAt",
               "type": {
                 "kind": "SCALAR",
                 "name": "Time",
@@ -36492,7 +36291,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "billedAtNEQ",
+              "name": "processedAtNEQ",
               "type": {
                 "kind": "SCALAR",
                 "name": "Time",
@@ -36502,7 +36301,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "billedAtIn",
+              "name": "processedAtIn",
               "type": {
                 "kind": "LIST",
                 "name": null,
@@ -36520,7 +36319,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "billedAtNotIn",
+              "name": "processedAtNotIn",
               "type": {
                 "kind": "LIST",
                 "name": null,
@@ -36538,7 +36337,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "billedAtGT",
+              "name": "processedAtGT",
               "type": {
                 "kind": "SCALAR",
                 "name": "Time",
@@ -36548,7 +36347,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "billedAtGTE",
+              "name": "processedAtGTE",
               "type": {
                 "kind": "SCALAR",
                 "name": "Time",
@@ -36558,7 +36357,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "billedAtLT",
+              "name": "processedAtLT",
               "type": {
                 "kind": "SCALAR",
                 "name": "Time",
@@ -36568,7 +36367,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "billedAtLTE",
+              "name": "processedAtLTE",
               "type": {
                 "kind": "SCALAR",
                 "name": "Time",
@@ -36578,7 +36377,7 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "billedAtIsNil",
+              "name": "processedAtIsNil",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
@@ -36588,95 +36387,11 @@
             {
               "defaultValue": null,
               "description": null,
-              "name": "billedAtNotNil",
+              "name": "processedAtNotNil",
               "type": {
                 "kind": "SCALAR",
                 "name": "Boolean",
                 "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": "team edge predicates",
-              "name": "hasTeam",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "hasTeamWith",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "TeamWhereInput",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": "api_key edge predicates",
-              "name": "hasAPIKey",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "hasAPIKeyWith",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "RPCApiKeyWhereInput",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": "cors_domain edge predicates",
-              "name": "hasCorsDomain",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "hasCorsDomainWith",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "RPCCorsDomainWhereInput",
-                    "ofType": null
-                  }
-                }
               }
             }
           ],
@@ -46486,73 +46201,6 @@
                 },
                 {
                   "defaultValue": null,
-                  "description": "Filtering options for RPCLogs returned from the connection.",
-                  "name": "where",
-                  "type": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "RPCLogWhereInput",
-                    "ofType": null
-                  }
-                }
-              ],
-              "deprecationReason": null,
-              "description": null,
-              "isDeprecated": false,
-              "name": "rpcLogs",
-              "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "RPCLogConnection",
-                  "ofType": null
-                }
-              }
-            },
-            {
-              "args": [
-                {
-                  "defaultValue": null,
-                  "description": "Returns the elements in the list that come after the specified cursor.",
-                  "name": "after",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Cursor",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "description": "Returns the first _n_ elements from the list.",
-                  "name": "first",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "description": "Returns the elements in the list that come before the specified cursor.",
-                  "name": "before",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Cursor",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": null,
-                  "description": "Returns the last _n_ elements from the list.",
-                  "name": "last",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int",
-                    "ofType": null
-                  }
-                },
-                {
-                  "defaultValue": null,
                   "description": "Filtering options for AccountTeams returned from the connection.",
                   "name": "where",
                   "type": {
@@ -48900,34 +48548,6 @@
                   "ofType": {
                     "kind": "INPUT_OBJECT",
                     "name": "RPCCorsDomainWhereInput",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": "rpc_logs edge predicates",
-              "name": "hasRPCLogs",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": null,
-              "name": "hasRPCLogsWith",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "RPCLogWhereInput",
                     "ofType": null
                   }
                 }
