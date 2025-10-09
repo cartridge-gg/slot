@@ -1,4 +1,4 @@
-use anyhow::{Context, Result};
+use anyhow::Result;
 use tracing::trace;
 
 pub fn open(url: &str) -> Result<()> {

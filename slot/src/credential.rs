@@ -97,7 +97,7 @@ mod tests {
     use crate::account::AccountInfo;
     use crate::credential::{AccessToken, Credentials, CREDENTIALS_FILE};
     use crate::{utils, Error};
-    use std::fs;
+    use std::{env, fs};
 
     // This test is to make sure that changes made to the `Credentials` struct doesn't
     // introduce breaking changes to the serde format.
@@ -141,6 +141,9 @@ mod tests {
 
     #[test]
     fn loading_malformed_credentials() {
+        // Clear SLOT_AUTH to ensure we're testing file-based credentials
+        env::remove_var("SLOT_AUTH");
+
         let malformed_cred = json!({
             "access_token": "mytoken",
             "token_type": "mytokentype"
@@ -157,6 +160,9 @@ mod tests {
 
     #[test]
     fn loading_non_existent_credentials() {
+        // Clear SLOT_AUTH to ensure we're testing file-based credentials
+        env::remove_var("SLOT_AUTH");
+
         let dir = utils::config_dir();
         let err = Credentials::load_at(dir).unwrap_err();
         assert!(err.to_string().contains("No credentials found"))
@@ -164,6 +170,9 @@ mod tests {
 
     #[test]
     fn credentials_rt() {
+        // Clear SLOT_AUTH to ensure we're testing file-based credentials
+        env::remove_var("SLOT_AUTH");
+
         let config_dir = utils::config_dir();
 
         let access_token = AccessToken {
