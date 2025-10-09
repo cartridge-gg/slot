@@ -482,6 +482,9 @@ mod tests {
 
     #[test]
     fn get_session_unauthenticated() {
+        // Clear SLOT_AUTH to ensure we're testing unauthenticated behavior
+        std::env::remove_var("SLOT_AUTH");
+
         let chain = Felt::ONE;
         let err = get(chain).unwrap_err();
         let Unauthorized = err else {
@@ -491,6 +494,9 @@ mod tests {
 
     #[test]
     fn get_non_existant_session_authenticated() {
+        // Clear SLOT_AUTH to ensure we're testing file-based credentials
+        std::env::remove_var("SLOT_AUTH");
+
         let config_dir = utils::config_dir();
         authenticate(&config_dir);
 
@@ -501,6 +507,9 @@ mod tests {
 
     #[test]
     fn get_existant_session_authenticated() {
+        // Clear SLOT_AUTH to ensure we're testing file-based credentials
+        std::env::remove_var("SLOT_AUTH");
+
         let config_dir = utils::config_dir();
         let username = authenticate(&config_dir);
 
@@ -525,6 +534,9 @@ mod tests {
 
     #[test]
     fn store_session_unauthenticated() {
+        // Clear SLOT_AUTH to ensure we're testing unauthenticated behavior
+        std::env::remove_var("SLOT_AUTH");
+
         let config_dir = utils::config_dir();
 
         let chain = felt!("0x999");
