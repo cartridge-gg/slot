@@ -259,9 +259,9 @@ impl CreateArgs {
                 .as_array()
                 .ok_or_else(|| anyhow::anyhow!("Entry {} must be an array", index))?;
 
-            if entry_array.len() != 2 {
+            if entry_array.len() != 3 {
                 return Err(anyhow::anyhow!(
-                    "Entry {} must have exactly 2 elements: [address, [data]]",
+                    "Entry {} must have exactly 3 elements: [address, index, [data]]",
                     index
                 ));
             }
@@ -271,10 +271,18 @@ impl CreateArgs {
                 anyhow::anyhow!("Entry {} first element must be a string address", index)
             })?;
 
-            // Second element should be an array (token IDs or other data)
-            entry_array[1].as_array().ok_or_else(|| {
-                anyhow::anyhow!("Entry {} second element must be an array", index)
+            // Second element should be a number (batch index)
+            entry_array[1].as_u64().ok_or_else(|| {
+                anyhow::anyhow!(
+                    "Entry {} second element must be a number (batch index)",
+                    index
+                )
             })?;
+
+            // Third element should be an array (token IDs or other data)
+            entry_array[2]
+                .as_array()
+                .ok_or_else(|| anyhow::anyhow!("Entry {} third element must be an array", index))?;
         }
         Ok(())
     }
@@ -296,7 +304,11 @@ impl CreateArgs {
                 let address = Felt::from_hex(address_str)
                     .unwrap_or_else(|_| Felt::from_dec_str(address_str).unwrap());
 
-                let data_array = entry_array[1]
+                let index = entry_array[1]
+                    .as_i64()
+                    .ok_or_else(|| anyhow::anyhow!("Index must be a number"))?;
+
+                let data_array = entry_array[2]
                     .as_array()
                     .ok_or_else(|| anyhow::anyhow!("Data must be an array"))?;
 
@@ -331,6 +343,7 @@ impl CreateArgs {
 
                 Ok(create_merkle_drop::MerkleClaimInput {
                     address,
+                    index,
                     data: data?,
                 })
             })
@@ -369,6 +382,7 @@ impl CreateArgs {
                 .iter()
                 .map(|claim| create_merkle_drop::MerkleClaimInput {
                     address: claim.address,
+                    index: claim.index,
                     data: claim.data.clone(),
                 })
                 .collect(),
