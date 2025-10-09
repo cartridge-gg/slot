@@ -76,6 +76,13 @@ pub struct SnapshotArgs {
 
     #[arg(
         long,
+        help = "Salt value for merkle tree generation",
+        default_value = "0x0"
+    )]
+    salt: String,
+
+    #[arg(
+        long,
         help = "Block height to query at (required for deterministic snapshots)"
     )]
     block_height: u64,
@@ -102,6 +109,12 @@ pub struct SnapshotArgs {
 
     #[arg(long, help = "Number of concurrent RPC requests", default_value = "10")]
     concurrency: usize,
+
+    #[arg(
+        long,
+        help = "Maximum number of items in the data array per claim (for splitting large claims into multiple transactions). If not specified, all data for each address will be in index 0."
+    )]
+    data_per_claim: Option<usize>,
 }
 
 impl SnapshotArgs {
@@ -167,33 +180,68 @@ impl SnapshotArgs {
             .map(|(_, token_ids)| token_ids.len())
             .sum();
 
-        // Prepare snapshot data
+        // Prepare snapshot data with batch indices
+        // For each address, split their data into chunks based on data_per_claim
         let snapshot: Vec<Vec<serde_json::Value>> = sorted_holders
             .iter()
-            .map(|(address, token_ids)| {
+            .flat_map(|(address, token_ids)| {
                 let mut sorted_ids = token_ids.clone();
                 sorted_ids.sort();
-                // Convert token IDs to hex strings and create JSON strings (not numbers)
-                let hex_ids: Vec<serde_json::Value> = sorted_ids
-                    .iter()
-                    .map(|id| serde_json::Value::String(format!("0x{:x}", id)))
-                    .collect();
-                vec![json!(address), serde_json::Value::Array(hex_ids)]
+
+                match self.data_per_claim {
+                    Some(data_per_claim) => {
+                        // Split data into chunks of data_per_claim
+                        sorted_ids
+                            .chunks(data_per_claim)
+                            .enumerate()
+                            .map(|(claim_index, chunk)| {
+                                let hex_ids: Vec<serde_json::Value> = chunk
+                                    .iter()
+                                    .map(|id| serde_json::Value::String(format!("0x{:x}", id)))
+                                    .collect();
+
+                                vec![
+                                    json!(address),
+                                    json!(claim_index),
+                                    serde_json::Value::Array(hex_ids),
+                                ]
+                            })
+                            .collect::<Vec<_>>()
+                    }
+                    None => {
+                        // All data in index 0 if no data_per_claim specified
+                        let hex_ids: Vec<serde_json::Value> = sorted_ids
+                            .iter()
+                            .map(|id| serde_json::Value::String(format!("0x{:x}", id)))
+                            .collect();
+
+                        vec![vec![
+                            json!(address),
+                            json!(0),
+                            serde_json::Value::Array(hex_ids),
+                        ]]
+                    }
+                }
             })
             .collect();
 
         // Build the complete output with metadata
-        let output_data = json!({
+        let mut output_data = json!({
             "name": self.name,
             "network": self.network.to_string(),
             "chain_id": chain_id,
             "description": self.description,
             "claim_contract": self.claim_contract,
             "entrypoint": self.entrypoint,
-            "contract_address": self.contract_address,
+            "salt": self.salt,
             "block_height": self.block_height,
             "snapshot": snapshot
         });
+
+        // Add data_per_claim to metadata if specified
+        if let Some(data_per_claim) = self.data_per_claim {
+            output_data["data_per_claim"] = json!(data_per_claim);
+        }
 
         // Write to output file
         let output_str = serde_json::to_string_pretty(&output_data)?;
@@ -203,6 +251,27 @@ impl SnapshotArgs {
         println!("\nSummary:");
         println!("  Total unique holders: {}", sorted_holders.len());
         println!("  Total supply: {}", total_supply);
+        println!("  Total claims: {}", snapshot.len());
+
+        // Show claim splitting information if data_per_claim was specified
+        if let Some(data_per_claim) = self.data_per_claim {
+            let multi_claim_holders: Vec<_> = sorted_holders
+                .iter()
+                .filter(|(_, tokens)| tokens.len() > data_per_claim)
+                .collect();
+
+            println!("  Data per claim: {}", data_per_claim);
+            if !multi_claim_holders.is_empty() {
+                println!(
+                    "  Holders with multiple claims: {} ({}%)",
+                    multi_claim_holders.len(),
+                    (multi_claim_holders.len() * 100) / sorted_holders.len()
+                );
+            }
+        } else {
+            println!("  Claims: All data per address in index 0 (no splitting)");
+        }
+
         println!("  Output file: {}", self.output.display());
         println!("\nNext steps:");
         println!("1. Review the generated snapshot data");
