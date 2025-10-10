@@ -8,7 +8,10 @@ use slot::graphql::paymaster::CreatePaymaster;
 use slot::graphql::GraphQLQuery;
 
 #[derive(Debug, Args)]
-#[command(next_help_heading = "Create paymaster options")]
+#[command(
+    next_help_heading = "Create paymaster options",
+    after_help = "Examples:\n  slot paymaster my-paymaster create --team my-team --budget 10 --unit usd"
+)]
 pub struct CreateArgs {
     #[arg(long, help = "Team name to associate the paymaster with.")]
     team: String,
