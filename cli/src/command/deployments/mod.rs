@@ -138,6 +138,15 @@ pub(crate) fn warn_checks(config_path: &std::path::Path) -> Result<()> {
             if parsed.get("metrics").is_some() {
                 println!("⚠️  Warning: 'metrics' section found in config file but is ignored and overridden in slot. Metrics are always collected and available at /metrics of your slot deployment URL.");
             }
+            if let Some(sql) = parsed.get("sql") {
+                println!("⚠️  Warning: '[sql]' section found in config file but is ignored and overridden in slot. Database configuration is managed by slot.");
+                if sql.get("cache_size").is_some() {
+                    println!("⚠️  Warning: 'cache_size' option found in config file but is ignored and overridden in slot.");
+                }
+                if sql.get("page_size").is_some() {
+                    println!("⚠️  Warning: 'page_size' option found in config file but is ignored and overridden in slot.");
+                }
+            }
         }
     }
     Ok(())
