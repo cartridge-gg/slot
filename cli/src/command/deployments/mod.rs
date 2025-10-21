@@ -148,9 +148,11 @@ pub(crate) fn warn_checks(config_path: &std::path::Path) -> Result<()> {
                 }
             }
             if let Some(erc) = parsed.get("erc") {
-                println!("⚠️  Warning: '[erc]' section found in config file but is ignored and overridden in slot. ERC configuration is managed by slot.");
                 if erc.get("max_metadata_tasks").is_some() {
                     println!("⚠️  Warning: 'max_metadata_tasks' option found in config file but is ignored and overridden in slot.");
+                }
+                if erc.get("max_concurrent_tasks").is_some() {
+                    println!("⚠️  Warning: 'max_concurrent_tasks' option found in config file but is ignored and overridden in slot.");
                 }
             }
         }
