@@ -147,6 +147,12 @@ pub(crate) fn warn_checks(config_path: &std::path::Path) -> Result<()> {
                     println!("⚠️  Warning: 'page_size' option found in config file but is ignored and overridden in slot.");
                 }
             }
+            if let Some(erc) = parsed.get("erc") {
+                println!("⚠️  Warning: '[erc]' section found in config file but is ignored and overridden in slot. ERC configuration is managed by slot.");
+                if erc.get("max_metadata_tasks").is_some() {
+                    println!("⚠️  Warning: 'max_metadata_tasks' option found in config file but is ignored and overridden in slot.");
+                }
+            }
         }
     }
     Ok(())
