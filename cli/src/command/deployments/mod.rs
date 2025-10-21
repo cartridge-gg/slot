@@ -134,6 +134,9 @@ pub(crate) fn warn_checks(config_path: &std::path::Path) -> Result<()> {
                 if indexing.get("events_chunk_size").is_some() {
                     println!("⚠️  Warning: 'events_chunk_size' option found in config file but is ignored and overridden in slot.");
                 }
+                if indexing.get("max_concurrent_tasks").is_some() {
+                    println!("⚠️  Warning: 'max_concurrent_tasks' option found in config file but is ignored and overridden in slot.");
+                }
             }
             if parsed.get("metrics").is_some() {
                 println!("⚠️  Warning: 'metrics' section found in config file but is ignored and overridden in slot. Metrics are always collected and available at /metrics of your slot deployment URL.");
@@ -145,6 +148,11 @@ pub(crate) fn warn_checks(config_path: &std::path::Path) -> Result<()> {
                 }
                 if sql.get("page_size").is_some() {
                     println!("⚠️  Warning: 'page_size' option found in config file but is ignored and overridden in slot.");
+                }
+            }
+            if let Some(erc) = parsed.get("erc") {
+                if erc.get("max_metadata_tasks").is_some() {
+                    println!("⚠️  Warning: 'max_metadata_tasks' option found in config file but is ignored and overridden in slot.");
                 }
             }
         }
