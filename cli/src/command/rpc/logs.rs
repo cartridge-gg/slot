@@ -13,7 +13,12 @@ pub struct LogsArgs {
     #[arg(long, help = "Team name to list logs for.")]
     team: String,
 
-    #[arg(long, short = 'n', default_value = "25", help = "Number of logs to fetch.")]
+    #[arg(
+        long,
+        short = 'n',
+        default_value = "25",
+        help = "Number of logs to fetch."
+    )]
     limit: i64,
 
     #[arg(long, help = "Show logs after this cursor for pagination.")]
@@ -82,7 +87,10 @@ impl LogsArgs {
                 if let Some(page_info) = connection.page_info {
                     if page_info.has_next_page {
                         if let Some(end_cursor) = page_info.end_cursor {
-                            println!("\nMore logs available. Use --after {} to see next page", end_cursor);
+                            println!(
+                                "\nMore logs available. Use --after {} to see next page",
+                                end_cursor
+                            );
                         }
                     }
                 }
