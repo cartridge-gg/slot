@@ -1,0 +1,34 @@
+# Query to list RPC logs
+# Operation name `ListRpcLogs` must match the struct name in Rust
+query ListRpcLogs($teamName: String!, $first: Int, $after: Cursor, $where: RPCLogWhereInput) {
+  rpcLogs(teamName: $teamName, first: $first, after: $after, where: $where) {
+    edges {
+      node {
+        id
+        teamID
+        apiKeyID
+        corsDomainID
+        clientIP
+        userAgent
+        referer
+        network
+        method
+        responseStatus
+        responseSizeBytes
+        durationMs
+        isInternal
+        costCredits
+        timestamp
+        processedAt
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}

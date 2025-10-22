@@ -1,9 +1,11 @@
 use anyhow::Result;
 use clap::Subcommand;
 
+use self::logs::LogsArgs;
 use self::tokens::TokensCmd;
 use self::whitelist::WhitelistCmd;
 
+mod logs;
 mod tokens;
 mod whitelist;
 
@@ -15,6 +17,9 @@ pub enum RpcCmd {
 
     #[command(about = "Manage origin whitelist.", alias = "w")]
     Whitelist(WhitelistCmd),
+
+    #[command(about = "View RPC logs.", alias = "l")]
+    Logs(LogsArgs),
 }
 
 impl RpcCmd {
@@ -23,6 +28,7 @@ impl RpcCmd {
         match &self {
             RpcCmd::Tokens(cmd) => cmd.run().await,
             RpcCmd::Whitelist(cmd) => cmd.run().await,
+            RpcCmd::Logs(args) => args.run().await,
         }
     }
 }

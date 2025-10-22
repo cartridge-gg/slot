@@ -1,0 +1,96 @@
+use anyhow::Result;
+use clap::Args;
+use comfy_table::{presets::UTF8_FULL, Cell, ContentArrangement, Table};
+use slot::api::Client;
+use slot::credential::Credentials;
+use slot::graphql::rpc::list_rpc_logs::{ResponseData, Variables};
+use slot::graphql::rpc::ListRpcLogs;
+use slot::graphql::GraphQLQuery;
+
+#[derive(Debug, Args)]
+#[command(next_help_heading = "List RPC logs options")]
+pub struct LogsArgs {
+    #[arg(long, help = "Team name to list logs for.")]
+    team: String,
+
+    #[arg(long, short = 'n', default_value = "25", help = "Number of logs to fetch.")]
+    limit: i64,
+
+    #[arg(long, help = "Show logs after this cursor for pagination.")]
+    after: Option<String>,
+}
+
+impl LogsArgs {
+    pub async fn run(&self) -> Result<()> {
+        let request_body = ListRpcLogs::build_query(Variables {
+            team_name: self.team.clone(),
+            first: Some(self.limit),
+            after: self.after.clone(),
+            where_: None,
+        });
+
+        let user = Credentials::load()?;
+        let client = Client::new_with_token(user.access_token);
+
+        let data: ResponseData = client.query(&request_body).await?;
+
+        if let Some(connection) = data.rpc_logs {
+            if let Some(edges) = connection.edges {
+                let logs: Vec<_> = edges
+                    .iter()
+                    .filter_map(|edge| edge.as_ref())
+                    .filter_map(|edge| edge.node.as_ref())
+                    .collect();
+
+                if logs.is_empty() {
+                    println!("\nNo RPC logs found for team '{}'", self.team);
+                    return Ok(());
+                }
+
+                let mut table = Table::new();
+                table
+                    .load_preset(UTF8_FULL)
+                    .set_content_arrangement(ContentArrangement::Dynamic)
+                    .set_header(vec![
+                        Cell::new("Timestamp"),
+                        Cell::new("Network"),
+                        Cell::new("Method"),
+                        Cell::new("Status"),
+                        Cell::new("Duration (ms)"),
+                        Cell::new("Size (bytes)"),
+                        Cell::new("Cost (credits)"),
+                        Cell::new("Client IP"),
+                    ]);
+
+                for log in logs {
+                    table.add_row(vec![
+                        Cell::new(&log.timestamp),
+                        Cell::new(format!("{:?}", log.network)),
+                        Cell::new(log.method.as_ref().map_or("-", |s| s.as_str())),
+                        Cell::new(&log.response_status.to_string()),
+                        Cell::new(&log.duration_ms.to_string()),
+                        Cell::new(&log.response_size_bytes.to_string()),
+                        Cell::new(&log.cost_credits.to_string()),
+                        Cell::new(&log.client_ip),
+                    ]);
+                }
+
+                println!("\nRPC Logs for team '{}':", self.team);
+                println!("{table}");
+
+                // Show pagination info if available
+                if let Some(page_info) = connection.page_info {
+                    if page_info.has_next_page {
+                        if let Some(end_cursor) = page_info.end_cursor {
+                            println!("\nMore logs available. Use --after {} to see next page", end_cursor);
+                        }
+                    }
+                }
+
+                println!("\nTotal logs: {}", connection.total_count);
+            }
+        }
+
+        Ok(())
+    }
+}
