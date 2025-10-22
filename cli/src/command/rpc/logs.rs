@@ -72,10 +72,10 @@ impl LogsArgs {
                         Cell::new(&log.timestamp),
                         Cell::new(format!("{:?}", log.network)),
                         Cell::new(log.method.as_ref().map_or("-", |s| s.as_str())),
-                        Cell::new(&log.response_status.to_string()),
-                        Cell::new(&log.duration_ms.to_string()),
-                        Cell::new(&log.response_size_bytes.to_string()),
-                        Cell::new(&log.cost_credits.to_string()),
+                        Cell::new(log.response_status.to_string()),
+                        Cell::new(log.duration_ms.to_string()),
+                        Cell::new(log.response_size_bytes.to_string()),
+                        Cell::new(log.cost_credits.to_string()),
                         Cell::new(&log.client_ip),
                     ]);
                 }
@@ -84,14 +84,13 @@ impl LogsArgs {
                 println!("{table}");
 
                 // Show pagination info if available
-                if let Some(page_info) = connection.page_info {
-                    if page_info.has_next_page {
-                        if let Some(end_cursor) = page_info.end_cursor {
-                            println!(
-                                "\nMore logs available. Use --after {} to see next page",
-                                end_cursor
-                            );
-                        }
+                let page_info = connection.page_info;
+                if page_info.has_next_page {
+                    if let Some(end_cursor) = page_info.end_cursor {
+                        println!(
+                            "\nMore logs available. Use --after {} to see next page",
+                            end_cursor
+                        );
                     }
                 }
 
