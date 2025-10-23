@@ -16,8 +16,8 @@ pub struct LogsArgs {
     #[arg(
         long,
         short = 'n',
-        default_value = "25",
-        help = "Number of logs to fetch."
+        default_value = "10",
+        help = "Number of logs to fetch (max 50)."
     )]
     limit: i64,
 
@@ -27,9 +27,20 @@ pub struct LogsArgs {
 
 impl LogsArgs {
     pub async fn run(&self) -> Result<()> {
+        // Validate limit is within bounds
+        let limit = if self.limit > 50 {
+            println!("Warning: Limit exceeds maximum of 50. Using 50 instead.");
+            50
+        } else if self.limit < 1 {
+            println!("Warning: Limit must be at least 1. Using 1 instead.");
+            1
+        } else {
+            self.limit
+        };
+
         let request_body = ListRpcLogs::build_query(Variables {
             team_name: self.team.clone(),
-            first: Some(self.limit),
+            first: Some(limit),
             after: self.after.clone(),
             where_: None,
         });
@@ -64,6 +75,8 @@ impl LogsArgs {
                         Cell::new("Duration (ms)"),
                         Cell::new("Size (bytes)"),
                         Cell::new("Cost (credits)"),
+                        Cell::new("API Key ID"),
+                        Cell::new("CORS Domain ID"),
                         Cell::new("Client IP"),
                     ]);
 
@@ -76,6 +89,8 @@ impl LogsArgs {
                         Cell::new(log.duration_ms.to_string()),
                         Cell::new(log.response_size_bytes.to_string()),
                         Cell::new(log.cost_credits.to_string()),
+                        Cell::new(log.api_key_id.as_deref().unwrap_or("-")),
+                        Cell::new(log.cors_domain_id.as_deref().unwrap_or("-")),
                         Cell::new(&log.client_ip),
                     ]);
                 }
