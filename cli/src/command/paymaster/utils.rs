@@ -17,10 +17,11 @@ pub fn parse_duration(duration_str: &str) -> Result<Duration> {
         .map_err(|_| anyhow!("Invalid number in duration: {}", number_str))?;
 
     let duration = match unit {
-        "min" | "mins" | "minute" | "minutes" => Duration::from_secs(number * 60),
-        "hr" | "hrs" | "hour" | "hours" => Duration::from_secs(number * 3600),
-        "day" | "days" => Duration::from_secs(number * 86400),
-        "week" | "weeks" => {
+        "s" | "sec" | "secs" | "second" | "seconds" => Duration::from_secs(number),
+        "m" | "min" | "mins" | "minute" | "minutes" => Duration::from_secs(number * 60),
+        "h" | "hr" | "hrs" | "hour" | "hours" => Duration::from_secs(number * 3600),
+        "d" | "day" | "days" => Duration::from_secs(number * 86400),
+        "w" | "week" | "weeks" => {
             if number > 1 {
                 return Err(anyhow!("Maximum duration is 1 week"));
             }
@@ -28,7 +29,7 @@ pub fn parse_duration(duration_str: &str) -> Result<Duration> {
         }
         _ => {
             return Err(anyhow!(
-                "Invalid time unit: {}. Supported units: min, hr, day, week",
+                "Invalid time unit: {}. Supported units: s, m, h, d, w",
                 unit
             ))
         }

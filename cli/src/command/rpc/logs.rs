@@ -1,11 +1,13 @@
 use anyhow::Result;
 use clap::Args;
 use comfy_table::{presets::UTF8_FULL, Cell, ContentArrangement, Table};
+use serde_json::json;
 use slot::api::Client;
 use slot::credential::Credentials;
-use slot::graphql::rpc::list_rpc_logs::{ResponseData, Variables};
-use slot::graphql::rpc::ListRpcLogs;
-use slot::graphql::GraphQLQuery;
+use slot::graphql::rpc::list_rpc_logs::ResponseData;
+use std::time::SystemTime;
+
+use crate::command::paymaster::utils::parse_duration;
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "List RPC logs options")]
@@ -23,6 +25,13 @@ pub struct LogsArgs {
 
     #[arg(long, help = "Show logs after this cursor for pagination.")]
     after: Option<String>,
+
+    #[arg(
+        long,
+        short = 's',
+        help = "Filter logs from the last duration (e.g., '30s', '5m', '2h', '1d'). Max 1 week."
+    )]
+    since: Option<String>,
 }
 
 impl LogsArgs {
@@ -38,11 +47,64 @@ impl LogsArgs {
             self.limit
         };
 
-        let request_body = ListRpcLogs::build_query(Variables {
-            team_name: self.team.clone(),
-            first: Some(limit),
-            after: self.after.clone(),
-            where_: None,
+        // Build where filter if time filter is provided
+        let where_filter = if let Some(ref since_str) = self.since {
+            let duration = parse_duration(since_str)?;
+            let since_time = SystemTime::now()
+                .checked_sub(duration)
+                .ok_or_else(|| anyhow::anyhow!("Time calculation overflow"))?;
+
+            // Convert to RFC3339 timestamp for GraphQL
+            let timestamp = chrono::DateTime::<chrono::Utc>::from(since_time)
+                .to_rfc3339_opts(chrono::SecondsFormat::Millis, true);
+
+            json!({ "timestampGTE": timestamp })
+        } else {
+            json!(null)
+        };
+
+        // Build the GraphQL query manually with JSON to support the where clause
+        let request_body = json!({
+            "query": r#"
+                query ListRpcLogs($teamName: String!, $first: Int, $after: Cursor, $where: RPCLogWhereInput) {
+                    rpcLogs(teamName: $teamName, first: $first, after: $after, where: $where) {
+                        edges {
+                            node {
+                                id
+                                teamID
+                                apiKeyID
+                                corsDomainID
+                                clientIP
+                                userAgent
+                                referer
+                                network
+                                method
+                                responseStatus
+                                responseSizeBytes
+                                durationMs
+                                isInternal
+                                costCredits
+                                timestamp
+                                processedAt
+                            }
+                            cursor
+                        }
+                        pageInfo {
+                            hasNextPage
+                            hasPreviousPage
+                            startCursor
+                            endCursor
+                        }
+                        totalCount
+                    }
+                }
+            "#,
+            "variables": {
+                "teamName": self.team,
+                "first": limit,
+                "after": self.after,
+                "where": where_filter,
+            }
         });
 
         let user = Credentials::load()?;
