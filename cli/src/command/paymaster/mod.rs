@@ -20,7 +20,7 @@ mod policy;
 mod stats;
 mod transactions;
 mod update;
-mod utils;
+pub(crate) mod utils;
 
 #[derive(Debug, Args, Serialize, Deserialize)]
 pub struct PolicyArgs {

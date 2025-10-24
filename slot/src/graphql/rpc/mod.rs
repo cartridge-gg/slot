@@ -64,3 +64,13 @@ pub struct DeleteRpcCorsDomain;
     variables_derives = "Debug"
 )]
 pub struct ListRpcCorsDomains;
+
+// Query for listing RPC logs
+#[derive(GraphQLQuery)]
+#[graphql(
+    schema_path = "schema.json",
+    query_path = "src/graphql/rpc/logs.graphql",
+    response_derives = "Debug, Serialize, Clone",
+    variables_derives = "Debug"
+)]
+pub struct ListRpcLogs;
