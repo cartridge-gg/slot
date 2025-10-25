@@ -79,6 +79,11 @@ impl CreateArgs {
                     return Ok(());
                 }
             }
+        } else {
+            // warning for basic tier
+            println!("\n⚠️  Note: Basic tier is intended for development and testing only.");
+            println!("   It has limited resources and does not scale storage automatically.");
+            println!("   Learn about paid tiers at https://docs.cartridge.gg/slot/scale\n");
         }
 
         let service = match &self.create_commands {
