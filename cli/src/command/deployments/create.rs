@@ -137,6 +137,11 @@ impl CreateArgs {
                     torii: Some(ToriiCreateInput {
                         replicas: config.replicas,
                         replication: if config.replication { Some(true) } else { None },
+                        observability: if config.observability {
+                            Some(true)
+                        } else {
+                            None
+                        },
                     }),
                 }
             }
