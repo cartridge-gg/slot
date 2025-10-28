@@ -23,6 +23,10 @@ pub struct KatanaCreateArgs {
         help = "Whether to start a saya instance alongside the provable Katana. Only in provable mode."
     )]
     pub saya: bool,
+
+    #[arg(long)]
+    #[arg(help = "Enable observability for monitoring and metrics.")]
+    pub observability: bool,
 }
 
 impl KatanaCreateArgs {
@@ -51,6 +55,10 @@ impl KatanaCreateArgs {
 #[derive(Debug, Args, serde::Serialize)]
 #[command(next_help_heading = "Katana update options")]
 pub struct KatanaUpdateArgs {
+    #[arg(long)]
+    #[arg(help = "Enable observability for monitoring and metrics.")]
+    pub observability: Option<bool>,
+
     #[arg(long)]
     #[arg(
         help = "The path to the configuration file to use for the update. This will replace the existing configuration."
