@@ -20,5 +20,6 @@ mutation CreateDeployment(
 		config {
 			configFile
 		}
+		observabilitySecret
 	}
 }
