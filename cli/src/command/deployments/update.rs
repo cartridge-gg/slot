@@ -76,6 +76,7 @@ impl UpdateArgs {
                     config,
                     torii: Some(ToriiUpdateInput {
                         replicas: args.replicas,
+                        observability: args.observability,
                     }),
                 }
             }
