@@ -120,6 +120,22 @@ impl CreateArgs {
                     super::warn_checks(config_path)?;
                 }
 
+                // Confirm observability usage unless force flag is set
+                if config.observability && !self.force {
+                    let confirmation = Confirm::with_theme(&ColorfulTheme::default())
+                        .with_prompt(
+                            "Enabling observability is billed at $10/month and provides with an automatic Prometheus + Grafana setup. Do you want to proceed?"
+                        )
+                        .default(false)
+                        .show_default(true)
+                        .wait_for_newline(true)
+                        .interact()?;
+
+                    if !confirmation {
+                        return Ok(());
+                    }
+                }
+
                 let service_config =
                     toml::to_string(&ToriiArgs::with_config_file(config.torii_args.clone())?)?;
 
