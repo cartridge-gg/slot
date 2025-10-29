@@ -51,6 +51,9 @@ impl UpdateArgs {
                     type_: DeploymentService::katana,
                     version: None,
                     config,
+                    katana: Some(KatanaUpdateInput {
+                        observability: args.observability,
+                    }),
                     torii: None,
                 }
             }
@@ -74,6 +77,7 @@ impl UpdateArgs {
                     type_: DeploymentService::torii,
                     version: args.version.clone(),
                     config,
+                    katana: None,
                     torii: Some(ToriiUpdateInput {
                         replicas: args.replicas,
                         observability: args.observability,
