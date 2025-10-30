@@ -314,30 +314,30 @@ impl CreateArgs {
 
                 let data: Result<Vec<Felt>> = data_array
                     .iter()
-                    .map(|id| {
-                        let id_str = match id {
-                            Value::String(s) => s.clone(),
-                            Value::Number(n) => {
-                                // Convert number to hex string format
-                                if let Some(n_u128) = n.as_u128() {
-                                    format!("0x{:x}", n_u128)
-                                } else {
-                                    return Err(anyhow::anyhow!(
-                                        "Claim data number must be less than 128 bits"
-                                    ));
-                                }
+                    .map(|id| match id {
+                        Value::String(s) => {
+                            if s.starts_with("0x") || s.starts_with("0X") {
+                                Felt::from_hex(s).map_err(|_| {
+                                    anyhow::anyhow!("Failed to parse claim data: {}", s)
+                                })
+                            } else {
+                                Felt::from_dec_str(s).map_err(|_| {
+                                    anyhow::anyhow!("Failed to parse claim data: {}", s)
+                                })
                             }
-                            _ => {
-                                return Err(anyhow::anyhow!(
-                                    "Claim data must be a string or number"
+                        }
+                        Value::Number(n) => {
+                            if let Some(n_u128) = n.as_u128() {
+                                Felt::from_dec_str(&n_u128.to_string()).map_err(|_| {
+                                    anyhow::anyhow!("Failed to parse claim data number: {}", n_u128)
+                                })
+                            } else {
+                                Err(anyhow::anyhow!(
+                                    "Claim data number must be less than 128 bits"
                                 ))
                             }
-                        };
-
-                        // Try hex first, then decimal
-                        Felt::from_hex(&id_str)
-                            .or_else(|_| Felt::from_dec_str(&id_str))
-                            .map_err(|_| anyhow::anyhow!("Failed to parse claim data: {}", id_str))
+                        }
+                        _ => Err(anyhow::anyhow!("Claim data must be a string or number")),
                     })
                     .collect();
 
