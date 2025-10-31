@@ -107,19 +107,17 @@ impl UpdateArgs {
 
         let response: update_deployment::ResponseData = client.query(&request_body).await?;
 
-        println!("Update success 🚀");
-
-        // Display observability secret if present
-        if let Some(observability_secret) = &response.update_deployment.observability_secret {
-            println!("\nObservability Secret: {}", observability_secret);
-            println!("Save this secret - it will be needed to access Prometheus and Grafana.");
-            println!("The username is 'admin' and the password is the secret.");
-        }
-
         let service = match &self.update_commands {
             UpdateServiceCommands::Katana(_) => "katana",
             UpdateServiceCommands::Torii(_) => "torii",
         };
+
+        println!("Update success 🚀");
+
+        // Display observability secret if present
+        if let Some(observability_secret) = &response.update_deployment.observability_secret {
+            super::print_observability_secret(observability_secret, &self.project, service);
+        }
 
         println!(
             "\nStream logs with `slot deployments logs {} {service} -f`",
