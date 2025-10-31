@@ -24,6 +24,10 @@ pub struct UpdateArgs {
     #[arg(help = "Deployment tier.")]
     pub tier: Option<Tier>,
 
+    #[arg(long)]
+    #[arg(help = "Enable observability for monitoring and metrics.")]
+    pub observability: Option<bool>,
+
     #[command(subcommand)]
     update_commands: UpdateServiceCommands,
 }
@@ -51,9 +55,6 @@ impl UpdateArgs {
                     type_: DeploymentService::katana,
                     version: None,
                     config,
-                    katana: Some(KatanaUpdateInput {
-                        observability: args.observability,
-                    }),
                     torii: None,
                 }
             }
@@ -77,10 +78,8 @@ impl UpdateArgs {
                     type_: DeploymentService::torii,
                     version: args.version.clone(),
                     config,
-                    katana: None,
                     torii: Some(ToriiUpdateInput {
                         replicas: args.replicas,
-                        observability: args.observability,
                     }),
                 }
             }
@@ -100,6 +99,7 @@ impl UpdateArgs {
             tier,
             service,
             wait: Some(true),
+            observability: self.observability,
         });
 
         let user = Credentials::load()?;
