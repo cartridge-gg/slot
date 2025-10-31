@@ -199,9 +199,7 @@ impl CreateArgs {
 
         // Display observability secret if present
         if let Some(observability_secret) = &response.create_deployment.observability_secret {
-            println!("\nObservability Secret: {}", observability_secret);
-            println!("Save this secret - it will be needed to access Prometheus and Grafana.");
-            println!("The username is 'admin' and the password is the secret.");
+            super::print_observability_secret(observability_secret, &self.project, service);
         }
 
         println!(

@@ -121,6 +121,16 @@ pub(crate) fn pretty_print_toml(str: &str) {
     }
 }
 
+/// Prints observability secret information with Prometheus and Grafana URLs.
+pub(crate) fn print_observability_secret(secret: &str, project: &str, service: &str) {
+    let base_url = service_url(project, service);
+    println!("\nObservability Secret: {}", secret);
+    println!("Save this secret - it will be needed to access Prometheus and Grafana.");
+    println!("The username is 'admin' and the password is the secret.");
+    println!("\nPrometheus URL: {}/prometheus", base_url);
+    println!("Grafana URL: {}/grafana", base_url);
+}
+
 pub(crate) fn warn_checks(config_path: &std::path::Path) -> Result<()> {
     if let Ok(file_content) = fs::read_to_string(config_path) {
         if let Ok(parsed) = toml::from_str::<Value>(&file_content) {
