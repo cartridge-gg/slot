@@ -42,6 +42,10 @@ pub struct CreateArgs {
     #[arg(global = true)]
     pub output_service_config: Option<PathBuf>,
 
+    #[arg(long)]
+    #[arg(help = "Enable observability for monitoring and metrics.")]
+    pub observability: bool,
+
     #[command(subcommand)]
     create_commands: CreateServiceCommands,
 
@@ -86,28 +90,28 @@ impl CreateArgs {
             println!("   Learn about paid tiers at https://docs.cartridge.gg/slot/scale\n");
         }
 
+        // Confirm observability usage unless force flag is set
+        if self.observability && !self.force {
+            let confirmation = Confirm::with_theme(&ColorfulTheme::default())
+                .with_prompt(
+                    "Enabling observability is billed at $10/month and provides with an automatic Prometheus + Grafana setup. Do you want to proceed?"
+                )
+                .default(false)
+                .show_default(true)
+                .wait_for_newline(true)
+                .interact()?;
+
+            if !confirmation {
+                return Ok(());
+            }
+        }
+
         let service = match &self.create_commands {
             CreateServiceCommands::Katana(config) => {
                 config.validate()?;
 
                 if let Some(config_path) = &config.node_args.config {
                     super::warn_checks(config_path)?;
-                }
-
-                // Confirm observability usage unless force flag is set
-                if config.observability && !self.force {
-                    let confirmation = Confirm::with_theme(&ColorfulTheme::default())
-                        .with_prompt(
-                            "Enabling observability is billed at $10/month and provides with an automatic Prometheus + Grafana setup. Do you want to proceed?"
-                        )
-                        .default(false)
-                        .show_default(true)
-                        .wait_for_newline(true)
-                        .interact()?;
-
-                    if !confirmation {
-                        return Ok(());
-                    }
                 }
 
                 let service_config =
@@ -127,11 +131,6 @@ impl CreateArgs {
                         provable: Some(config.provable),
                         network: config.network.clone(),
                         saya: Some(config.saya),
-                        observability: if config.observability {
-                            Some(true)
-                        } else {
-                            None
-                        },
                     }),
                     torii: None,
                 }
@@ -139,22 +138,6 @@ impl CreateArgs {
             CreateServiceCommands::Torii(config) => {
                 if let Some(config_path) = &config.torii_args.config {
                     super::warn_checks(config_path)?;
-                }
-
-                // Confirm observability usage unless force flag is set
-                if config.observability && !self.force {
-                    let confirmation = Confirm::with_theme(&ColorfulTheme::default())
-                        .with_prompt(
-                            "Enabling observability is billed at $10/month and provides with an automatic Prometheus + Grafana setup. Do you want to proceed?"
-                        )
-                        .default(false)
-                        .show_default(true)
-                        .wait_for_newline(true)
-                        .interact()?;
-
-                    if !confirmation {
-                        return Ok(());
-                    }
                 }
 
                 let service_config =
@@ -174,11 +157,6 @@ impl CreateArgs {
                     torii: Some(ToriiCreateInput {
                         replicas: config.replicas,
                         replication: if config.replication { Some(true) } else { None },
-                        observability: if config.observability {
-                            Some(true)
-                        } else {
-                            None
-                        },
                     }),
                 }
             }
@@ -199,6 +177,7 @@ impl CreateArgs {
             wait: Some(true),
             regions: self.regions.clone(),
             team: self.team.clone(),
+            observability: if self.observability { Some(true) } else { None },
         });
 
         let user = Credentials::load()?;

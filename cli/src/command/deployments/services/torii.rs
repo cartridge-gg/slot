@@ -19,10 +19,6 @@ pub struct ToriiCreateArgs {
     #[arg(help = "Enable database replication using litestream.")]
     pub replication: bool,
 
-    #[arg(long)]
-    #[arg(help = "Enable observability for monitoring and metrics.")]
-    pub observability: bool,
-
     #[command(flatten)]
     pub torii_args: ToriiArgs,
 }
@@ -43,10 +39,6 @@ pub struct ToriiUpdateArgs {
     #[arg(long)]
     #[arg(help = "The version of Torii to deploy.")]
     pub version: Option<String>,
-
-    #[arg(long)]
-    #[arg(help = "Enable observability for monitoring and metrics.")]
-    pub observability: Option<bool>,
 
     #[arg(long)]
     #[arg(

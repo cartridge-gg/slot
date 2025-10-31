@@ -3,12 +3,14 @@ mutation UpdateDeployment(
   $service: UpdateServiceInput!
   $tier: DeploymentTier
   $wait: Boolean
+  $observability: Boolean
 ) {
   updateDeployment(
     name: $project
     service: $service
     tier: $tier
     wait: $wait
+    observability: $observability
   ) {
     __typename
     id
