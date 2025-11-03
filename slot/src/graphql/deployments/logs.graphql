@@ -3,9 +3,10 @@ query DeploymentLogs(
   $service: DeploymentService!
   $since: Time
   $limit: Int
+  $container: String
 ) {
   deployment(name: $project, service: $service) {
-    logs(since: $since, limit: $limit) {
+    logs(since: $since, limit: $limit, container: $container) {
       content
       until
     }
