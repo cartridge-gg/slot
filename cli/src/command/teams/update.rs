@@ -13,6 +13,14 @@ pub struct UpdateTeamArgs {
     #[arg(long)]
     #[arg(help = "The email address for team notifications.")]
     pub email: Option<String>,
+
+    #[arg(long)]
+    #[arg(help = "The physical address for the team.")]
+    pub address: Option<String>,
+
+    #[arg(long)]
+    #[arg(help = "The tax ID for the team.")]
+    pub tax_id: Option<String>,
 }
 
 impl UpdateTeamArgs {
@@ -28,6 +36,8 @@ impl UpdateTeamArgs {
             name: team.clone(),
             input: update_team::TeamInput {
                 email: self.email.clone(),
+                address: self.address.clone(),
+                tax_id: self.tax_id.clone(),
             },
         });
 
