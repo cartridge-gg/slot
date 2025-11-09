@@ -8220,6 +8220,16 @@
             },
             {
               "defaultValue": null,
+              "description": "Additional metadata for the merkle drop",
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "JSON",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
               "description": null,
               "name": "matchStarterpackItem",
               "type": {
@@ -18423,6 +18433,18 @@
                   "name": "String",
                   "ofType": null
                 }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Additional metadata for the merkle drop",
+              "isDeprecated": false,
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "JSON",
+                "ofType": null
               }
             },
             {
@@ -50917,6 +50939,36 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "Additional metadata for the merkle drop",
+              "name": "metadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "JSON",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "appendMetadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "JSON",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "clearMetadata",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             },
