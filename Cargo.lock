@@ -5873,7 +5873,7 @@ dependencies = [
  "thiserror 1.0.69",
  "toml",
  "tower 0.5.2",
- "tower-http",
+ "tower-http 0.5.2",
  "tracing",
  "url",
 ]
@@ -5990,7 +5990,7 @@ dependencies = [
  "thiserror 1.0.69",
  "tokio",
  "tower 0.5.2",
- "tower-http",
+ "tower-http 0.5.2",
  "tracing",
  "url",
 ]
@@ -8860,7 +8860,7 @@ dependencies = [
  "tempfile",
  "thiserror 1.0.69",
  "tokio",
- "tower-http",
+ "tower-http 0.6.6",
  "tracing",
  "update-informer",
  "url",
@@ -10287,6 +10287,22 @@ dependencies = [
  "tower-service",
  "tracing",
  "uuid 1.15.1",
+]
+
+[[package]]
+name = "tower-http"
+version = "0.6.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "adc82fd73de2a9722ac5da747f12383d2bfdb93591ee6c58486e0097890f05f2"
+dependencies = [
+ "bitflags 2.9.0",
+ "bytes",
+ "http 1.3.0",
+ "http-body 1.0.1",
+ "pin-project-lite",
+ "tower-layer",
+ "tower-service",
+ "tracing",
 ]
 
 [[package]]
