@@ -19,7 +19,7 @@ jobs:
         with:
           toolchain: ${{ env.RUST_VERSION }}
       # Required to build Katana at the moment.
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
       - run: cargo test
@@ -33,7 +33,7 @@ jobs:
           toolchain: ${{ env.RUST_VERSION }}
           components: clippy
       # Required to build Katana at the moment.
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
       - run: cargo clippy --all-targets --all-features
@@ -59,7 +59,7 @@ jobs:
           toolchain: ${{ env.RUST_VERSION }}
           target: x86_64-pc-windows-msvc
       # Required to build Katana at the moment.
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
       - run: cargo check --target x86_64-pc-windows-msvc --workspace

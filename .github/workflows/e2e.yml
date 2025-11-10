@@ -20,7 +20,7 @@ jobs:
           toolchain: ${{ env.RUST_VERSION }}
           components: clippy
       # Required to build Katana at the moment.
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
       - run: sh ./scripts/e2e.sh

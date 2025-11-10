@@ -74,7 +74,7 @@ jobs:
           cache-on-failure: true
 
       # Required to build Katana at the moment.
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
