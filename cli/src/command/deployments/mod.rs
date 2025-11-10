@@ -105,7 +105,7 @@ pub(crate) fn pretty_print_toml(str: &str) {
                 let key = parts[0].trim();
                 let value = parts[1].trim().replace("\"", "");
 
-                println!("{}: {}", key.bright_black(), value);
+                println!("{} = {}", key.bright_black(), value);
             } else {
                 println!("{}", line);
             }
