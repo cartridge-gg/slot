@@ -20,7 +20,7 @@ jobs:
     outputs:
       tag_name: ${{ steps.release_info.outputs.tag_name }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
       - name: Get version
         id: release_info
         run: |
@@ -61,7 +61,7 @@ jobs:
             arch: amd64
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
 
       - uses: dtolnay/rust-toolchain@master
         name: Rust Toolchain Setup
@@ -114,7 +114,7 @@ jobs:
         shell: bash
 
       - name: Upload release artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: artifacts-${{ matrix.job.target }}
           path: ${{ steps.artifacts.outputs.file_name }}
@@ -128,8 +128,8 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v6
         with:
           pattern: artifacts-*
           path: artifacts

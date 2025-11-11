@@ -19,13 +19,13 @@ serde.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true
 tokio.workspace = true
-tower-http = { version = "0.5", features = ["cors", "trace"] }
+tower-http = { version = "0.6", features = ["cors", "trace"] }
 tracing = "0.1.34"
 urlencoding = "2"
-webbrowser = "0.8"
+webbrowser = "1.0"
 starknet.workspace = true
 url.workspace = true
-tempfile = "3.10.1"
+tempfile = "3.23.0"
 hyper.workspace = true
 # https://github.com/cartridge-gg/controller/pull/1549
 account_sdk = { git = "https://github.com/cartridge-gg/controller", rev = "05fe96f4" }
