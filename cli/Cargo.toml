@@ -28,7 +28,7 @@ katana-cli = { git = "https://github.com/dojoengine/katana", rev = "d615ff05", d
 	"cartridge",
 ] }
 
-comfy-table = "7.1"
+comfy-table = "7.2"
 hyper.workspace = true
 num-bigint = { version = "0.4", features = ["serde"] }
 tokio.workspace = true
