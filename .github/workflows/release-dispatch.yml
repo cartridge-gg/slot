@@ -24,7 +24,7 @@ jobs:
         run: |
           cargo install cargo-get
           echo "version=$(cargo get workspace.package.version)" >> $GITHUB_OUTPUT
-      - uses: peter-evans/create-pull-request@v5
+      - uses: peter-evans/create-pull-request@v7
         id: pr
         with:
           # We have to use a PAT in order to trigger ci
