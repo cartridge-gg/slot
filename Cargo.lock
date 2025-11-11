@@ -8903,7 +8903,7 @@ dependencies = [
  "serde_json",
  "slot",
  "starknet 0.14.0",
- "strum_macros 0.25.3",
+ "strum_macros 0.27.1",
  "thiserror 1.0.69",
  "tokio",
  "toml",
