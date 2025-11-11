@@ -1,9 +1,7 @@
 use anyhow::Result;
 use clap::Subcommand;
 use colored::*;
-use std::fs;
 use strum_macros::Display;
-use toml::Value;
 
 use self::{
     accounts::AccountsArgs, create::CreateArgs, delete::DeleteArgs, describe::DescribeArgs,
@@ -129,43 +127,4 @@ pub(crate) fn print_observability_secret(secret: &str, project: &str, service: &
     println!("The username is 'admin' and the password is the secret.");
     println!("\nPrometheus URL: {}/prometheus", base_url);
     println!("Grafana URL: {}/grafana", base_url);
-}
-
-pub(crate) fn warn_checks(config_path: &std::path::Path) -> Result<()> {
-    if let Ok(file_content) = fs::read_to_string(config_path) {
-        if let Ok(parsed) = toml::from_str::<Value>(&file_content) {
-            if parsed.get("db_dir").is_some() {
-                println!("⚠️  Warning: 'db_dir' option found in config file but is ignored. Slot is managing and persisting the database.");
-            }
-            if let Some(indexing) = parsed.get("indexing") {
-                if indexing.get("blocks_chunk_size").is_some() {
-                    println!("⚠️  Warning: 'blocks_chunk_size' option found in config file but is ignored and overridden in slot.");
-                }
-                if indexing.get("events_chunk_size").is_some() {
-                    println!("⚠️  Warning: 'events_chunk_size' option found in config file but is ignored and overridden in slot.");
-                }
-                if indexing.get("max_concurrent_tasks").is_some() {
-                    println!("⚠️  Warning: 'max_concurrent_tasks' option found in config file but is ignored and overridden in slot.");
-                }
-            }
-            if parsed.get("metrics").is_some() {
-                println!("⚠️  Warning: 'metrics' section found in config file but is ignored and overridden in slot. Metrics are always collected and available at /metrics of your slot deployment URL.");
-            }
-            if let Some(sql) = parsed.get("sql") {
-                println!("⚠️  Warning: '[sql]' section found in config file but is ignored and overridden in slot. Database configuration is managed by slot.");
-                if sql.get("cache_size").is_some() {
-                    println!("⚠️  Warning: 'cache_size' option found in config file but is ignored and overridden in slot.");
-                }
-                if sql.get("page_size").is_some() {
-                    println!("⚠️  Warning: 'page_size' option found in config file but is ignored and overridden in slot.");
-                }
-            }
-            if let Some(erc) = parsed.get("erc") {
-                if erc.get("max_metadata_tasks").is_some() {
-                    println!("⚠️  Warning: 'max_metadata_tasks' option found in config file but is ignored and overridden in slot.");
-                }
-            }
-        }
-    }
-    Ok(())
 }
