@@ -24,7 +24,7 @@ graphql_client.workspace = true
 # <https://github.com/dojoengine/katana/commit/d9514a9996c51bd8083da9b7fd1029a41480cfdd>
 katana-primitives = { git = "https://github.com/dojoengine/katana", rev = "d615ff05" }
 
-comfy-table = "7.1"
+comfy-table = "7.2"
 hyper.workspace = true
 num-bigint = { version = "0.4", features = ["serde"] }
 tokio.workspace = true
@@ -34,7 +34,7 @@ serde_json = "1.0"
 slot.workspace = true
 starknet.workspace = true
 url.workspace = true
-strum_macros = "0.25.3"
+strum_macros = "0.27.1"
 update-informer = { version = "1.1", default-features = false, features = [
 	"ureq",
 	"github",
