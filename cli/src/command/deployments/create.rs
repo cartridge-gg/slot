@@ -123,6 +123,8 @@ impl CreateArgs {
                         provable: Some(config.provable),
                         network: config.network.clone(),
                         saya: Some(config.saya),
+                        optimistic: Some(config.optimistic),
+                        fork_provider_url: config.fork_provider_url.clone(),
                     }),
                     torii: None,
                 }

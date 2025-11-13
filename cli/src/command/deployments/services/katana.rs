@@ -22,6 +22,14 @@ pub struct KatanaCreateArgs {
         help = "Whether to start a saya instance alongside the provable Katana. Only in provable mode."
     )]
     pub saya: bool,
+
+    #[arg(long, short, value_name = "optimistic")]
+    #[arg(help = "Whether to run the service in optimistic mode.")]
+    pub optimistic: bool,
+
+    #[arg(long, short = 'f', value_name = "fork_provider_url")]
+    #[arg(help = "URL of the fork provider to use for the service.")]
+    pub fork_provider_url: Option<String>,
 }
 
 /// Update a Katana deployment.
