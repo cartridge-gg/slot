@@ -2,11 +2,13 @@ use std::path::PathBuf;
 
 use clap::Args;
 
-use torii_cli::ToriiArgs;
-
 #[derive(Clone, Debug, Args, serde::Serialize)]
 #[command(next_help_heading = "Torii create options")]
 pub struct ToriiCreateArgs {
+    #[arg(long, short = 'c')]
+    #[arg(help = "Path to the Torii configuration file (TOML format). This is required.")]
+    pub config: PathBuf,
+
     #[arg(long, default_value = "1")]
     #[arg(help = "The number of replicas to deploy.")]
     pub replicas: Option<i64>,
@@ -18,9 +20,6 @@ pub struct ToriiCreateArgs {
     #[arg(long)]
     #[arg(help = "Enable database replication using litestream.")]
     pub replication: bool,
-
-    #[command(flatten)]
-    pub torii_args: ToriiArgs,
 }
 
 /// Update a Torii deployment.

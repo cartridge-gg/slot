@@ -91,7 +91,8 @@ test_katana() {
     local project=$1
     local config_path=$2
 
-    cargo run -- d create "$project" katana
+    create_katana_config "$config_path"
+    cargo run -- d create "$project" katana --config "$config_path"
 
     sleep 10
 

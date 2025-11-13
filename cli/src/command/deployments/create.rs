@@ -6,13 +6,11 @@ use anyhow::Result;
 use clap::Args;
 use dialoguer::theme::ColorfulTheme;
 use dialoguer::Confirm;
-use katana_cli::file::NodeArgsConfig;
 use slot::api::Client;
 use slot::credential::Credentials;
 use slot::graphql::deployments::create_deployment::*;
 use slot::graphql::deployments::CreateDeployment;
 use slot::graphql::GraphQLQuery;
-use torii_cli::args::ToriiArgs;
 
 use super::{services::CreateServiceCommands, Tier};
 
@@ -108,14 +106,8 @@ impl CreateArgs {
 
         let service = match &self.create_commands {
             CreateServiceCommands::Katana(config) => {
-                config.validate()?;
-
-                if let Some(config_path) = &config.node_args.config {
-                    super::warn_checks(config_path)?;
-                }
-
-                let service_config =
-                    toml::to_string(&NodeArgsConfig::try_from(config.node_args.clone())?)?;
+                // Read the raw config file content
+                let service_config = std::fs::read_to_string(&config.config)?;
 
                 if let Some(path) = &self.output_service_config {
                     std::fs::write(path, &service_config)?;
@@ -136,12 +128,8 @@ impl CreateArgs {
                 }
             }
             CreateServiceCommands::Torii(config) => {
-                if let Some(config_path) = &config.torii_args.config {
-                    super::warn_checks(config_path)?;
-                }
-
-                let service_config =
-                    toml::to_string(&ToriiArgs::with_config_file(config.torii_args.clone())?)?;
+                // Read the raw config file content
+                let service_config = std::fs::read_to_string(&config.config)?;
 
                 if let Some(path) = &self.output_service_config {
                     std::fs::write(path, &service_config)?;
