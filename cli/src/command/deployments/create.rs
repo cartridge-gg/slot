@@ -106,29 +106,19 @@ impl CreateArgs {
 
         let service = match &self.create_commands {
             CreateServiceCommands::Katana(config) => {
-                // Read the raw config file content if provided
-                let service_config = if let Some(config_path) = &config.config {
-                    let content = std::fs::read_to_string(config_path)?;
+                // Read the raw config file content
+                let service_config = std::fs::read_to_string(&config.config)?;
 
-                    if let Some(path) = &self.output_service_config {
-                        std::fs::write(path, &content)?;
-                        println!("Service config written to {}", path.display());
-                        return Ok(());
-                    }
-
-                    Some(slot::read::base64_encode_string(&content))
-                } else {
-                    if self.output_service_config.is_some() {
-                        println!("No config provided, skipping output.");
-                        return Ok(());
-                    }
-                    None
-                };
+                if let Some(path) = &self.output_service_config {
+                    std::fs::write(path, &service_config)?;
+                    println!("Service config written to {}", path.display());
+                    return Ok(());
+                }
 
                 CreateServiceInput {
                     type_: DeploymentService::katana,
                     version: None,
-                    config: service_config.unwrap_or_default(),
+                    config: slot::read::base64_encode_string(&service_config),
                     katana: Some(KatanaCreateInput {
                         provable: Some(config.provable),
                         network: config.network.clone(),

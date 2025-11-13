@@ -6,10 +6,8 @@ use clap::Args;
 #[command(next_help_heading = "Katana create options")]
 pub struct KatanaCreateArgs {
     #[arg(long, short = 'c')]
-    #[arg(
-        help = "Path to the Katana configuration file (TOML format). Optional - Katana can work with defaults."
-    )]
-    pub config: Option<PathBuf>,
+    #[arg(help = "Path to the Katana configuration file (TOML format). This is required.")]
+    pub config: PathBuf,
 
     #[arg(long, short, value_name = "provable mode")]
     #[arg(help = "Whether to run the service in provable mode.")]
