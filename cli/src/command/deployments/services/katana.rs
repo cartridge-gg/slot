@@ -6,8 +6,10 @@ use clap::Args;
 #[command(next_help_heading = "Katana create options")]
 pub struct KatanaCreateArgs {
     #[arg(long, short = 'c')]
-    #[arg(help = "Path to the Katana configuration file (TOML format). This is required.")]
-    pub config: PathBuf,
+    #[arg(
+        help = "Path to the Katana configuration file (TOML format). Required unless --optimistic is used."
+    )]
+    pub config: Option<PathBuf>,
 
     #[arg(long, short, value_name = "provable mode")]
     #[arg(help = "Whether to run the service in provable mode.")]
@@ -30,6 +32,15 @@ pub struct KatanaCreateArgs {
     #[arg(long, short = 'f', value_name = "fork_provider_url")]
     #[arg(help = "URL of the fork provider to use for the service.")]
     pub fork_provider_url: Option<String>,
+}
+
+impl KatanaCreateArgs {
+    pub fn validate(&self) -> anyhow::Result<()> {
+        if self.config.is_none() && !self.optimistic {
+            anyhow::bail!("Either --config or --optimistic must be provided");
+        }
+        Ok(())
+    }
 }
 
 /// Update a Katana deployment.
