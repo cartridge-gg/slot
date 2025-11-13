@@ -15731,6 +15731,26 @@
                 "name": "String",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "optimistic",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "forkProviderUrl",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             }
           ],
           "interfaces": [],

@@ -106,23 +106,35 @@ impl CreateArgs {
 
         let service = match &self.create_commands {
             CreateServiceCommands::Katana(config) => {
-                // Read the raw config file content
-                let service_config = std::fs::read_to_string(&config.config)?;
+                // Validate that either config or optimistic is provided
+                config.validate()?;
 
-                if let Some(path) = &self.output_service_config {
-                    std::fs::write(path, &service_config)?;
-                    println!("Service config written to {}", path.display());
-                    return Ok(());
-                }
+                // Read the raw config file content if provided
+                let service_config = if let Some(config_path) = &config.config {
+                    let content = std::fs::read_to_string(config_path)?;
+
+                    if let Some(path) = &self.output_service_config {
+                        std::fs::write(path, &content)?;
+                        println!("Service config written to {}", path.display());
+                        return Ok(());
+                    }
+
+                    slot::read::base64_encode_string(&content)
+                } else {
+                    // When optimistic mode is used without config, use empty config
+                    String::new()
+                };
 
                 CreateServiceInput {
                     type_: DeploymentService::katana,
                     version: None,
-                    config: slot::read::base64_encode_string(&service_config),
+                    config: service_config,
                     katana: Some(KatanaCreateInput {
                         provable: Some(config.provable),
                         network: config.network.clone(),
                         saya: Some(config.saya),
+                        optimistic: Some(config.optimistic),
+                        fork_provider_url: config.fork_provider_url.clone(),
                     }),
                     torii: None,
                 }
