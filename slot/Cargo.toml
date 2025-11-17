@@ -9,7 +9,7 @@ rust-version.workspace = true
 anyhow.workspace = true
 axum.workspace = true
 cainome-cairo-serde = "0.2.0"
-dirs = "5"
+dirs = "6"
 graphql_client.workspace = true
 reqwest = { version = "0.12", default-features = false, features = [
 	"rustls-tls",
