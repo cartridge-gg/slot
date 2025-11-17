@@ -20,6 +20,6 @@ tokio = { version = "1.18.2", features = ["full", "sync"] }
 serde = "1"
 serde_json = "1.0.145"
 thiserror = "1.0.32"
-url = "2.2.2"
+url = "2.5.7"
 starknet = "0.14.0"
 num-bigint = "0.4.3"
