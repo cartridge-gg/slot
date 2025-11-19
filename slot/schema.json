@@ -25711,6 +25711,18 @@
             {
               "args": [],
               "deprecationReason": null,
+              "description": "Trigger configuration - policy only applies if this call exists in the multicall",
+              "isDeprecated": false,
+              "name": "trigger",
+              "type": {
+                "kind": "OBJECT",
+                "name": "PolicyTrigger",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
               "description": "If set, this policy only applies to requests from the specified katana project (e.g., 'myproject' for /x/myproject/katana)",
               "isDeprecated": false,
               "name": "requiredKatanaProject",
@@ -29521,6 +29533,16 @@
                 "name": "PolicyPredicateInput",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "trigger",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "PolicyTriggerInput",
+                "ofType": null
+              }
             }
           ],
           "interfaces": [],
@@ -29608,6 +29630,88 @@
           "interfaces": [],
           "kind": "INPUT_OBJECT",
           "name": "PolicyPredicateInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "contractAddress",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "entryPoint",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "PolicyTrigger",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "address",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "entrypoint",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "PolicyTriggerInput",
           "possibleTypes": []
         },
         {

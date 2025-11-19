@@ -90,6 +90,7 @@ impl PolicyCmd {
                 contract_address: args.contract.clone(),
                 entry_point: args.entrypoint.clone(),
                 predicate: None,
+                trigger: None,
             }],
         };
         let request_body = AddPolicies::build_query(variables);
@@ -128,6 +129,7 @@ impl PolicyCmd {
                     address: pred.address,
                     entrypoint: pred.entrypoint,
                 }),
+                trigger: None,
             })
             .collect();
 
@@ -172,6 +174,7 @@ impl PolicyCmd {
                     address: pred.address,
                     entrypoint: pred.entrypoint,
                 }),
+                trigger: None,
             })
             .collect();
 
@@ -211,6 +214,7 @@ impl PolicyCmd {
                 contract_address: args.contract.clone(),
                 entry_point: args.entrypoint.clone(),
                 predicate: None,
+                trigger: None,
             },
         };
         let request_body = RemovePolicy::build_query(variables);
