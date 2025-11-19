@@ -2,14 +2,12 @@
 
 use anyhow::Result;
 use clap::Args;
-use katana_primitives::contract::ContractAddress;
-use katana_primitives::genesis::allocation::{DevAllocationsGenerator, GenesisAccountAlloc};
-use katana_primitives::genesis::Genesis;
+use slot::api::Client;
+use slot::credential::Credentials;
 use slot::graphql::deployments::{katana_accounts::*, KatanaAccounts};
 use slot::graphql::GraphQLQuery;
 
-use slot::api::Client;
-use slot::credential::Credentials;
+use serde_json::{json, Value};
 
 use super::services::KatanaAccountCommands;
 
@@ -58,78 +56,52 @@ impl AccountsArgs {
         // }
         // print_genesis_accounts(accounts_vec.iter().map(|(a, b)| (a, b)), None);
 
-        // NOTICE: This is implementation assume that the Katana instance is configured with the default seed and total number of accounts. If not, the
-        // generated addresses will be different from the ones in the Katana instance. This is rather a hack until `slot` can return the addresses directly (or
-        // at least the exact configurations of the instance).
+        // NOTICE: Use the dev_predeployedAccounts since Katana is usually in dev mode.
+        // This is a temporary solution until we have a way to get the accounts from the deployment.
+        // This is also better than using the seed 0, since here the accounts addresses are already computed.
 
-        let seed = "0";
-        let total_accounts = 10;
+        // Use raw reqwest client to make the json rpc call:
+        let client = reqwest::Client::new();
+        let response = client
+            .post(format!(
+                "https://api.cartridge.gg/x/{}/katana",
+                self.project
+            ))
+            .json(&json!({
+                "jsonrpc": "2.0",
+                "method": "dev_predeployedAccounts",
+                "params": [],
+                "id": 1
+            }))
+            .send()
+            .await?;
 
-        let accounts = DevAllocationsGenerator::new(total_accounts)
-            .with_seed(parse_seed(seed))
-            .generate();
+        let json_response = response.json::<Value>().await?;
 
-        let mut genesis = Genesis::default();
-        genesis.extend_allocations(accounts.into_iter().map(|(k, v)| (k, v.into())));
-        print_genesis_accounts(genesis.accounts().peekable(), Some(seed));
+        // If some accounts are found, print them. Otherwise, empty output.
+        if let Some(result) = json_response.get("result").and_then(|r| r.as_array()) {
+            for account in result {
+                let address = account
+                    .get("address")
+                    .and_then(|a| a.as_str())
+                    .unwrap_or("");
+                let public_key = account
+                    .get("publicKey")
+                    .and_then(|pk| pk.as_str())
+                    .unwrap_or("");
+
+                println!("| Account Address |  {}", address);
+
+                // Private key is optional.
+                if let Some(private_key) = account.get("privateKey").and_then(|pk| pk.as_str()) {
+                    println!("| Private key     |  {}", private_key);
+                }
+
+                println!("| Public key      |  {}", public_key);
+                println!();
+            }
+        }
 
         Ok(())
-    }
-}
-
-fn print_genesis_accounts<'a, Accounts>(accounts: Accounts, seed: Option<&str>)
-where
-    Accounts: Iterator<Item = (&'a ContractAddress, &'a GenesisAccountAlloc)>,
-{
-    println!(
-        r"
-
-PREFUNDED ACCOUNTS
-=================="
-    );
-
-    for (addr, account) in accounts {
-        if let Some(pk) = account.private_key() {
-            println!(
-                r"
-| Account address |  {addr}
-| Private key     |  {pk:#x}
-| Public key      |  {:#x}",
-                account.public_key()
-            )
-        } else {
-            println!(
-                r"
-| Account address |  {addr}
-| Public key      |  {:#x}",
-                account.public_key()
-            )
-        }
-    }
-
-    if let Some(seed) = seed {
-        println!(
-            r"
-ACCOUNTS SEED
-=============
-{seed}
-"
-        );
-    }
-}
-
-// Mimic how Katana parse the seed to generate the predeployed accounts
-// https://github.com/dojoengine/dojo/blob/85c0b025f108bd1ed64a5b35cfb574f61545a0ff/crates/katana/cli/src/utils.rs#L24-L34
-fn parse_seed(seed: &str) -> [u8; 32] {
-    let seed = seed.as_bytes();
-
-    if seed.len() >= 32 {
-        unsafe { *(seed[..32].as_ptr() as *const [u8; 32]) }
-    } else {
-        let mut actual_seed = [0u8; 32];
-        seed.iter()
-            .enumerate()
-            .for_each(|(i, b)| actual_seed[i] = *b);
-        actual_seed
     }
 }

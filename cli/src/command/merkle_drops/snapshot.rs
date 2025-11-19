@@ -1,6 +1,5 @@
 use anyhow::Result;
 use clap::Args;
-use katana_primitives::Felt;
 use serde_json::json;
 use std::collections::HashMap;
 use std::path::PathBuf;
@@ -15,7 +14,7 @@ use futures::stream::{self, StreamExt};
 // Add Starknet imports
 use starknet::{
     core::{
-        types::{BlockId, FunctionCall},
+        types::{BlockId, Felt, FunctionCall},
         utils::get_selector_from_name,
     },
     providers::{

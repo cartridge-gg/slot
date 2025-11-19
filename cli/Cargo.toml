@@ -19,11 +19,6 @@ env_logger = "0.11.3"
 log = "0.4"
 graphql_client.workspace = true
 
-# Revision that includes the `config` field being public.
-# Should be bumped once a new version is released with this commit:
-# <https://github.com/dojoengine/katana/commit/d9514a9996c51bd8083da9b7fd1029a41480cfdd>
-katana-primitives = { git = "https://github.com/dojoengine/katana", rev = "d615ff05" }
-
 comfy-table = "7.2"
 hyper.workspace = true
 num-bigint = { version = "0.4", features = ["serde"] }
@@ -39,6 +34,7 @@ update-informer = { version = "1.3", default-features = false, features = [
 	"ureq",
 	"github",
 ] }
+reqwest = "0.12.12"
 
 [[bin]]
 name = "slot"
