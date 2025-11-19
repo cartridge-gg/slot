@@ -27,8 +27,6 @@ starknet.workspace = true
 url.workspace = true
 tempfile = "3.23.0"
 hyper.workspace = true
-# https://github.com/cartridge-gg/controller/pull/1549
-#account_sdk = { git = "https://github.com/cartridge-gg/controller", rev = "05fe96f4" }
 account_sdk = { git = "https://github.com/cartridge-gg/controller-rs", branch = "types-rs-100-blake2s" }
 base64 = "0.22.1"
 colored = "2.0.0"

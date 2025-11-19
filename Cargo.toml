@@ -12,14 +12,14 @@ rust-version = "1.76.0"
 [workspace.dependencies]
 slot = { path = "slot" }
 
-anyhow = "1.0.100"
+anyhow = "1"
 axum = "0.8"
 graphql_client = "0.14.0"
 hyper = "1.4"
 tokio = { version = "1.46.1", features = ["full", "sync"] }
 serde = "1"
-serde_json = "1.0.145"
-thiserror = "2.0.12"
+serde_json = "1"
+thiserror = "2"
 url = "2.2.2"
 starknet = { git = "https://github.com/dojoengine/starknet-rs", branch = "feat/types-rs-100-blake2s" }
 num-bigint = "0.4.3"
