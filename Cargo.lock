@@ -687,7 +687,7 @@ dependencies = [
 [[package]]
 name = "cainome"
 version = "0.10.1"
-source = "git+https://github.com/cartridge-gg/cainome?branch=types-rs-100-blake2s#daaea0dae7bd6fef352ffee1639a2228c3b80d99"
+source = "git+https://github.com/cartridge-gg/cainome?branch=types-rs-100-blake2s#4d6b5e702eb5ccf3f135e12e9d057f77f4a26158"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -713,7 +713,7 @@ dependencies = [
 [[package]]
 name = "cainome-cairo-serde"
 version = "0.4.1"
-source = "git+https://github.com/cartridge-gg/cainome?branch=types-rs-100-blake2s#daaea0dae7bd6fef352ffee1639a2228c3b80d99"
+source = "git+https://github.com/cartridge-gg/cainome?branch=types-rs-100-blake2s#4d6b5e702eb5ccf3f135e12e9d057f77f4a26158"
 dependencies = [
  "num-bigint",
  "serde",
@@ -725,7 +725,7 @@ dependencies = [
 [[package]]
 name = "cainome-cairo-serde-derive"
 version = "0.1.0"
-source = "git+https://github.com/cartridge-gg/cainome?branch=types-rs-100-blake2s#daaea0dae7bd6fef352ffee1639a2228c3b80d99"
+source = "git+https://github.com/cartridge-gg/cainome?branch=types-rs-100-blake2s#4d6b5e702eb5ccf3f135e12e9d057f77f4a26158"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -736,7 +736,7 @@ dependencies = [
 [[package]]
 name = "cainome-parser"
 version = "0.6.0"
-source = "git+https://github.com/cartridge-gg/cainome?branch=types-rs-100-blake2s#daaea0dae7bd6fef352ffee1639a2228c3b80d99"
+source = "git+https://github.com/cartridge-gg/cainome?branch=types-rs-100-blake2s#4d6b5e702eb5ccf3f135e12e9d057f77f4a26158"
 dependencies = [
  "convert_case",
  "quote",
@@ -749,7 +749,7 @@ dependencies = [
 [[package]]
 name = "cainome-rs"
 version = "0.5.1"
-source = "git+https://github.com/cartridge-gg/cainome?branch=types-rs-100-blake2s#daaea0dae7bd6fef352ffee1639a2228c3b80d99"
+source = "git+https://github.com/cartridge-gg/cainome?branch=types-rs-100-blake2s#4d6b5e702eb5ccf3f135e12e9d057f77f4a26158"
 dependencies = [
  "anyhow",
  "cainome-cairo-serde",
@@ -767,7 +767,7 @@ dependencies = [
 [[package]]
 name = "cainome-rs-macro"
 version = "0.5.1"
-source = "git+https://github.com/cartridge-gg/cainome?branch=types-rs-100-blake2s#daaea0dae7bd6fef352ffee1639a2228c3b80d99"
+source = "git+https://github.com/cartridge-gg/cainome?branch=types-rs-100-blake2s#4d6b5e702eb5ccf3f135e12e9d057f77f4a26158"
 dependencies = [
  "anyhow",
  "cainome-cairo-serde",
@@ -2728,8 +2728,8 @@ dependencies = [
  "libc",
  "percent-encoding",
  "pin-project-lite",
- "socket2 0.6.1",
- "system-configuration 0.6.1",
+ "socket2 0.5.10",
+ "system-configuration",
  "tokio",
  "tower-service",
  "tracing",
@@ -3966,7 +3966,7 @@ dependencies = [
  "quinn-udp",
  "rustc-hash",
  "rustls 0.23.35",
- "socket2 0.6.1",
+ "socket2 0.5.10",
  "thiserror 2.0.17",
  "tokio",
  "tracing",
@@ -4003,7 +4003,7 @@ dependencies = [
  "cfg_aliases",
  "libc",
  "once_cell",
- "socket2 0.6.1",
+ "socket2 0.5.10",
  "tracing",
  "windows-sys 0.59.0",
 ]
@@ -4228,7 +4228,7 @@ dependencies = [
  "serde_json",
  "serde_urlencoded",
  "sync_wrapper 0.1.2",
- "system-configuration 0.5.1",
+ "system-configuration",
  "tokio",
  "tokio-rustls 0.24.1",
  "tower-service",
@@ -5084,7 +5084,7 @@ checksum = "6ce2be8dc25455e1f91df71bfa12ad37d7af1092ae736f3a6cd0e37bc7810596"
 [[package]]
 name = "starknet"
 version = "0.17.0"
-source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#50d5a7dcaf15eb4981597c54fd9685586205069b"
+source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#bc33ecb0837f7bb605176deacf6d110409016039"
 dependencies = [
  "starknet-accounts",
  "starknet-contract",
@@ -5099,7 +5099,7 @@ dependencies = [
 [[package]]
 name = "starknet-accounts"
 version = "0.16.0"
-source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#50d5a7dcaf15eb4981597c54fd9685586205069b"
+source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#bc33ecb0837f7bb605176deacf6d110409016039"
 dependencies = [
  "async-trait",
  "auto_impl",
@@ -5113,7 +5113,7 @@ dependencies = [
 [[package]]
 name = "starknet-contract"
 version = "0.16.0"
-source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#50d5a7dcaf15eb4981597c54fd9685586205069b"
+source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#bc33ecb0837f7bb605176deacf6d110409016039"
 dependencies = [
  "serde",
  "serde_json",
@@ -5127,7 +5127,7 @@ dependencies = [
 [[package]]
 name = "starknet-core"
 version = "0.16.0"
-source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#50d5a7dcaf15eb4981597c54fd9685586205069b"
+source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#bc33ecb0837f7bb605176deacf6d110409016039"
 dependencies = [
  "base64 0.21.7",
  "crypto-bigint",
@@ -5149,7 +5149,7 @@ dependencies = [
 [[package]]
 name = "starknet-core-derive"
 version = "0.1.0"
-source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#50d5a7dcaf15eb4981597c54fd9685586205069b"
+source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#bc33ecb0837f7bb605176deacf6d110409016039"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -5159,7 +5159,7 @@ dependencies = [
 [[package]]
 name = "starknet-crypto"
 version = "0.8.1"
-source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#50d5a7dcaf15eb4981597c54fd9685586205069b"
+source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#bc33ecb0837f7bb605176deacf6d110409016039"
 dependencies = [
  "crypto-bigint",
  "hex",
@@ -5177,7 +5177,7 @@ dependencies = [
 [[package]]
 name = "starknet-curve"
 version = "0.6.0"
-source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#50d5a7dcaf15eb4981597c54fd9685586205069b"
+source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#bc33ecb0837f7bb605176deacf6d110409016039"
 dependencies = [
  "starknet-types-core",
 ]
@@ -5185,7 +5185,7 @@ dependencies = [
 [[package]]
 name = "starknet-macros"
 version = "0.2.5"
-source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#50d5a7dcaf15eb4981597c54fd9685586205069b"
+source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#bc33ecb0837f7bb605176deacf6d110409016039"
 dependencies = [
  "starknet-core",
  "syn 2.0.110",
@@ -5194,7 +5194,7 @@ dependencies = [
 [[package]]
 name = "starknet-providers"
 version = "0.16.0"
-source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#50d5a7dcaf15eb4981597c54fd9685586205069b"
+source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#bc33ecb0837f7bb605176deacf6d110409016039"
 dependencies = [
  "async-trait",
  "auto_impl",
@@ -5214,7 +5214,7 @@ dependencies = [
 [[package]]
 name = "starknet-signers"
 version = "0.14.0"
-source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#50d5a7dcaf15eb4981597c54fd9685586205069b"
+source = "git+https://github.com/dojoengine/starknet-rs?branch=feat/types-rs-100-blake2s#bc33ecb0837f7bb605176deacf6d110409016039"
 dependencies = [
  "async-trait",
  "auto_impl",
@@ -5386,18 +5386,7 @@ checksum = "ba3a3adc5c275d719af8cb4272ea1c4a6d668a777f37e115f6d11ddbc1c8e0e7"
 dependencies = [
  "bitflags 1.3.2",
  "core-foundation 0.9.4",
- "system-configuration-sys 0.5.0",
-]
-
-[[package]]
-name = "system-configuration"
-version = "0.6.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3c879d448e9d986b661742763247d3693ed13609438cf3d006f51f5368a5ba6b"
-dependencies = [
- "bitflags 2.10.0",
- "core-foundation 0.9.4",
- "system-configuration-sys 0.6.0",
+ "system-configuration-sys",
 ]
 
 [[package]]
@@ -5405,16 +5394,6 @@ name = "system-configuration-sys"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a75fb188eb626b924683e3b95e3a48e63551fcfb51949de2f06a9d91dbee93c9"
-dependencies = [
- "core-foundation-sys",
- "libc",
-]
-
-[[package]]
-name = "system-configuration-sys"
-version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8e1d1b10ced5ca923a1fcb8d03e96b8d3268065d724548c0211415ff6ac6bac4"
 dependencies = [
  "core-foundation-sys",
  "libc",
@@ -6326,7 +6305,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.59.0",
+ "windows-sys 0.48.0",
 ]
 
 [[package]]
