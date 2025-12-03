@@ -16433,6 +16433,18 @@
               "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
+              "name": "PENDING_USER_TRANSFER"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "PENDING_LS_TRANSFER"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
               "name": "CONFIRMED"
             },
             {
