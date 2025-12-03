@@ -30,7 +30,7 @@ hyper.workspace = true
 # https://github.com/cartridge-gg/controller/pull/1549
 account_sdk = { git = "https://github.com/cartridge-gg/controller", rev = "05fe96f4" }
 base64 = "0.22.1"
-colored = "2.0.0"
+colored = "3.0.0"
 num-bigint = { version = "0.4.6", features = ["serde"] }
 update-informer = { version = "1.3", default-features = false, features = [
 	"ureq",
