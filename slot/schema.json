@@ -6063,6 +6063,1128 @@
             {
               "args": [],
               "deprecationReason": null,
+              "description": "The amount value as a string.",
+              "isDeprecated": false,
+              "name": "amount",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "The currency code (e.g., \"USD\", \"USDC\").",
+              "isDeprecated": false,
+              "name": "currency",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "CoinbaseAmount",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "BASE"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "ETHEREUM"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "POLYGON"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "ARBITRUM"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "OPTIMISM"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "SOLANA"
+            }
+          ],
+          "fields": [],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "ENUM",
+          "name": "CoinbaseNetwork",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "The type of fee (FEE_TYPE_NETWORK or FEE_TYPE_EXCHANGE).",
+              "isDeprecated": false,
+              "name": "type",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "The fee amount.",
+              "isDeprecated": false,
+              "name": "amount",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "The currency of the fee.",
+              "isDeprecated": false,
+              "name": "currency",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "CoinbaseOnrampFee",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "The unique order ID.",
+              "isDeprecated": false,
+              "name": "orderId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Total payment amount including fees.",
+              "isDeprecated": false,
+              "name": "paymentTotal",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Payment amount before fees.",
+              "isDeprecated": false,
+              "name": "paymentSubtotal",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "The fiat currency used for payment.",
+              "isDeprecated": false,
+              "name": "paymentCurrency",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "The amount of crypto to be purchased.",
+              "isDeprecated": false,
+              "name": "purchaseAmount",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "The crypto currency being purchased (always USDC).",
+              "isDeprecated": false,
+              "name": "purchaseCurrency",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "The exchange rate used for the conversion.",
+              "isDeprecated": false,
+              "name": "exchangeRate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Fees associated with the order.",
+              "isDeprecated": false,
+              "name": "fees",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "OBJECT",
+                      "name": "CoinbaseOnrampFee",
+                      "ofType": null
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "The destination address for the crypto.",
+              "isDeprecated": false,
+              "name": "destinationAddress",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "The destination network.",
+              "isDeprecated": false,
+              "name": "destinationNetwork",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Current status of the order.",
+              "isDeprecated": false,
+              "name": "status",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "CoinbaseOnrampStatus",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "The payment link URL for Apple Pay checkout.\nAppend &useApplePaySandbox=true for testing on localhost.",
+              "isDeprecated": false,
+              "name": "paymentLink",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "The type of payment link.",
+              "isDeprecated": false,
+              "name": "paymentLinkType",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Transaction hash (only available after crypto is sent).",
+              "isDeprecated": false,
+              "name": "txHash",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "When the order was created.",
+              "isDeprecated": false,
+              "name": "createdAt",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Time",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "When the order was last updated.",
+              "isDeprecated": false,
+              "name": "updatedAt",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Time",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "CoinbaseOnrampOrder",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Total payment amount including fees.",
+              "isDeprecated": false,
+              "name": "paymentTotal",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CoinbaseAmount",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Payment amount before fees (cost of crypto).",
+              "isDeprecated": false,
+              "name": "paymentSubtotal",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CoinbaseAmount",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "The amount of crypto to be purchased.",
+              "isDeprecated": false,
+              "name": "purchaseAmount",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CoinbaseAmount",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Fee charged by Coinbase.",
+              "isDeprecated": false,
+              "name": "coinbaseFee",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CoinbaseAmount",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Network fee for sending the crypto.",
+              "isDeprecated": false,
+              "name": "networkFee",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CoinbaseAmount",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Quote ID that can be used when launching the Coinbase Onramp widget.",
+              "isDeprecated": false,
+              "name": "quoteId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Ready-to-use one-click-buy URL. Only returned when destinationAddress is provided.",
+              "isDeprecated": false,
+              "name": "onrampUrl",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "CoinbaseOnrampQuote",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": "The amount of fiat currency to pay (e.g., \"100.00\" for $100 USD).",
+              "name": "paymentAmount",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "The fiat currency to pay with (e.g., \"USD\").",
+              "name": "paymentCurrency",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "The destination network for the USDC purchase.",
+              "name": "destinationNetwork",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "CoinbaseNetwork",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "ISO 3166-1 two-digit country code (e.g., \"US\").",
+              "name": "country",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "The client's IP address. Required by Coinbase for compliance.",
+              "name": "clientIP",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "ISO 3166-2 subdivision code (e.g., \"NY\"). Required for US users.",
+              "name": "subdivision",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "Optional destination wallet address. If provided, the response will include a one-click-buy URL.",
+              "name": "destinationAddress",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "CoinbaseOnrampQuoteInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "The session token (for reference, already embedded in the URL).",
+              "isDeprecated": false,
+              "name": "sessionToken",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "The single-use Coinbase onramp URL. This URL can only be used once.",
+              "isDeprecated": false,
+              "name": "onrampUrl",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "CoinbaseOnrampSession",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "PENDING_AUTH"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "PENDING_PAYMENT"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "PROCESSING"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "COMPLETED"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "FAILED"
+            }
+          ],
+          "fields": [],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "ENUM",
+          "name": "CoinbaseOnrampStatus",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Unique identifier for the transaction.",
+              "isDeprecated": false,
+              "name": "transactionId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Status of the transaction.",
+              "isDeprecated": false,
+              "name": "status",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "CoinbaseTransactionStatus",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Crypto currency being purchased.",
+              "isDeprecated": false,
+              "name": "purchaseCurrency",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Network used to deliver crypto.",
+              "isDeprecated": false,
+              "name": "purchaseNetwork",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Amount of crypto being purchased.",
+              "isDeprecated": false,
+              "name": "purchaseAmount",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CoinbaseAmount",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Total fiat payment amount.",
+              "isDeprecated": false,
+              "name": "paymentTotal",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CoinbaseAmount",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Fiat payment amount before fees.",
+              "isDeprecated": false,
+              "name": "paymentSubtotal",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CoinbaseAmount",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Coinbase fee amount.",
+              "isDeprecated": false,
+              "name": "coinbaseFee",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CoinbaseAmount",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Network fee amount.",
+              "isDeprecated": false,
+              "name": "networkFee",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CoinbaseAmount",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Exchange rate for the transaction.",
+              "isDeprecated": false,
+              "name": "exchangeRate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CoinbaseAmount",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Payment method used.",
+              "isDeprecated": false,
+              "name": "paymentMethod",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Country of the user.",
+              "isDeprecated": false,
+              "name": "country",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Wallet address the transaction was sent to.",
+              "isDeprecated": false,
+              "name": "walletAddress",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Transaction hash on the blockchain.",
+              "isDeprecated": false,
+              "name": "txHash",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "When the transaction was created.",
+              "isDeprecated": false,
+              "name": "createdAt",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Type of transaction.",
+              "isDeprecated": false,
+              "name": "type",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "CoinbaseTransaction",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "IN_PROGRESS"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "SUCCESS"
+            },
+            {
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "FAILED"
+            }
+          ],
+          "fields": [],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "ENUM",
+          "name": "CoinbaseTransactionStatus",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": "The partner user reference ID to get transactions for.\nThis should match the partnerUserRef used when creating orders.",
+              "name": "partnerUserRef",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "Reference to the next page of transactions (from previous response).",
+              "name": "pageKey",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "Number of transactions to return per page. Default is 1.",
+              "name": "pageSize",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "If true, prepend \"sandbox-\" to partnerUserRef to query sandbox transactions.",
+              "name": "sandbox",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "CoinbaseTransactionsInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "List of transactions in reverse chronological order.",
+              "isDeprecated": false,
+              "name": "transactions",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "OBJECT",
+                      "name": "CoinbaseTransaction",
+                      "ofType": null
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Reference to the next page of transactions.",
+              "isDeprecated": false,
+              "name": "nextPageKey",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Total number of transactions for this user.",
+              "isDeprecated": false,
+              "name": "totalCount",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "CoinbaseTransactionsResponse",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
               "description": null,
               "isDeprecated": false,
               "name": "assets",
@@ -7715,6 +8837,244 @@
           "interfaces": [],
           "kind": "INPUT_OBJECT",
           "name": "ControllerWhereInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": "The amount of fiat currency to pay (e.g., \"100.00\" for $100 USD).\nEither paymentAmount or purchaseAmount must be provided.",
+              "name": "paymentAmount",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "The amount of USDC to purchase (e.g., \"100.000000\" for 100 USDC).\nEither paymentAmount or purchaseAmount must be provided.",
+              "name": "purchaseAmount",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "The fiat currency to pay with. Currently only \"USD\" is supported.",
+              "name": "paymentCurrency",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "The destination wallet address on Base to receive the USDC.",
+              "name": "destinationAddress",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "The user's phone number in E.164 format (e.g., \"+12055555555\").\nMust be verified via OTP before use.",
+              "name": "phoneNumber",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "The user's verified email address.",
+              "name": "email",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "Timestamp of when the user's phone number was verified via OTP.",
+              "name": "phoneNumberVerifiedAt",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Time",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "A unique identifier for the user in your app.\nPrefix with \"sandbox-\" for test transactions.",
+              "name": "partnerUserRef",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "Optional partner order reference ID.",
+              "name": "partnerOrderRef",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "The IP address of the end user (required for compliance).",
+              "name": "clientIp",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "The domain where the Apple Pay button will be rendered.\nRequired when embedding the payment link in an iframe.",
+              "name": "domain",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "If true, use sandbox mode for testing (no real charges).",
+              "name": "sandbox",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "CreateCoinbaseOnrampOrderInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": "The destination wallet address to receive the crypto.",
+              "name": "destinationAddress",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "The destination network (e.g., \"base\", \"ethereum\").",
+              "name": "destinationNetwork",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "ENUM",
+                  "name": "CoinbaseNetwork",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "The IP address of the end user (required for compliance).",
+              "name": "clientIp",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "The amount of fiat currency to pay (e.g., \"100.00\" for $100 USD).\nOptional - if provided, creates a one-click buy URL.",
+              "name": "paymentAmount",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "The fiat currency to pay with (e.g., \"USD\"). Required if paymentAmount is provided.",
+              "name": "paymentCurrency",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "URL to redirect the user after completing the purchase.",
+              "name": "redirectUrl",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "CreateCoinbaseOnrampSessionInput",
           "possibleTypes": []
         },
         {
@@ -21592,6 +22952,68 @@
                     "name": null,
                     "ofType": {
                       "kind": "INPUT_OBJECT",
+                      "name": "CreateCoinbaseOnrampOrderInput",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": "Create a Coinbase onramp order for purchasing USDC via Apple Pay.\nReturns a payment link URL that can be used to complete the purchase.",
+              "isDeprecated": false,
+              "name": "createCoinbaseOnrampOrder",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CoinbaseOnrampOrder",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "input",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "INPUT_OBJECT",
+                      "name": "CreateCoinbaseOnrampSessionInput",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": "Create a Coinbase onramp session with a single-use URL.\nThis is the recommended approach for integrating Coinbase onramp.\nReturns a session token and URL that can be used once to complete a purchase.",
+              "isDeprecated": false,
+              "name": "createCoinbaseOnrampSession",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CoinbaseOnrampSession",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "input",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "INPUT_OBJECT",
                       "name": "CreateCryptoPaymentInput",
                       "ofType": null
                     }
@@ -31637,6 +33059,68 @@
                 "ofType": {
                   "kind": "OBJECT",
                   "name": "PaymasterStats",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "input",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "INPUT_OBJECT",
+                      "name": "CoinbaseOnrampQuoteInput",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": "Get a quote for a Coinbase onramp purchase without creating a transaction.\nThis is an estimate only and does not guarantee the final price.",
+              "isDeprecated": false,
+              "name": "coinbaseOnrampQuote",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CoinbaseOnrampQuote",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "input",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "INPUT_OBJECT",
+                      "name": "CoinbaseTransactionsInput",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": "Get the status and history of Coinbase onramp transactions for a user.\nReturns a paginated list of transactions in reverse chronological order.",
+              "isDeprecated": false,
+              "name": "coinbaseOnrampTransactions",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CoinbaseTransactionsResponse",
                   "ofType": null
                 }
               }
