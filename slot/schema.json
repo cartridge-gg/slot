@@ -7053,6 +7053,65 @@
           "possibleTypes": []
         },
         {
+          "description": "Indicates what user information is required for Coinbase onramp.",
+          "enumValues": [],
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "True if the user needs to provide an email address.",
+              "isDeprecated": false,
+              "name": "needsEmail",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "True if the user needs to provide a valid US phone number.",
+              "isDeprecated": false,
+              "name": "needsPhoneNumber",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "True if the user's phone number needs to be (re)verified.",
+              "isDeprecated": false,
+              "name": "needsPhoneVerification",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "CoinbaseOnrampRequirements",
+          "possibleTypes": []
+        },
+        {
           "description": null,
           "enumValues": [],
           "fields": [
@@ -7427,8 +7486,8 @@
           "inputFields": [
             {
               "defaultValue": null,
-              "description": "The partner user reference ID to get transactions for.\nThis should match the partnerUserRef used when creating orders.",
-              "name": "partnerUserRef",
+              "description": "The controller username to get transactions for.",
+              "name": "username",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -7461,7 +7520,7 @@
             },
             {
               "defaultValue": null,
-              "description": "If true, prepend \"sandbox-\" to partnerUserRef to query sandbox transactions.",
+              "description": "If true, use sandbox mode to query sandbox transactions.",
               "name": "sandbox",
               "type": {
                 "kind": "SCALAR",
@@ -9260,16 +9319,6 @@
                   "name": "String",
                   "ofType": null
                 }
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": "Optional partner order reference ID.",
-              "name": "partnerOrderRef",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
               }
             },
             {
@@ -33435,6 +33484,37 @@
                 "ofType": {
                   "kind": "OBJECT",
                   "name": "CoinbaseTransactionsResponse",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "username",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": "Check if a user has the required information for Coinbase onramp.\nReturns flags indicating what information is missing or needs to be updated.\nDoes not expose any user data.",
+              "isDeprecated": false,
+              "name": "coinbaseOnrampRequirements",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CoinbaseOnrampRequirements",
                   "ofType": null
                 }
               }
