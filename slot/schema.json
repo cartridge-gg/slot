@@ -7053,6 +7053,65 @@
           "possibleTypes": []
         },
         {
+          "description": "Indicates what user information is required for Coinbase onramp.",
+          "enumValues": [],
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "True if the user needs to provide an email address.",
+              "isDeprecated": false,
+              "name": "needsEmail",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "True if the user needs to provide a valid US phone number.",
+              "isDeprecated": false,
+              "name": "needsPhoneNumber",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "True if the user's phone number needs to be (re)verified.",
+              "isDeprecated": false,
+              "name": "needsPhoneVerification",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "CoinbaseOnrampRequirements",
+          "possibleTypes": []
+        },
+        {
           "description": null,
           "enumValues": [],
           "fields": [
@@ -7427,8 +7486,8 @@
           "inputFields": [
             {
               "defaultValue": null,
-              "description": "The partner user reference ID to get transactions for.\nThis should match the partnerUserRef used when creating orders.",
-              "name": "partnerUserRef",
+              "description": "The controller username to get transactions for.",
+              "name": "username",
               "type": {
                 "kind": "NON_NULL",
                 "name": null,
@@ -7461,7 +7520,7 @@
             },
             {
               "defaultValue": null,
-              "description": "If true, prepend \"sandbox-\" to partnerUserRef to query sandbox transactions.",
+              "description": "If true, use sandbox mode to query sandbox transactions.",
               "name": "sandbox",
               "type": {
                 "kind": "SCALAR",
@@ -9260,16 +9319,6 @@
                   "name": "String",
                   "ofType": null
                 }
-              }
-            },
-            {
-              "defaultValue": null,
-              "description": "Optional partner order reference ID.",
-              "name": "partnerOrderRef",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
               }
             },
             {
@@ -24204,6 +24253,130 @@
                   "ofType": null
                 }
               }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "input",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "INPUT_OBJECT",
+                      "name": "SendPhoneVerificationInput",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": "Send a verification code via SMS to the specified phone number.\nThe code expires after 10 minutes.",
+              "isDeprecated": false,
+              "name": "sendPhoneVerification",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SendVerificationResponse",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "input",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "INPUT_OBJECT",
+                      "name": "VerifyPhoneInput",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": "Verify a phone number using the code sent via SMS.\nUpdates the user's phone number and verification timestamp on success.",
+              "isDeprecated": false,
+              "name": "verifyPhone",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "VerifyResponse",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "input",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "INPUT_OBJECT",
+                      "name": "SendEmailVerificationInput",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": "Send a verification code via email to the specified email address.\nThe code expires after 10 minutes.",
+              "isDeprecated": false,
+              "name": "sendEmailVerification",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SendVerificationResponse",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "input",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "INPUT_OBJECT",
+                      "name": "VerifyEmailInput",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": "Verify an email address using the code sent via email.\nUpdates the user's email and verification timestamp on success.",
+              "isDeprecated": false,
+              "name": "verifyEmail",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "VerifyResponse",
+                  "ofType": null
+                }
+              }
             }
           ],
           "inputFields": [],
@@ -33444,6 +33617,37 @@
                 {
                   "defaultValue": null,
                   "description": null,
+                  "name": "username",
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": "Check if a user has the required information for Coinbase onramp.\nReturns flags indicating what information is missing or needs to be updated.\nDoes not expose any user data.",
+              "isDeprecated": false,
+              "name": "coinbaseOnrampRequirements",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "CoinbaseOnrampRequirements",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
                   "name": "id",
                   "type": {
                     "kind": "NON_NULL",
@@ -39108,6 +39312,99 @@
           "interfaces": [],
           "kind": "OBJECT",
           "name": "SIWSCredentials",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": "The email address to send the verification code to.",
+              "name": "email",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "SendEmailVerificationInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": "The phone number to send the verification code to.\nMust be in E.164 format (e.g., +14155551234).",
+              "name": "phoneNumber",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "SendPhoneVerificationInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Whether the verification code was sent successfully.",
+              "isDeprecated": false,
+              "name": "success",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Human-readable message about the verification status.",
+              "isDeprecated": false,
+              "name": "message",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "SendVerificationResponse",
           "possibleTypes": []
         },
         {
@@ -53061,6 +53358,139 @@
           "interfaces": [],
           "kind": "INPUT_OBJECT",
           "name": "UpdateServiceInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": "The email address that was sent the verification code.\nMust match the email used in sendEmailVerification.",
+              "name": "email",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "The 6-digit verification code received via email.",
+              "name": "code",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "VerifyEmailInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [],
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": "The phone number that was sent the verification code.\nMust match the phone number used in sendPhoneVerification.",
+              "name": "phoneNumber",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "The 6-digit verification code received via SMS.",
+              "name": "code",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "interfaces": [],
+          "kind": "INPUT_OBJECT",
+          "name": "VerifyPhoneInput",
+          "possibleTypes": []
+        },
+        {
+          "description": null,
+          "enumValues": [],
+          "fields": [
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Whether the verification was successful.",
+              "isDeprecated": false,
+              "name": "success",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "Human-readable message about the verification result.",
+              "isDeprecated": false,
+              "name": "message",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": "The verified value (phone number or email) if verification succeeded.",
+              "isDeprecated": false,
+              "name": "verifiedValue",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "inputFields": [],
+          "interfaces": [],
+          "kind": "OBJECT",
+          "name": "VerifyResponse",
           "possibleTypes": []
         },
         {
