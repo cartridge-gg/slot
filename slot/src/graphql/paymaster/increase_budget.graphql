@@ -1,7 +1,7 @@
 # Mutation to increase a paymaster's budget
 # Operation name `IncreaseBudget` must match the struct name in Rust
-mutation IncreaseBudget($paymasterName: ID!, $amount: Int!, $unit: FeeUnit!) {
-  increaseBudget(paymasterName: $paymasterName, amount: $amount, unit: $unit) {
+mutation IncreaseBudget($paymasterName: ID!, $amount: Int!, $unit: FeeUnit!, $admin: Boolean, $reason: AdminBudgetReason) {
+  increaseBudget(paymasterName: $paymasterName, amount: $amount, unit: $unit, admin: $admin, reason: $reason) {
     id
     name
     budget
