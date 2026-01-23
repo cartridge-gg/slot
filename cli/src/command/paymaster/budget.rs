@@ -2,7 +2,9 @@ use anyhow::Result;
 use clap::{Args, Subcommand};
 use slot::api::Client;
 use slot::credential::Credentials;
+use slot::graphql::paymaster::decrease_budget::AdminBudgetReason as DecreaseBudgetReason;
 use slot::graphql::paymaster::decrease_budget::FeeUnit as DecreaseBudgetFeeUnit;
+use slot::graphql::paymaster::increase_budget::AdminBudgetReason as IncreaseBudgetReason;
 use slot::graphql::paymaster::increase_budget::FeeUnit as IncreaseBudgetFeeUnit;
 use slot::graphql::paymaster::{decrease_budget, increase_budget};
 use slot::graphql::paymaster::{DecreaseBudget, IncreaseBudget};
@@ -29,6 +31,13 @@ struct IncreaseBudgetArgs {
     amount: u64,
     #[arg(long, help = "Unit for the budget (USD or STRK).")]
     unit: String,
+    #[arg(long, help = "Admin performing the operation.")]
+    admin: bool,
+    #[arg(
+        long,
+        help = "Reason for the budget increase (ADVANCE, SETTLEMENT, REFUND, PROMOTION, CORRECTION)."
+    )]
+    reason: Option<String>,
 }
 
 #[derive(Debug, Args)]
@@ -37,6 +46,13 @@ struct DecreaseBudgetArgs {
     amount: u64,
     #[arg(long, help = "Unit for the budget (USD or STRK).")]
     unit: String,
+    #[arg(long, help = "Admin performing the operation.")]
+    admin: bool,
+    #[arg(
+        long,
+        help = "Reason for the budget decrease (ADVANCE, SETTLEMENT, REFUND, PROMOTION, CORRECTION)."
+    )]
+    reason: Option<String>,
 }
 
 impl BudgetCmd {
@@ -61,10 +77,29 @@ impl BudgetCmd {
             }
         };
 
+        let reason = match args.reason.as_deref() {
+            Some(r) => match r.to_uppercase().as_str() {
+                "ADVANCE" => Some(IncreaseBudgetReason::ADVANCE),
+                "SETTLEMENT" => Some(IncreaseBudgetReason::SETTLEMENT),
+                "REFUND" => Some(IncreaseBudgetReason::REFUND),
+                "PROMOTION" => Some(IncreaseBudgetReason::PROMOTION),
+                "CORRECTION" => Some(IncreaseBudgetReason::CORRECTION),
+                _ => {
+                    return Err(anyhow::anyhow!(
+                        "Invalid reason: {}. Supported reasons: ADVANCE, SETTLEMENT, REFUND, PROMOTION, CORRECTION",
+                        r
+                    ))
+                }
+            },
+            None => None,
+        };
+
         let variables = increase_budget::Variables {
             paymaster_name: name.clone(),
             amount: amount_for_api,
             unit,
+            admin: Some(args.admin),
+            reason,
         };
         let request_body = IncreaseBudget::build_query(variables);
 
@@ -116,10 +151,30 @@ impl BudgetCmd {
         };
 
         // 2. Build Query Variables
+        let reason = match args.reason.as_deref() {
+            Some(r) => match r.to_uppercase().as_str() {
+
+                "ADVANCE" => Some(DecreaseBudgetReason::ADVANCE),
+                "SETTLEMENT" => Some(DecreaseBudgetReason::SETTLEMENT),
+                "REFUND" => Some(DecreaseBudgetReason::REFUND),
+                "PROMOTION" => Some(DecreaseBudgetReason::PROMOTION),
+                "CORRECTION" => Some(DecreaseBudgetReason::CORRECTION),
+                _ => {
+                    return Err(anyhow::anyhow!(
+                        "Invalid reason: {}. Supported reasons: ADVANCE, SETTLEMENT, REFUND, PROMOTION, CORRECTION",
+                        r
+                    ))
+                }
+            },
+            None => None,
+        };
+
         let variables = decrease_budget::Variables {
             paymaster_name: name.clone(),
             amount: amount_for_api,
             unit,
+            admin: Some(args.admin),
+            reason,
         };
         let request_body = DecreaseBudget::build_query(variables);
 
