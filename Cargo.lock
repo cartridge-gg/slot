@@ -5960,7 +5960,7 @@ dependencies = [
 
 [[package]]
 name = "slot"
-version = "0.56.0"
+version = "0.57.0"
 dependencies = [
  "account_sdk",
  "anyhow",
@@ -5993,7 +5993,7 @@ dependencies = [
 
 [[package]]
 name = "slot-cli"
-version = "0.56.0"
+version = "0.57.0"
 dependencies = [
  "anyhow",
  "axum",
