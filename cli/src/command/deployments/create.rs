@@ -207,7 +207,7 @@ impl CreateArgs {
             if let Some(replicas) = config.replicas {
                 if replicas > 1 {
                     println!("\n⚠️  Note: Deployment will not be active until fully synced due to replica mode.");
-                    println!("   This may take several minutes depending on the database size.");
+                    println!("   This may take several minutes/hours depending on the database size.");
                 }
             }
         }
