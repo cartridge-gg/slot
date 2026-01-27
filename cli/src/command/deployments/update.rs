@@ -102,6 +102,16 @@ impl UpdateArgs {
             super::print_observability_secret(observability_secret, &self.project, service);
         }
 
+        // Show replica sync note for torii deployments with replicas > 1
+        if let UpdateServiceCommands::Torii(args) = &self.update_commands {
+            if let Some(replicas) = args.replicas {
+                if replicas > 1 {
+                    println!("\n⚠️  Note: Deployment will not be active until fully synced due to replica mode.");
+                    println!("   This may take several minutes depending on the database size.");
+                }
+            }
+        }
+
         println!(
             "\nStream logs with `slot deployments logs {} {service} -f`",
             self.project
