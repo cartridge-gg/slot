@@ -1,14 +1,19 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo "Running pre-commit hook..."
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACMRT)
 
-# Run clippy
-echo "Running cargo clippy..."
-./scripts/clippy.sh
+if [[ -z "$STAGED_FILES" ]]; then
+  exit 0
+fi
 
-# Run rustfmt
-echo "Running cargo +nightly fmt..."
-./scripts/rust_fmt_fix.sh
+# Rust
+if echo "$STAGED_FILES" | grep -qE '\.rs$|^Cargo\.(toml|lock)$|^rust-toolchain\.toml$|^\.clippy\.toml$|^rustfmt\.toml$'; then
+  echo 'Running Rust checks...'
+  ./scripts/rust_fmt.sh --check
+  ./scripts/clippy.sh
+  cargo test --workspace --all-features
+fi
 
-echo "Pre-commit hook completed successfully."
+
+echo 'Pre-commit checks complete.'
