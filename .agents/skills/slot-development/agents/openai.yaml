@@ -1,0 +1,4 @@
+interface:
+  display_name: "Slot Development"
+  short_description: "Contributor workflow for cartridge-gg/slot"
+  default_prompt: "Use $slot-development to implement and validate changes in slot."
