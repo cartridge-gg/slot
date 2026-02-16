@@ -101,12 +101,8 @@ test_katana() {
         return 1
     fi
 
-    cargo run -- d update --tier epic "$project" katana
-    # This delay is a bit higher, but it seems like Katana takes a bit longer to
-    # start up in higher tiers.
-    # Also, the update tier command returns directly, when it may need to wait for
-    # the deployment to be ready.
-    sleep 60
+    cargo run -- d update --tier basic "$project" katana
+    sleep 20
 
     if ! check_katana "$project"; then
         cargo run -- d delete "$project" katana -f || true
@@ -143,12 +139,8 @@ test_torii() {
         return 1
     fi
 
-    cargo run -- d update --tier epic "$project" torii
-    # This delay is a bit higher, but it seems like Torii takes a bit longer to
-    # start up in higher tiers.
-    # Also, the update tier command returns directly, when it may need to wait for
-    # the deployment to be ready.
-    sleep 60
+    cargo run -- d update --tier basic "$project" torii
+    sleep 20
 
     if ! check_torii "$project"; then
         cargo run -- d delete "$project" torii -f || true
