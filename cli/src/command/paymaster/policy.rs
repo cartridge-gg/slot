@@ -101,8 +101,7 @@ impl PolicyCmd {
         };
 
         // Warn if adding transfer/approve without a trigger
-        if trigger.is_none()
-            && WARN_ENTRYPOINTS.contains(&args.entrypoint.to_lowercase().as_str())
+        if trigger.is_none() && WARN_ENTRYPOINTS.contains(&args.entrypoint.to_lowercase().as_str())
         {
             print!(
                 "Warning: Adding '{}' without a trigger means the paymaster will sponsor ALL {} calls (including regular transfers). Continue? [y/N]: ",
@@ -402,14 +401,8 @@ impl PolicyCmd {
                     .map(|p| PolicyArgs {
                         contract: p.contract_address.clone(),
                         entrypoint: p.entry_point.clone(),
-                        trigger_contract: p
-                            .trigger
-                            .as_ref()
-                            .map(|t| t.contract_address.clone()),
-                        trigger_entrypoint: p
-                            .trigger
-                            .as_ref()
-                            .map(|t| t.entry_point.clone()),
+                        trigger_contract: p.trigger.as_ref().map(|t| t.contract_address.clone()),
+                        trigger_entrypoint: p.trigger.as_ref().map(|t| t.entry_point.clone()),
                     })
                     .collect();
 

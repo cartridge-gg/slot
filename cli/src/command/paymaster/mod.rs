@@ -32,7 +32,10 @@ pub struct PolicyArgs {
     #[serde(rename = "entrypoint")]
     entrypoint: String,
 
-    #[arg(long, help = "Trigger contract address (policy only applies if this call exists in the multicall)")]
+    #[arg(
+        long,
+        help = "Trigger contract address (policy only applies if this call exists in the multicall)"
+    )]
     #[serde(rename = "triggerContract", skip_serializing_if = "Option::is_none")]
     trigger_contract: Option<String>,
 
