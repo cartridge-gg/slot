@@ -31,6 +31,17 @@ pub struct PolicyArgs {
     #[arg(long, help = "Entrypoint name")]
     #[serde(rename = "entrypoint")]
     entrypoint: String,
+
+    #[arg(
+        long,
+        help = "Trigger contract address (policy only applies if this call exists in the multicall)"
+    )]
+    #[serde(rename = "triggerContract", skip_serializing_if = "Option::is_none")]
+    trigger_contract: Option<String>,
+
+    #[arg(long, help = "Trigger entrypoint name")]
+    #[serde(rename = "triggerEntrypoint", skip_serializing_if = "Option::is_none")]
+    trigger_entrypoint: Option<String>,
 }
 
 /// Command group for managing Paymasters
@@ -90,17 +101,38 @@ impl PaymasterCmd {
 }
 
 pub fn print_policies_table(policies: &[PolicyArgs]) {
+    let has_triggers = policies
+        .iter()
+        .any(|p| p.trigger_contract.is_some() || p.trigger_entrypoint.is_some());
+
     let mut table = Table::new();
     table
         .load_preset(UTF8_FULL)
-        .set_content_arrangement(ContentArrangement::Dynamic)
-        .set_header(vec!["Contract Address", "Entry Point"]);
+        .set_content_arrangement(ContentArrangement::Dynamic);
 
-    for policy in policies {
-        table.add_row(vec![
-            Cell::new(&policy.contract),
-            Cell::new(&policy.entrypoint),
+    if has_triggers {
+        table.set_header(vec![
+            "Contract Address",
+            "Entry Point",
+            "Trigger Contract",
+            "Trigger Entry Point",
         ]);
+        for policy in policies {
+            table.add_row(vec![
+                Cell::new(&policy.contract),
+                Cell::new(&policy.entrypoint),
+                Cell::new(policy.trigger_contract.as_deref().unwrap_or("-")),
+                Cell::new(policy.trigger_entrypoint.as_deref().unwrap_or("-")),
+            ]);
+        }
+    } else {
+        table.set_header(vec!["Contract Address", "Entry Point"]);
+        for policy in policies {
+            table.add_row(vec![
+                Cell::new(&policy.contract),
+                Cell::new(&policy.entrypoint),
+            ]);
+        }
     }
 
     println!("{}", table);

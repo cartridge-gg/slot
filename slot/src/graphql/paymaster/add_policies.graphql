@@ -9,5 +9,9 @@ mutation AddPolicies(
     contractAddress
     entryPoint
     selector
+    trigger {
+      contractAddress
+      entryPoint
+    }
   }
 } 

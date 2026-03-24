@@ -2,7 +2,9 @@ use anyhow::{Context, Result};
 use clap::{Args, Subcommand};
 use slot::api::Client;
 use slot::credential::Credentials;
-use slot::graphql::paymaster::add_policies::{PolicyInput as AddPolicyInput, PolicyPredicateInput};
+use slot::graphql::paymaster::add_policies::{
+    PolicyInput as AddPolicyInput, PolicyPredicateInput, PolicyTriggerInput,
+};
 use slot::graphql::paymaster::remove_policy::PolicyInput as RemovePolicyInput;
 use slot::graphql::paymaster::{add_policies, list_policies, remove_all_policies, remove_policy};
 use slot::graphql::paymaster::{AddPolicies, ListPolicies, RemoveAllPolicies, RemovePolicy};
@@ -13,6 +15,8 @@ use std::io::{self, Write};
 use std::path::PathBuf;
 
 use super::PolicyArgs;
+
+const WARN_ENTRYPOINTS: &[&str] = &["transfer", "approve"];
 
 #[derive(Debug, Args)]
 #[command(next_help_heading = "Paymaster policy options")]
@@ -83,6 +87,35 @@ impl PolicyCmd {
     }
 
     async fn run_add(args: &PolicyArgs, name: String) -> Result<()> {
+        let trigger = match (&args.trigger_contract, &args.trigger_entrypoint) {
+            (Some(addr), Some(ep)) => Some(PolicyTriggerInput {
+                address: addr.clone(),
+                entrypoint: ep.clone(),
+            }),
+            (None, None) => None,
+            _ => {
+                anyhow::bail!(
+                    "--trigger-contract and --trigger-entrypoint must both be provided together"
+                );
+            }
+        };
+
+        // Warn if adding transfer/approve without a trigger
+        if trigger.is_none() && WARN_ENTRYPOINTS.contains(&args.entrypoint.to_lowercase().as_str())
+        {
+            print!(
+                "Warning: Adding '{}' without a trigger means the paymaster will sponsor ALL {} calls (including regular transfers). Continue? [y/N]: ",
+                args.entrypoint, args.entrypoint
+            );
+            io::stdout().flush()?;
+            let mut input = String::new();
+            io::stdin().read_line(&mut input)?;
+            if !input.trim().eq_ignore_ascii_case("y") {
+                println!("Operation cancelled.");
+                return Ok(());
+            }
+        }
+
         let credentials = Credentials::load()?;
         let variables = add_policies::Variables {
             paymaster_name: name.clone(),
@@ -90,7 +123,7 @@ impl PolicyCmd {
                 contract_address: args.contract.clone(),
                 entry_point: args.entrypoint.clone(),
                 predicate: None,
-                trigger: None,
+                trigger,
             }],
         };
         let request_body = AddPolicies::build_query(variables);
@@ -102,6 +135,8 @@ impl PolicyCmd {
             .map(|p| PolicyArgs {
                 contract: p.contract_address.clone(),
                 entrypoint: p.entry_point.clone(),
+                trigger_contract: p.trigger.as_ref().map(|t| t.contract_address.clone()),
+                trigger_entrypoint: p.trigger.as_ref().map(|t| t.entry_point.clone()),
             })
             .collect();
 
@@ -119,6 +154,31 @@ impl PolicyCmd {
                 args.file
             ))?;
 
+        // Warn about untriggered transfer/approve policies
+        let risky: Vec<&str> = policies_json
+            .iter()
+            .filter(|p| {
+                p.trigger.is_none()
+                    && WARN_ENTRYPOINTS.contains(&p.entry_point.to_lowercase().as_str())
+            })
+            .map(|p| p.entry_point.as_str())
+            .collect();
+
+        if !risky.is_empty() {
+            print!(
+                "Warning: {} policies with entrypoints [{}] have no trigger and will sponsor ALL such calls. Continue? [y/N]: ",
+                risky.len(),
+                risky.join(", ")
+            );
+            io::stdout().flush()?;
+            let mut input = String::new();
+            io::stdin().read_line(&mut input)?;
+            if !input.trim().eq_ignore_ascii_case("y") {
+                println!("Operation cancelled.");
+                return Ok(());
+            }
+        }
+
         // Map JSON input to GraphQL input type
         let policies_gql: Vec<AddPolicyInput> = policies_json
             .into_iter()
@@ -129,7 +189,10 @@ impl PolicyCmd {
                     address: pred.address,
                     entrypoint: pred.entrypoint,
                 }),
-                trigger: None,
+                trigger: p.trigger.map(|t| PolicyTriggerInput {
+                    address: t.address,
+                    entrypoint: t.entrypoint,
+                }),
             })
             .collect();
 
@@ -153,6 +216,8 @@ impl PolicyCmd {
             .map(|p| PolicyArgs {
                 contract: p.contract_address.clone(),
                 entrypoint: p.entry_point.clone(),
+                trigger_contract: p.trigger.as_ref().map(|t| t.contract_address.clone()),
+                trigger_entrypoint: p.trigger.as_ref().map(|t| t.entry_point.clone()),
             })
             .collect();
 
@@ -165,6 +230,31 @@ impl PolicyCmd {
         let config = load_preset(&args.name).await?;
         let policies = extract_paymaster_policies(&config, "SN_MAIN");
 
+        // Warn about untriggered transfer/approve policies
+        let risky: Vec<&str> = policies
+            .iter()
+            .filter(|p| {
+                p.trigger.is_none()
+                    && WARN_ENTRYPOINTS.contains(&p.entry_point.to_lowercase().as_str())
+            })
+            .map(|p| p.entry_point.as_str())
+            .collect();
+
+        if !risky.is_empty() {
+            print!(
+                "Warning: {} policies with entrypoints [{}] have no trigger and will sponsor ALL such calls. Continue? [y/N]: ",
+                risky.len(),
+                risky.join(", ")
+            );
+            io::stdout().flush()?;
+            let mut input = String::new();
+            io::stdin().read_line(&mut input)?;
+            if !input.trim().eq_ignore_ascii_case("y") {
+                println!("Operation cancelled.");
+                return Ok(());
+            }
+        }
+
         let policies_gql: Vec<AddPolicyInput> = policies
             .into_iter()
             .map(|p| AddPolicyInput {
@@ -174,7 +264,10 @@ impl PolicyCmd {
                     address: pred.address,
                     entrypoint: pred.entrypoint,
                 }),
-                trigger: None,
+                trigger: p.trigger.map(|t| PolicyTriggerInput {
+                    address: t.address,
+                    entrypoint: t.entrypoint,
+                }),
             })
             .collect();
 
@@ -198,6 +291,8 @@ impl PolicyCmd {
             .map(|p| PolicyArgs {
                 contract: p.contract_address.clone(),
                 entrypoint: p.entry_point.clone(),
+                trigger_contract: p.trigger.as_ref().map(|t| t.contract_address.clone()),
+                trigger_entrypoint: p.trigger.as_ref().map(|t| t.entry_point.clone()),
             })
             .collect();
 
@@ -306,6 +401,8 @@ impl PolicyCmd {
                     .map(|p| PolicyArgs {
                         contract: p.contract_address.clone(),
                         entrypoint: p.entry_point.clone(),
+                        trigger_contract: p.trigger.as_ref().map(|t| t.contract_address.clone()),
+                        trigger_entrypoint: p.trigger.as_ref().map(|t| t.entry_point.clone()),
                     })
                     .collect();
 

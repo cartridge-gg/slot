@@ -26,6 +26,12 @@ impl Default for PaymasterConfig {
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct Trigger {
+    pub address: String,
+    pub entrypoint: String,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Method {
     pub name: Option<String>,
     pub description: Option<String>,
@@ -35,6 +41,7 @@ pub struct Method {
     #[serde(default, rename = "isPaymastered")]
     pub is_paymastered: PaymasterConfig,
     pub predicate: Option<Predicate>,
+    pub trigger: Option<Trigger>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -118,6 +125,7 @@ pub fn extract_paymaster_policies(
                             contract_address: contract_address.clone(),
                             entry_point: method.entrypoint.clone(),
                             predicate: method.predicate.clone(),
+                            trigger: method.trigger.clone(),
                         });
                     }
                     PaymasterConfig::Predicate(predicate) => {
@@ -125,6 +133,7 @@ pub fn extract_paymaster_policies(
                             contract_address: contract_address.clone(),
                             entry_point: method.entrypoint.clone(),
                             predicate: Some(predicate.clone()),
+                            trigger: method.trigger.clone(),
                         });
                     }
                     PaymasterConfig::Bool(false) => {
@@ -147,6 +156,7 @@ pub struct PaymasterPolicyInput {
     pub entry_point: String,
 
     pub predicate: Option<Predicate>,
+    pub trigger: Option<Trigger>,
 }
 
 // Merkle drop related structures
