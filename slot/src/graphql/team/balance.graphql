@@ -1,0 +1,8 @@
+query TeamBalance($team: String!) {
+  team(name: $team) {
+    id
+    name
+    credits
+    strk
+  }
+}

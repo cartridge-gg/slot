@@ -1,4 +1,5 @@
 use self::members::{TeamAddArgs, TeamListArgs, TeamRemoveArgs};
+use crate::command::teams::balance::BalanceArgs;
 use crate::command::teams::create::CreateTeamArgs;
 use crate::command::teams::delete::DeleteTeamArgs;
 use crate::command::teams::invoices::InvoicesArgs;
@@ -6,6 +7,7 @@ use crate::command::teams::update::UpdateTeamArgs;
 use anyhow::Result;
 use clap::{Args, Subcommand};
 
+mod balance;
 mod create;
 mod delete;
 mod invoices;
@@ -43,6 +45,9 @@ pub enum TeamsCommands {
 
     #[command(about = "List team invoices.")]
     Invoices(InvoicesArgs),
+
+    #[command(about = "Show team balances (USD credits and STRK).")]
+    Balance(BalanceArgs),
 }
 
 impl Teams {
@@ -55,6 +60,7 @@ impl Teams {
             TeamsCommands::Update(args) => args.run(self.name.clone()).await,
             TeamsCommands::Delete(args) => args.run(self.name.clone()).await,
             TeamsCommands::Invoices(args) => args.run(self.name.clone()).await,
+            TeamsCommands::Balance(args) => args.run(self.name.clone()).await,
         }
     }
 }
