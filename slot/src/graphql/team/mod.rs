@@ -57,3 +57,11 @@ pub struct DeleteTeam;
     query_path = "src/graphql/team/invoices.graphql"
 )]
 pub struct TeamInvoices;
+
+#[derive(GraphQLQuery)]
+#[graphql(
+    response_derives = "Debug",
+    schema_path = "schema.json",
+    query_path = "src/graphql/team/balance.graphql"
+)]
+pub struct TeamBalance;
