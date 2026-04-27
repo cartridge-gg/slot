@@ -46,7 +46,7 @@ impl BalanceArgs {
 
 fn format_usd(credits: i64) -> String {
     let dollars = credits as f64 / 100.0 / 1e6;
-    format!("${:.2}", dollars)
+    format!("${:.6}", dollars)
 }
 
 fn format_strk(strk: i64) -> String {
