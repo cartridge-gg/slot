@@ -73,18 +73,14 @@ impl InfoArgs {
                 );
 
                 println!("\n💰 Budget:");
-                if budget_formatted > 0.0 {
-                    match paymaster.budget_fee_unit {
-                        PaymasterBudgetFeeUnit::CREDIT => {
-                            println!("  • Total: ${:.2} USD", budget_formatted * 0.01)
-                        }
-                        PaymasterBudgetFeeUnit::STRK => {
-                            println!("  • Total: {:.2} STRK", budget_formatted)
-                        }
-                        _ => println!("  • Total: NONE (Please Top Up)"),
+                match paymaster.budget_fee_unit {
+                    PaymasterBudgetFeeUnit::CREDIT => {
+                        println!("  • Total: ${:.2} USD", budget_formatted * 0.01)
                     }
-                } else {
-                    println!("  • Total: NONE (Please Top Up)");
+                    PaymasterBudgetFeeUnit::STRK => {
+                        println!("  • Total: {:.2} STRK", budget_formatted)
+                    }
+                    _ => println!("  • Total: Unsupported"),
                 }
 
                 // Only display the relevant fee type based on budget unit
