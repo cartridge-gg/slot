@@ -1,12 +1,19 @@
 query PaymasterStats($paymasterName: ID!, $since: Time!) {
+  paymaster(name: $paymasterName) {
+    budgetFeeUnit
+  }
   paymasterStats(paymasterName: $paymasterName, since: $since) {
     minUsdFee
     maxUsdFee
     avgUsdFee
     totalUsdFees
+    minStrkFee
+    maxStrkFee
+    avgStrkFee
+    totalStrkFees
     totalTransactions
     successfulTransactions
     revertedTransactions
     uniqueUsers
   }
-} 
+}

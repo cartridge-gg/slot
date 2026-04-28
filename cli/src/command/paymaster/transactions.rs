@@ -5,7 +5,7 @@ use slot::api::Client;
 use slot::credential::Credentials;
 use slot::graphql::paymaster::paymaster_transactions;
 use slot::graphql::paymaster::paymaster_transactions::{
-    PaymasterTransactionFilter, PaymasterTransactionOrder,
+    PaymasterBudgetFeeUnit, PaymasterTransactionFilter, PaymasterTransactionOrder,
 };
 use slot::graphql::paymaster::PaymasterTransactions;
 use slot::graphql::GraphQLQuery;
@@ -45,7 +45,7 @@ pub struct TransactionDisplay {
     pub transaction_hash: String,
     pub executed_at: String,
     pub status: String,
-    pub usd_fee: String,
+    pub fee: String,
 }
 
 impl TransactionArgs {
@@ -108,6 +108,11 @@ impl TransactionArgs {
         let client = Client::new_with_token(credentials.access_token);
         let data: paymaster_transactions::ResponseData = client.query(&request_body).await?;
 
+        let is_strk = matches!(
+            data.paymaster.as_ref().map(|p| &p.budget_fee_unit),
+            Some(PaymasterBudgetFeeUnit::STRK)
+        );
+
         let transactions = data.paymaster_transactions;
 
         if transactions.is_empty() {
@@ -121,7 +126,6 @@ impl TransactionArgs {
         }
 
         // Convert to display format
-        // Convert to display format
         let display_transactions: Vec<TransactionDisplay> = transactions
             .into_iter()
             .map(|t| TransactionDisplay {
@@ -132,7 +136,11 @@ impl TransactionArgs {
                     paymaster_transactions::ActivityStatus::FAILED => "REVERTED".to_string(),
                     _ => format!("{:?}", t.status), // Fallback for any other status values
                 },
-                usd_fee: format!("${:.4}", t.usd_fee),
+                fee: if is_strk {
+                    format!("{:.4} STRK", t.strk_fee)
+                } else {
+                    format!("${:.4}", t.usd_fee)
+                },
             })
             .collect();
 
@@ -143,7 +151,7 @@ impl TransactionArgs {
         );
         println!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
-        print_transactions_table(&display_transactions);
+        print_transactions_table(&display_transactions, is_strk);
 
         Ok(())
     }
@@ -188,26 +196,34 @@ fn format_relative_time(executed_at: &str) -> String {
     format!("{}w ago", weeks)
 }
 
-pub fn print_transactions_table(transactions: &[TransactionDisplay]) {
+pub fn print_transactions_table(transactions: &[TransactionDisplay], is_strk: bool) {
     if transactions.is_empty() {
         return;
     }
 
+    let fee_header = if is_strk { "STRK Fee" } else { "USD Fee" };
+    let fee_width = if is_strk { 16 } else { 12 };
+
     // Print header - adjusted widths for full hash and relative time
     println!(
-        "{:<66} {:<12} {:<12} {:<12}",
-        "Transaction Hash", "Executed", "Status", "USD Fee"
+        "{:<66} {:<12} {:<12} {:<width$}",
+        "Transaction Hash",
+        "Executed",
+        "Status",
+        fee_header,
+        width = fee_width,
     );
     println!("{}", "─".repeat(110));
 
     // Print transactions
     for transaction in transactions {
         println!(
-            "{:<66} {:<12} {:<12} {:<12}",
+            "{:<66} {:<12} {:<12} {:<width$}",
             transaction.transaction_hash,
             transaction.executed_at,
             transaction.status,
-            transaction.usd_fee
+            transaction.fee,
+            width = fee_width,
         );
     }
 }

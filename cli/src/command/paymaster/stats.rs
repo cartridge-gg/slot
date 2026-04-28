@@ -4,6 +4,7 @@ use clap::Args;
 use slot::api::Client;
 use slot::credential::Credentials;
 use slot::graphql::paymaster::paymaster_stats;
+use slot::graphql::paymaster::paymaster_stats::PaymasterBudgetFeeUnit;
 use slot::graphql::paymaster::PaymasterStats;
 use slot::graphql::GraphQLQuery;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -76,15 +77,31 @@ impl StatsArgs {
             println!("  • TPS: {:.4}", tps);
         }
 
-        println!("\n💰 Fees (USD):");
-        println!(
-            "  • Total ({}): ${:.2}",
-            self.last,
-            stats.total_usd_fees.unwrap_or(0.0)
-        );
-        println!("  • Average: ${:.6}", stats.avg_usd_fee.unwrap_or(0.0));
-        println!("  • Minimum: ${:.6}", stats.min_usd_fee.unwrap_or(0.0));
-        println!("  • Maximum: ${:.6}", stats.max_usd_fee.unwrap_or(0.0));
+        let unit = data.paymaster.as_ref().map(|p| &p.budget_fee_unit);
+        match unit {
+            Some(PaymasterBudgetFeeUnit::STRK) => {
+                println!("\n💰 Fees (STRK):");
+                println!(
+                    "  • Total ({}): {:.2} STRK",
+                    self.last,
+                    stats.total_strk_fees.unwrap_or(0.0)
+                );
+                println!("  • Average: {:.6} STRK", stats.avg_strk_fee.unwrap_or(0.0));
+                println!("  • Minimum: {:.6} STRK", stats.min_strk_fee.unwrap_or(0.0));
+                println!("  • Maximum: {:.6} STRK", stats.max_strk_fee.unwrap_or(0.0));
+            }
+            _ => {
+                println!("\n💰 Fees (USD):");
+                println!(
+                    "  • Total ({}): ${:.2}",
+                    self.last,
+                    stats.total_usd_fees.unwrap_or(0.0)
+                );
+                println!("  • Average: ${:.6}", stats.avg_usd_fee.unwrap_or(0.0));
+                println!("  • Minimum: ${:.6}", stats.min_usd_fee.unwrap_or(0.0));
+                println!("  • Maximum: ${:.6}", stats.max_usd_fee.unwrap_or(0.0));
+            }
+        }
 
         println!("\n👥 Users:");
         println!("  • Unique Users: {}", stats.unique_users);
