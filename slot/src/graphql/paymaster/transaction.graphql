@@ -7,6 +7,9 @@ query PaymasterTransactions(
   $since: Time!
   $limit: Int
 ) {
+  paymaster(name: $paymasterName) {
+    budgetFeeUnit
+  }
   paymasterTransactions(
     paymasterName: $paymasterName
     filter: $filter
@@ -17,6 +20,7 @@ query PaymasterTransactions(
     transactionHash
     status
     usdFee
+    strkFee
     executedAt
   }
 }
