@@ -14,7 +14,7 @@ slot = { path = "slot" }
 
 anyhow = "1.0.100"
 axum = "0.8"
-graphql_client = "0.14.0"
+graphql_client = "0.15.0"
 hyper = "1.4"
 tokio = { version = "1.46.1", features = ["full", "sync"] }
 serde = "1"
