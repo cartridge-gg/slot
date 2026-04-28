@@ -73,15 +73,14 @@ impl InfoArgs {
                 );
 
                 println!("\n💰 Budget:");
-                let usd_equivalent = match paymaster.budget_fee_unit {
-                    PaymasterBudgetFeeUnit::CREDIT => budget_formatted * 0.01, // 100 credit = 1 USD
-                    _ => 0.0,
-                };
-
-                if usd_equivalent > 0.0 {
-                    println!("  • Total: ${:.2} USD", usd_equivalent);
-                } else {
-                    println!("  • Total: NONE (Please Top Up)");
+                match paymaster.budget_fee_unit {
+                    PaymasterBudgetFeeUnit::CREDIT => {
+                        println!("  • Total: ${:.2} USD", budget_formatted * 0.01)
+                    }
+                    PaymasterBudgetFeeUnit::STRK => {
+                        println!("  • Total: {:.2} STRK", budget_formatted)
+                    }
+                    _ => println!("  • Total: Unsupported"),
                 }
 
                 // Only display the relevant fee type based on budget unit
