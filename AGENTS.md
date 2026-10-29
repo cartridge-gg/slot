@@ -27,9 +27,6 @@ Slot is a CLI tool and execution layer for the Dojo ecosystem that manages rapid
 # Code formatting fix
 ./scripts/rust_fmt_fix.sh
 
-# End-to-end testing (creates/tests/deletes deployments)
-./scripts/e2e.sh
-
 # Update GraphQL schema from API
 ./scripts/pull_schema.sh
 ```
@@ -46,17 +43,12 @@ cargo build --release
 cargo run -- <command>
 ```
 
-### Testing
-- E2E tests create temporary deployments, test functionality, and clean up
-- Tests verify both Katana and Torii service deployments
-- Health checks ensure services are responding before proceeding
-
 ## Architecture
 
 ### Command Structure
 The CLI is organized into main command groups:
 - `slot auth` - Authentication and session management
-- `slot deployments` (alias: `d`) - Katana/Torii service management  
+- `slot deployments` (alias: `d`) - Discontinued; hidden and returns an error
 - `slot teams` - Team collaboration features
 - `slot paymaster`/`slot paymasters` - Gas fee management
 
@@ -64,7 +56,6 @@ The CLI is organized into main command groups:
 - **CLI Layer** (`cli/src/command/`) - Command implementations organized by domain
 - **Core Library** (`slot/src/`) - Shared functionality including GraphQL client, account management, API client
 - **GraphQL Integration** - Generated client code from comprehensive schema (37k+ lines)
-- **Service Management** - Configuration-driven deployment of Katana/Torii services
 
 ### Key Files
 - `slot/src/graphql/schema.graphql` - GraphQL schema (regenerate Rust code after changes)
@@ -78,11 +69,6 @@ The CLI is organized into main command groups:
 - `CARTRIDGE_KEYCHAIN_URL` - Override keychain endpoint
 
 ## Development Notes
-
-### Service Deployments
-- Katana: Starknet sequencer with configurable block times and account predeployment
-- Torii: Indexer requiring world address configuration
-- Both support tier scaling (basic to epic) for performance requirements
 
 ### Authentication
 All API operations require authentication via `slot auth login` which handles Cartridge Controller integration.
