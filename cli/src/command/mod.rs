@@ -25,8 +25,7 @@ pub enum Command {
     #[command(about = "Manage auth credentials for the Slot CLI.", aliases = ["a"])]
     Auth(Auth),
 
-    #[command(subcommand)]
-    #[command(about = "Manage Slot deployments.", aliases = ["d"])]
+    #[command(about = "Discontinued.", aliases = ["d"], hide = true)]
     Deployments(Deployments),
 
     #[command(about = "Manage Slot team.", aliases = ["t"])]
